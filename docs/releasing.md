@@ -1,25 +1,33 @@
 # Releasing
 
-## Guide (`design.uinaf.dev`)
+Tracker: [design → attach](https://github.com/orgs/uinaf/projects/1)
 
-Push to `main` runs `main.yml`: verify → secret scanning → deploy through the
-`production` environment (`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`).
+## npm `@uinaf/design`
 
-Custom domain `design.uinaf.dev` → `uinaf-design` is also inventoried in
-`uinaf/infra` (`tofu/inventory/workers_custom_domains.json`). Wrangler deploys
-the Worker script + assets; hostname ownership stays in infra.
+Publishing uses npm Trusted Publishing (OIDC) from `.github/workflows/release.yml`
+via the `release` GitHub Environment. No long-lived `NPM_TOKEN` is stored.
 
-## npm (`@uinaf/design`) — deferred
+### One-time bootstrap (owner)
 
-Bootstrap publish + trusted publisher registration are a maintainer one-time
-step (do together). Until the package exists on npm, there is **no**
-`release.yml` — semantic-release OIDC fails with `package not found`.
+Trusted publishing requires an existing package. With a fresh npm login:
 
-After bootstrap:
+```sh
+cd ~/projects/uinaf/design
+pnpm run verify
+npm publish --access public   # 2FA if prompted → creates @uinaf/design@0.1.0
+npx -y npm@^11.10.0 trust github @uinaf/design \
+  --repo uinaf/design \
+  --file release.yml \
+  --env release \
+  --allow-publish \
+  --yes
+```
 
-1. Add `release.yml` matching `@uinaf/workspace-kit` (OIDC + `uinaf-releaser`).
-2. Register trusted publisher:
-   `npm trust github @uinaf/design --repo uinaf/design --file release.yml --env release --allow-publish --yes`
-3. Grant `uinaf-releaser` bypass on `protect-main` / `protect-release-tags`.
+Create the `uinaf` npm org first if it does not exist. After trust is
+registered, subsequent `feat:`/`fix:` pushes to `main` publish via OIDC.
 
-Tracker: https://github.com/orgs/uinaf/projects/1
+## Guide deploy
+
+`.github/workflows/main.yml` deploys `guide/` through the `production`
+environment with Wrangler. Hostname `design.uinaf.dev` is bound in
+`uinaf/infra` (`workers_custom_domains` inventory), not via wrangler routes.
