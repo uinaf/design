@@ -9,7 +9,7 @@ Tracker: [design → attach](https://github.com/orgs/uinaf/projects/1)
 1. verify
 2. secret scan
 3. npm release (`release` Environment, OIDC trusted publishing + `uinaf-releaser`)
-4. guide deploy (`production` Environment) — same workflow so publish and deploy share one gate
+4. guide deploy (`production`) — needs successful release job
 
 ## npm bootstrap (one-time, owner)
 
