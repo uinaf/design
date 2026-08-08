@@ -13,25 +13,27 @@
 - Spec lives in `DESIGN.md`; agent skill in `.agents/skills/uinaf-design/`.
 - Guide static root is `guide/` (synced from `preview/` + tokens).
 
-## Workflow invariants
-
-- Guide deploy: `.github/workflows/main.yml` only.
-- npm publish: `.github/workflows/release.yml` only.
-- Never make production guide deploy `needs: [release]` — npm bootstrap must not strand `design.uinaf.dev`.
-
 ## Toolchain
 
 Vite+ (`vp`). Prefer `vp run verify`, `vp check`, `vp test run`.
 
 ## Ship loop
 
-New work ships with:
-
 1. **gh-setup** conventions (Environments, SHA-pinned Actions, secrets scan,
    squash-only, signed-commit rulesets + `uinaf-releaser` bypass).
 2. **autoreview** after builder verify (`autoreview review --mode branch`).
 3. **Bugbot** on the PR (`/review-bugbot`).
 4. **autopilot** to triage comments and CI until merge-ready.
+
+## Workflow invariant
+
+Two push workflows on `main` (intentional during npm bootstrap):
+
+- `main.yml` — verify → secrets → guide deploy (`production`)
+- `release.yml` — verify → secrets → npm release (`release`, fail-closed)
+
+Do **not** gate guide deploy on the release job. Do **not** delete `main.yml`
+to "simplify" until `@uinaf/design` publishes reliably via OIDC.
 
 ## Commands
 
