@@ -4,16 +4,32 @@ description: Use this skill to generate well-branded interfaces and assets for u
 user-invocable: true
 ---
 
-Read `DESIGN.md` at the repo root — it is the design spec (voice, type, color, structure, components, layout, motion, guardrails). Then explore the other files.
+# uinaf design
 
-Key files:
+## Spec first
 
-- `DESIGN.md` — the design spec. Read it before building anything.
-- `@uinaf/design/css` (`dist/css/tokens.css`) — tokens + ready styles. Import it and use what's there; load Berkeley Mono from `https://cdn.uinaf.dev/fonts/berkeley-mono/variable/font.css` (not vendored in the package).
-- `templates/` — copyable starting points.
-- `preview/` — one card per pattern; the canonical reference.
-- Brand images: `https://cdn.uinaf.dev/images/...` or `system/assets/` for package-safe copies.
+Read `DESIGN.md` at the repo root before building anything — voice, type, color, structure, components, layout, motion, guardrails.
 
-The non-negotiables, in one breath: Berkeley Mono only · everything lowercase except 11px tracked micro-labels · small type, hierarchy from the 11↔24 spread + air · one phosphor-lime accent used like a laser pointer, cyan stays in the artwork · white-fill primary buttons, monochrome everything else · 1px borders, square corners, no shadows, no gradients, no emoji, no icon fonts · quiet dot-scale status · narrow shell by default · dry lowercase copy with no SaaS sludge.
+## Package
+
+| Import              | Use                                         |
+| ------------------- | ------------------------------------------- |
+| `@uinaf/design/css` | tokens + ready styles — the only CSS import |
+| `@uinaf/design`     | flat token map                              |
+| `@uinaf/design/cdn` | CDN URL constants for fonts and images      |
+
+Fonts: always load Berkeley Mono from `https://cdn.uinaf.dev/fonts/berkeley-mono/variable/font.css`. Never vendor font binaries in apps or this package.
+
+Brand images: use `CDN.images` / `https://cdn.uinaf.dev/images/...`. Offline package copies live under `system/assets/`.
+
+## References
+
+- `preview/` — one HTML card per pattern; match the nearest card when unsure
+- `templates/` — copyable starting points
+- Live guide: https://design.uinaf.dev
+
+## Non-negotiables
+
+Berkeley Mono only · everything lowercase except 11px tracked micro-labels · hierarchy from the 11↔24 spread + air · one phosphor-lime accent used like a laser pointer · cyan stays in artwork · white-fill primary buttons, monochrome everything else · 1px borders, square corners, no shadows, no gradients, no emoji, no icon fonts · quiet dot-scale status · narrow shell by default · dry lowercase copy with no SaaS sludge.
 
 If a choice isn't covered: pick the quieter option, and match the nearest preview card.

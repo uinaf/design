@@ -34,7 +34,6 @@ export default defineConfig({
       "wrangler.toml",
       ".github/**",
       "pnpm-lock.yaml",
-      "scripts/**/*.mjs",
     ],
     options: {
       typeAware: true,

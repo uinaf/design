@@ -1,45 +1,49 @@
 # Releasing
 
-Tracker: [design → attach](https://github.com/orgs/uinaf/projects/1)
-
 ## Pipelines
 
-| Workflow      | On push to `main`                                                   |
-| ------------- | ------------------------------------------------------------------- |
-| `main.yml`    | verify → secrets → guide deploy (`production`)                      |
-| `release.yml` | verify → secrets → npm publish (`release`, OIDC + `uinaf-releaser`) |
+| Workflow                        | On push to `main`                                                   |
+| ------------------------------- | ------------------------------------------------------------------- |
+| `.github/workflows/main.yml`    | verify → secrets → guide deploy (`production`)                      |
+| `.github/workflows/release.yml` | verify → secrets → npm publish (`release`, OIDC + `uinaf-releaser`) |
 
-Guide deploy is independent of npm so `design.uinaf.dev` keeps shipping while
-the package bootstraps.
+Guide deploy stays independent of npm so `design.uinaf.dev` keeps shipping even when a release job fails. Do not make deploy `needs: [release]`.
 
-## npm bootstrap (one-time, owner)
+## npm
+
+`@uinaf/design` publishes from `.github/workflows/release.yml` via npm Trusted Publishing (OIDC) and `uinaf-releaser`.
+
+Required on the `release` GitHub Environment:
+
+| Name                            | Kind   | Purpose                                     |
+| ------------------------------- | ------ | ------------------------------------------- |
+| `UINAF_RELEASE_APP_CLIENT_ID`   | var    | GitHub App client id for the releaser bot   |
+| `UINAF_RELEASE_APP_PRIVATE_KEY` | secret | GitHub App private key for the releaser bot |
+
+npm trusted publisher is already registered for this repo / workflow file (`release.yml`) / `release` environment.
+
+Manual publish is only for emergency recovery:
 
 ```sh
-cd ~/projects/uinaf/design
-npm login
 pnpm run verify
 npm publish --access public
-# semantic-release reads git tags (tagFormat v${version}); match the bootstrap
-# npm version so the next automated release continues from 0.1.0.
-git tag -s v0.1.0 -m v0.1.0
-git push origin v0.1.0
-npx -y npm@^11.10.0 trust github @uinaf/design \
-  --repo uinaf/design \
-  --file release.yml \
-  --env release \
-  --allow-publish \
-  --yes
 ```
 
-Also copy `UINAF_RELEASE_APP_PRIVATE_KEY` from `uinaf/workspace-kit`'s `release`
-Environment into this repo's `release` Environment.
+## Guide
 
-## Guide host
+CI deploys from `.github/workflows/main.yml` via the `production` GitHub Environment.
 
-`design.uinaf.dev` is bound in `uinaf/infra` (`workers_custom_domains`), not via
-wrangler routes.
+Required on `production`:
 
-## Ship loop
+| Name                    | Kind   | Purpose               |
+| ----------------------- | ------ | --------------------- |
+| `CLOUDFLARE_ACCOUNT_ID` | var    | Cloudflare account id |
+| `CLOUDFLARE_API_TOKEN`  | secret | Workers deploy token  |
 
-For delivery PRs: gh-setup → builder verify → autoreview → Bugbot → autopilot.
-Do not merge from the agent; leave merge to the owner.
+Local:
+
+```sh
+pnpm run deploy
+```
+
+`design.uinaf.dev` is bound in `uinaf/infra` (`workers_custom_domains`), not via wrangler routes.

@@ -4,50 +4,197 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>uinaf design</title>
-    <link rel="stylesheet" href="https://cdn.uinaf.dev/fonts/berkeley-mono/variable/font.css" />
+    <meta
+      name="description"
+      content="public tokens and guidance for uinaf surfaces."
+    />
+    <link rel="canonical" href="https://design.uinaf.dev/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:site_name" content="uinaf design" />
+    <meta property="og:title" content="uinaf design" />
+    <meta
+      property="og:description"
+      content="public tokens and guidance for uinaf surfaces."
+    />
+    <meta property="og:url" content="https://design.uinaf.dev/" />
+    <meta
+      property="og:image"
+      content="https://cdn.uinaf.dev/images/uinaf-computer-og-image.png"
+    />
+    <meta property="og:image:alt" content="uinaf — melting crt" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1024" />
+    <meta property="og:image:height" content="537" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@uinafdev" />
+    <meta name="twitter:title" content="uinaf design" />
+    <meta
+      name="twitter:description"
+      content="public tokens and guidance for uinaf surfaces."
+    />
+    <meta
+      name="twitter:image"
+      content="https://cdn.uinaf.dev/images/uinaf-computer-og-image.png"
+    />
+    <link
+      rel="icon"
+      href="https://cdn.uinaf.dev/images/uinaf-computer.png"
+      type="image/png"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.uinaf.dev/fonts/berkeley-mono/variable/font.css"
+    />
     <link rel="stylesheet" href="/tokens.css" />
     <style>
-      body { margin: 0; background: var(--bg); color: var(--fg); font: var(--text-base)/var(--leading-base) var(--font-mono); }
-      .shell { max-width: 36rem; margin: 0 auto; padding: 64px 20px 96px; }
-      .label { font-size: var(--text-xs); letter-spacing: var(--tracking-caps); text-transform: uppercase; color: var(--fg-muted); }
-      h1 { font-size: var(--text-2xl); font-weight: var(--weight-regular); line-height: var(--leading-tight); margin: 12px 0 16px; color: var(--fg-strong); }
-      p { margin: 0 0 16px; color: var(--fg-muted); max-width: 46ch; }
-      a { color: var(--fg); text-decoration-color: var(--border-strong); }
-      a:hover { color: var(--accent); }
-      ul { padding: 0; list-style: none; margin: 32px 0 0; border-top: 1px solid var(--border); }
-      li { border-bottom: 1px solid var(--border); }
-      li a { display: block; padding: 14px 0; text-decoration: none; font-size: var(--text-sm); }
-      code { font-size: var(--text-sm); }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font: var(--text-base) / var(--leading-base) var(--font-mono);
+      }
+      .shell {
+        max-width: 36rem;
+        margin: 0 auto;
+        padding: 64px 20px 96px;
+      }
+      .label {
+        font-size: var(--text-xs);
+        letter-spacing: var(--tracking-caps);
+        text-transform: uppercase;
+        color: var(--fg-muted);
+      }
+      h1 {
+        font-size: var(--text-2xl);
+        font-weight: var(--weight-regular);
+        line-height: var(--leading-tight);
+        margin: 12px 0 16px;
+        color: var(--fg-strong);
+        max-width: 22ch;
+      }
+      .lede {
+        margin: 0 0 16px;
+        color: var(--fg-muted);
+        max-width: 46ch;
+      }
+      .links {
+        margin: 0 0 48px;
+        font-size: var(--text-sm);
+        color: var(--fg-subtle);
+      }
+      .links a {
+        color: var(--fg);
+        text-decoration-color: var(--border-strong);
+      }
+      .links a:hover {
+        color: var(--accent);
+      }
+      .group {
+        margin: 0 0 32px;
+      }
+      .group .label {
+        display: block;
+        margin-bottom: 8px;
+      }
+      .group ul {
+        padding: 0;
+        list-style: none;
+        margin: 0;
+        border-top: 1px solid var(--border);
+      }
+      .group li {
+        border-bottom: 1px solid var(--border);
+      }
+      .group a {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+        align-items: baseline;
+        padding: 12px 0;
+        text-decoration: none;
+        color: var(--fg);
+      }
+      .group a:hover {
+        color: var(--accent);
+      }
+      .group .name {
+        font-size: var(--text-sm);
+      }
+      .group .sub {
+        font-size: var(--text-xs);
+        color: var(--fg-subtle);
+        text-align: right;
+        max-width: 28ch;
+      }
+      .group a:hover .sub {
+        color: var(--fg-muted);
+      }
+      code {
+        font-size: var(--text-sm);
+      }
+      .mark {
+        width: 64px;
+        height: 64px;
+        border: 1px solid var(--border-strong);
+        display: block;
+        margin: 0 0 28px;
+        background: #000;
+      }
     </style>
   </head>
   <body>
     <main class="shell">
+      <img
+        class="mark"
+        src="https://cdn.uinaf.dev/images/uinaf-computer.png"
+        width="64"
+        height="64"
+        alt=""
+      />
       <div class="label">uinaf · design</div>
       <h1>we bet you've seen us before.</h1>
-      <p>
+      <p class="lede">
         public tokens and guidance for uinaf surfaces. install
-        <code>@uinaf/design</code>, load berkeley mono from the cdn, import the css.
+        <code>@uinaf/design</code>, load berkeley mono from the cdn, import the
+        css.
       </p>
-      <p>
+      <p class="links">
         <a href="https://github.com/uinaf/design">github ↗</a>
         ·
         <a href="https://www.npmjs.com/package/@uinaf/design">npm ↗</a>
-        ·
-        <a href="https://github.com/orgs/uinaf/projects/1">tracker ↗</a>
       </p>
-      <ul id="previews"></ul>
+      <div id="catalog"></div>
     </main>
     <script type="module">
-      const previews = [
-        "brand-illustration","brand-logo","colors-semantic","colors-slime",
-        "components-buttons","components-card","components-inputs","components-links",
-        "components-status","components-table","motion","spacing-tokens","type-roles","voice-samples"
+      const res = await fetch("/previews.json")
+      const items = await res.json()
+      const order = ["Brand", "Colors", "Type", "Spacing", "Components", "Motion"]
+      const groups = new Map()
+      for (const item of items) {
+        const list = groups.get(item.group) ?? []
+        list.push(item)
+        groups.set(item.group, list)
+      }
+      const root = document.getElementById("catalog")
+      const keys = [
+        ...order.filter((g) => groups.has(g)),
+        ...[...groups.keys()].filter((g) => !order.includes(g)),
       ]
-      const ul = document.getElementById("previews")
-      for (const name of previews) {
-        const li = document.createElement("li")
-        li.innerHTML = `<a href="/preview/${name}.html"><span class="label">preview</span> · ${name.replaceAll("-", " ")}</a>`
-        ul.appendChild(li)
+      for (const group of keys) {
+        const section = document.createElement("section")
+        section.className = "group"
+        const label = document.createElement("span")
+        label.className = "label"
+        label.textContent = group.toLowerCase()
+        const ul = document.createElement("ul")
+        for (const item of groups.get(group)) {
+          const li = document.createElement("li")
+          li.innerHTML = `<a href="/preview/${item.slug}"><span class="name">${item.name.toLowerCase()}</span><span class="sub">${item.subtitle}</span></a>`
+          ul.appendChild(li)
+        }
+        section.append(label, ul)
+        root.appendChild(section)
       }
     </script>
   </body>

@@ -2,7 +2,7 @@
 
 ## Setup
 
-Node (see `.node-version`) with Corepack enabled. Then:
+Node (see `.node-version`) with Corepack enabled:
 
 ```sh
 pnpm install --frozen-lockfile
@@ -15,8 +15,15 @@ pnpm exec vp config --no-agent
 pnpm run verify
 ```
 
+That builds tokens, syncs `guide/`, and runs checks + tests.
+
+## Preview locally
+
+```sh
+pnpm run guide:sync
+pnpm exec wrangler dev
+```
+
 ## Releases / deploy
 
-Guide deploys from `main` via the `production` GitHub Environment.
-npm publish is wired for trusted publishing once the package exists — see
-`docs/releasing.md`.
+See [Releasing](docs/releasing.md). Guide deploys from `main` via the `production` environment; npm publishes via the `release` environment.

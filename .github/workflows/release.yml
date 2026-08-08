@@ -1,6 +1,6 @@
 name: Release
 
-# npm Trusted Publishing (OIDC) + uinaf-releaser. Fail-closed until bootstrap.
+# npm Trusted Publishing (OIDC) + uinaf-releaser.
 # Guide deploy lives in main.yml — never needs: [release] for production assets.
 
 on:

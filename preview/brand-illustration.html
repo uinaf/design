@@ -4,14 +4,35 @@
 <meta charset="utf-8">
 <title>uinaf — illustrations</title>
 <link rel="stylesheet" href="../dist/css/tokens.css">
-<style>html,body{margin:0;padding:0}body.uinaf{padding:32px 36px;display:flex;gap:28px}.art{flex:1}.art img{width:100%;border:1px solid var(--neutral-900);display:block}.art figcaption{font-size:11px;color:var(--fg-subtle);margin-top:10px}.notes{width:220px;flex:none;display:flex;flex-direction:column;gap:12px;font-size:12px;color:var(--fg-muted)}.notes p{font-size:12px}</style>
+<style>
+html,body{margin:0;padding:0}
+body.uinaf{padding:32px 36px;display:flex;flex-direction:column;gap:24px}
+.row{display:flex;gap:32px;align-items:flex-start;flex-wrap:wrap}
+.marks{display:flex;gap:20px;align-items:flex-end}
+figure{margin:0}
+figure img{display:block;border:1px solid var(--neutral-900);background:#000}
+figure figcaption{font-size:11px;color:var(--fg-subtle);margin-top:10px;max-width:24ch}
+.notes{width:240px;flex:none;display:flex;flex-direction:column;gap:12px;font-size:12px;color:var(--fg-muted);padding-top:2px}
+.notes p{margin:0;font-size:12px;line-height:1.55}
+</style>
 </head><body class="uinaf">
-<figure class="art" style="margin:0"><img src="../assets/uinaf-team.png" alt="two robed skeletons at a melting crt"><figcaption>uinaf-team.png — the studio</figcaption></figure>
-<div class="notes">
-<span class="u-label">the whole image library</span>
-<p>heavy black ink, halftone shading, one passage of neon slime per piece.</p>
-<p>always on pure black, square crop, 1px frame. they sit as monoliths — no text overlays, no crops into ui chrome.</p>
-<p>two illustrations exist. anything else gets commissioned — never generate look-alikes.</p>
-<figure style="margin:0"><img src="../assets/uinaf-computer.png" width="96" height="96" style="border:1px solid var(--neutral-900)" alt=""><figcaption style="font-size:11px;color:var(--fg-subtle);margin-top:8px">uinaf-computer.png — favicon</figcaption></figure>
+<span class="u-label">illustrations — two exist. period.</span>
+<div class="row">
+  <div class="marks">
+    <figure>
+      <img src="https://cdn.uinaf.dev/images/uinaf-team.png" width="240" height="240" alt="two robed skeletons at a melting crt">
+      <figcaption>uinaf-team.png · primary mark · 220–240px</figcaption>
+    </figure>
+    <figure>
+      <img src="https://cdn.uinaf.dev/images/uinaf-computer.png" width="64" height="64" alt="melting crt favicon">
+      <figcaption>uinaf-computer.png · 24–64px</figcaption>
+    </figure>
+  </div>
+  <div class="notes">
+    <span class="u-label">rules</span>
+    <p>heavy black ink, halftone shading, one passage of neon slime per piece.</p>
+    <p>always on pure black, square crop, 1px frame. monoliths — no text overlays, no crops into ui chrome.</p>
+    <p>anything else gets commissioned — never generate look-alikes.</p>
+  </div>
 </div>
 </body></html>

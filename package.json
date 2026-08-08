@@ -40,11 +40,11 @@
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
-    "build": "node scripts/build.mjs",
-    "guide:sync": "node scripts/build.mjs && node scripts/sync-guide.mjs",
-    "check": "vp check && node scripts/check.mjs",
+    "build": "node scripts/build.ts",
+    "guide:sync": "node scripts/build.ts && node scripts/sync-guide.ts",
+    "check": "vp check && node scripts/check.ts",
     "test": "vp test run",
-    "verify": "vp check && node scripts/check.mjs && vp test run && node scripts/build.mjs && node scripts/sync-guide.mjs",
+    "verify": "vp check && node scripts/check.ts && vp test run && node scripts/build.ts && node scripts/sync-guide.ts",
     "deploy": "pnpm run guide:sync && wrangler deploy",
     "prepare": "vp config --no-agent",
     "prepublishOnly": "pnpm run verify",

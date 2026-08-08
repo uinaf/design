@@ -2,8 +2,9 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = path.resolve(import.meta.dirname, "..");
-const fail = (m) => {
-  console.error(m);
+
+const fail = (message: string): never => {
+  console.error(message);
   process.exit(1);
 };
 
@@ -15,13 +16,16 @@ if (!css.includes("cdn.uinaf.dev/fonts/berkeley-mono")) {
   fail("tokens.css must reference CDN Berkeley Mono");
 }
 
-for (const bad of ["fonts", ".handoff-src"]) {
-  if (fs.existsSync(path.join(root, bad)) && bad === "fonts")
-    fail("fonts/ must not exist in package root");
+if (fs.existsSync(path.join(root, "fonts"))) {
+  fail("fonts/ must not exist in package root");
 }
 
-const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
-if ((pkg.files || []).some((f) => f === "fonts" || f.includes("font"))) {
+type PackageJson = {
+  files?: string[];
+};
+
+const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8")) as PackageJson;
+if ((pkg.files ?? []).some((f) => f === "fonts" || f.includes("font"))) {
   fail("package.json files must not include fonts");
 }
 

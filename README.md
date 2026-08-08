@@ -2,9 +2,9 @@
 
 Public design tokens and guidance for [uinaf](https://uinaf.dev) surfaces.
 
-- **Guide:** [design.uinaf.dev](https://design.uinaf.dev)
-- **Tracker:** [design → attach](https://github.com/orgs/uinaf/projects/1)
-- **Fonts:** Berkeley Mono is licensed — load from [`cdn.uinaf.dev`](https://cdn.uinaf.dev), not this package
+Guide: [design.uinaf.dev](https://design.uinaf.dev)
+
+Berkeley Mono is licensed — load it from [`cdn.uinaf.dev`](https://cdn.uinaf.dev), not this package.
 
 ## Install
 
@@ -39,14 +39,12 @@ import { CDN } from "@uinaf/design/cdn";
 | `templates/`                   | Starter HTML                                 |
 | `.agents/skills/uinaf-design/` | Agent skill                                  |
 
-## Development
+## Docs
 
-```sh
-pnpm install
-pnpm run build
-pnpm run check
-pnpm run deploy   # Cloudflare Worker assets → design.uinaf.dev
-```
+- [Design spec](DESIGN.md)
+- [Contributing](CONTRIBUTING.md)
+- [Releasing](docs/releasing.md)
+- [Security](SECURITY.md)
 
 ## License
 

@@ -1,0 +1,86 @@
+[
+  {
+    "slug": "brand-illustration",
+    "group": "Brand",
+    "name": "Illustrations",
+    "subtitle": "Halftone line-art dipped in coolant"
+  },
+  {
+    "slug": "brand-logo",
+    "group": "Brand",
+    "name": "Logo lockup",
+    "subtitle": "Framed mark, black only, never recolored"
+  },
+  {
+    "slug": "colors-semantic",
+    "group": "Colors",
+    "name": "Colors — semantic tokens",
+    "subtitle": "Monochrome neutrals do all the UI work"
+  },
+  {
+    "slug": "colors-slime",
+    "group": "Colors",
+    "name": "Colors — accent & slime",
+    "subtitle": "One phosphor accent; slime demoted to imagery + charts"
+  },
+  {
+    "slug": "components-buttons",
+    "group": "Components",
+    "name": "Buttons",
+    "subtitle": "32px rhythm · white primary · one accent max per surface"
+  },
+  {
+    "slug": "components-card",
+    "group": "Components",
+    "name": "Panels & cards",
+    "subtitle": "Corner ticks, shared hairlines, air inside"
+  },
+  {
+    "slug": "components-inputs",
+    "group": "Components",
+    "name": "Inputs",
+    "subtitle": "32px controls, micro-labels, accent caret"
+  },
+  {
+    "slug": "components-links",
+    "group": "Components",
+    "name": "Links & footer",
+    "subtitle": "Underline affordance, phosphor hover"
+  },
+  {
+    "slug": "components-status",
+    "group": "Components",
+    "name": "Status & tags",
+    "subtitle": "6px dots, square tags, one live glow"
+  },
+  {
+    "slug": "components-table",
+    "group": "Components",
+    "name": "Table",
+    "subtitle": "Micro-label headers, hairline rules, 40px rows"
+  },
+  {
+    "slug": "motion",
+    "group": "Motion",
+    "name": "Motion",
+    "subtitle": "Snappy ease, 160/220ms, staggered fade-up"
+  },
+  {
+    "slug": "spacing-tokens",
+    "group": "Spacing",
+    "name": "Structure — spacing, borders, ticks",
+    "subtitle": "8px rhythm, 1px hairlines, corner ticks"
+  },
+  {
+    "slug": "type-roles",
+    "group": "Type",
+    "name": "Type — roles",
+    "subtitle": "10→40 scale, hierarchy from the 11↔24 spread + air"
+  },
+  {
+    "slug": "voice-samples",
+    "group": "Brand",
+    "name": "Voice — do / don't",
+    "subtitle": "Lowercase, dry, fragment-friendly"
+  }
+]

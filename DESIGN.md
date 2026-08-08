@@ -1,5 +1,3 @@
-> Tracker: [design → attach](https://github.com/orgs/uinaf/projects/1)
-
 # uinaf — design system
 
 **uinaf** ("undefined is not a function LLC") — a small independent software studio. developer tools, automation, agent infrastructure, weird useful internet machinery. tagline: **"we bet you've seen us before."**

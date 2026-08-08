@@ -1,44 +1,44 @@
 # AGENTS.md
 
-`@uinaf/design` — public uinaf design tokens and guide.
+`@uinaf/design` — public tokens, CSS primitives, preview cards, and the guide at design.uinaf.dev.
 
 ## Tracker
 
 [design → attach](https://github.com/orgs/uinaf/projects/1)
 
-## Rules
+## Invariants
 
 - Never commit Berkeley Mono binaries or a `fonts/` directory.
-- Tokens must reference `https://cdn.uinaf.dev/fonts/berkeley-mono/...`.
-- Spec lives in `DESIGN.md`; agent skill in `.agents/skills/uinaf-design/`.
-- Guide static root is `guide/` (synced from `preview/` + tokens).
-
-## Toolchain
-
-Vite+ (`vp`). Prefer `vp run verify`, `vp check`, `vp test run`.
-
-## Ship loop
-
-1. **gh-setup** conventions (Environments, SHA-pinned Actions, secrets scan,
-   squash-only, signed-commit rulesets + `uinaf-releaser` bypass).
-2. **autoreview** after builder verify (`autoreview review --mode branch`).
-3. **Bugbot** on the PR (`/review-bugbot`).
-4. **autopilot** to triage comments and CI until merge-ready.
-
-## Workflow invariant
-
-Two push workflows on `main` (intentional during npm bootstrap):
-
-- `main.yml` — verify → secrets → guide deploy (`production`)
-- `release.yml` — verify → secrets → npm release (`release`, fail-closed)
-
-Do **not** gate guide deploy on the release job. Do **not** delete `main.yml`
-to "simplify" until `@uinaf/design` publishes reliably via OIDC.
+- Font URLs in tokens must stay on `https://cdn.uinaf.dev/fonts/berkeley-mono/...`.
+- Spec: `DESIGN.md`. Skill: `.agents/skills/uinaf-design/`.
+- Guide static root is `guide/`. `guide/index.html` is hand-authored; `pnpm run guide:sync` refreshes tokens + `guide/preview/` from `preview/`.
+- Keep tracker / GitHub Project links out of the public guide and out of package-facing docs (`README.md`, `DESIGN.md`).
 
 ## Commands
 
 ```sh
 pnpm install --frozen-lockfile
-pnpm exec vp run verify
-pnpm exec vp run deploy
+pnpm run verify
+pnpm run deploy
 ```
+
+Prefer `vp` for lint/format/test: `pnpm exec vp check`, `pnpm exec vp test run`.
+
+## Pipelines
+
+| Workflow                        | On push to `main`                              |
+| ------------------------------- | ---------------------------------------------- |
+| `.github/workflows/main.yml`    | verify → secrets → guide deploy (`production`) |
+| `.github/workflows/release.yml` | verify → secrets → npm publish (`release`)     |
+
+Do not gate guide deploy on the release job. Credentials for each path are listed in `docs/releasing.md` (vars vs secrets).
+
+## Docs map
+
+| Doc                 | When                                    |
+| ------------------- | --------------------------------------- |
+| `README.md`         | package install / consumer usage        |
+| `DESIGN.md`         | visual + voice rules                    |
+| `CONTRIBUTING.md`   | local setup and verify                  |
+| `docs/releasing.md` | npm + guide deploy pipelines            |
+| skill               | building UI that should feel like uinaf |

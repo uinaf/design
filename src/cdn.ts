@@ -6,6 +6,9 @@ export const CDN = {
     "https://cdn.uinaf.dev/fonts/berkeley-mono/static/berkeley-mono-regular.woff",
   images: {
     computer240: "https://cdn.uinaf.dev/images/webp/uinaf-computer-240w.webp",
-    team: "https://cdn.uinaf.dev/images/webp/uinaf-team.webp",
+    computer: "https://cdn.uinaf.dev/images/uinaf-computer.png",
+    computerOg: "https://cdn.uinaf.dev/images/uinaf-computer-og-image.png",
+    computerOgWebp: "https://cdn.uinaf.dev/images/webp/uinaf-computer-og-image-1024w.webp",
+    team: "https://cdn.uinaf.dev/images/uinaf-team.png",
   },
 } as const;
