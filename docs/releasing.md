@@ -4,9 +4,9 @@ Tracker: [design → attach](https://github.com/orgs/uinaf/projects/1)
 
 ## Pipelines
 
-| Workflow | On push to `main` |
-|---|---|
-| `main.yml` | verify → secrets → guide deploy (`production`) |
+| Workflow      | On push to `main`                                                   |
+| ------------- | ------------------------------------------------------------------- |
+| `main.yml`    | verify → secrets → guide deploy (`production`)                      |
 | `release.yml` | verify → secrets → npm publish (`release`, OIDC + `uinaf-releaser`) |
 
 Guide deploy is independent of npm so `design.uinaf.dev` keeps shipping while
