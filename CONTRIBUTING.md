@@ -2,27 +2,21 @@
 
 ## Setup
 
-Node >= 24.18 (see `.node-version`) with Corepack enabled, and git. The repo
-runs on the [Vite+](https://github.com/voidzero-dev/vite-plus) toolchain (`vp`):
+Node (see `.node-version`) with Corepack enabled. Then:
 
-```
+```sh
 pnpm install --frozen-lockfile
 pnpm exec vp config --no-agent
 ```
 
 ## Validation
 
+```sh
+pnpm run verify
 ```
-pnpm exec vp run verify
-pnpm exec vp check --fix
-```
 
-## Pull requests
+## Releases / deploy
 
-Branch from `main`, keep PRs scoped, use Conventional Commits, and fill the
-PR template. CI must be green; `main` requires signed commits when rulesets
-are enabled.
-
-Releases are automatic on push to `main` (semantic-release + npm trusted
-publishing). Guide deploys to [design.uinaf.dev](https://design.uinaf.dev)
-via the `production` GitHub Environment.
+Guide deploys from `main` via the `production` GitHub Environment.
+npm publish is wired for trusted publishing once the package exists — see
+`docs/releasing.md`.

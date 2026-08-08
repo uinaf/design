@@ -1,33 +1,15 @@
 # Releasing
 
-Tracker: [design → attach](https://github.com/orgs/uinaf/projects/1)
+## Guide (`design.uinaf.dev`)
 
-## npm `@uinaf/design`
+Push to `main` runs `main.yml`: verify → secret scanning → deploy through the
+`production` environment (`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`).
+Custom domain binding is also inventoried in `uinaf/infra`.
 
-Publishing uses npm Trusted Publishing (OIDC) from `.github/workflows/release.yml`
-via the `release` GitHub Environment.
+## npm (`@uinaf/design`)
 
-Bootstrap (one-time, package owner):
+Public package. Bootstrap publish + trusted publisher registration are a
+maintainer one-time step (do together). After that, wire semantic-release +
+OIDC like `@uinaf/workspace-kit` (`release` environment already exists).
 
-1. Ensure the `uinaf` npm org exists and your user can publish `@uinaf/*`.
-2. First publish may need a manual `npm publish` with 2FA if npm has not yet
-   accepted an OIDC publisher for this package name.
-3. Then register the trusted publisher:
-
-```sh
-npx -y npm@^11.10.0 trust github @uinaf/design \
-  --repo uinaf/design \
-  --file release.yml \
-  --env release \
-  --allow-publish \
-  --yes
-```
-
-Optional hardening: copy `UINAF_RELEASE_APP_*` from `uinaf/workspace-kit`'s
-`release` environment and switch the workflow to the App-token bot identity
-used by other uinaf libraries (required once signed-commit rulesets are on).
-
-## Guide deploy
-
-`.github/workflows/deploy.yml` deploys `guide/` through the `production`
-environment to `design.uinaf.dev` with Wrangler.
+Tracker: https://github.com/orgs/uinaf/projects/1

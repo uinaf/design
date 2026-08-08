@@ -42,16 +42,14 @@
     "build": "node scripts/build.mjs",
     "guide:sync": "node scripts/build.mjs && node scripts/sync-guide.mjs",
     "check": "vp check && node scripts/check.mjs",
-    "deploy": "pnpm run guide:sync && wrangler deploy",
-    "prepublishOnly": "pnpm run verify",
     "test": "vp test run",
     "verify": "vp check && node scripts/check.mjs && vp test run && node scripts/build.mjs && node scripts/sync-guide.mjs",
-    "fmt": "vp fmt",
-    "lint": "vp lint",
-    "prepare": "vp config --no-agent"
+    "deploy": "pnpm run guide:sync && wrangler deploy",
+    "prepare": "vp config --no-agent",
+    "prepublishOnly": "pnpm run verify"
   },
   "devDependencies": {
-    "@types/node": "^24.0.0",
+    "@types/node": "^22.10.2",
     "typescript": "^5.9.2",
     "vite": "npm:@voidzero-dev/vite-plus-core@0.2.8",
     "vite-plus": "0.2.8",
@@ -61,7 +59,13 @@
     "vite": "npm:@voidzero-dev/vite-plus-core@0.2.8"
   },
   "engines": {
-    "node": ">=24.18.0"
+    "node": ">=22"
   },
-  "packageManager": "pnpm@10.14.0"
+  "packageManager": "pnpm@10.14.0",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "workerd"
+    ]
+  }
 }

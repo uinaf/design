@@ -1,31 +1,39 @@
 import { defineConfig } from "vite-plus";
 
-const handoffIgnore = [
-  "DESIGN.md",
-  "dist/**",
-  "guide/**",
-  "preview/**",
-  "templates/**",
-  "system/**",
-  ".handoff-src/**",
-];
-
 export default defineConfig({
   test: {
     include: ["test/**/*.test.ts"],
   },
-  pack: {
-    entry: ["src/cdn.ts"],
-    dts: true,
-  },
   staged: {
-    "*.{js,mjs,cjs,ts,mts,cts}": "vp check --fix",
+    "src/**/*.{js,mjs,cjs,ts}": "vp check --fix",
+    "scripts/**/*.{js,mjs,cjs,ts}": "vp check --fix",
+    "test/**/*.{js,mjs,cjs,ts}": "vp check --fix",
+    "vite.config.ts": "vp check --fix",
   },
   fmt: {
-    ignorePatterns: handoffIgnore,
+    ignorePatterns: [
+      "preview/**",
+      "templates/**",
+      "guide/**",
+      "dist/**",
+      ".handoff-src/**",
+      "system/assets/**",
+      "wrangler.toml",
+      "pnpm-lock.yaml",
+    ],
   },
   lint: {
-    ignorePatterns: handoffIgnore,
+    ignorePatterns: [
+      "preview/**",
+      "templates/**",
+      "guide/**",
+      "dist/**",
+      ".handoff-src/**",
+      "system/assets/**",
+      "wrangler.toml",
+      "pnpm-lock.yaml",
+      "scripts/**/*.mjs",
+    ],
     options: {
       typeAware: true,
       typeCheck: true,

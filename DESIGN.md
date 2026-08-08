@@ -8,13 +8,13 @@ one typeface, near-black, hairline borders, one accent, visible structure.
 
 ## index
 
-| file | what |
-|---|---|
+| file                  | what                                                                         |
+| --------------------- | ---------------------------------------------------------------------------- |
 | `colors_and_type.css` | tokens + ready styles implementing everything below. the only css you import |
-| `templates/` | starting points: uinaf.dev homepage, blog index, blog post |
-| `fonts/` | Berkeley Mono, self-hosted (licensed from Berkeley Graphics) |
-| `assets/` | the two brand illustrations |
-| `preview/` | one card per pattern — the canonical reference for each |
+| `templates/`          | starting points: uinaf.dev homepage, blog index, blog post                   |
+| `fonts/`              | Berkeley Mono, self-hosted (licensed from Berkeley Graphics)                 |
+| `assets/`             | the two brand illustrations                                                  |
+| `preview/`            | one card per pattern — the canonical reference for each                      |
 
 ## voice
 
@@ -33,17 +33,17 @@ one typeface, near-black, hairline borders, one accent, visible structure.
 - **the micro-label** is the hierarchy device: 11px, uppercase, wide tracking, dim. it kicks off sections, heads tables, labels fields, captions stats. the only uppercase in the system.
 - body line-height 1.6 — mono needs the air.
 
-| role | size |
-|---|---|
-| micro-label / kicker | 11, caps, tracked |
-| meta (dates, counts) | 11 |
-| secondary body, buttons, code | 13 |
-| body | 14 |
-| list title / minor heading | 16 |
-| section heading | 20 |
-| page title / stat value | 24 |
-| hero | 32 |
-| display ceiling | 40 |
+| role                          | size              |
+| ----------------------------- | ----------------- |
+| micro-label / kicker          | 11, caps, tracked |
+| meta (dates, counts)          | 11                |
+| secondary body, buttons, code | 13                |
+| body                          | 14                |
+| list title / minor heading    | 16                |
+| section heading               | 20                |
+| page title / stat value       | 24                |
+| hero                          | 32                |
+| display ceiling               | 40                |
 
 no 18px. pick the nearest step.
 
