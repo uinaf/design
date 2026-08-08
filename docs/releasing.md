@@ -2,23 +2,24 @@
 
 Tracker: [design → attach](https://github.com/orgs/uinaf/projects/1)
 
-## Pipeline
+## Guide deploy
 
-`.github/workflows/release.yml` on push to `main`:
+`.github/workflows/main.yml` on push to `main`: verify → secret scan → guide
+deploy (`production` Environment, Wrangler). Hostname `design.uinaf.dev` is
+bound in `uinaf/infra` (`workers_custom_domains`), not via wrangler routes.
 
-1. verify
-2. secret scan
-3. npm release (`release` Environment, OIDC trusted publishing + `uinaf-releaser`)
-4. guide deploy (`production`) — needs successful release job
+Guide deploy does **not** wait on npm publish.
 
-Hostname `design.uinaf.dev` is bound in `uinaf/infra` (`workers_custom_domains`),
-not via wrangler routes.
+## npm `@uinaf/design`
 
-## npm bootstrap (one-time, owner)
+`.github/workflows/release.yml` on push to `main`: verify → secret scan →
+semantic-release in the `release` Environment via npm Trusted Publishing
+(OIDC) + `uinaf-releaser` for version push-back.
 
-Until the package exists and trust is registered, the release job fails closed
-on publish/auth. Because deploy needs release, that also blocks guide deploy
-until bootstrap is done — intentional.
+### Bootstrap (one-time, owner)
+
+Until the package exists and trust is registered, `release.yml` fails closed
+on publish/auth. That is intentional and must not block guide deploys.
 
 ```sh
 cd ~/projects/uinaf/design

@@ -40,10 +40,3 @@ pnpm install --frozen-lockfile
 pnpm exec vp run verify
 pnpm exec vp run deploy
 ```
-
-## Workflow invariant
-
-Push to `main` is owned solely by `.github/workflows/release.yml`
-(`verify` + `secrets`, then `release` and `deploy` in parallel).
-Do **not** reintroduce a parallel `main.yml` push workflow. Guide deploy must
-not be gated on npm publish success during bootstrap.
