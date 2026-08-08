@@ -118,7 +118,9 @@ jobs:
           GIT_COMMITTER_NAME: ${{ steps.release-bot.outputs.app-slug }}[bot]
           GIT_COMMITTER_EMAIL: ${{ steps.release-bot-identity.outputs.user-id }}+${{ steps.release-bot.outputs.app-slug }}[bot]@users.noreply.github.com
 
-
+  deploy:
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
+    needs: [release]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     environment:
