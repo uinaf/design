@@ -34,3 +34,9 @@ pnpm install --frozen-lockfile
 pnpm exec vp run verify
 pnpm exec vp run deploy
 ```
+
+## Workflow invariant
+
+Push to `main` is owned solely by `.github/workflows/release.yml`
+(`verify → secrets → release → deploy`). Do **not** reintroduce a parallel
+`main.yml` push deploy workflow.
