@@ -17,6 +17,16 @@
 
 Vite+ (`vp`). Prefer `vp run verify`, `vp check`, `vp test run`.
 
+## Ship loop
+
+New work ships with:
+
+1. **gh-setup** conventions (Environments, SHA-pinned Actions, secrets scan,
+   squash-only, signed-commit rulesets + `uinaf-releaser` bypass).
+2. **autoreview** after builder verify (`autoreview review --mode branch`).
+3. **Bugbot** on the PR (`/review-bugbot`).
+4. **autopilot** to triage comments and CI until merge-ready.
+
 ## Commands
 
 ```sh
