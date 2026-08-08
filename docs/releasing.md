@@ -2,19 +2,30 @@
 
 Tracker: [design → attach](https://github.com/orgs/uinaf/projects/1)
 
-## npm `@uinaf/design`
+## Guide deploy
 
-Publishing uses npm Trusted Publishing (OIDC) from `.github/workflows/release.yml`
-via the `release` GitHub Environment. No long-lived `NPM_TOKEN` is stored.
+`.github/workflows/main.yml` deploys `guide/` through the `production`
+environment with Wrangler (`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`).
+Hostname `design.uinaf.dev` is bound in `uinaf/infra`
+(`workers_custom_domains` inventory).
 
-### One-time bootstrap (owner)
+## npm `@uinaf/design` — deferred
 
-Trusted publishing requires an existing package. With a fresh npm login:
+There is intentionally **no** `release.yml` until the package exists on npm.
+Trusted publishing OIDC fails with `package not found` before bootstrap.
+
+### One-time bootstrap (owner — do together)
 
 ```sh
 cd ~/projects/uinaf/design
 pnpm run verify
-npm publish --access public   # 2FA if prompted → creates @uinaf/design@0.1.0
+npm publish --access public   # creates @uinaf/design@0.1.0
+```
+
+Then add `release.yml` matching `@uinaf/workspace-kit` (OIDC + `uinaf-releaser`),
+register the trusted publisher, and grant ruleset bypass:
+
+```sh
 npx -y npm@^11.10.0 trust github @uinaf/design \
   --repo uinaf/design \
   --file release.yml \
@@ -22,12 +33,3 @@ npx -y npm@^11.10.0 trust github @uinaf/design \
   --allow-publish \
   --yes
 ```
-
-Create the `uinaf` npm org first if it does not exist. After trust is
-registered, subsequent `feat:`/`fix:` pushes to `main` publish via OIDC.
-
-## Guide deploy
-
-`.github/workflows/main.yml` deploys `guide/` through the `production`
-environment with Wrangler. Hostname `design.uinaf.dev` is bound in
-`uinaf/infra` (`workers_custom_domains` inventory), not via wrangler routes.
