@@ -1,7 +1,10 @@
+# Keeps SHA-pinned actions current with reviewable PRs.
 version: 2
 updates:
-  - package-ecosystem: github-actions
-    directory: /
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
-      interval: weekly
-    open-pull-requests-limit: 5
+      interval: "weekly"
+    # Let new action releases bake before PRing them (supply-chain buffer).
+    cooldown:
+      default-days: 7
