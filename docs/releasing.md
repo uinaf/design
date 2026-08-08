@@ -34,3 +34,8 @@ Environment into this repo's `release` Environment.
 
 `design.uinaf.dev` is bound in `uinaf/infra` (`workers_custom_domains`), not via
 wrangler routes.
+
+## Ship loop
+
+For delivery PRs: gh-setup → builder verify → autoreview → Bugbot → autopilot.
+Do not merge from the agent; leave merge to the owner.
