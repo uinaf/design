@@ -1,0 +1,107 @@
+name: Release
+
+# npm Trusted Publishing (OIDC) + uinaf-releaser. Fail-closed until bootstrap.
+# Guide deploy lives in main.yml — never needs: [release] for production assets.
+
+on:
+  push:
+    branches: [main]
+
+permissions: {}
+
+jobs:
+  verify:
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+        with:
+          standalone: true
+      - uses: voidzero-dev/setup-vp@313600b80b104eadebb9111787d37a2e83e014ca # v1.17.0
+        with:
+          node-version-file: ".node-version"
+          cache: true
+          run-install: |
+            - args: ["--frozen-lockfile"]
+      - run: vp run verify
+
+  secrets:
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
+    permissions:
+      contents: read
+    uses: ./.github/workflows/secrets.yml
+
+  release:
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
+    needs: [verify, secrets]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: release
+    concurrency:
+      group: release-${{ github.repository }}-main
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+        with:
+          standalone: true
+      - uses: voidzero-dev/setup-vp@313600b80b104eadebb9111787d37a2e83e014ca # v1.17.0
+        with:
+          node-version-file: ".node-version"
+          run-install: |
+            - args: ["--frozen-lockfile"]
+      - name: Create release bot token
+        id: release-bot
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.UINAF_RELEASE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.UINAF_RELEASE_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ github.event.repository.name }}
+          permission-contents: write
+      - name: Authorize release writes
+        env:
+          GH_TOKEN: ${{ steps.release-bot.outputs.token }}
+        run: gh auth setup-git
+      - name: Resolve release bot identity
+        id: release-bot-identity
+        env:
+          GH_TOKEN: ${{ steps.release-bot.outputs.token }}
+          APP_SLUG: ${{ steps.release-bot.outputs.app-slug }}
+        run: |
+          set -euo pipefail
+          user_id="$(gh api "/users/${APP_SLUG}[bot]" --jq .id)"
+          if [[ ! "$user_id" =~ ^[0-9]+$ ]]; then
+            echo "failed to resolve numeric bot user id for ${APP_SLUG}[bot]" >&2
+            exit 1
+          fi
+          echo "user-id=${user_id}" >> "$GITHUB_OUTPUT"
+      - uses: cycjimmy/semantic-release-action@b12c8f6015dc215fe37bc154d4ad456dd3833c90 # v6.0.0
+        with:
+          extra_plugins: |
+            @semantic-release/commit-analyzer@13.0.1
+            @semantic-release/release-notes-generator@14.1.1
+            @semantic-release/npm@13.1.5
+            @semantic-release/git@10.0.1
+            @semantic-release/github@12.0.8
+            conventional-changelog-conventionalcommits@9.3.1
+        env:
+          GITHUB_TOKEN: ${{ steps.release-bot.outputs.token }}
+          GH_TOKEN: ${{ steps.release-bot.outputs.token }}
+          GIT_AUTHOR_NAME: ${{ steps.release-bot.outputs.app-slug }}[bot]
+          GIT_AUTHOR_EMAIL: ${{ steps.release-bot-identity.outputs.user-id }}+${{ steps.release-bot.outputs.app-slug }}[bot]@users.noreply.github.com
+          GIT_COMMITTER_NAME: ${{ steps.release-bot.outputs.app-slug }}[bot]
+          GIT_COMMITTER_EMAIL: ${{ steps.release-bot-identity.outputs.user-id }}+${{ steps.release-bot.outputs.app-slug }}[bot]@users.noreply.github.com

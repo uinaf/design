@@ -1,5 +1,8 @@
 name: Main
 
+# Guide deploy is independent of npm publish. Do NOT move deploy behind
+# release.yml — bootstrap OIDC fails until @uinaf/design exists on npm.
+
 on:
   push:
     branches: [main]

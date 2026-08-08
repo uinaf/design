@@ -2,19 +2,27 @@
 
 Tracker: [design → attach](https://github.com/orgs/uinaf/projects/1)
 
-## npm `@uinaf/design`
+## Pipelines
 
-Publishing uses npm Trusted Publishing (OIDC) from `.github/workflows/release.yml`
-via the `release` GitHub Environment. No long-lived `NPM_TOKEN` is stored.
+| Workflow      | On push to `main`                                                   |
+| ------------- | ------------------------------------------------------------------- |
+| `main.yml`    | verify → secrets → guide deploy (`production`)                      |
+| `release.yml` | verify → secrets → npm publish (`release`, OIDC + `uinaf-releaser`) |
 
-### One-time bootstrap (owner)
+Guide deploy is independent of npm so `design.uinaf.dev` keeps shipping while
+the package bootstraps.
 
-Trusted publishing requires an existing package. With a fresh npm login:
+## npm bootstrap (one-time, owner)
 
 ```sh
 cd ~/projects/uinaf/design
+npm login
 pnpm run verify
-npm publish --access public   # 2FA if prompted → creates @uinaf/design@0.1.0
+npm publish --access public
+# semantic-release reads git tags (tagFormat v${version}); match the bootstrap
+# npm version so the next automated release continues from 0.1.0.
+git tag -s v0.1.0 -m v0.1.0
+git push origin v0.1.0
 npx -y npm@^11.10.0 trust github @uinaf/design \
   --repo uinaf/design \
   --file release.yml \
@@ -23,11 +31,15 @@ npx -y npm@^11.10.0 trust github @uinaf/design \
   --yes
 ```
 
-Create the `uinaf` npm org first if it does not exist. After trust is
-registered, subsequent `feat:`/`fix:` pushes to `main` publish via OIDC.
+Also copy `UINAF_RELEASE_APP_PRIVATE_KEY` from `uinaf/workspace-kit`'s `release`
+Environment into this repo's `release` Environment.
 
-## Guide deploy
+## Guide host
 
-`.github/workflows/main.yml` deploys `guide/` through the `production`
-environment with Wrangler. Hostname `design.uinaf.dev` is bound in
-`uinaf/infra` (`workers_custom_domains` inventory), not via wrangler routes.
+`design.uinaf.dev` is bound in `uinaf/infra` (`workers_custom_domains`), not via
+wrangler routes.
+
+## Ship loop
+
+For delivery PRs: gh-setup → builder verify → autoreview → Bugbot → autopilot.
+Do not merge from the agent; leave merge to the owner.
