@@ -1,0 +1,20 @@
+<!doctype html>
+<!-- @dsCard group="Components" name="Inputs" subtitle="32px controls, micro-labels, accent caret" viewport="720x620" -->
+<html lang="en"><head>
+<meta charset="utf-8">
+<title>uinaf — inputs</title>
+<link rel="stylesheet" href="../dist/css/tokens.css">
+<style>html,body{margin:0;padding:0}body.uinaf{padding:32px 36px;display:flex;flex-direction:column;gap:20px}.cols{display:grid;grid-template-columns:1fr 1fr;gap:20px}.search{position:relative;display:flex;align-items:center}.search .u-input{width:100%;padding-right:44px}.search .u-kbd{position:absolute;right:6px}</style>
+</head><body class="uinaf">
+<div class="u-label">fields — label above, 32px control, quiet focus</div>
+<div class="cols">
+<label class="u-field"><span class="u-label">email</span><input class="u-input" type="email" placeholder="dev@uinaf.dev"><span class="u-help">we reply within a day. usually faster.</span></label>
+<label class="u-field"><span class="u-label">api key</span><input class="u-input" aria-invalid="true" value="uinaf_sk_…9f2"><span class="u-help u-help--error">key expired 2026-07-30. rotate it.</span></label>
+</div>
+<div class="cols">
+<label class="u-field"><span class="u-label">region</span><select class="u-select"><option>eu-central</option><option>us-east</option><option>ap-south</option></select></label>
+<label class="u-field"><span class="u-label">search</span><span class="search"><input class="u-input" placeholder="find anything…"><kbd class="u-kbd">⌘k</kbd></span></label>
+</div>
+<label class="u-field"><span class="u-label">message</span><textarea class="u-textarea" placeholder="what are you building?"></textarea></label>
+<p class="u-meta">focus = border 800→500, caret in accent, no glow rings. errors are muted red on the border + one dry sentence — never a banner.</p>
+</body></html>

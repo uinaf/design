@@ -1,0 +1,31 @@
+<!doctype html>
+<!-- @dsCard group="Motion" name="Motion" subtitle="Snappy ease, 160/220ms, staggered fade-up" viewport="720x520" -->
+<html lang="en"><head>
+<meta charset="utf-8">
+<title>uinaf — motion</title>
+<link rel="stylesheet" href="../dist/css/tokens.css">
+<style>html,body{margin:0;padding:0}body.uinaf{padding:32px 36px;display:flex;flex-direction:column;gap:20px}
+@keyframes fadeup{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.stage{display:flex;flex-direction:column;gap:12px}
+.stage .u-card{animation:fadeup var(--duration-base) var(--ease-snappy) both;animation-delay:calc(var(--i)*var(--stagger-step))}
+.specs{display:flex;gap:24px;font-size:11px;color:var(--fg-muted);flex-wrap:wrap}
+.specs b{font-weight:400;color:var(--fg);display:block;font-size:13px}
+.replay{align-self:flex-start}
+@media (prefers-reduced-motion:reduce){.stage .u-card{animation:none}}
+</style>
+</head><body class="uinaf">
+<div class="u-label">entry — fade-up 10px, 45ms stagger, once per session</div>
+<div class="stage" id="stage">
+<div class="u-card" style="--i:0"><span style="font-size:13px;color:var(--fg)">first</span></div>
+<div class="u-card" style="--i:1"><span style="font-size:13px;color:var(--fg)">second — 45ms later</span></div>
+<div class="u-card" style="--i:2"><span style="font-size:13px;color:var(--fg)">third — hover me for the lift</span></div>
+</div>
+<button class="u-btn u-btn-sm replay" onclick="const s=document.getElementById('stage');s.style.display='none';s.offsetHeight;s.style.display=''">replay</button>
+<div class="specs">
+<span><b>--ease-snappy</b>cubic-bezier(.22,1,.36,1)</span>
+<span><b>160ms</b>hover, press</span>
+<span><b>220ms</b>entry</span>
+<span><b>scale(.97)</b>universal press</span>
+</div>
+<p class="u-meta">no bounce, no parallax, nothing loops. reduced motion degrades to plain opacity.</p>
+</body></html>

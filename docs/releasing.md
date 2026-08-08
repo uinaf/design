@@ -1,0 +1,33 @@
+# Releasing
+
+Tracker: [design → attach](https://github.com/orgs/uinaf/projects/1)
+
+## npm `@uinaf/design`
+
+Publishing uses npm Trusted Publishing (OIDC) from `.github/workflows/release.yml`
+via the `release` GitHub Environment.
+
+Bootstrap (one-time, package owner):
+
+1. Ensure the `uinaf` npm org exists and your user can publish `@uinaf/*`.
+2. First publish may need a manual `npm publish` with 2FA if npm has not yet
+   accepted an OIDC publisher for this package name.
+3. Then register the trusted publisher:
+
+```sh
+npx -y npm@^11.10.0 trust github @uinaf/design \
+  --repo uinaf/design \
+  --file release.yml \
+  --env release \
+  --allow-publish \
+  --yes
+```
+
+Optional hardening: copy `UINAF_RELEASE_APP_*` from `uinaf/workspace-kit`'s
+`release` environment and switch the workflow to the App-token bot identity
+used by other uinaf libraries (required once signed-commit rulesets are on).
+
+## Guide deploy
+
+`.github/workflows/deploy.yml` deploys `guide/` through the `production`
+environment to `design.uinaf.dev` with Wrangler.

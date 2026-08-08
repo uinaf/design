@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- @template name="uinaf.dev status" description="Status page: summary line, uptime strip, service table." -->
+<helmet>
+<script src="./ds-base.js"></script>
+<style>body{margin:0;background:rgb(10,10,10)}@keyframes ue{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}@media (prefers-reduced-motion:reduce){[style*="animation"]{animation:none !important}}</style>
+</helmet>
+<div class="uinaf" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:64px 24px 48px">
+<div style="width:100%;max-width:48rem;display:flex;flex-direction:column">
+<header style="margin-bottom:48px;animation:ue 220ms cubic-bezier(0.22,1,0.36,1) both">
+<a href="/" class="u-link-plain" style="display:inline-flex;align-items:center;gap:8px"><img src="../../assets/uinaf-computer.png" width="24" height="24" alt="" style="border:1px solid rgb(38,38,38);display:block"><span style="font-size:14px;color:rgb(229,229,229)">uinaf</span></a>
+</header>
+<div style="display:flex;flex-direction:column;gap:8px;animation:ue 220ms cubic-bezier(0.22,1,0.36,1) 45ms both">
+<h1>status</h1>
+<p style="display:flex;align-items:center;gap:10px"><i class="u-dot u-dot--ok"></i>all systems operational.</p>
+</div>
+<div class="u-panel-grid u-ticks" style="grid-template-columns:repeat(3,1fr);margin-top:32px;animation:ue 220ms cubic-bezier(0.22,1,0.36,1) 90ms both">
+<div class="u-stat"><span class="u-label">uptime · 90d</span><span class="u-stat-value">99.98%</span><span class="u-stat-note">all services</span></div>
+<div class="u-stat"><span class="u-label">incidents · 90d</span><span class="u-stat-value">1</span><span class="u-stat-note">resolved in 41 min</span></div>
+<div class="u-stat"><span class="u-label">last incident</span><span class="u-stat-value">jun 30</span><span class="u-stat-note">queue backlog, us-east</span></div>
+</div>
+<div style="border:1px solid rgb(38,38,38);margin-top:32px;animation:ue 220ms cubic-bezier(0.22,1,0.36,1) 135ms both">
+<table class="u-table">
+<thead><tr><th>service</th><th>status</th><th>region</th><th class="num">p99</th><th class="num">uptime</th></tr></thead>
+<tbody>
+<tr><td>gateway</td><td><span style="display:inline-flex;align-items:center;gap:7px"><i class="u-dot u-dot--live"></i>live</span></td><td>eu-central</td><td class="num">41ms</td><td class="num">100%</td></tr>
+<tr><td>api</td><td><span style="display:inline-flex;align-items:center;gap:7px"><i class="u-dot u-dot--ok"></i>ok</span></td><td>eu-central</td><td class="num">88ms</td><td class="num">99.99%</td></tr>
+<tr><td>queue</td><td><span style="display:inline-flex;align-items:center;gap:7px"><i class="u-dot u-dot--ok"></i>ok</span></td><td>us-east</td><td class="num">120ms</td><td class="num">99.94%</td></tr>
+<tr><td>cdn</td><td><span style="display:inline-flex;align-items:center;gap:7px"><i class="u-dot u-dot--ok"></i>ok</span></td><td>global</td><td class="num">12ms</td><td class="num">100%</td></tr>
+</tbody>
+</table>
+</div>
+<p style="font-size:11px;color:rgb(82,82,82);margin-top:16px;animation:ue 220ms cubic-bezier(0.22,1,0.36,1) 180ms both">checked every 60 seconds by healthd. incidents get a line here, not a banner.</p>
+<hr style="margin-top:64px">
+<div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px 24px;padding-top:16px;font-size:13px;animation:ue 220ms cubic-bezier(0.22,1,0.36,1) 225ms both">
+<span><a class="u-link-plain" href="/projects" style="color:rgb(82,82,82)">projects</a> <span class="u-sep">·</span> <a class="u-link-plain" href="/terms-of-service" style="color:rgb(82,82,82)">terms</a> <span class="u-sep">·</span> <a class="u-link-plain" href="/thanks" style="color:rgb(82,82,82)">thanks</a></span>
+<span><a class="u-link-plain" href="mailto:dev@uinaf.dev" style="color:rgb(82,82,82)">dev@uinaf.dev</a> <span class="u-sep">·</span> <a class="u-link-plain" href="https://github.com/uinaf" style="color:rgb(82,82,82)">gh&nbsp;↗</a> <span class="u-sep">·</span> <a class="u-link-plain" href="https://x.com/uinafdev" style="color:rgb(82,82,82)">x&nbsp;↗</a></span>
+</div>
+</div>
+</div>
+</x-dc>
+</body>
+</html>

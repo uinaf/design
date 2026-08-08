@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>uinaf design</title>
+    <link rel="stylesheet" href="https://cdn.uinaf.dev/fonts/berkeley-mono/variable/font.css" />
+    <link rel="stylesheet" href="/tokens.css" />
+    <style>
+      body { margin: 0; background: var(--bg); color: var(--fg); font: var(--text-base)/var(--leading-base) var(--font-mono); }
+      .shell { max-width: 36rem; margin: 0 auto; padding: 64px 20px 96px; }
+      .label { font-size: var(--text-xs); letter-spacing: var(--tracking-caps); text-transform: uppercase; color: var(--fg-muted); }
+      h1 { font-size: var(--text-2xl); font-weight: var(--weight-regular); line-height: var(--leading-tight); margin: 12px 0 16px; color: var(--fg-strong); }
+      p { margin: 0 0 16px; color: var(--fg-muted); max-width: 46ch; }
+      a { color: var(--fg); text-decoration-color: var(--border-strong); }
+      a:hover { color: var(--accent); }
+      ul { padding: 0; list-style: none; margin: 32px 0 0; border-top: 1px solid var(--border); }
+      li { border-bottom: 1px solid var(--border); }
+      li a { display: block; padding: 14px 0; text-decoration: none; font-size: var(--text-sm); }
+      code { font-size: var(--text-sm); }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <div class="label">uinaf · design</div>
+      <h1>we bet you've seen us before.</h1>
+      <p>
+        public tokens and guidance for uinaf surfaces. install
+        <code>@uinaf/design</code>, load berkeley mono from the cdn, import the css.
+      </p>
+      <p>
+        <a href="https://github.com/uinaf/design">github ↗</a>
+        ·
+        <a href="https://www.npmjs.com/package/@uinaf/design">npm ↗</a>
+      </p>
+      <ul id="previews"></ul>
+    </main>
+    <script type="module">
+      const previews = [
+        "brand-illustration","brand-logo","colors-semantic","colors-slime",
+        "components-buttons","components-card","components-inputs","components-links",
+        "components-status","components-table","motion","spacing-tokens","type-roles","voice-samples"
+      ]
+      const ul = document.getElementById("previews")
+      for (const name of previews) {
+        const li = document.createElement("li")
+        li.innerHTML = `<a href="/preview/${name}.html"><span class="label">preview</span> · ${name.replaceAll("-", " ")}</a>`
+        ul.appendChild(li)
+      }
+    </script>
+  </body>
+</html>

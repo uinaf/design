@@ -1,0 +1,22 @@
+<!doctype html>
+<!-- @dsCard group="Components" name="Table" subtitle="Micro-label headers, hairline rules, 40px rows" viewport="720x520" -->
+<html lang="en"><head>
+<meta charset="utf-8">
+<title>uinaf — table</title>
+<link rel="stylesheet" href="/tokens.css">
+<style>html,body{margin:0;padding:0}body.uinaf{padding:32px 36px;display:flex;flex-direction:column;gap:16px}.wrap{border:1px solid var(--border)}.cell-status{display:inline-flex;align-items:center;gap:7px}</style>
+</head><body class="uinaf">
+<div class="u-label">table — data gets rules, prose never does</div>
+<div class="wrap u-ticks">
+<table class="u-table">
+<thead><tr><th>service</th><th>status</th><th>region</th><th class="num">p99</th><th class="num">req/s</th></tr></thead>
+<tbody>
+<tr><td>gateway</td><td><span class="cell-status"><i class="u-dot u-dot--live"></i>live</span></td><td>eu-central</td><td class="num">41ms</td><td class="num">12,406</td></tr>
+<tr data-selected=""><td>healthd</td><td><span class="cell-status"><i class="u-dot u-dot--ok"></i>ok</span></td><td>eu-central</td><td class="num">8ms</td><td class="num">981</td></tr>
+<tr><td>queue</td><td><span class="cell-status"><i class="u-dot u-dot--warn"></i>degraded</span></td><td>us-east</td><td class="num">220ms</td><td class="num">3,112</td></tr>
+<tr><td>relay</td><td><span class="cell-status"><i class="u-dot"></i>idle</span></td><td>ap-south</td><td class="num">—</td><td class="num">0</td></tr>
+</tbody>
+</table>
+</div>
+<p class="u-meta">headers are micro-labels. numerics right-aligned — the mono grid does the rest. selected row gets the only accent tint allowed in the system.</p>
+</body></html>

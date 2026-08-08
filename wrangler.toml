@@ -1,0 +1,10 @@
+name = "uinaf-design"
+compatibility_date = "2025-08-01"
+workers_dev = false
+
+[assets]
+directory = "./guide"
+not_found_handling = "404-page"
+html_handling = "auto-trailing-slash"
+
+routes = [{ pattern = "design.uinaf.dev", custom_domain = true }]

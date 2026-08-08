@@ -1,0 +1,9 @@
+node_modules/
+.handoff-src/
+.wrangler/
+*.log
+.DS_Store
+.vite/
+coverage/
+*.tgz
+.handoff-src/

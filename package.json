@@ -1,0 +1,67 @@
+{
+  "name": "@uinaf/design",
+  "version": "0.1.0",
+  "description": "uinaf design tokens, CSS primitives, and agent guidance",
+  "homepage": "https://design.uinaf.dev",
+  "bugs": {
+    "url": "https://github.com/uinaf/design/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uinaf/design.git"
+  },
+  "files": [
+    "dist",
+    "DESIGN.md",
+    "preview",
+    "templates",
+    "system",
+    ".agents/skills/uinaf-design"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/tokens.d.ts",
+      "import": "./dist/tokens.js",
+      "default": "./dist/tokens.js"
+    },
+    "./css": "./dist/css/tokens.css",
+    "./tokens.css": "./dist/css/tokens.css",
+    "./cdn": {
+      "types": "./dist/cdn.d.ts",
+      "import": "./dist/cdn.js",
+      "default": "./dist/cdn.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "guide:sync": "node scripts/build.mjs && node scripts/sync-guide.mjs",
+    "check": "vp check && node scripts/check.mjs",
+    "deploy": "pnpm run guide:sync && wrangler deploy",
+    "prepublishOnly": "pnpm run verify",
+    "test": "vp test run",
+    "verify": "vp check && node scripts/check.mjs && vp test run && node scripts/build.mjs && node scripts/sync-guide.mjs",
+    "fmt": "vp fmt",
+    "lint": "vp lint",
+    "prepare": "vp config --no-agent"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.2",
+    "vite": "npm:@voidzero-dev/vite-plus-core@0.2.8",
+    "vite-plus": "0.2.8",
+    "wrangler": "^4.28.0"
+  },
+  "overrides": {
+    "vite": "npm:@voidzero-dev/vite-plus-core@0.2.8"
+  },
+  "engines": {
+    "node": ">=24.18.0"
+  },
+  "packageManager": "pnpm@10.14.0"
+}

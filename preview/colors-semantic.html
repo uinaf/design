@@ -1,0 +1,23 @@
+<!doctype html>
+<!-- @dsCard group="Colors" name="Colors — semantic tokens" subtitle="Monochrome neutrals do all the UI work" viewport="720x560" -->
+<html lang="en"><head>
+<meta charset="utf-8">
+<title>uinaf — semantic colors</title>
+<link rel="stylesheet" href="../dist/css/tokens.css">
+<style>html,body{margin:0;padding:0}body.uinaf{padding:32px 36px;display:flex;flex-direction:column;gap:20px}.ramp{display:grid;grid-template-columns:repeat(13,1fr);border:1px solid var(--border)}.ramp div{height:36px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border)}.grid>div{background:var(--bg);padding:14px 16px;display:flex;align-items:center;gap:12px}.sw{width:22px;height:22px;border:1px solid var(--border);flex:none}.tk{font-size:11px;color:var(--fg-muted)}.tk b{display:block;font-weight:400;color:var(--fg);font-size:13px}</style>
+</head><body class="uinaf">
+<div class="u-label">neutrals — the entire ui palette</div>
+<div class="ramp"><div style="background:var(--neutral-950)"></div><div style="background:var(--neutral-925)"></div><div style="background:var(--neutral-900)"></div><div style="background:var(--neutral-850)"></div><div style="background:var(--neutral-800)"></div><div style="background:var(--neutral-700)"></div><div style="background:var(--neutral-600)"></div><div style="background:var(--neutral-500)"></div><div style="background:var(--neutral-400)"></div><div style="background:var(--neutral-300)"></div><div style="background:var(--neutral-200)"></div><div style="background:var(--neutral-100)"></div><div style="background:var(--neutral-050)"></div></div>
+<div class="u-label">semantic roles</div>
+<div class="grid">
+<div><span class="sw" style="background:var(--bg)"></span><span class="tk"><b>--bg</b>page canvas · 950</span></div>
+<div><span class="sw" style="background:var(--fg)"></span><span class="tk"><b>--fg</b>primary text · 200</span></div>
+<div><span class="sw" style="background:var(--bg-raised)"></span><span class="tk"><b>--bg-raised</b>raised surface · 900</span></div>
+<div><span class="sw" style="background:var(--fg-muted)"></span><span class="tk"><b>--fg-muted</b>paragraphs · 400</span></div>
+<div><span class="sw" style="background:var(--neutral-925)"></span><span class="tk"><b>--neutral-925</b>inputs, code blocks</span></div>
+<div><span class="sw" style="background:var(--fg-subtle)"></span><span class="tk"><b>--fg-subtle</b>labels, meta · 600</span></div>
+<div><span class="sw" style="background:var(--border)"></span><span class="tk"><b>--border</b>hairlines · 800</span></div>
+<div><span class="sw" style="background:var(--border-hover)"></span><span class="tk"><b>--border-hover</b>hover, focus · 500</span></div>
+</div>
+<p class="u-meta">no colored surfaces, no washes. hierarchy = border + background step, never hue.</p>
+</body></html>
