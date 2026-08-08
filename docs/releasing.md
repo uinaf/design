@@ -19,6 +19,10 @@ cd ~/projects/uinaf/design
 npm login
 pnpm run verify
 npm publish --access public
+# semantic-release reads git tags (tagFormat v${version}); match the bootstrap
+# npm version so the next automated release continues from 0.1.0.
+git tag -s v0.1.0 -m v0.1.0
+git push origin v0.1.0
 npx -y npm@^11.10.0 trust github @uinaf/design \
   --repo uinaf/design \
   --file release.yml \
