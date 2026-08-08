@@ -1,0 +1,119 @@
+name: Release
+
+# Canonical verify -> release on push to main. Publishing uses npm Trusted
+# Publishing (OIDC): npmjs.com lists this workflow filename (release.yml)
+# and the "release" environment as the package's trusted publisher — see
+# docs/releasing.md. Version push-back and GitHub Release writes use a
+# short-lived uinaf-releaser installation token (rulesets bypass that App
+# for unsigned bot commits/tags while humans still require signed commits).
+
+on:
+  push:
+    branches: [main]
+
+permissions: {}
+
+jobs:
+  verify:
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+        with:
+          standalone: true
+      - uses: voidzero-dev/setup-vp@250f29ce396baf5e8f24498e17c0dfdebabc26eb # v1.15.0
+        with:
+          node-version-file: ".node-version"
+          cache: true
+          # vp install alone maps to `npm install`; frozen keeps CI on `npm ci`
+          # semantics so lockfile drift fails loudly instead of re-resolving.
+          run-install: |
+            - args: ["--frozen-lockfile"]
+      - run: vp run verify
+
+  secrets:
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
+    permissions:
+      contents: read
+    uses: ./.github/workflows/secrets.yml
+
+  release:
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
+    needs: [verify, secrets]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: release
+    # Never cancel a publish mid-flight; queue instead.
+    concurrency:
+      group: release-${{ github.repository }}-main
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      id-token: write # OIDC for npm trusted publishing
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+        with:
+          standalone: true
+      # Secret-bearing job: no dependency cache, fresh install via setup-vp.
+      # vp must be on PATH here because npm publish's prepack runs the verify
+      # gate (vp check/test/pack). Trusted publishing authenticates from the
+      # job's OIDC identity; no registry token is ever configured.
+      - uses: voidzero-dev/setup-vp@250f29ce396baf5e8f24498e17c0dfdebabc26eb # v1.15.0
+        with:
+          node-version-file: ".node-version"
+          run-install: |
+            - args: ["--frozen-lockfile"]
+      - name: Create release bot token
+        id: release-bot
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.UINAF_RELEASE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.UINAF_RELEASE_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ github.event.repository.name }}
+          permission-contents: write
+      - name: Authorize release writes
+        env:
+          GH_TOKEN: ${{ steps.release-bot.outputs.token }}
+        run: gh auth setup-git
+      # GitHub links bot commits when the noreply email uses `{user-id}+{slug}[bot]@…`.
+      - name: Resolve release bot identity
+        id: release-bot-identity
+        env:
+          GH_TOKEN: ${{ steps.release-bot.outputs.token }}
+          APP_SLUG: ${{ steps.release-bot.outputs.app-slug }}
+        run: |
+          set -euo pipefail
+          user_id="$(gh api "/users/${APP_SLUG}[bot]" --jq .id)"
+          if [[ ! "$user_id" =~ ^[0-9]+$ ]]; then
+            echo "failed to resolve numeric bot user id for ${APP_SLUG}[bot]" >&2
+            exit 1
+          fi
+          echo "user-id=${user_id}" >> "$GITHUB_OUTPUT"
+      - uses: cycjimmy/semantic-release-action@b12c8f6015dc215fe37bc154d4ad456dd3833c90 # v6.0.0
+        with:
+          extra_plugins: |
+            @semantic-release/commit-analyzer@13.0.1
+            @semantic-release/release-notes-generator@14.1.1
+            @semantic-release/npm@13.1.5
+            @semantic-release/git@10.0.1
+            @semantic-release/github@12.0.8
+            conventional-changelog-conventionalcommits@9.3.1
+        env:
+          GITHUB_TOKEN: ${{ steps.release-bot.outputs.token }}
+          GH_TOKEN: ${{ steps.release-bot.outputs.token }}
+          GIT_AUTHOR_NAME: ${{ steps.release-bot.outputs.app-slug }}[bot]
+          GIT_AUTHOR_EMAIL: ${{ steps.release-bot-identity.outputs.user-id }}+${{ steps.release-bot.outputs.app-slug }}[bot]@users.noreply.github.com
+          GIT_COMMITTER_NAME: ${{ steps.release-bot.outputs.app-slug }}[bot]
+          GIT_COMMITTER_EMAIL: ${{ steps.release-bot-identity.outputs.user-id }}+${{ steps.release-bot.outputs.app-slug }}[bot]@users.noreply.github.com

@@ -11,7 +11,7 @@ and GitHub Releases use `uinaf-releaser` (App id `4474917`).
 ### Bootstrap (one-time, owner)
 
 1. Ensure the `uinaf` npm org exists.
-2. Fresh login (local `~/.npmrc` token is not sufficient if expired):
+2. Fresh login:
 
 ```sh
 cd ~/projects/uinaf/design
@@ -30,8 +30,7 @@ npx -y npm@^11.10.0 trust github @uinaf/design \
    Environment into this repo's `release` Environment (vars
    `UINAF_RELEASE_APP_CLIENT_ID` / `UINAF_RELEASE_APP_ID` are already set).
 
-Until steps 2–3 land, `release.yml` will fail closed on publish/auth — that is
-intentional.
+Until steps 2–3 land, `release.yml` fails closed on publish/auth — intentional.
 
 ## Guide deploy
 
