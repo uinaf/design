@@ -2,16 +2,26 @@
 
 Tracker: [design → attach](https://github.com/orgs/uinaf/projects/1)
 
-## Pipeline
+## Guide deploy
 
-`.github/workflows/release.yml` on push to `main`:
+`.github/workflows/main.yml` deploys `guide/` through the `production`
+environment with Wrangler. Hostname `design.uinaf.dev` is bound in
+`uinaf/infra` (`workers_custom_domains`). Guide deploy does **not** wait on
+npm publish.
 
-1. verify
-2. secret scan
-3. npm release (`release` Environment, OIDC trusted publishing + `uinaf-releaser`)
-4. guide deploy (`production`) — needs successful release job
+## npm `@uinaf/design`
 
-## npm bootstrap (one-time, owner)
+`.github/workflows/release.yml` follows the `@uinaf/workspace-kit` shape:
+verify → secret scan → semantic-release in the `release` Environment via npm
+Trusted Publishing (OIDC) + `uinaf-releaser` for version push-back.
+
+### Bootstrap (one-time, owner — do together)
+
+Until the package exists and trust is registered, `release.yml` fails closed
+on publish/auth. That is intentional and must not block guide deploys.
+
+1. Ensure the `uinaf` npm org exists.
+2. Fresh login and first publish:
 
 ```sh
 cd ~/projects/uinaf/design
@@ -26,10 +36,12 @@ npx -y npm@^11.10.0 trust github @uinaf/design \
   --yes
 ```
 
-Also copy `UINAF_RELEASE_APP_PRIVATE_KEY` from `uinaf/workspace-kit`'s `release`
-Environment into this repo's `release` Environment.
+3. Copy `UINAF_RELEASE_APP_PRIVATE_KEY` from `uinaf/workspace-kit`'s `release`
+   Environment into this repo's `release` Environment (vars
+   `UINAF_RELEASE_APP_CLIENT_ID` / `UINAF_RELEASE_APP_ID` should already be set).
+4. Confirm `uinaf-releaser` bypass on `protect-main` / `protect-release-tags`.
 
-## Guide host
+## Ship loop
 
-`design.uinaf.dev` is bound in `uinaf/infra` (`workers_custom_domains`), not via
-wrangler routes.
+For delivery PRs: gh-setup conventions → `autoreview` → Bugbot → autopilot
+until merge-ready (CI green, threads triaged). Do not merge from the agent.
