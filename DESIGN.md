@@ -8,13 +8,13 @@ one typeface, near-black, hairline borders, one accent, visible structure.
 
 ## index
 
-| file                  | what                                                                         |
-| --------------------- | ---------------------------------------------------------------------------- |
-| `colors_and_type.css` | tokens + ready styles implementing everything below. the only css you import |
-| `templates/`          | starting points: uinaf.dev homepage, blog index, blog post                   |
-| `fonts/`              | Berkeley Mono, self-hosted (licensed from Berkeley Graphics)                 |
-| `assets/`             | the two brand illustrations                                                  |
-| `preview/`            | one card per pattern — the canonical reference for each                      |
+| file                     | what                                                                                           |
+| ------------------------ | ---------------------------------------------------------------------------------------------- |
+| `@uinaf/design/css`      | tokens + ready styles implementing everything below. the only css you import                   |
+| `templates/`             | starting points: uinaf.dev homepage, blog index, blog post                                     |
+| Berkeley Mono (CDN only) | `https://cdn.uinaf.dev/fonts/berkeley-mono/variable/font.css` — never vendored in this package |
+| `system/assets/`         | package-safe brand illustrations                                                               |
+| `preview/`               | one card per pattern — the canonical reference for each                                        |
 
 ## voice
 
