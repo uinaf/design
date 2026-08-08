@@ -1,14 +1,7 @@
 name: Release
 
-# Canonical verify -> release on push to main. Publishing uses npm Trusted
-# Publishing (OIDC): npmjs.com lists this workflow filename (release.yml)
-# and the "release" environment as the package's trusted publisher — see
-# docs/releasing.md. Version push-back and GitHub Release writes use a
-# short-lived uinaf-releaser installation token (rulesets bypass that App
-# for unsigned bot commits/tags while humans still require signed commits).
-#
-# Guide deploy stays in main.yml so a blocked npm bootstrap cannot strand
-# design.uinaf.dev.
+# npm Trusted Publishing (OIDC) + uinaf-releaser. Fail-closed until bootstrap.
+# Guide deploy lives in main.yml — never needs: [release] for production assets.
 
 on:
   push:
@@ -56,7 +49,7 @@ jobs:
       cancel-in-progress: false
     permissions:
       contents: read
-      id-token: write # OIDC for npm trusted publishing
+      id-token: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -112,36 +105,3 @@ jobs:
           GIT_AUTHOR_EMAIL: ${{ steps.release-bot-identity.outputs.user-id }}+${{ steps.release-bot.outputs.app-slug }}[bot]@users.noreply.github.com
           GIT_COMMITTER_NAME: ${{ steps.release-bot.outputs.app-slug }}[bot]
           GIT_COMMITTER_EMAIL: ${{ steps.release-bot-identity.outputs.user-id }}+${{ steps.release-bot.outputs.app-slug }}[bot]@users.noreply.github.com
-
-
-  deploy:
-    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
-    needs: [verify, secrets]
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    environment:
-      name: production
-      url: https://design.uinaf.dev
-    concurrency:
-      group: deploy-${{ github.repository }}-production
-      cancel-in-progress: false
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
-        with:
-          standalone: true
-      - uses: voidzero-dev/setup-vp@313600b80b104eadebb9111787d37a2e83e014ca # v1.17.0
-        with:
-          node-version-file: ".node-version"
-          cache: false
-          run-install: |
-            - args: ["--frozen-lockfile"]
-      - name: Deploy guide
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
-        run: vp run deploy

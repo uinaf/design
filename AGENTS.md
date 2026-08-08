@@ -13,6 +13,12 @@
 - Spec lives in `DESIGN.md`; agent skill in `.agents/skills/uinaf-design/`.
 - Guide static root is `guide/` (synced from `preview/` + tokens).
 
+## Workflow invariants
+
+- Guide deploy: `.github/workflows/main.yml` only.
+- npm publish: `.github/workflows/release.yml` only.
+- Never make production guide deploy `needs: [release]` — npm bootstrap must not strand `design.uinaf.dev`.
+
 ## Toolchain
 
 Vite+ (`vp`). Prefer `vp run verify`, `vp check`, `vp test run`.
