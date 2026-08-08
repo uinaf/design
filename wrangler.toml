@@ -3,7 +3,8 @@ compatibility_date = "2025-08-01"
 workers_dev = true
 preview_urls = false
 
-routes = [{ pattern = "design.uinaf.dev", custom_domain = true }]
+# Custom domain design.uinaf.dev is bound in uinaf/infra
+# (cloudflare_workers_custom_domain). Deploy token cannot mutate zone routes.
 
 [assets]
 directory = "./guide"

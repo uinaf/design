@@ -46,10 +46,12 @@
     "verify": "vp check && node scripts/check.mjs && vp test run && node scripts/build.mjs && node scripts/sync-guide.mjs",
     "deploy": "pnpm run guide:sync && wrangler deploy",
     "prepare": "vp config --no-agent",
-    "prepublishOnly": "pnpm run verify"
+    "prepublishOnly": "pnpm run verify",
+    "fmt": "vp fmt",
+    "lint": "vp lint"
   },
   "devDependencies": {
-    "@types/node": "^22.10.2",
+    "@types/node": "^24.0.0",
     "typescript": "^5.9.2",
     "vite": "npm:@voidzero-dev/vite-plus-core@0.2.8",
     "vite-plus": "0.2.8",
@@ -59,7 +61,7 @@
     "vite": "npm:@voidzero-dev/vite-plus-core@0.2.8"
   },
   "engines": {
-    "node": ">=22"
+    "node": ">=24.18.0"
   },
   "packageManager": "pnpm@10.14.0",
   "pnpm": {

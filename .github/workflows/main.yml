@@ -24,6 +24,8 @@ jobs:
         with:
           node-version-file: ".node-version"
           cache: true
+          run-install: |
+            - args: ["--frozen-lockfile"]
       - run: vp run verify
 
   secrets:
@@ -51,6 +53,8 @@ jobs:
         with:
           node-version-file: ".node-version"
           cache: false
+          run-install: |
+            - args: ["--frozen-lockfile"]
       - name: Deploy guide
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
