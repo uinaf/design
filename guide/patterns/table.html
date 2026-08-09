@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>uinaf — table</title>
+<link rel="stylesheet" href="https://design.uinaf.dev/tokens.css">
+</head>
+<body class="uinaf">
+<!-- In your project: @import "@uinaf/design/css"; then copy the markup below. -->
+<table class="u-table">
+  <thead><tr><th>service</th><th>status</th><th data-num>p99</th></tr></thead>
+  <tbody>
+    <tr><td>gateway</td><td><i class="u-dot u-dot--live"></i>live</td><td data-num>41ms</td></tr>
+    <tr data-selected=""><td>healthd</td><td><i class="u-dot u-dot--ok"></i>ok</td><td data-num>8ms</td></tr>
+    <tr><td>relay</td><td><i class="u-dot"></i>idle</td><td data-num>—</td></tr>
+  </tbody>
+</table>
+</body>
+</html>

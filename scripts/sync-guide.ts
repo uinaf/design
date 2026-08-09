@@ -20,6 +20,12 @@ fs.mkdirSync(guide, { recursive: true });
 // tokens.css @imports ./components.css — both must land side by side.
 fs.copyFileSync(path.join(root, "dist/css/tokens.css"), path.join(guide, "tokens.css"));
 fs.copyFileSync(path.join(root, "dist/css/components.css"), path.join(guide, "components.css"));
+fs.copyFileSync(path.join(root, "dist/components.json"), path.join(guide, "components.json"));
+fs.copyFileSync(path.join(root, "dist/tokens.json"), path.join(guide, "tokens.json"));
+
+const patternsDest = path.join(guide, "patterns");
+fs.rmSync(patternsDest, { recursive: true, force: true });
+fs.cpSync(path.join(root, "dist/patterns"), patternsDest, { recursive: true });
 
 fs.rmSync(previewDest, { recursive: true, force: true });
 fs.cpSync(previewSrc, previewDest, { recursive: true });
