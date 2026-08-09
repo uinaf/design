@@ -57,12 +57,16 @@ const countOccurrences = (haystack: string, needle: string): number => {
 
 const MIN_TERM_LENGTH = 2;
 const MAX_TERMS = 8;
+// Truncate before tokenizing: splitting a multi-megabyte query allocates the
+// whole array before any cap can apply.
+const MAX_QUERY_LENGTH = 200;
 
 export const rankSections = (
   spec: string,
   query: string,
 ): { hits: Array<{ heading: string; body: string; score: number }>; sections: string[] } => {
   const terms = query
+    .slice(0, MAX_QUERY_LENGTH)
     .toLowerCase()
     .split(/\s+/)
     .filter((t) => t.length >= MIN_TERM_LENGTH)

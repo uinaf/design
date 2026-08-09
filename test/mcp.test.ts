@@ -62,3 +62,14 @@ describe("search_guidelines input bounds", () => {
     expect(rankSections(spec, "type scale").hits.length).toBeGreaterThan(0);
   });
 });
+
+describe("search_guidelines query length", () => {
+  it("truncates before tokenizing rather than after", () => {
+    // A cap applied after split() has already allocated the whole array.
+    const huge = "color ".repeat(500_000);
+    const start = Date.now();
+    const { hits } = rankSections(spec, huge);
+    expect(Date.now() - start).toBeLessThan(1000);
+    expect(hits.length).toBeGreaterThan(0);
+  });
+});

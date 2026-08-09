@@ -19,4 +19,4 @@ not_found_handling = "none"
 # HTML pages must reach the Worker so Accept: text/markdown can serve the twin;
 # an exact asset match would otherwise bypass Worker code entirely. CSS, JSON,
 # and .md stay on the asset fast path.
-run_worker_first = [ "/mcp", "/", "/*.html", "/patterns/*.html", "/preview/*.html" ]
+run_worker_first = [ "/mcp", "/mcp/", "/", "/*.html", "/patterns/*.html", "/preview/*.html" ]
