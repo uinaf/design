@@ -41,6 +41,7 @@
     },
     "./package.json": "./package.json",
     "./lint": {
+      "types": "./dist/lint/index.d.ts",
       "import": "./dist/lint/index.js",
       "default": "./dist/lint/index.js"
     }

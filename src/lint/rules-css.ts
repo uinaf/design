@@ -28,25 +28,21 @@ const SPACED_PROPERTY_SPLIT = /\s+/;
 const isToken = (value: string): boolean => /var\(\s*--/.test(value);
 
 /**
- * Strip `var(--x)` references, keeping any fallback, so a raw color cannot hide
- * behind a token in the same declaration: `var(--fg, #f00)` and
- * `linear-gradient(var(--accent), #ff0000)` both still expose their raw value.
+ * Strip whole `var(--x, fallback)` references, leaving the part of the value
+ * that is not token-driven. A fallback inside var() is a safety net for when
+ * the stylesheet has not loaded and stays allowed; a raw color sitting *beside*
+ * a token — `linear-gradient(var(--accent), #ff0000)` — is a real violation and
+ * survives the strip.
  */
 const withoutTokenReferences = (value: string): string => {
   let out = value;
   let previous: string;
   do {
     previous = out;
-    out = out.replace(
-      /var\(\s*--[a-z0-9-]+\s*(?:,([^()]*))?\)/gi,
-      (_, fallback) => fallback ?? " ",
-    );
+    out = out.replace(/var\(\s*--[a-z0-9-]+\s*(?:,[^()]*)?\)/gi, " ");
   } while (out !== previous);
   return out;
 };
-const hasRawColor = (value: string): boolean =>
-  /#[0-9a-f]{3,8}\b/i.test(value) || /\b(rgba?|hsla?|oklch|lab|color)\s*\(/i.test(value);
-
 const ALLOWED_RAW_COLORS = new Set([
   "#000",
   "#000000",
@@ -59,6 +55,14 @@ const ALLOWED_RAW_COLORS = new Set([
   "unset",
   "initial",
 ]);
+
+const COLOR_TOKEN = /#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?|oklch|lab|color)\s*\([^()]*\)/gi;
+
+/** Each colour is judged on its own: `border: 1px solid #000` is allowed. */
+const disallowedColors = (value: string): string[] =>
+  [...value.matchAll(COLOR_TOKEN)]
+    .map((m) => m[0].trim())
+    .filter((color) => !ALLOWED_RAW_COLORS.has(color.toLowerCase()));
 
 /**
  * A one-dimension pill (a dot, a bar) may use the pill radius. Matched against
@@ -115,13 +119,13 @@ export const checkCss = (css: string, file: string): Violation[] => {
     // Custom properties are where raw values are supposed to live.
     const inTokenDefinition = prop.startsWith("--");
 
-    const withoutTokens = withoutTokenReferences(value);
-    if (!inTokenDefinition && hasRawColor(withoutTokens) && !ALLOWED_RAW_COLORS.has(lower)) {
+    const offending = inTokenDefinition ? [] : disallowedColors(withoutTokenReferences(value));
+    if (offending.length > 0) {
       add(
         decl,
         "no-raw-color",
         "error",
-        `raw color in \`${prop}: ${value}\``,
+        `raw color ${offending.join(", ")} in \`${prop}: ${value}\``,
         "use a token: var(--fg), var(--bg), var(--border), var(--accent) — see /tokens.json",
       );
     }

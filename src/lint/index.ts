@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { checkCss } from "./rules-css.ts";
-import { checkMarkup, type MarkupOptions } from "./rules-markup.ts";
+import { checkMarkup, setJsxStyleChecker, type MarkupOptions } from "./rules-markup.ts";
 import type { Severity, Violation } from "./types.ts";
 
 export type { Severity, Violation } from "./types.ts";
@@ -27,6 +27,11 @@ export type CheckOptions = MarkupOptions & {
   paths?: string[];
   ignore?: string[];
 };
+
+// JSX object styles are judged by the same CSS rules as everything else.
+setJsxStyleChecker((property, value) =>
+  checkCss(`*{${property}:${value}}`, "jsx").map((v) => ({ ...v, line: 1 })),
+);
 
 export const collectFiles = (roots: string[], ignore: string[] = []): string[] => {
   const found: string[] = [];

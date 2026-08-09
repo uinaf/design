@@ -299,13 +299,17 @@ describe("inline style attributes", () => {
 });
 
 describe("no-raw-color cannot hide behind a token", () => {
-  it("catches a raw fallback inside var()", () => {
-    expect(rules(css("a{color:var(--fg, #f00)}"))).toContain("no-raw-color");
+  it("allows a fallback inside var(), which only applies if the sheet failed to load", () => {
+    expect(rules(css("a{color:var(--fg, #f00)}"))).not.toContain("no-raw-color");
   });
   it("catches a raw stop in a gradient beside a token", () => {
     expect(rules(css("a{background:linear-gradient(var(--accent), #ff0000)}"))).toContain(
       "no-raw-color",
     );
+  });
+  it("applies the allowlist per colour, not to the whole declaration", () => {
+    expect(rules(css("a{border:1px solid #000}"))).not.toContain("no-raw-color");
+    expect(rules(css("a{border:1px solid #a1b2c3}"))).toContain("no-raw-color");
   });
   it("still passes when every colour is a token", () => {
     expect(rules(css("a{background:linear-gradient(var(--accent), var(--bg))}"))).not.toContain(
@@ -336,5 +340,35 @@ describe("inline styles are attribute-order independent", () => {
     const file = join(dir, "dot.html");
     writeFileSync(file, `<i style="border-radius:9999px" class="u-dot"></i>\n`);
     expect(checkFile(file).map((v) => v.rule)).not.toContain("radius-ceiling");
+  });
+});
+
+describe("JSX object styles", () => {
+  it("are checked, since .jsx/.tsx is an advertised input", async () => {
+    const { checkFile } = await import("../src/lint/index");
+    const { writeFileSync, mkdtempSync } = await import("node:fs");
+    const { join } = await import("node:path");
+    const { tmpdir } = await import("node:os");
+    const dir = mkdtempSync(join(tmpdir(), "design-jsx-"));
+    const file = join(dir, "Card.tsx");
+    writeFileSync(
+      file,
+      `export const Card = () => <div style={{ color: "#f00", borderRadius: "20px", fontSize: "18px" }} />;\n`,
+    );
+    const found = checkFile(file).map((v) => v.rule);
+    expect(found).toContain("no-raw-color");
+    expect(found).toContain("radius-ceiling");
+    expect(found).toContain("type-scale-only");
+  });
+
+  it("passes on token-driven JSX styles", async () => {
+    const { checkFile } = await import("../src/lint/index");
+    const { writeFileSync, mkdtempSync } = await import("node:fs");
+    const { join } = await import("node:path");
+    const { tmpdir } = await import("node:os");
+    const dir = mkdtempSync(join(tmpdir(), "design-jsx2-"));
+    const file = join(dir, "Ok.tsx");
+    writeFileSync(file, `export const Ok = () => <div style={{ color: "var(--fg)" }} />;\n`);
+    expect(checkFile(file).map((v) => v.rule)).toEqual([]);
   });
 });

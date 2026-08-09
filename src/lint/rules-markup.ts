@@ -68,6 +68,14 @@ const ICON_FONT_CLASS =
 
 export type MarkupOptions = { abbreviations?: string[] };
 
+/** Injected by the runner so JSX object styles reuse the real CSS rules. */
+let jsxStyleRules: (property: string, value: string) => Violation[] = () => [];
+export const setJsxStyleChecker = (
+  checker: (property: string, value: string) => Violation[],
+): void => {
+  jsxStyleRules = checker;
+};
+
 export const checkMarkup = (
   source: string,
   file: string,
@@ -162,6 +170,26 @@ export const checkMarkup = (
         `icon font class ${token}`,
         "no icon fonts; use ↗ → · or an inline SVG hairline",
       );
+    }
+  }
+
+  // JSX expresses inline styles as objects, so the quoted-string scan misses
+  // them entirely on the .jsx/.tsx inputs this check advertises.
+  for (const match of source.matchAll(/style\s*=\s*\{\{([^{}]*)\}\}/g)) {
+    const body = match[1];
+    for (const pair of body.split(",")) {
+      const [rawKey, ...rest] = pair.split(":");
+      if (rest.length === 0) continue;
+      const key = rawKey.trim().replace(/["']/g, "");
+      const raw = rest
+        .join(":")
+        .trim()
+        .replace(/^["']|["']$/g, "");
+      if (!key || !raw) continue;
+      const property = key.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
+      for (const violation of jsxStyleRules(property, raw)) {
+        add(match.index ?? 0, violation.rule, violation.severity, violation.message, violation.fix);
+      }
     }
   }
 

@@ -25,14 +25,10 @@ var withoutTokenReferences = (value) => {
   let previous;
   do {
     previous = out;
-    out = out.replace(
-      /var\(\s*--[a-z0-9-]+\s*(?:,([^()]*))?\)/gi,
-      (_, fallback) => fallback ?? " "
-    );
+    out = out.replace(/var\(\s*--[a-z0-9-]+\s*(?:,[^()]*)?\)/gi, " ");
   } while (out !== previous);
   return out;
 };
-var hasRawColor = (value) => /#[0-9a-f]{3,8}\b/i.test(value) || /\b(rgba?|hsla?|oklch|lab|color)\s*\(/i.test(value);
 var ALLOWED_RAW_COLORS = /* @__PURE__ */ new Set([
   "#000",
   "#000000",
@@ -45,6 +41,8 @@ var ALLOWED_RAW_COLORS = /* @__PURE__ */ new Set([
   "unset",
   "initial"
 ]);
+var COLOR_TOKEN = /#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?|oklch|lab|color)\s*\([^()]*\)/gi;
+var disallowedColors = (value) => [...value.matchAll(COLOR_TOKEN)].map((m) => m[0].trim()).filter((color) => !ALLOWED_RAW_COLORS.has(color.toLowerCase()));
 var ONE_DIMENSIONAL_SEGMENT = /(^|[-_])(dot|pill|bar|spark|tick|avatar)s?([-_]|$)/i;
 var looksOneDimensional = (selector) => [...selector.matchAll(/\.([a-zA-Z0-9_-]+)/g)].some((m) => ONE_DIMENSIONAL_SEGMENT.test(m[1]));
 var LABEL_CONTEXT = /label|tag|kicker|caps|micro|crumb|th\b/i;
@@ -81,13 +79,13 @@ var checkCss = (css, file) => {
     const lower = value.toLowerCase();
     const selector = decl.parent?.selector ?? "";
     const inTokenDefinition = prop.startsWith("--");
-    const withoutTokens = withoutTokenReferences(value);
-    if (!inTokenDefinition && hasRawColor(withoutTokens) && !ALLOWED_RAW_COLORS.has(lower)) {
+    const offending = inTokenDefinition ? [] : disallowedColors(withoutTokenReferences(value));
+    if (offending.length > 0) {
       add(
         decl,
         "no-raw-color",
         "error",
-        `raw color in \`${prop}: ${value}\``,
+        `raw color ${offending.join(", ")} in \`${prop}: ${value}\``,
         "use a token: var(--fg), var(--bg), var(--border), var(--accent) \u2014 see /tokens.json"
       );
     }
@@ -227,6 +225,10 @@ var classOccurrences = (source, wanted) => {
 };
 var EMOJI = new RegExp("\\p{Emoji_Presentation}|\\p{Emoji}\\uFE0F", "gu");
 var ICON_FONT_CLASS = /^(?:(?:fa|fas|far|fab|fa-solid|fa-regular|glyphicon|mdi)-[a-z0-9-]+|material-icons(?:-[a-z]+)?|glyphicon)$/;
+var jsxStyleRules = () => [];
+var setJsxStyleChecker = (checker) => {
+  jsxStyleRules = checker;
+};
 var checkMarkup = (source, file, options = {}) => {
   const violations = [];
   const add = (index, rule, severity, message, fix) => {
@@ -300,6 +302,20 @@ var checkMarkup = (source, file, options = {}) => {
       );
     }
   }
+  for (const match of source.matchAll(/style\s*=\s*\{\{([^{}]*)\}\}/g)) {
+    const body = match[1];
+    for (const pair of body.split(",")) {
+      const [rawKey, ...rest] = pair.split(":");
+      if (rest.length === 0) continue;
+      const key = rawKey.trim().replace(/["']/g, "");
+      const raw = rest.join(":").trim().replace(/^["']|["']$/g, "");
+      if (!key || !raw) continue;
+      const property = key.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
+      for (const violation of jsxStyleRules(property, raw)) {
+        add(match.index ?? 0, violation.rule, violation.severity, violation.message, violation.fix);
+      }
+    }
+  }
   for (const match of source.matchAll(/style\s*=\s*["'{]([^"'}]*)["'}]/g)) {
     const style = match[1].toLowerCase();
     if (/border-left\s*:/.test(style) && /background(-color)?\s*:/.test(style)) {
@@ -346,6 +362,9 @@ var SKIP_DIRECTORIES = /* @__PURE__ */ new Set([
   ".turbo",
   "vendor"
 ]);
+setJsxStyleChecker(
+  (property, value) => checkCss(`*{${property}:${value}}`, "jsx").map((v) => ({ ...v, line: 1 }))
+);
 var collectFiles = (roots, ignore = []) => {
   const found = [];
   const ignored = (file) => ignore.some((pattern) => file.includes(pattern));
