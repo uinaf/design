@@ -17,16 +17,16 @@ disable-model-invocation: true
    `/tokens.json` when writing custom CSS.
 3. **Prefer the MCP tools when connected** (`https://design.uinaf.dev/mcp`):
    `list_patterns`, `get_pattern`, `get_tokens`, `search_guidelines`.
-4. **Finish on green.** `npx design-check src` must pass. Red is not done.
+4. **Finish on green.** The adherence check must pass before you are done —
+   `npx design-check src` in a clean repo, or `npx design-check --ratchet src`
+   in one with a recorded baseline. Red is not done, and neither is silencing it.
 
 Install once per repo: `npm i @uinaf/design`.
 
-In a repo with existing violations, `design-check` will be red before you start.
-Do not fix the whole codebase and do not silence the check. Record the current
-state with `npx design-check --update-ratchet src`, commit
-`.design-ratchet.json`, then use `npx design-check --ratchet src`: it fails only
-when a count rises, so your change is held to green without inheriting the
-backlog.
+If the repo already has violations, do not try to fix the whole codebase. Record
+the current state once with `npx design-check --update-ratchet src` and commit
+`.design-ratchet.json`. From then on `--ratchet` fails only when a count rises,
+so your change is held to green without inheriting the backlog.
 
 Fonts: Berkeley Mono is licensed and loads from
 `https://cdn.uinaf.dev/fonts/berkeley-mono/variable/font.css`. Never bundle it.

@@ -54,4 +54,39 @@ if ((pkg.files ?? []).some((f) => f === "fonts" || f.includes("font"))) {
   fail("package.json files must not include fonts");
 }
 
+// The skill ships inside the npm tarball, so a malformed one is publishable.
+// Structural, not a network call: this must hold in CI where tessl is absent.
+// `pnpm run skill:lint` remains the richer, optional gate.
+const skillDir = path.join(root, "skills/uinaf-design");
+const skill = fs.readFileSync(path.join(skillDir, "SKILL.md"), "utf8");
+const frontmatter = /^---\n([\s\S]*?)\n---/.exec(skill)?.[1];
+if (!frontmatter) {
+  fail("skills/uinaf-design/SKILL.md has no frontmatter");
+}
+for (const field of ["name", "description"]) {
+  if (!new RegExp(`^${field}:\\s*\\S`, "m").test(frontmatter as string)) {
+    fail(`skills/uinaf-design/SKILL.md frontmatter is missing \`${field}\``);
+  }
+}
+
+const plugin = JSON.parse(
+  fs.readFileSync(path.join(skillDir, ".tessl-plugin/plugin.json"), "utf8"),
+) as { name?: string; skills?: string[] };
+if (!plugin.name || !plugin.skills?.length) {
+  fail("skills/uinaf-design/.tessl-plugin/plugin.json needs a name and a skills list");
+}
+for (const entry of plugin.skills ?? []) {
+  if (!fs.existsSync(path.join(skillDir, entry))) {
+    fail(`.tessl-plugin/plugin.json lists ${entry}, which does not exist`);
+  }
+}
+if (!fs.existsSync(path.join(skillDir, "agents/openai.yaml"))) {
+  fail("skills/uinaf-design/agents/openai.yaml is missing");
+}
+
+const packaged = (pkg.files ?? []).some((f) => f === "skills/uinaf-design");
+if (!packaged) {
+  fail("package.json files must include skills/uinaf-design so the skill ships");
+}
+
 console.log("check ok");
