@@ -42,6 +42,29 @@ for (const [name, value] of grouped) {
   }
 }
 
+// Templates ship in the tarball, so a stylesheet they name has to be a file the
+// tarball contains. `colors_and_type.css` shipped broken for months (#15)
+// because nothing checked. Quoted strings only — `el.sheet.css` is a property
+// access, not a reference.
+const templatesDir = path.join(root, "templates");
+for (const template of fs.readdirSync(templatesDir)) {
+  const dir = path.join(templatesDir, template);
+  if (!fs.statSync(dir).isDirectory()) continue;
+  for (const file of fs.readdirSync(dir)) {
+    const source = fs.readFileSync(path.join(dir, file), "utf8");
+    for (const [, reference] of source.matchAll(/["']([^"']+\.css)["']/g)) {
+      if (reference.startsWith("https://cdn.uinaf.dev/")) continue;
+      // ds-base.js resolves its list against the package root.
+      const resolved = path.join(root, reference.replace(/^(?:\.\.\/)+/, ""));
+      if (!resolved.startsWith(path.join(root, "dist/css/")) || !fs.existsSync(resolved)) {
+        fail(
+          `templates/${template}/${file} references ${reference}, which the package does not ship. Stylesheets must live in dist/css/.`,
+        );
+      }
+    }
+  }
+}
+
 // The six reference pages are a published contract: the skill, the adoption
 // doc, and get_page all name them, so a rename silently breaks all three.
 const REFERENCE_PAGES = [

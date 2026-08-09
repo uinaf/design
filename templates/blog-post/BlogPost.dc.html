@@ -7,13 +7,13 @@
 </head>
 <body>
 <x-dc>
-<!-- @template name="blog post" description="Personal-blog post page: 16px h1, meta line, prose at narrow measure, backlinks." -->
+<!-- @page name="blog post" description="Personal-blog post page: 16px h1, meta line, prose at narrow measure, backlinks." -->
 <helmet>
 <script src="./ds-base.js"></script>
 <style>body{margin:0;background:rgb(10,10,10)}@keyframes ue{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}@media (prefers-reduced-motion:reduce){[style*="animation"]{animation:none !important}}</style>
 </helmet>
 <div class="uinaf" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:64px 24px 48px">
-<article style="width:100%;max-width:36rem;display:flex;flex-direction:column">
+<article style="width:100%;max-width:40rem;display:flex;flex-direction:column">
 <header style="display:flex;flex-direction:column;gap:4px;animation:ue 220ms cubic-bezier(0.22,1,0.36,1) both;margin-bottom:40px">
 <a href="/" class="u-link-plain" style="display:inline-flex;align-items:center;gap:8px"><img src="../../assets/uinaf-computer.png" width="24" height="24" alt="" style="border:1px solid rgb(38,38,38);display:block"><span style="font-size:14px;color:rgb(229,229,229)">uinaf</span></a>
 </header>
@@ -31,7 +31,7 @@ gateway   live   41ms
 queue     warn   220ms  ← this line pays the rent</code></pre>
 <p>we don't guarantee perfection. software has edge cases.</p>
 </div>
-<sc-if value="{{ showBacklinks }}" hint-placeholder-val="{{ true }}">
+
 <div style="margin-top:32px;padding-top:16px;border-top:1px solid rgb(38,38,38);animation:ue 220ms cubic-bezier(0.22,1,0.36,1) 135ms both">
 <span class="u-label">linked from</span>
 <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
@@ -39,21 +39,15 @@ queue     warn   220ms  ← this line pays the rent</code></pre>
 <a class="u-link" href="#" style="font-size:13px;align-self:flex-start">dotfiles as infrastructure</a>
 </div>
 </div>
-</sc-if>
+
 <hr style="margin-top:64px">
 <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px 24px;padding-top:16px;font-size:13px">
-<span><a class="u-link-plain" href="/projects" style="color:rgb(82,82,82)">projects</a> <span class="u-sep">·</span> <a class="u-link-plain" href="/terms-of-service" style="color:rgb(82,82,82)">terms</a> <span class="u-sep">·</span> <a class="u-link-plain" href="/thanks" style="color:rgb(82,82,82)">thanks</a></span>
+<span><a class="u-link-plain" href="/projects" style="color:rgb(82,82,82)">projects</a></span>
 <span><a class="u-link-plain" href="mailto:dev@uinaf.dev" style="color:rgb(82,82,82)">dev@uinaf.dev</a> <span class="u-sep">·</span> <a class="u-link-plain" href="https://github.com/uinaf" style="color:rgb(82,82,82)">gh&nbsp;↗</a> <span class="u-sep">·</span> <a class="u-link-plain" href="https://x.com/uinafdev" style="color:rgb(82,82,82)">x&nbsp;↗</a></span>
 </div>
 </article>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;showBacklinks&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
-class Component extends DCLogic {
-  renderVals() {
-    return { showBacklinks: this.props.showBacklinks ?? true };
-  }
-}
-</script>
+<script type="text/x-dc" data-dc-script></script>
 </body>
 </html>
