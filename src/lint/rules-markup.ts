@@ -84,9 +84,9 @@ const UNITLESS_PROPERTIES = new Set([
 export type MarkupOptions = { abbreviations?: string[] };
 
 /** Injected by the runner so JSX object styles reuse the real CSS rules. */
-let jsxStyleRules: (property: string, value: string) => Violation[] = () => [];
+let jsxStyleRules: (property: string, value: string, classes: string) => Violation[] = () => [];
 export const setJsxStyleChecker = (
-  checker: (property: string, value: string) => Violation[],
+  checker: (property: string, value: string, classes: string) => Violation[],
 ): void => {
   jsxStyleRules = checker;
 };
@@ -164,7 +164,15 @@ export const checkMarkup = (
     }
   }
 
-  for (const match of source.matchAll(EMOJI)) {
+  // Only text that actually renders: an emoji in a comment or a JS string is
+  // source, not UI, and flagging it makes the rule noise in any .tsx file.
+  const renderable = source
+    .replace(/<!--[\s\S]*?-->/g, (m) => " ".repeat(m.length))
+    .replace(/\/\*[\s\S]*?\*\//g, (m) => " ".repeat(m.length))
+    .replace(/(^|\n)\s*\/\/[^\n]*/g, (m) => " ".repeat(m.length))
+    .replace(/<script[\s\S]*?<\/script>/gi, (m) => " ".repeat(m.length))
+    .replace(/<style[\s\S]*?<\/style>/gi, (m) => " ".repeat(m.length));
+  for (const match of renderable.matchAll(EMOJI)) {
     add(
       match.index ?? 0,
       "no-emoji",
@@ -190,8 +198,15 @@ export const checkMarkup = (
 
   // JSX expresses inline styles as objects, so the quoted-string scan misses
   // them entirely on the .jsx/.tsx inputs this check advertises.
-  for (const match of source.matchAll(/style\s*=\s*\{\{((?:[^{}]|\{[^{}]*\})*)\}\}/g)) {
+  for (const match of source.matchAll(
+    /<[a-z][a-z0-9-]*\s[^>]*?style\s*=\s*\{\{((?:[^{}]|\{[^{}]*\})*)\}\}/gi,
+  )) {
     const body = match[1];
+    // Carry the element's classes through, so a pill radius still passes on a
+    // .u-dot in JSX exactly as it does in HTML.
+    const jsxClasses = /(?<![\w-])(?:class|className)\s*=\s*["'{]([^"'}]*)["'}]/i.exec(
+      match[0],
+    )?.[1];
     for (const pair of splitTopLevel(body)) {
       const [rawKey, ...rest] = pair.split(":");
       if (rest.length === 0) continue;
@@ -207,7 +222,7 @@ export const checkMarkup = (
         !quoted && /^-?\d+(?:\.\d+)?$/.test(raw) && !UNITLESS_PROPERTIES.has(property)
           ? `${raw}px`
           : raw;
-      for (const violation of jsxStyleRules(property, value)) {
+      for (const violation of jsxStyleRules(property, value, jsxClasses ?? "")) {
         add(match.index ?? 0, violation.rule, violation.severity, violation.message, violation.fix);
       }
     }

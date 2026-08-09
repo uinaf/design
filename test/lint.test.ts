@@ -547,3 +547,46 @@ describe("JSX style objects with nested expressions", () => {
     expect(checkFile(file).map((v) => v.rule)).toContain("no-raw-color");
   });
 });
+
+describe("radius-ceiling sees through calc()", () => {
+  it("catches an oversized value inside calc", () => {
+    expect(rules(css("a{border-radius:calc(20px + 2px)}"))).toContain("radius-ceiling");
+  });
+  it("passes a small one", () => {
+    expect(rules(css("a{border-radius:calc(4px)}"))).not.toContain("radius-ceiling");
+  });
+});
+
+describe("no-emoji ignores non-rendered source", () => {
+  it("does not flag emoji in comments or scripts", () => {
+    expect(rules(markup("<!-- ship it 🚀 --><p>ok</p>"))).not.toContain("no-emoji");
+    expect(rules(markup('<script>const msg = "done 🚀";</script>'))).not.toContain("no-emoji");
+  });
+  it("still flags emoji in rendered text", () => {
+    expect(rules(markup("<p>ship it 🚀</p>"))).toContain("no-emoji");
+  });
+});
+
+describe("JSX object styles keep selector context", () => {
+  const jsx = async (source: string) => {
+    const { checkFile } = await import("../src/lint/index");
+    const { writeFileSync, mkdtempSync } = await import("node:fs");
+    const { join } = await import("node:path");
+    const { tmpdir } = await import("node:os");
+    const dir = mkdtempSync(join(tmpdir(), "design-ctx-"));
+    const file = join(dir, "C.tsx");
+    writeFileSync(file, source);
+    return checkFile(file).map((v) => v.rule);
+  };
+
+  it("allows a pill radius on a dot, as in HTML", async () => {
+    expect(
+      await jsx(`export const D = () => <i className="u-dot" style={{ borderRadius: 9999 }} />;`),
+    ).not.toContain("radius-ceiling");
+  });
+  it("still fails on anything else", async () => {
+    expect(
+      await jsx(`export const C = () => <div className="card" style={{ borderRadius: 9999 }} />;`),
+    ).toContain("radius-ceiling");
+  });
+});

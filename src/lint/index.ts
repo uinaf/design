@@ -29,9 +29,15 @@ export type CheckOptions = MarkupOptions & {
 };
 
 // JSX object styles are judged by the same CSS rules as everything else.
-setJsxStyleChecker((property, value) =>
-  checkCss(`*{${property}:${value}}`, "jsx").map((v) => ({ ...v, line: 1 })),
-);
+setJsxStyleChecker((property, value, classes) => {
+  const selector =
+    classes
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((c) => `.${c}`)
+      .join("") || "*";
+  return checkCss(`${selector}{${property}:${value}}`, "jsx").map((v) => ({ ...v, line: 1 }));
+});
 
 export const collectFiles = (roots: string[], ignore: string[] = []): string[] => {
   const found: string[] = [];

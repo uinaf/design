@@ -162,7 +162,8 @@ var checkCss = (css, file) => {
       );
     }
     if (prop === "border-radius" || /^border-([a-z]+-)+radius$/.test(prop)) {
-      for (const part of value.split(SPACED_PROPERTY_SPLIT)) {
+      const parts = /calc\(/i.test(value) ? [...value.matchAll(/(\d+(?:\.\d+)?)px/g)].map((m) => m[0]) : value.split(SPACED_PROPERTY_SPLIT);
+      for (const part of parts) {
         const px = /^(\d+(?:\.\d+)?)px$/.exec(part);
         if (!px) continue;
         const size = Number.parseFloat(px[1]);
@@ -366,7 +367,8 @@ var checkMarkup = (source, file, options = {}) => {
       );
     }
   }
-  for (const match of source.matchAll(EMOJI)) {
+  const renderable = source.replace(/<!--[\s\S]*?-->/g, (m) => " ".repeat(m.length)).replace(/\/\*[\s\S]*?\*\//g, (m) => " ".repeat(m.length)).replace(/(^|\n)\s*\/\/[^\n]*/g, (m) => " ".repeat(m.length)).replace(/<script[\s\S]*?<\/script>/gi, (m) => " ".repeat(m.length)).replace(/<style[\s\S]*?<\/style>/gi, (m) => " ".repeat(m.length));
+  for (const match of renderable.matchAll(EMOJI)) {
     add(
       match.index ?? 0,
       "no-emoji",
@@ -388,8 +390,13 @@ var checkMarkup = (source, file, options = {}) => {
       );
     }
   }
-  for (const match of source.matchAll(/style\s*=\s*\{\{((?:[^{}]|\{[^{}]*\})*)\}\}/g)) {
+  for (const match of source.matchAll(
+    /<[a-z][a-z0-9-]*\s[^>]*?style\s*=\s*\{\{((?:[^{}]|\{[^{}]*\})*)\}\}/gi
+  )) {
     const body = match[1];
+    const jsxClasses = /(?<![\w-])(?:class|className)\s*=\s*["'{]([^"'}]*)["'}]/i.exec(
+      match[0]
+    )?.[1];
     for (const pair of splitTopLevel(body)) {
       const [rawKey, ...rest] = pair.split(":");
       if (rest.length === 0) continue;
@@ -400,7 +407,7 @@ var checkMarkup = (source, file, options = {}) => {
       if (!key || !raw) continue;
       const property = key.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
       const value = !quoted && /^-?\d+(?:\.\d+)?$/.test(raw) && !UNITLESS_PROPERTIES.has(property) ? `${raw}px` : raw;
-      for (const violation of jsxStyleRules(property, value)) {
+      for (const violation of jsxStyleRules(property, value, jsxClasses ?? "")) {
         add(match.index ?? 0, violation.rule, violation.severity, violation.message, violation.fix);
       }
     }
@@ -451,9 +458,10 @@ var SKIP_DIRECTORIES = /* @__PURE__ */ new Set([
   ".turbo",
   "vendor"
 ]);
-setJsxStyleChecker(
-  (property, value) => checkCss(`*{${property}:${value}}`, "jsx").map((v) => ({ ...v, line: 1 }))
-);
+setJsxStyleChecker((property, value, classes) => {
+  const selector = classes.split(/\s+/).filter(Boolean).map((c) => `.${c}`).join("") || "*";
+  return checkCss(`${selector}{${property}:${value}}`, "jsx").map((v) => ({ ...v, line: 1 }));
+});
 var collectFiles = (roots, ignore = []) => {
   const found = [];
   const ignored = (file) => ignore.some((pattern) => file.includes(pattern));

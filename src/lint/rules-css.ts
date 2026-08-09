@@ -193,7 +193,11 @@ export const checkCss = (css: string, file: string): Violation[] => {
 
     // border-top-left-radius and the logical start/end variants all count.
     if (prop === "border-radius" || /^border-([a-z]+-)+radius$/.test(prop)) {
-      for (const part of value.split(SPACED_PROPERTY_SPLIT)) {
+      // calc() hides the number from a plain px match; pull any px out of it.
+      const parts = /calc\(/i.test(value)
+        ? [...value.matchAll(/(\d+(?:\.\d+)?)px/g)].map((m) => m[0])
+        : value.split(SPACED_PROPERTY_SPLIT);
+      for (const part of parts) {
         const px = /^(\d+(?:\.\d+)?)px$/.exec(part);
         if (!px) continue;
         const size = Number.parseFloat(px[1]);
