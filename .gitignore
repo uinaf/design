@@ -7,3 +7,6 @@ node_modules/
 coverage/
 *.tgz
 .handoff-src/
+
+# slopomatic run evidence — scratch, not repo content
+*.evidence.json
