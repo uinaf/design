@@ -20,7 +20,7 @@
     "preview",
     "templates",
     "system",
-    ".agents/skills/uinaf-design"
+    "skills/uinaf-design"
   ],
   "type": "module",
   "exports": {
@@ -63,7 +63,8 @@
     "lint": "vp lint",
     "types:worker": "wrangler types",
     "smoke:mcp": "node scripts/smoke-mcp.ts",
-    "design:check": "node src/lint/cli.ts preview guide --ignore guide/tokens.css --ignore guide/components.css"
+    "design:check": "node src/lint/cli.ts preview guide --ignore guide/tokens.css --ignore guide/components.css",
+    "skill:lint": "TESSL_AUTO_UPDATE_INTERVAL_MINUTES=0 tessl plugin lint skills/uinaf-design"
   },
   "dependencies": {
     "postcss": "^8.5.26"
@@ -73,10 +74,12 @@
     "@types/node": "^24.0.0",
     "agents": "^0.20.1",
     "esbuild": "^0.28.2",
+    "tessl": "0.94.0",
     "typescript": "^5.9.2",
     "vite": "npm:@voidzero-dev/vite-plus-core@0.2.8",
     "vite-plus": "0.2.8",
     "wrangler": "^4.28.0",
+    "yaml": "^2.9.0",
     "zod": "^4.4.3"
   },
   "overrides": {

@@ -27,6 +27,9 @@ importers:
       esbuild:
         specifier: ^0.28.2
         version: 0.28.2
+      tessl:
+        specifier: 0.94.0
+        version: 0.94.0
       typescript:
         specifier: ^5.9.2
         version: 5.9.3
@@ -39,6 +42,9 @@ importers:
       wrangler:
         specifier: ^4.28.0
         version: 4.120.0(@cloudflare/workers-types@5.20260809.1)
+      yaml:
+        specifier: ^2.9.0
+        version: 2.9.0
       zod:
         specifier: ^4.4.3
         version: 4.4.3
@@ -2175,6 +2181,11 @@ packages:
     resolution: {integrity: sha512-SS+jx45GF1QjgEXQx4NJZV9ImqmO2NPz5FNsIHrsDjh2YsHnawpan7SNQ1o8NuhrbHZy9AZhIoCUiCeaW/C80g==}
     engines: {node: '>=18'}
 
+  tessl@0.94.0:
+    resolution: {integrity: sha512-4l45DkL8UO8usIjOeERKJ93KVihin8hTFRIsT93A4RZB6/jzmiNpR/2KIHj80q7UqN0rBCOPMZ6uAPkNIwkTgQ==}
+    engines: {node: '>=20'}
+    hasBin: true
+
   tinybench@2.9.0:
     resolution: {integrity: sha512-0+DUvqWMValLmha6lr4kD8iAMK1HzV0/aKnCtWb9v9641TnP/MFb7Pc2bxoxQjTXAErryXVgUOfv2YqNllqGeg==}
 
@@ -4120,6 +4131,8 @@ snapshots:
       ansi-regex: 6.2.2
 
   supports-color@10.2.2: {}
+
+  tessl@0.94.0: {}
 
   tinybench@2.9.0: {}
 
