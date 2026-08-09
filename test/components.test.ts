@@ -46,36 +46,31 @@ describe("components.json", () => {
     expect(broken).toEqual([]);
   });
 
-  it("has markup for the patterns that currently carry it", () => {
-    // Coverage is partial upstream — see the tracked markup gap. This locks in
-    // what exists so a regression cannot silently drop a chunk.
-    const withMarkup = components.patterns
-      .filter((p) => p.markup)
-      .map((p) => p.name)
-      .sort();
-    expect(withMarkup).toEqual([
-      "banner",
-      "breadcrumbs",
-      "button",
-      "card",
-      "choice",
-      "def-rows",
-      "field",
-      "footer",
-      "micro-label",
-      "pagination",
-      "panel",
-      "panel-grid",
-      "skeleton",
-      "stat",
-      "switch",
-      "table",
-      "tag+dot",
-      "timeline",
-      "tooltip",
-      "topbar",
-      "version",
-    ]);
+  it("gives every pattern copyable markup", () => {
+    // The gap is closed (#17). A pattern without markup is now a regression,
+    // not a known hole, so this asserts the invariant rather than a list.
+    const missing = components.patterns.filter((p) => !p.markup).map((p) => p.name);
+    expect(missing).toEqual([]);
+  });
+
+  it("gives every pattern markup that uses at least one of its own classes", () => {
+    // Markup copied from the wrong card would still be non-empty. It has to
+    // actually demonstrate the pattern it is filed under.
+    //
+    // Whole tokens inside class attributes only: a substring search would let
+    // `.u-btn` be satisfied by `u-btn-primary`, or by the name appearing in an
+    // id or in visible copy.
+    const classTokens = (markup: string): Set<string> =>
+      new Set(
+        [...markup.matchAll(/class="([^"]*)"/g)].flatMap((m) => m[1].split(/\s+/)).filter(Boolean),
+      );
+    const mismatched = components.patterns
+      .filter((p) => {
+        const used = classTokens(p.markup ?? "");
+        return !p.classes.some((c) => used.has(c.replace(/^\./, "")));
+      })
+      .map((p) => p.name);
+    expect(mismatched).toEqual([]);
   });
 });
 

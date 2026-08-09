@@ -98,7 +98,10 @@
       "never": [
         "chart junk: legends for one series, fills beyond the rare accent area, glows"
       ],
-      "slug": "charts"
+      "markup": "<div class=\"u-bars\"><i style=\"height:34%\"></i><i style=\"height:52%\"></i><i style=\"height:41%\"></i><i style=\"height:66%\"></i><i style=\"height:47%\"></i><i style=\"height:75%\"></i><i data-hot style=\"height:88%\"></i></div>",
+      "slug": "charts",
+      "chunk": "https://design.uinaf.dev/patterns/charts.html",
+      "chunkFile": "./patterns/charts.html"
     },
     {
       "name": "choice",
@@ -132,7 +135,10 @@
         "never wrap code — scroll it",
         "abbreviations in code stay as written (--pr flags, url vars)"
       ],
-      "slug": "code"
+      "markup": "<p class=\"u-prose\">run <code class=\"u-code\">attach put ./shot.png</code>, or press <kbd class=\"u-kbd\">⌘k</kbd>.</p>\n<pre class=\"u-pre\">attach login\nattach put ./shot.png --repo owner/repo --pr 12</pre>",
+      "slug": "code",
+      "chunk": "https://design.uinaf.dev/patterns/code.html",
+      "chunkFile": "./patterns/code.html"
     },
     {
       "name": "def-rows",
@@ -164,7 +170,10 @@
       "rules": [
         "finding = dot + bold-lead dry sentence with file/line specificity"
       ],
-      "slug": "diff"
+      "markup": "<div class=\"u-diff\" style=\"max-width:680px\">\n<div class=\"ln\"><span class=\"no\">41</span><span>  const key = await deriveKey(secret);</span></div>\n<div class=\"ln del\"><span class=\"no\">42</span><span>- cache.set(url, key);</span></div>\n<div class=\"ln add\"><span class=\"no\">42</span><span>+ cache.set(url, key, { ttl: 300 });</span></div>\n<div class=\"u-finding\"><span class=\"u-dot u-dot--warn\" style=\"flex:none\"></span><span><strong>unbounded cache before this change.</strong> ttl fixes growth, but eviction on key rotation is still missing — see <code>deriveKey</code>.</span></div>\n<div class=\"ln\"><span class=\"no\">43</span><span>  return key;</span></div>\n</div>",
+      "slug": "diff",
+      "chunk": "https://design.uinaf.dev/patterns/diff.html",
+      "chunkFile": "./patterns/diff.html"
     },
     {
       "name": "empty-state",
@@ -179,7 +188,10 @@
         "illustrations",
         "multi-paragraph explanations"
       ],
-      "slug": "empty-state"
+      "markup": "<div class=\"u-empty\" style=\"max-width:560px\">\n<p>no runs for this repo yet. install the github app or trigger one from the CLI.</p>\n<pre class=\"u-pre\">slopomatic init --run demo</pre>\n<a class=\"u-btn u-btn-primary\" href=\"#\">install app ↗</a>\n</div>",
+      "slug": "empty-state",
+      "chunk": "https://design.uinaf.dev/patterns/empty-state.html",
+      "chunkFile": "./patterns/empty-state.html"
     },
     {
       "name": "field",
@@ -240,7 +252,10 @@
       "never": [
         "a kicker that repeats the product name, studio name, or anything in the nav — `UINAF · REVIEW BOT` under a slopzapper nav is the canonical failure; no kicker beats a redundant one"
       ],
-      "slug": "hero"
+      "markup": "<div class=\"u-hero\">\n<span class=\"u-label\">AI code review · runs the code</span>\n<h1 class=\"u-hero-title\">PR review that actually runs the PR.</h1>\n<p class=\"u-hero-sub\">every PR gets cloned into a cloudflare sandbox, built, exercised, and reviewed. findings only, no vibes.</p>\n<div class=\"u-hero-actions\">\n<a class=\"u-btn u-btn-primary\" href=\"#\">add to github ↗</a>\n<a class=\"u-btn u-btn-ghost\" href=\"#\">read the docs</a>\n</div>\n</div>",
+      "slug": "hero",
+      "chunk": "https://design.uinaf.dev/patterns/hero.html",
+      "chunkFile": "./patterns/hero.html"
     },
     {
       "name": "list",
@@ -256,7 +271,10 @@
       "rules": [
         "row is one .u-link-plain when it links"
       ],
-      "slug": "list"
+      "markup": "<ul class=\"u-list u-list--ruled\" style=\"margin-top: 8px\">\n            <li class=\"u-list-row\" style=\"display: flex;gap: 16px;align-items: baseline\">\n              <span class=\"u-meta\">01</span\n              ><span\n                >install the github app on the repos you care about.</span\n              >\n            </li>\n            <li class=\"u-list-row\" style=\"display: flex;gap: 16px;align-items: baseline\">\n              <span class=\"u-meta\">02</span\n              ><span\n                >open a PR. a sandbox clones it, builds it, runs it.</span\n              >\n            </li>\n            <li class=\"u-list-row\" style=\"display: flex;gap: 16px;align-items: baseline\">\n              <span class=\"u-meta\">03</span\n              ><span\n                >one review lands. push fixes — it re-checks, quietly.</span\n              >\n            </li>\n          </ul>",
+      "slug": "list",
+      "chunk": "https://design.uinaf.dev/patterns/list.html",
+      "chunkFile": "./patterns/list.html"
     },
     {
       "name": "log",
@@ -267,7 +285,10 @@
       "rules": [
         "the level word takes the color — never the message"
       ],
-      "slug": "log"
+      "markup": "<pre class=\"u-log\" style=\"max-width:680px\"><span class=\"row\"><span class=\"t\">14:02:11.402</span><span class=\"lv\">info</span><span class=\"msg\">sandbox warm · pool=3 t=210ms</span></span>\n<span class=\"row\"><span class=\"t\">14:02:11.688</span><span class=\"lv\">info</span><span class=\"msg\">clone uinaf/slopzapper#512 @ 9c41f2e</span></span>\n<span class=\"row\" data-warn><span class=\"t\">14:02:14.010</span><span class=\"lv\">warn</span><span class=\"msg\">github rate remaining=41 · backing off 2s</span></span>\n<span class=\"row\"><span class=\"t\">14:02:19.334</span><span class=\"lv\">info</span><span class=\"msg\">build ok · 3.2s</span></span>\n<span class=\"row\" data-err><span class=\"t\">14:02:24.902</span><span class=\"lv\">error</span><span class=\"msg\">test FAIL webhook_dedupe_test.go:88 — retry scheduled</span></span></pre>",
+      "slug": "log",
+      "chunk": "https://design.uinaf.dev/patterns/log.html",
+      "chunkFile": "./patterns/log.html"
     },
     {
       "name": "menu",
@@ -281,7 +302,10 @@
         "one danger item max, ruled off with <hr>",
         "toggle via hidden attribute (css ships [hidden]{display:none})"
       ],
-      "slug": "menu"
+      "markup": "<div class=\"u-menu\"><button class=\"u-btn u-btn-sm\" id=\"menu-btn\" type=\"button\" aria-haspopup=\"menu\">···</button>\n<div class=\"u-menu-list\" id=\"menu-list\" hidden>\n<button type=\"button\">re-review</button>\n<button type=\"button\">copy link</button>\n<a href=\"#\">open PR ↗</a>\n<hr>\n<button type=\"button\" class=\"danger\">delete run</button>\n</div></div>",
+      "slug": "menu",
+      "chunk": "https://design.uinaf.dev/patterns/menu.html",
+      "chunkFile": "./patterns/menu.html"
     },
     {
       "name": "micro-label",
@@ -315,9 +339,13 @@
       "use": "confirm destructive actions",
       "rules": [
         "title / body / primary+ghost pair; cancel is a button — no ✕",
-        "overlay click + esc close; toggle via hidden attribute"
+        "overlay click + esc close; toggle via hidden attribute",
+        "the overlay carries `hidden`; the app toggles it — a copied modal must not cover the page on load"
       ],
-      "slug": "modal"
+      "markup": "<div class=\"u-overlay\" hidden>\n<div class=\"u-modal u-ticks\">\n<h2 class=\"u-modal-title\">uninstall slopzapper?</h2>\n<p class=\"u-modal-body\">removes the app from all 12 repos. runs are kept 30 days, then deleted. reinstalling restores nothing.</p>\n<div class=\"u-modal-actions\"><button class=\"u-btn u-btn-ghost\" id=\"cancel\" type=\"button\">cancel</button><button class=\"u-btn u-btn-primary\" type=\"button\">uninstall</button></div>\n</div>\n</div>",
+      "slug": "modal",
+      "chunk": "https://design.uinaf.dev/patterns/modal.html",
+      "chunkFile": "./patterns/modal.html"
     },
     {
       "name": "notice",
@@ -328,7 +356,10 @@
       "rules": [
         "text stays muted — the dot is the signal"
       ],
-      "slug": "notice"
+      "markup": "<div class=\"u-notice\"><span class=\"u-dot u-dot--ok\" style=\"flex:none\"></span><span>webhook verified. reviews start on the next PR.</span></div>",
+      "slug": "notice",
+      "chunk": "https://design.uinaf.dev/patterns/notice.html",
+      "chunkFile": "./patterns/notice.html"
     },
     {
       "name": "pagination",
@@ -387,7 +418,10 @@
       "never": [
         "bars, percentages, spinners — progress is countable or it isn't shown"
       ],
-      "slug": "progress"
+      "markup": "<span class=\"u-progress\"><i data-on></i><i data-on></i><i data-live></i><i></i><i></i><span>2/5 units</span></span>",
+      "slug": "progress",
+      "chunk": "https://design.uinaf.dev/patterns/progress.html",
+      "chunkFile": "./patterns/progress.html"
     },
     {
       "name": "prose",
@@ -400,7 +434,10 @@
       "rules": [
         "three link families, never mixed on one surface: prose (dim underline, phosphor hover) · plain chrome (opacity fade) · whole-card"
       ],
-      "slug": "prose"
+      "markup": "<p class=\"u-prose\" style=\"max-width:52ch\">underline is the affordance; hover goes phosphor. write to <a class=\"u-link\" href=\"#\">dev@uinaf.dev</a> or read the <a class=\"u-link\" href=\"#\">source ↗</a>. the underline never disappears.</p>",
+      "slug": "prose",
+      "chunk": "https://design.uinaf.dev/patterns/prose.html",
+      "chunkFile": "./patterns/prose.html"
     },
     {
       "name": "segmented",
@@ -415,7 +452,10 @@
       "never": [
         "actions in a segmented control"
       ],
-      "slug": "segmented"
+      "markup": "<div class=\"u-segmented\" id=\"seg\"><button type=\"button\" aria-pressed=\"true\">7d</button><button type=\"button\" aria-pressed=\"false\">30d</button><button type=\"button\" aria-pressed=\"false\">90d</button></div>",
+      "slug": "segmented",
+      "chunk": "https://design.uinaf.dev/patterns/segmented.html",
+      "chunkFile": "./patterns/segmented.html"
     },
     {
       "name": "shell",
@@ -429,7 +469,10 @@
         "if unsure, narrow",
         "never widen a shell to fit one element"
       ],
-      "slug": "shell"
+      "markup": "<header class=\"u-topbar\"><div class=\"u-shell-base u-topbar-row\">…</div></header>\n<main class=\"u-shell-base\">…</main>",
+      "slug": "shell",
+      "chunk": "https://design.uinaf.dev/patterns/shell.html",
+      "chunkFile": "./patterns/shell.html"
     },
     {
       "name": "site-header",
@@ -447,7 +490,10 @@
       "never": [
         "on product pages — that's what the topbar is for"
       ],
-      "slug": "site-header"
+      "markup": "<div class=\"u-header\" style=\"margin-bottom:0\">\n<span class=\"u-header-mark\"><img src=\"https://cdn.uinaf.dev/images/uinaf-computer.png\" alt=\"\"><span class=\"u-header-name\">uinaf</span></span>\n<p class=\"u-header-tagline\">we bet you've seen us before</p>\n<nav class=\"u-nav\"><a class=\"u-link-plain\" href=\"#\">blog</a><span class=\"u-sep\">·</span><a class=\"u-link-plain\" href=\"#\">projects</a><span class=\"u-sep\">·</span><a class=\"u-link-plain\" href=\"#\">status</a></nav>\n</div>",
+      "slug": "site-header",
+      "chunk": "https://design.uinaf.dev/patterns/site-header.html",
+      "chunkFile": "./patterns/site-header.html"
     },
     {
       "name": "skeleton",
@@ -533,7 +579,10 @@
       "rules": [
         "current = fg + 1px underline; tabs switch views, never trigger actions"
       ],
-      "slug": "tabs"
+      "markup": "<nav class=\"u-tabs\" style=\"max-width:520px\"><a href=\"#\" aria-current=\"page\">findings</a><a href=\"#\">files</a><a href=\"#\">timeline</a><a href=\"#\">raw</a></nav>",
+      "slug": "tabs",
+      "chunk": "https://design.uinaf.dev/patterns/tabs.html",
+      "chunkFile": "./patterns/tabs.html"
     },
     {
       "name": "tag+dot",
@@ -569,7 +618,10 @@
       "rules": [
         "the accent caret is the ONE thing allowed to blink"
       ],
-      "slug": "terminal"
+      "markup": "<pre class=\"u-term\" style=\"max-width:680px\"><span class=\"ps1\">$</span> attach put ./shot.png --repo uinaf/slopzapper --pr 512\n<span class=\"out\">uploading… 482.1 KiB</span>\n<span class=\"ok\">✓</span> <span class=\"out\">https://attach.uinaf.dev/p/Jw5tQUBK0ao5rRzItyF0Fg</span>\n<span class=\"ps1\">$</span> <span class=\"u-caret\"></span></pre>",
+      "slug": "terminal",
+      "chunk": "https://design.uinaf.dev/patterns/terminal.html",
+      "chunkFile": "./patterns/terminal.html"
     },
     {
       "name": "timeline",
@@ -601,7 +653,10 @@
         "gone in 3s, max 3 stacked",
         "past tense: `saved.` not `saving your changes!`"
       ],
-      "slug": "toast"
+      "markup": "<div class=\"u-toasts\">\n<div class=\"u-toast\"><span class=\"u-dot u-dot--ok\"></span>saved.</div>\n</div>",
+      "slug": "toast",
+      "chunk": "https://design.uinaf.dev/patterns/toast.html",
+      "chunkFile": "./patterns/toast.html"
     },
     {
       "name": "toolbar",
@@ -612,7 +667,10 @@
       "rules": [
         "at most two filters — a third means the table needs a redesign"
       ],
-      "slug": "toolbar"
+      "markup": "<div class=\"u-toolbar\">\n<input class=\"u-input\" type=\"search\" placeholder=\"search runs…\">\n<select class=\"u-select\"><option>all repos</option><option>uinaf/slopzapper</option><option>uinaf/healthd</option></select>\n<span class=\"count\">128 runs</span>\n</div>",
+      "slug": "toolbar",
+      "chunk": "https://design.uinaf.dev/patterns/toolbar.html",
+      "chunkFile": "./patterns/toolbar.html"
     },
     {
       "name": "tooltip",
