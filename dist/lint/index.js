@@ -435,7 +435,7 @@ var checkMarkup = (source, file, options = {}) => {
   }
   for (const match of source.matchAll(/<button\b([^>]{0,2000})>/gi)) {
     const attributes = match[1] ?? "";
-    if (/\btype\s{0,8}=/i.test(attributes)) continue;
+    if (/(?:^|\s)type\s{0,8}=/i.test(attributes)) continue;
     add(
       match.index ?? 0,
       "button-type",

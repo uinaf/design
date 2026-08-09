@@ -180,7 +180,15 @@ describe("button-type", () => {
     );
   });
   it("does not mistake another attribute ending in type", () => {
+    // A word boundary matches inside `data-type=` too, which would let a bare
+    // button pass. Both spellings must still report.
     expect(rules(markup('<button data-mimetype="x" class="u-btn">go</button>'))).toContain(
+      "button-type",
+    );
+    expect(rules(markup('<button data-type="x" class="u-btn">go</button>'))).toContain(
+      "button-type",
+    );
+    expect(rules(markup('<button formtype="x" class="u-btn">go</button>'))).toContain(
       "button-type",
     );
   });
