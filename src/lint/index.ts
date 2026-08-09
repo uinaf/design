@@ -54,7 +54,18 @@ export const collectFiles = (roots: string[], ignore: string[] = []): string[] =
     seen.add(real);
     if (stat.isFile()) {
       const ext = path.extname(target).toLowerCase();
-      if ((CSS_EXTENSIONS.has(ext) || MARKUP_EXTENSIONS.has(ext)) && !ignored(target)) {
+      // Skipped directories apply to explicit file arguments too. A caller
+      // passing a glob or a `git ls-files` result should never end up linting
+      // its own dependencies.
+      const inSkipped = target
+        .split(path.sep)
+        .slice(0, -1)
+        .some((segment) => SKIP_DIRECTORIES.has(segment));
+      if (
+        (CSS_EXTENSIONS.has(ext) || MARKUP_EXTENSIONS.has(ext)) &&
+        !ignored(target) &&
+        !inSkipped
+      ) {
         found.push(target);
       }
       return;

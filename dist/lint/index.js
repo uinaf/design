@@ -482,7 +482,8 @@ var collectFiles = (roots, ignore = []) => {
     seen.add(real);
     if (stat.isFile()) {
       const ext = path.extname(target).toLowerCase();
-      if ((CSS_EXTENSIONS.has(ext) || MARKUP_EXTENSIONS.has(ext)) && !ignored(target)) {
+      const inSkipped = target.split(path.sep).slice(0, -1).some((segment) => SKIP_DIRECTORIES.has(segment));
+      if ((CSS_EXTENSIONS.has(ext) || MARKUP_EXTENSIONS.has(ext)) && !ignored(target) && !inSkipped) {
         found.push(target);
       }
       return;

@@ -149,14 +149,16 @@ another leaves the count at one and passes. It stops the codebase getting worse,
 which is the point during a migration — it does not certify that new work is
 clean.
 
-For that, run the strict check against what you actually changed, and keep the
-ratchet as the repo-wide floor:
+For that, run the strict check against what you actually changed. Note that a
+plain `git diff HEAD` is the wrong tool here: it misses untracked files — a brand
+new component is the most common case — and returns nothing once the agent has
+committed. Compare against the base branch and include untracked files:
 
 ```json
 {
   "scripts": {
     "design:check": "design-check src --ratchet",
-    "design:check:changed": "design-check $(git diff --name-only --diff-filter=d HEAD | grep -E '\\.(css|html|jsx|tsx)$' | tr '\\n' ' ')"
+    "design:check:changed": "design-check $(git diff --name-only --diff-filter=d origin/main...HEAD; git ls-files --others --exclude-standard | grep -E '\\.(css|html|jsx|tsx)$' || true)"
   }
 }
 ```

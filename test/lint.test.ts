@@ -632,3 +632,22 @@ describe("topbar-single-row is scoped to one topbar", () => {
     );
   });
 });
+
+describe("skipped directories apply to explicit paths", () => {
+  it("never lints a dependency, even when handed the file directly", async () => {
+    const { collectFiles } = await import("../src/lint/index");
+    const { mkdtempSync, mkdirSync, writeFileSync } = await import("node:fs");
+    const { join } = await import("node:path");
+    const { tmpdir } = await import("node:os");
+    const dir = mkdtempSync(join(tmpdir(), "design-skip-"));
+    mkdirSync(join(dir, "node_modules", "pkg"), { recursive: true });
+    mkdirSync(join(dir, "src"), { recursive: true });
+    const dep = join(dir, "node_modules", "pkg", "index.html");
+    const own = join(dir, "src", "page.html");
+    writeFileSync(dep, "<p>x</p>");
+    writeFileSync(own, "<p>y</p>");
+    // A `git ls-files` result in a repo with a broken .gitignore looks like this.
+    const files = collectFiles([dep, own]);
+    expect(files).toEqual([own]);
+  });
+});
