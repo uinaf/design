@@ -139,9 +139,29 @@ Then switch the script to ratchet mode:
 }
 ```
 
-It now fails only when a violation count _rises_, so new work is held to green
-while the existing backlog migrates gradually. When a count falls, the check says
-so; re-record to lock the improvement in.
+It now fails only when a violation count _rises_, so the existing backlog can
+migrate gradually instead of blocking every change. When a count falls, the check
+says so; re-record to lock the improvement in.
+
+Be clear about what this does and does not guarantee. It is a non-increasing
+count, not a clean bill of health: removing one `radius-ceiling` and adding
+another leaves the count at one and passes. It stops the codebase getting worse,
+which is the point during a migration — it does not certify that new work is
+clean.
+
+For that, run the strict check against what you actually changed, and keep the
+ratchet as the repo-wide floor:
+
+```json
+{
+  "scripts": {
+    "design:check": "design-check src --ratchet",
+    "design:check:changed": "design-check $(git diff --name-only --diff-filter=d HEAD | grep -E '\\.(css|html|jsx|tsx)$' | tr '\\n' ' ')"
+  }
+}
+```
+
+Point the Stop-hook at whichever matches how strict you want the repo to be.
 
 ## Checking it works
 
