@@ -10,6 +10,9 @@
 
 - Never commit Berkeley Mono binaries or a `fonts/` directory.
 - Font URLs in tokens must stay on `https://cdn.uinaf.dev/fonts/berkeley-mono/...`.
+- CSS source is the pair `src/tokens.css` + `src/components.css`; `tokens.css` `@import`s the other, so consumers import one file and the two must stay side by side in `dist/css/` and `guide/`.
+- Handoff CSS is adopted **content-verbatim, formatter-normalized** — `vp fmt` owns layout, hex casing, and trailing zeros. Never add `src/*.css` to a formatter ignore to preserve upstream byte formatting.
+- `dist/tokens.json` is generated. Every custom property must match a rule in `groupRules` (`scripts/build.ts`); an ungrouped token fails the build by design.
 - Spec: `DESIGN.md`. Skill: `.agents/skills/uinaf-design/`.
 - Guide static root is `guide/`. `guide/index.html` is hand-authored; `pnpm run guide:sync` refreshes tokens + `guide/preview/` from `preview/`.
 - Keep tracker / GitHub Project links out of the public guide and out of package-facing docs (`README.md`, `DESIGN.md`).

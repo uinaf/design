@@ -28,6 +28,8 @@
     },
     "./css": "./dist/css/tokens.css",
     "./tokens.css": "./dist/css/tokens.css",
+    "./components.css": "./dist/css/components.css",
+    "./tokens.json": "./dist/tokens.json",
     "./cdn": {
       "types": "./dist/cdn.d.ts",
       "import": "./dist/cdn.js",

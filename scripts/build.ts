@@ -3,16 +3,65 @@ import path from "node:path";
 import { CDN } from "../src/cdn.ts";
 
 const root = path.resolve(import.meta.dirname, "..");
-const cssSrc = path.join(root, "src/tokens.css");
-const css = fs.readFileSync(cssSrc, "utf8");
+const css = fs.readFileSync(path.join(root, "src/tokens.css"), "utf8");
 
 fs.mkdirSync(path.join(root, "dist/css"), { recursive: true });
 fs.writeFileSync(path.join(root, "dist/css/tokens.css"), css);
+fs.copyFileSync(path.join(root, "src/components.css"), path.join(root, "dist/css/components.css"));
 
 const vars = [...css.matchAll(/--([a-z0-9-]+):\s*([^;]+);/gi)].map(
   (m) => [m[1], m[2].trim()] as const,
 );
 const obj = Object.fromEntries(vars);
+
+/** Ordered prefix rules; first match wins. Every token must land in exactly one group. */
+const groupRules: ReadonlyArray<readonly [string, RegExp]> = [
+  ["typography", /^(font|text|leading|tracking|weight)-/],
+  ["neutrals", /^neutral-/],
+  ["accent", /^accent(-|$)/],
+  ["links", /^link(-|$)/],
+  ["slime", /^slime-/],
+  ["viz", /^viz-/],
+  ["status", /^(ok|warn|error|info)$/],
+  ["spacing", /^sp-/],
+  ["radius", /^radius-/],
+  ["borders", /^hairline(-|$)/],
+  ["shadows", /^shadow-/],
+  ["motion", /^(ease|duration|stagger)-/],
+  ["layout", /^container-/],
+  ["semantic", /^(bg|fg|border|tick)(-|$)/],
+];
+
+const groups: Record<string, Record<string, string>> = Object.fromEntries(
+  groupRules.map(([name]) => [name, {}]),
+);
+const ungrouped: string[] = [];
+for (const [name, value] of vars) {
+  const rule = groupRules.find(([, pattern]) => pattern.test(name));
+  if (!rule) {
+    ungrouped.push(name);
+    continue;
+  }
+  groups[rule[0]][`--${name}`] = value;
+}
+if (ungrouped.length > 0) {
+  throw new Error(
+    `tokens.json: no group for ${ungrouped.map((n) => `--${n}`).join(", ")} — add a rule to groupRules in scripts/build.ts`,
+  );
+}
+
+fs.writeFileSync(
+  path.join(root, "dist/tokens.json"),
+  `${JSON.stringify(
+    {
+      $schema: "uinaf design tokens v2",
+      $source: "src/tokens.css (generated in the build — do not hand-edit)",
+      groups,
+    },
+    null,
+    2,
+  )}\n`,
+);
 fs.writeFileSync(path.join(root, "dist/tokens.flat.json"), `${JSON.stringify(obj, null, 2)}\n`);
 fs.writeFileSync(
   path.join(root, "dist/tokens.js"),
@@ -46,4 +95,4 @@ fs.writeFileSync(
   `export declare const CDN: ${literalType(CDN)}\n`,
 );
 
-console.log(`built ${vars.length} tokens`);
+console.log(`built ${vars.length} tokens across ${Object.keys(groups).length} groups`);

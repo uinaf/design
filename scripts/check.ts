@@ -8,12 +8,37 @@ const fail = (message: string): never => {
   process.exit(1);
 };
 
-const css = fs.readFileSync(path.join(root, "dist/css/tokens.css"), "utf8");
-if (css.includes("./fonts/") || css.includes("berkeley-mono-variable-regular.woff2")) {
-  fail("tokens.css must not embed local font file URLs");
+for (const name of ["tokens.css", "components.css"]) {
+  const sheet = fs.readFileSync(path.join(root, "dist/css", name), "utf8");
+  if (sheet.includes("./fonts/") || sheet.includes("berkeley-mono-variable-regular.woff2")) {
+    fail(`${name} must not embed local font file URLs`);
+  }
 }
-if (!css.includes("cdn.uinaf.dev/fonts/berkeley-mono")) {
-  fail("tokens.css must reference CDN Berkeley Mono");
+
+const css = fs.readFileSync(path.join(root, "dist/css/tokens.css"), "utf8");
+if (!css.includes('@import url("https://cdn.uinaf.dev/fonts/berkeley-mono')) {
+  fail("tokens.css must @import CDN Berkeley Mono");
+}
+if (!css.includes('@import url("./components.css")')) {
+  fail("tokens.css must @import ./components.css — consumers import one file");
+}
+
+const tokens = JSON.parse(fs.readFileSync(path.join(root, "dist/tokens.json"), "utf8")) as {
+  groups: Record<string, Record<string, string>>;
+};
+const flat = JSON.parse(
+  fs.readFileSync(path.join(root, "dist/tokens.flat.json"), "utf8"),
+) as Record<string, string>;
+const grouped = Object.values(tokens.groups).flatMap((g) => Object.entries(g));
+if (grouped.length !== Object.keys(flat).length) {
+  fail(
+    `tokens.json has ${grouped.length} tokens, tokens.flat.json has ${Object.keys(flat).length}`,
+  );
+}
+for (const [name, value] of grouped) {
+  if (flat[name.slice(2)] !== value) {
+    fail(`tokens.json ${name} does not match tokens.flat.json`);
+  }
 }
 
 if (fs.existsSync(path.join(root, "fonts"))) {
