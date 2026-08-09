@@ -1,3 +1,4 @@
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { checkCss } from "./rules-css.ts";
@@ -101,6 +102,47 @@ const applySuppressions = (source: string, violations: Violation[]): Violation[]
     (violation) =>
       !rules.some((s) => s.line === violation.line && (s.rule === "" || s.rule === violation.rule)),
   );
+};
+
+/**
+ * Files this branch touched: committed changes against the base, uncommitted
+ * edits to tracked files, and untracked new files. All three matter — a Stop
+ * hook runs mid-work, so the most common case is an edit that is not committed
+ * yet, and a brand new component is untracked.
+ *
+ * Enumerated through git argv rather than a shell pipeline, so a filename with
+ * a space in it survives.
+ */
+export const changedFiles = (base = "origin/main"): string[] => {
+  const git = (args: string[]): string[] => {
+    try {
+      return execFileSync("git", args, { encoding: "utf8" }).split("\n").filter(Boolean);
+    } catch {
+      return [];
+    }
+  };
+  const hasBase = (): boolean => {
+    try {
+      execFileSync("git", ["rev-parse", "--verify", "--quiet", base], { stdio: "ignore" });
+      return true;
+    } catch {
+      return false;
+    }
+  };
+  const linted = (file: string): boolean => {
+    const ext = path.extname(file).toLowerCase();
+    return CSS_EXTENSIONS.has(ext) || MARKUP_EXTENSIONS.has(ext);
+  };
+  return [
+    ...new Set([
+      ...(hasBase() ? git(["diff", "--name-only", "--diff-filter=d", `${base}...HEAD`]) : []),
+      ...git(["diff", "--name-only", "--diff-filter=d", "HEAD"]),
+      ...git(["ls-files", "--others", "--exclude-standard"]),
+    ]),
+  ]
+    .filter(linted)
+    .filter((file) => fs.existsSync(file))
+    .sort();
 };
 
 export const checkFile = (file: string, options: CheckOptions = {}): Violation[] => {

@@ -651,3 +651,13 @@ describe("skipped directories apply to explicit paths", () => {
     expect(files).toEqual([own]);
   });
 });
+
+describe("changedFiles", () => {
+  it("only returns files the linter can actually check", async () => {
+    const { changedFiles } = await import("../src/lint/index");
+    // Runs against this repo; whatever it returns must be lintable and real.
+    for (const file of changedFiles()) {
+      expect(file).toMatch(/\.(css|html|htm|jsx|tsx|astro|svelte|vue)$/);
+    }
+  });
+});

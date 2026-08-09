@@ -1,4 +1,5 @@
 // src/lint/index.ts
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -507,6 +508,34 @@ var applySuppressions = (source, violations) => {
     (violation) => !rules.some((s) => s.line === violation.line && (s.rule === "" || s.rule === violation.rule))
   );
 };
+var changedFiles = (base = "origin/main") => {
+  const git = (args) => {
+    try {
+      return execFileSync("git", args, { encoding: "utf8" }).split("\n").filter(Boolean);
+    } catch {
+      return [];
+    }
+  };
+  const hasBase = () => {
+    try {
+      execFileSync("git", ["rev-parse", "--verify", "--quiet", base], { stdio: "ignore" });
+      return true;
+    } catch {
+      return false;
+    }
+  };
+  const linted = (file) => {
+    const ext = path.extname(file).toLowerCase();
+    return CSS_EXTENSIONS.has(ext) || MARKUP_EXTENSIONS.has(ext);
+  };
+  return [
+    .../* @__PURE__ */ new Set([
+      ...hasBase() ? git(["diff", "--name-only", "--diff-filter=d", `${base}...HEAD`]) : [],
+      ...git(["diff", "--name-only", "--diff-filter=d", "HEAD"]),
+      ...git(["ls-files", "--others", "--exclude-standard"])
+    ])
+  ].filter(linted).filter((file) => fs.existsSync(file)).sort();
+};
 var checkFile = (file, options = {}) => {
   const source = fs.readFileSync(file, "utf8");
   const ext = path.extname(file).toLowerCase();
@@ -568,6 +597,7 @@ var summarise = (violations) => {
   return `${plural(errors, "error")}, ${plural(warnings, "warning")}`;
 };
 export {
+  changedFiles,
   check,
   checkCss,
   checkFile,

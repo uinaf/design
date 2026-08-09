@@ -5,6 +5,7 @@ import fs2 from "node:fs";
 import path2 from "node:path";
 
 // src/lint/index.ts
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -513,6 +514,34 @@ var applySuppressions = (source, violations2) => {
     (violation) => !rules.some((s) => s.line === violation.line && (s.rule === "" || s.rule === violation.rule))
   );
 };
+var changedFiles = (base = "origin/main") => {
+  const git = (args) => {
+    try {
+      return execFileSync("git", args, { encoding: "utf8" }).split("\n").filter(Boolean);
+    } catch {
+      return [];
+    }
+  };
+  const hasBase = () => {
+    try {
+      execFileSync("git", ["rev-parse", "--verify", "--quiet", base], { stdio: "ignore" });
+      return true;
+    } catch {
+      return false;
+    }
+  };
+  const linted = (file) => {
+    const ext = path.extname(file).toLowerCase();
+    return CSS_EXTENSIONS.has(ext) || MARKUP_EXTENSIONS.has(ext);
+  };
+  return [
+    .../* @__PURE__ */ new Set([
+      ...hasBase() ? git(["diff", "--name-only", "--diff-filter=d", `${base}...HEAD`]) : [],
+      ...git(["diff", "--name-only", "--diff-filter=d", "HEAD"]),
+      ...git(["ls-files", "--others", "--exclude-standard"])
+    ])
+  ].filter(linted).filter((file) => fs.existsSync(file)).sort();
+};
 var checkFile = (file, options = {}) => {
   const source = fs.readFileSync(file, "utf8");
   const ext = path.extname(file).toLowerCase();
@@ -589,6 +618,8 @@ if (flag("help")) {
   design-check --ratchet         compare against ${RATCHET_FILE}, fail if any count rises
   design-check --update-ratchet  write the current counts as the new baseline
   design-check --json            machine-readable output
+  design-check --changed         only files this branch touched (vs origin/main)
+  design-check --base <ref>      base for --changed (default origin/main)
   design-check --ignore <part>   skip paths containing this substring (repeatable)
   design-check --abbreviations A,B  extra abbreviations allowed to keep their caps
 
@@ -602,7 +633,9 @@ var KNOWN_FLAGS = /* @__PURE__ */ new Set([
   "--update-ratchet",
   "--json",
   "--ignore",
-  "--abbreviations"
+  "--abbreviations",
+  "--changed",
+  "--base"
 ]);
 var unknown = argv.filter((arg) => arg.startsWith("--") && !KNOWN_FLAGS.has(arg));
 if (unknown.length > 0) {
@@ -620,8 +653,17 @@ var abbreviationsArg = value("abbreviations");
 var paths = argv.filter((arg, index) => {
   if (arg.startsWith("--")) return false;
   const previous = argv[index - 1];
-  return previous !== "--ignore" && previous !== "--abbreviations";
+  return previous !== "--ignore" && previous !== "--abbreviations" && previous !== "--base";
 });
+if (flag("changed")) {
+  const touched = changedFiles(value("base") ?? "origin/main");
+  if (touched.length === 0) {
+    console.log("design:check clean \u2014 no changed files to check");
+    process.exit(0);
+  }
+  paths.length = 0;
+  paths.push(...touched);
+}
 var violations;
 try {
   violations = check({

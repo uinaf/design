@@ -149,19 +149,22 @@ another leaves the count at one and passes. It stops the codebase getting worse,
 which is the point during a migration — it does not certify that new work is
 clean.
 
-For that, run the strict check against what you actually changed. Note that a
-plain `git diff HEAD` is the wrong tool here: it misses untracked files — a brand
-new component is the most common case — and returns nothing once the agent has
-committed. Compare against the base branch and include untracked files:
+For that, use `--changed`, which checks only the files this branch touched:
 
 ```json
 {
   "scripts": {
     "design:check": "design-check src --ratchet",
-    "design:check:changed": "design-check $(git diff --name-only --diff-filter=d origin/main...HEAD; git ls-files --others --exclude-standard | grep -E '\\.(css|html|jsx|tsx)$' || true)"
+    "design:check:changed": "design-check --changed"
   }
 }
 ```
+
+It covers all three ways a file can be "changed" — committed against the base
+branch, edited but not committed, and untracked. A Stop-hook runs mid-work, so
+uncommitted and untracked are the common cases, and a shell pipeline built on
+`git diff HEAD` misses both. It also enumerates through git directly, so a
+filename containing a space survives. Override the base with `--base <ref>`.
 
 Point the Stop-hook at whichever matches how strict you want the repo to be.
 
