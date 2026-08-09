@@ -10,5 +10,11 @@
     "types": ["node"],
     "lib": ["ES2022"]
   },
-  "include": ["src/**/*.ts", "scripts/**/*.ts", "vite.config.ts", "test/**/*.ts"]
+  "include": [
+    "src/**/*.ts",
+    "scripts/**/*.ts",
+    "vite.config.ts",
+    "test/**/*.ts",
+    "worker-configuration.d.ts"
+  ]
 }
