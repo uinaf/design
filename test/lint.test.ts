@@ -679,3 +679,24 @@ describe("--changed fails closed", () => {
     }
   });
 });
+
+describe("skip names are judged inside the project only", () => {
+  it("does not suppress a repo that happens to live under a skipped name", async () => {
+    const { collectFiles } = await import("../src/lint/index");
+    const { mkdtempSync, mkdirSync, writeFileSync } = await import("node:fs");
+    const { join } = await import("node:path");
+    const { tmpdir } = await import("node:os");
+    // /…/dist/myrepo/src/page.html — `dist` is an ancestor, not the project's.
+    const base = mkdtempSync(join(tmpdir(), "design-anc-"));
+    const repo = join(base, "dist", "myrepo");
+    mkdirSync(join(repo, "src"), { recursive: true });
+    mkdirSync(join(repo, "node_modules", "pkg"), { recursive: true });
+    const own = join(repo, "src", "page.html");
+    const dep = join(repo, "node_modules", "pkg", "index.html");
+    writeFileSync(own, "<p>x</p>");
+    writeFileSync(dep, "<p>y</p>");
+    // Judged against the repo root: `dist` above it is irrelevant, but
+    // node_modules inside it is still skipped.
+    expect(collectFiles([own, dep], [], repo)).toEqual([own]);
+  });
+});

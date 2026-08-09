@@ -477,7 +477,7 @@ setJsxStyleChecker((property, value2, classes) => {
   const selector = classes.split(/\s+/).filter(Boolean).map((c) => `.${c}`).join("") || "*";
   return checkCss(`${selector}{${property}:${value2}}`, "jsx").map((v) => ({ ...v, line: 1 }));
 });
-var collectFiles = (roots, ignore2 = []) => {
+var collectFiles = (roots, ignore2 = [], relativeTo = process.cwd()) => {
   const found = [];
   const ignored = (file) => ignore2.some((pattern) => file.includes(pattern));
   const seen = /* @__PURE__ */ new Set();
@@ -489,7 +489,9 @@ var collectFiles = (roots, ignore2 = []) => {
     seen.add(real);
     if (stat.isFile()) {
       const ext = path.extname(target).toLowerCase();
-      const inSkipped = target.split(path.sep).slice(0, -1).some((segment) => SKIP_DIRECTORIES.has(segment));
+      const within = path.relative(relativeTo, target);
+      const judged = within && !within.startsWith("..") ? within : target;
+      const inSkipped = judged.split(path.sep).slice(0, -1).some((segment) => SKIP_DIRECTORIES.has(segment));
       if ((CSS_EXTENSIONS.has(ext) || MARKUP_EXTENSIONS.has(ext)) && !ignored(target) && !inSkipped) {
         found.push(target);
       }
@@ -564,6 +566,17 @@ var changedFiles = (base = "origin/main") => {
     ])
   ].filter(linted).map((file) => path.resolve(repoRoot, file)).filter((file) => fs.existsSync(file)).sort();
 };
+var repoRootOf = (files) => {
+  if (files.length === 0) return void 0;
+  const split = files.map((f) => path.dirname(f).split(path.sep));
+  const common = [];
+  for (let i = 0; i < split[0].length; i += 1) {
+    const segment = split[0][i];
+    if (split.every((parts) => parts[i] === segment)) common.push(segment);
+    else break;
+  }
+  return common.join(path.sep) || path.sep;
+};
 var checkFile = (file, options = {}) => {
   const source = fs.readFileSync(file, "utf8");
   const ext = path.extname(file).toLowerCase();
@@ -593,7 +606,9 @@ var check = (options = {}) => {
   if (missing.length > 0) {
     throw new Error(`no such path: ${missing.join(", ")}`);
   }
-  return collectFiles(roots, options.ignore ?? []).flatMap((file) => checkFile(file, options));
+  return collectFiles(roots, options.ignore ?? [], options.relativeTo).flatMap(
+    (file) => checkFile(file, options)
+  );
 };
 var countByRule = (violations2) => {
   const counts2 = {};
@@ -677,6 +692,7 @@ var paths = argv.filter((arg, index) => {
   const previous = argv[index - 1];
   return previous !== "--ignore" && previous !== "--abbreviations" && previous !== "--base";
 });
+var changedRoot;
 if (flag("changed")) {
   let touched;
   try {
@@ -691,12 +707,14 @@ if (flag("changed")) {
   }
   paths.length = 0;
   paths.push(...touched);
+  changedRoot = repoRootOf(touched);
 }
 var violations;
 try {
   violations = check({
     paths,
     ignore,
+    relativeTo: changedRoot,
     abbreviations: abbreviationsArg ? abbreviationsArg.split(",") : void 0
   });
 } catch (error) {

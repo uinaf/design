@@ -4,6 +4,7 @@ import path from "node:path";
 import {
   changedFiles,
   check,
+  repoRootOf,
   compareRatchet,
   countByRule,
   formatViolation,
@@ -76,6 +77,7 @@ const paths = argv.filter((arg, index) => {
   return previous !== "--ignore" && previous !== "--abbreviations" && previous !== "--base";
 });
 
+let changedRoot: string | undefined;
 if (flag("changed")) {
   let touched: string[];
   try {
@@ -92,6 +94,7 @@ if (flag("changed")) {
   }
   paths.length = 0;
   paths.push(...touched);
+  changedRoot = repoRootOf(touched);
 }
 
 let violations;
@@ -99,6 +102,7 @@ try {
   violations = check({
     paths,
     ignore,
+    relativeTo: changedRoot,
     abbreviations: abbreviationsArg ? abbreviationsArg.split(",") : undefined,
   });
 } catch (error) {

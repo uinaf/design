@@ -471,7 +471,7 @@ setJsxStyleChecker((property, value, classes) => {
   const selector = classes.split(/\s+/).filter(Boolean).map((c) => `.${c}`).join("") || "*";
   return checkCss(`${selector}{${property}:${value}}`, "jsx").map((v) => ({ ...v, line: 1 }));
 });
-var collectFiles = (roots, ignore = []) => {
+var collectFiles = (roots, ignore = [], relativeTo = process.cwd()) => {
   const found = [];
   const ignored = (file) => ignore.some((pattern) => file.includes(pattern));
   const seen = /* @__PURE__ */ new Set();
@@ -483,7 +483,9 @@ var collectFiles = (roots, ignore = []) => {
     seen.add(real);
     if (stat.isFile()) {
       const ext = path.extname(target).toLowerCase();
-      const inSkipped = target.split(path.sep).slice(0, -1).some((segment) => SKIP_DIRECTORIES.has(segment));
+      const within = path.relative(relativeTo, target);
+      const judged = within && !within.startsWith("..") ? within : target;
+      const inSkipped = judged.split(path.sep).slice(0, -1).some((segment) => SKIP_DIRECTORIES.has(segment));
       if ((CSS_EXTENSIONS.has(ext) || MARKUP_EXTENSIONS.has(ext)) && !ignored(target) && !inSkipped) {
         found.push(target);
       }
@@ -558,6 +560,17 @@ var changedFiles = (base = "origin/main") => {
     ])
   ].filter(linted).map((file) => path.resolve(repoRoot, file)).filter((file) => fs.existsSync(file)).sort();
 };
+var repoRootOf = (files) => {
+  if (files.length === 0) return void 0;
+  const split = files.map((f) => path.dirname(f).split(path.sep));
+  const common = [];
+  for (let i = 0; i < split[0].length; i += 1) {
+    const segment = split[0][i];
+    if (split.every((parts) => parts[i] === segment)) common.push(segment);
+    else break;
+  }
+  return common.join(path.sep) || path.sep;
+};
 var checkFile = (file, options = {}) => {
   const source = fs.readFileSync(file, "utf8");
   const ext = path.extname(file).toLowerCase();
@@ -587,7 +600,9 @@ var check = (options = {}) => {
   if (missing.length > 0) {
     throw new Error(`no such path: ${missing.join(", ")}`);
   }
-  return collectFiles(roots, options.ignore ?? []).flatMap((file) => checkFile(file, options));
+  return collectFiles(roots, options.ignore ?? [], options.relativeTo).flatMap(
+    (file) => checkFile(file, options)
+  );
 };
 var countByRule = (violations) => {
   const counts = {};
@@ -629,5 +644,6 @@ export {
   countByRule,
   formatViolation,
   hasErrors,
+  repoRootOf,
   summarise
 };
