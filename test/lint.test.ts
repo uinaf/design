@@ -436,3 +436,34 @@ describe("JSX object styles with commas", () => {
     expect(checkFile(file).map((v) => v.rule)).toEqual([]);
   });
 });
+
+describe("colour detection ignores content", () => {
+  it("does not read strings or url() payloads as colours", () => {
+    expect(rules(css('a{content:"red"}'))).not.toContain("no-raw-color");
+    expect(rules(css("a{background-image:url(red-arrow.svg)}"))).not.toContain("no-raw-color");
+  });
+});
+
+describe("class matching is attribute-anchored", () => {
+  it("does not treat data-class or subclass as a class attribute", () => {
+    const markupSource =
+      '<div data-class="u-btn-accent"></div><div data-class="u-btn-accent"></div>';
+    expect(rules(markup(markupSource))).not.toContain("one-accent-per-view");
+  });
+});
+
+describe("file collection survives symlink cycles", () => {
+  it("visits each real path once", async () => {
+    const { collectFiles } = await import("../src/lint/index");
+    const { mkdtempSync, mkdirSync, writeFileSync, symlinkSync } = await import("node:fs");
+    const { join } = await import("node:path");
+    const { tmpdir } = await import("node:os");
+    const dir = mkdtempSync(join(tmpdir(), "design-cycle-"));
+    mkdirSync(join(dir, "a"));
+    writeFileSync(join(dir, "a", "page.html"), "<p>x</p>");
+    // A directory linking back to its ancestor would otherwise recurse forever.
+    symlinkSync(dir, join(dir, "a", "loop"));
+    const files = collectFiles([dir]);
+    expect(files.filter((f) => f.endsWith("page.html")).length).toBe(1);
+  });
+});

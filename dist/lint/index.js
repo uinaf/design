@@ -92,7 +92,8 @@ var NAMED_COLORS = new Set(
    thistle tomato turquoise violet wheat white whitesmoke yellow yellowgreen`.split(/\s+/).filter(Boolean)
 );
 var COLOR_TOKEN = /#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color|color-mix)\s*\([^()]*\)|\b[a-z]{3,20}\b/gi;
-var disallowedColors = (value) => [...value.matchAll(COLOR_TOKEN)].map((m) => m[0].trim()).filter((color) => {
+var withoutLiterals = (value) => value.replace(/"[^"]*"|'[^']*'/g, " ").replace(/url\([^)]*\)/gi, " ");
+var disallowedColors = (rawValue) => [...withoutLiterals(rawValue).matchAll(COLOR_TOKEN)].map((m) => m[0].trim()).filter((color) => {
   const lower = color.toLowerCase();
   if (ALLOWED_RAW_COLORS.has(lower)) return false;
   if (/^[a-z]+$/i.test(lower)) return NAMED_COLORS.has(lower);
@@ -272,7 +273,7 @@ var DEFAULT_ABBREVIATIONS = [
   "uinaf"
 ];
 var lineOf = (source, index) => source.slice(0, index).split("\n").length;
-var CLASS_ATTR = /(?:class|className)\s*=\s*(?:"([^"]*)"|'([^']*)'|\{\s*"([^"]*)"\s*\}|\{\s*'([^']*)'\s*\})/g;
+var CLASS_ATTR = /(?<![\w-])(?:class|className)\s*=\s*(?:"([^"]*)"|'([^']*)'|\{\s*"([^"]*)"\s*\}|\{\s*'([^']*)'\s*\})/g;
 var classOccurrences = (source, wanted) => {
   const hits = [];
   for (const match of source.matchAll(CLASS_ATTR)) {
@@ -426,9 +427,13 @@ setJsxStyleChecker(
 var collectFiles = (roots, ignore = []) => {
   const found = [];
   const ignored = (file) => ignore.some((pattern) => file.includes(pattern));
+  const seen = /* @__PURE__ */ new Set();
   const walk = (target) => {
     const stat = fs.statSync(target, { throwIfNoEntry: false });
     if (!stat) return;
+    const real = fs.realpathSync.native(target);
+    if (seen.has(real)) return;
+    seen.add(real);
     if (stat.isFile()) {
       const ext = path.extname(target).toLowerCase();
       if ((CSS_EXTENSIONS.has(ext) || MARKUP_EXTENSIONS.has(ext)) && !ignored(target)) {

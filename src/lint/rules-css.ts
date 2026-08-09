@@ -82,9 +82,16 @@ const NAMED_COLORS = new Set(
 const COLOR_TOKEN =
   /#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color|color-mix)\s*\([^()]*\)|\b[a-z]{3,20}\b/gi;
 
+/**
+ * Quoted strings and url() payloads are content, not colour: `content: "red"`
+ * and `background-image: url(red-arrow.svg)` must not read as violations.
+ */
+const withoutLiterals = (value: string): string =>
+  value.replace(/"[^"]*"|'[^']*'/g, " ").replace(/url\([^)]*\)/gi, " ");
+
 /** Each colour is judged on its own: `border: 1px solid #000` is allowed. */
-const disallowedColors = (value: string): string[] =>
-  [...value.matchAll(COLOR_TOKEN)]
+const disallowedColors = (rawValue: string): string[] =>
+  [...withoutLiterals(rawValue).matchAll(COLOR_TOKEN)]
     .map((m) => m[0].trim())
     .filter((color) => {
       const lower = color.toLowerCase();

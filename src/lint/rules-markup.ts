@@ -42,8 +42,9 @@ const DEFAULT_ABBREVIATIONS = [
 const lineOf = (source: string, index: number): number => source.slice(0, index).split("\n").length;
 
 /** Class attribute in either dialect, static values only. */
+// Anchored so `data-class=` and `subclass=` are not read as class attributes.
 const CLASS_ATTR =
-  /(?:class|className)\s*=\s*(?:"([^"]*)"|'([^']*)'|\{\s*"([^"]*)"\s*\}|\{\s*'([^']*)'\s*\})/g;
+  /(?<![\w-])(?:class|className)\s*=\s*(?:"([^"]*)"|'([^']*)'|\{\s*"([^"]*)"\s*\}|\{\s*'([^']*)'\s*\})/g;
 
 const classOccurrences = (source: string, wanted: string): number[] => {
   const hits: number[] = [];

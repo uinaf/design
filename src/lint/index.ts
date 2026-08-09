@@ -36,10 +36,16 @@ setJsxStyleChecker((property, value) =>
 export const collectFiles = (roots: string[], ignore: string[] = []): string[] => {
   const found: string[] = [];
   const ignored = (file: string): boolean => ignore.some((pattern) => file.includes(pattern));
+  // statSync follows symlinks, so a directory linking to an ancestor would
+  // recurse forever. Real paths are visited at most once.
+  const seen = new Set<string>();
 
   const walk = (target: string): void => {
     const stat = fs.statSync(target, { throwIfNoEntry: false });
     if (!stat) return;
+    const real = fs.realpathSync.native(target);
+    if (seen.has(real)) return;
+    seen.add(real);
     if (stat.isFile()) {
       const ext = path.extname(target).toLowerCase();
       if ((CSS_EXTENSIONS.has(ext) || MARKUP_EXTENSIONS.has(ext)) && !ignored(target)) {
