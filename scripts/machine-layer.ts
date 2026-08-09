@@ -41,6 +41,13 @@ const write = (relative: string, body: string): void => {
 const bullets = (heading: string, items?: string[]): string =>
   items?.length ? `\n**${heading}**\n${items.map((r) => `- ${r}`).join("\n")}\n` : "";
 
+// Generated output is gitignored, so a renamed or deleted pattern would leave
+// an orphan twin that Wrangler keeps deploying. Clear before writing.
+for (const name of fs.readdirSync(path.join(guide, "patterns"))) {
+  if (name.endsWith(".md")) fs.rmSync(path.join(guide, "patterns", name));
+}
+fs.rmSync(path.join(guide, ".well-known"), { recursive: true, force: true });
+
 // One markdown twin per pattern. This is the token-cheap form of a chunk: an
 // agent gets the contract and the markup without parsing a full HTML document.
 for (const p of components.patterns) {
