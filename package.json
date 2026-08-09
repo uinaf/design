@@ -56,11 +56,14 @@
     "types:worker": "wrangler types"
   },
   "devDependencies": {
+    "@modelcontextprotocol/server": "2.0.0",
     "@types/node": "^24.0.0",
+    "agents": "^0.20.1",
     "typescript": "^5.9.2",
     "vite": "npm:@voidzero-dev/vite-plus-core@0.2.8",
     "vite-plus": "0.2.8",
-    "wrangler": "^4.28.0"
+    "wrangler": "^4.28.0",
+    "zod": "^4.4.3"
   },
   "overrides": {
     "vite": "npm:@voidzero-dev/vite-plus-core@0.2.8"
