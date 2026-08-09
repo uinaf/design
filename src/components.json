@@ -1,6 +1,6 @@
 {
   "$schema": "uinaf component contract v1 — one entry per pattern; markup is canonical, rules carry the WHY (agents ignore whats without whys)",
-  "$css": "colors_and_type.css auto-imports components.css; import one file",
+  "$css": "tokens.css auto-imports components.css; import one file (@uinaf/design/css)",
   "patterns": [
     {
       "name": "micro-label",
@@ -288,5 +288,5 @@
       ]
     }
   ],
-  "$markupCoverage": "11 of 31 patterns carry markup upstream; table is derived from its preview card. The rest serve rules/classes only — see the tracked gap."
+  "$markupCoverage": "12 of 31 patterns carry markup and have a generated chunk. 11 came from upstream; table and card were derived from their preview cards. The rest serve classes and rules only."
 }
