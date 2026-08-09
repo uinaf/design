@@ -42,28 +42,32 @@ for (const [name, value] of grouped) {
   }
 }
 
-// Templates ship in the tarball, so a stylesheet they name has to be a file the
-// tarball contains. `colors_and_type.css` shipped broken for months (#15)
-// because nothing checked. Quoted strings only — `el.sheet.css` is a property
-// access, not a reference.
+// Templates ship in the tarball, so every local file one names has to be a file
+// the tarball contains. `colors_and_type.css` (#15) and `_ds_bundle.js` (#31)
+// both shipped broken because nothing checked, and nothing in this repo reads
+// templates/, so no other code path would have noticed.
 const templatesDir = path.join(root, "templates");
-for (const template of fs.readdirSync(templatesDir)) {
-  const dir = path.join(templatesDir, template);
-  if (!fs.statSync(dir).isDirectory()) continue;
-  for (const file of fs.readdirSync(dir)) {
-    const source = fs.readFileSync(path.join(dir, file), "utf8");
-    for (const [, reference] of source.matchAll(/["']([^"']+\.css)["']/g)) {
-      if (reference.startsWith("https://cdn.uinaf.dev/")) continue;
-      // ds-base.js resolves its list against the package root. Containment via
-      // path.relative, so `..` inside a reference cannot escape dist/css.
-      const resolved = path.resolve(root, reference.replace(/^(?:\.\.\/)+/, ""));
-      const inside = path.relative(path.resolve(root, "dist/css"), resolved);
-      const contained = inside !== "" && !inside.startsWith("..") && !path.isAbsolute(inside);
-      if (!contained || !fs.existsSync(resolved)) {
-        fail(
-          `templates/${template}/${file} references ${reference}, which the package does not ship. Stylesheets must live in dist/css/.`,
-        );
-      }
+const templates = fs.readdirSync(templatesDir).filter((f) => f.endsWith(".html"));
+if (templates.length === 0) {
+  fail("templates/ has no .html files — templates are standalone HTML");
+}
+for (const file of templates) {
+  const source = fs.readFileSync(path.join(templatesDir, file), "utf8");
+  // Machinery from the design tool needs a runtime the package does not carry.
+  for (const banned of ["<x-dc", "<helmet", "ds-base.js", "support.js", "_ds_bundle"]) {
+    if (source.includes(banned)) {
+      fail(`templates/${file} contains ${banned} — templates are standalone HTML (#31)`);
+    }
+  }
+  for (const [, reference] of source.matchAll(/(?:href|src)="([^"]+)"/g)) {
+    if (/^(?:https?:|mailto:|data:|#)/.test(reference)) continue;
+    const resolved = path.resolve(templatesDir, reference.split(/[?#]/)[0]);
+    const outside = path.relative(root, resolved);
+    if (outside.startsWith("..") || path.isAbsolute(outside)) {
+      fail(`templates/${file} references ${reference}, which resolves outside the package.`);
+    }
+    if (!fs.existsSync(resolved)) {
+      fail(`templates/${file} references ${reference}, which the package does not ship.`);
     }
   }
 }

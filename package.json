@@ -63,7 +63,7 @@
     "lint": "vp lint",
     "types:worker": "wrangler types",
     "smoke:mcp": "node scripts/smoke-mcp.ts",
-    "design:check": "node src/lint/cli.ts preview pages guide --ignore guide/tokens.css --ignore guide/components.css",
+    "design:check": "node src/lint/cli.ts preview pages templates guide --ignore guide/tokens.css --ignore guide/components.css --ignore templates/export-",
     "skill:lint": "TESSL_AUTO_UPDATE_INTERVAL_MINUTES=0 tessl plugin lint skills/uinaf-design"
   },
   "dependencies": {
