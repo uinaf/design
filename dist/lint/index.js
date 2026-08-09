@@ -103,14 +103,18 @@ var NAMED_COLORS = new Set(
    seashell sienna silver skyblue slateblue slategray slategrey snow springgreen steelblue tan teal
    thistle tomato turquoise violet wheat white whitesmoke yellow yellowgreen`.split(/\s+/).filter(Boolean)
 );
-var COLOR_TOKEN = /#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color|color-mix)\s*\([^()]*\)|\b[a-z]{3,20}\b/gi;
+var COLOR_PROPERTY = /(^|-)color$|^(background|border|outline|fill|stroke|box-shadow|text-shadow|caret|accent|column-rule|text-emphasis|text-decoration|border-(top|right|bottom|left|block|inline)(-(start|end))?)($|-)/;
+var COLOR_TOKEN = /#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color|color-mix)\s*\((?:[^()]|\([^()]*\))*\)|\b[a-z]{3,20}\b/gi;
 var withoutLiterals = (value) => value.replace(/"[^"]*"|'[^']*'/g, " ").replace(/url\([^)]*\)/gi, " ");
-var disallowedColors = (rawValue) => [...withoutLiterals(rawValue).matchAll(COLOR_TOKEN)].map((m) => m[0].trim()).filter((color) => {
-  const lower = color.toLowerCase();
-  if (ALLOWED_RAW_COLORS.has(lower)) return false;
-  if (/^[a-z]+$/i.test(lower)) return NAMED_COLORS.has(lower);
-  return true;
-});
+var disallowedColors = (rawValue, property) => {
+  const acceptsColor = COLOR_PROPERTY.test(property);
+  return [...withoutLiterals(rawValue).matchAll(COLOR_TOKEN)].map((m) => m[0].trim()).filter((color) => {
+    const lower = color.toLowerCase();
+    if (ALLOWED_RAW_COLORS.has(lower)) return false;
+    if (/^[a-z]+$/i.test(lower)) return acceptsColor && NAMED_COLORS.has(lower);
+    return true;
+  });
+};
 var ONE_DIMENSIONAL_SEGMENT = /(^|[-_])(dot|pill|bar|spark|tick|avatar)s?([-_]|$)/i;
 var looksOneDimensional = (selector) => [...selector.matchAll(/\.([a-zA-Z0-9_-]+)/g)].some((m) => ONE_DIMENSIONAL_SEGMENT.test(m[1]));
 var LABEL_CONTEXT = /label|tag|kicker|caps|micro|crumb|th\b/i;
@@ -147,7 +151,7 @@ var checkCss = (css, file) => {
     const lower = value.toLowerCase();
     const selector = decl.parent?.selector ?? "";
     const inTokenDefinition = prop.startsWith("--");
-    const offending = inTokenDefinition ? [] : disallowedColors(withoutTokenReferences(value));
+    const offending = inTokenDefinition ? [] : disallowedColors(withoutTokenReferences(value), prop);
     if (offending.length > 0) {
       add(
         decl,
@@ -384,7 +388,7 @@ var checkMarkup = (source, file, options = {}) => {
       );
     }
   }
-  for (const match of source.matchAll(/style\s*=\s*\{\{([^{}]*)\}\}/g)) {
+  for (const match of source.matchAll(/style\s*=\s*\{\{((?:[^{}]|\{[^{}]*\})*)\}\}/g)) {
     const body = match[1];
     for (const pair of splitTopLevel(body)) {
       const [rawKey, ...rest] = pair.split(":");

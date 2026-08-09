@@ -509,3 +509,41 @@ describe("spacing-grid is not disabled by a sibling token", () => {
     expect(rules(css("a{padding:var(--sp-2) 8px}"))).not.toContain("spacing-grid");
   });
 });
+
+describe("named colours only on colour properties", () => {
+  it("does not flag identifiers that happen to be colour names", () => {
+    // grid-area: red is a named grid area, not a colour.
+    expect(rules(css("a{grid-area:red}"))).not.toContain("no-raw-color");
+    expect(rules(css("a{animation-name:blue}"))).not.toContain("no-raw-color");
+  });
+  it("still flags them on properties that take a colour", () => {
+    expect(rules(css("a{color:red}"))).toContain("no-raw-color");
+    expect(rules(css("a{border-color:red}"))).toContain("no-raw-color");
+    expect(rules(css("a{background:tan}"))).toContain("no-raw-color");
+  });
+  it("catches hex and functional syntax on any property", () => {
+    expect(rules(css("a{grid-area:#ff0000}"))).toContain("no-raw-color");
+  });
+});
+
+describe("nested colour functions", () => {
+  it("are still detected", () => {
+    expect(rules(css("a{color:rgb(calc(255) 0 0)}"))).toContain("no-raw-color");
+  });
+});
+
+describe("JSX style objects with nested expressions", () => {
+  it("are still checked rather than skipped entirely", async () => {
+    const { checkFile } = await import("../src/lint/index");
+    const { writeFileSync, mkdtempSync } = await import("node:fs");
+    const { join } = await import("node:path");
+    const { tmpdir } = await import("node:os");
+    const dir = mkdtempSync(join(tmpdir(), "design-nested-"));
+    const file = join(dir, "C.tsx");
+    writeFileSync(
+      file,
+      'export const C = () => <div style={{ color: "#f00", transform: `translateX(${x}px)` }} />;\n',
+    );
+    expect(checkFile(file).map((v) => v.rule)).toContain("no-raw-color");
+  });
+});

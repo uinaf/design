@@ -92,8 +92,16 @@ const NAMED_COLORS = new Set(
     .filter(Boolean),
 );
 
+/**
+ * Bare words are only colours on properties that take one. `grid-area: red`
+ * and `animation-name: blue` are identifiers, not colours. Hex and functional
+ * syntax stay unambiguous everywhere.
+ */
+const COLOR_PROPERTY =
+  /(^|-)color$|^(background|border|outline|fill|stroke|box-shadow|text-shadow|caret|accent|column-rule|text-emphasis|text-decoration|border-(top|right|bottom|left|block|inline)(-(start|end))?)($|-)/;
+
 const COLOR_TOKEN =
-  /#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color|color-mix)\s*\([^()]*\)|\b[a-z]{3,20}\b/gi;
+  /#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color|color-mix)\s*\((?:[^()]|\([^()]*\))*\)|\b[a-z]{3,20}\b/gi;
 
 /**
  * Quoted strings and url() payloads are content, not colour: `content: "red"`
@@ -103,17 +111,17 @@ const withoutLiterals = (value: string): string =>
   value.replace(/"[^"]*"|'[^']*'/g, " ").replace(/url\([^)]*\)/gi, " ");
 
 /** Each colour is judged on its own: `border: 1px solid #000` is allowed. */
-const disallowedColors = (rawValue: string): string[] =>
-  [...withoutLiterals(rawValue).matchAll(COLOR_TOKEN)]
+const disallowedColors = (rawValue: string, property: string): string[] => {
+  const acceptsColor = COLOR_PROPERTY.test(property);
+  return [...withoutLiterals(rawValue).matchAll(COLOR_TOKEN)]
     .map((m) => m[0].trim())
     .filter((color) => {
       const lower = color.toLowerCase();
       if (ALLOWED_RAW_COLORS.has(lower)) return false;
-      // Bare words are only colors if they are named colors; `solid`, `inset`,
-      // and every other keyword in a compound value are not.
-      if (/^[a-z]+$/i.test(lower)) return NAMED_COLORS.has(lower);
+      if (/^[a-z]+$/i.test(lower)) return acceptsColor && NAMED_COLORS.has(lower);
       return true;
     });
+};
 
 /**
  * A one-dimension pill (a dot, a bar) may use the pill radius. Matched against
@@ -170,7 +178,9 @@ export const checkCss = (css: string, file: string): Violation[] => {
     // Custom properties are where raw values are supposed to live.
     const inTokenDefinition = prop.startsWith("--");
 
-    const offending = inTokenDefinition ? [] : disallowedColors(withoutTokenReferences(value));
+    const offending = inTokenDefinition
+      ? []
+      : disallowedColors(withoutTokenReferences(value), prop);
     if (offending.length > 0) {
       add(
         decl,

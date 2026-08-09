@@ -190,7 +190,7 @@ export const checkMarkup = (
 
   // JSX expresses inline styles as objects, so the quoted-string scan misses
   // them entirely on the .jsx/.tsx inputs this check advertises.
-  for (const match of source.matchAll(/style\s*=\s*\{\{([^{}]*)\}\}/g)) {
+  for (const match of source.matchAll(/style\s*=\s*\{\{((?:[^{}]|\{[^{}]*\})*)\}\}/g)) {
     const body = match[1];
     for (const pair of splitTopLevel(body)) {
       const [rawKey, ...rest] = pair.split(":");
