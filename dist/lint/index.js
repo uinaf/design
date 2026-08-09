@@ -4,6 +4,38 @@ import path from "node:path";
 
 // src/lint/rules-css.ts
 import postcss from "postcss";
+
+// src/lint/split.ts
+var splitTopLevel = (value, separator = ",") => {
+  const parts = [];
+  let depth = 0;
+  let quote;
+  let current = "";
+  for (const char of value) {
+    if (quote) {
+      current += char;
+      if (char === quote) quote = void 0;
+      continue;
+    }
+    if (char === '"' || char === "'") {
+      quote = char;
+      current += char;
+      continue;
+    }
+    if (char === "(") depth += 1;
+    if (char === ")") depth = Math.max(0, depth - 1);
+    if (char === separator && depth === 0) {
+      parts.push(current);
+      current = "";
+      continue;
+    }
+    current += char;
+  }
+  parts.push(current);
+  return parts.map((p) => p.trim()).filter(Boolean);
+};
+
+// src/lint/rules-css.ts
 var TYPE_SCALE = /* @__PURE__ */ new Set([
   "10px",
   "11px",
@@ -59,7 +91,7 @@ var NAMED_COLORS = new Set(
    seashell sienna silver skyblue slateblue slategray slategrey snow springgreen steelblue tan teal
    thistle tomato turquoise violet wheat white whitesmoke yellow yellowgreen`.split(/\s+/).filter(Boolean)
 );
-var COLOR_TOKEN = /#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?|oklch|lab|color)\s*\([^()]*\)|\b[a-z]{3,20}\b/gi;
+var COLOR_TOKEN = /#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color|color-mix)\s*\([^()]*\)|\b[a-z]{3,20}\b/gi;
 var disallowedColors = (value) => [...value.matchAll(COLOR_TOKEN)].map((m) => m[0].trim()).filter((color) => {
   const lower = color.toLowerCase();
   if (ALLOWED_RAW_COLORS.has(lower)) return false;
@@ -141,7 +173,7 @@ var checkCss = (css, file) => {
       }
     }
     if (prop === "box-shadow" && lower !== "none") {
-      const layers = value.split(/,(?![^()]*\))/).map((l) => l.trim()).filter(Boolean);
+      const layers = splitTopLevel(value);
       const allowed = layers.every(
         (layer) => layer.toLowerCase() === "none" || /^var\(\s*--(accent-glow|shadow-glow-accent|shadow-none)\s*\)$/.test(layer)
       );
@@ -330,7 +362,7 @@ var checkMarkup = (source, file, options = {}) => {
   }
   for (const match of source.matchAll(/style\s*=\s*\{\{([^{}]*)\}\}/g)) {
     const body = match[1];
-    for (const pair of body.split(",")) {
+    for (const pair of splitTopLevel(body)) {
       const [rawKey, ...rest] = pair.split(":");
       if (rest.length === 0) continue;
       const key = rawKey.trim().replace(/["']/g, "");
@@ -448,6 +480,10 @@ var checkFile = (file, options = {}) => {
 };
 var check = (options = {}) => {
   const roots = options.paths?.length ? options.paths : [process.cwd()];
+  const missing = roots.filter((root) => !fs.existsSync(root));
+  if (missing.length > 0) {
+    throw new Error(`no such path: ${missing.join(", ")}`);
+  }
   return collectFiles(roots, options.ignore ?? []).flatMap((file) => checkFile(file, options));
 };
 var countByRule = (violations) => {

@@ -1,3 +1,4 @@
+import { splitTopLevel } from "./split.ts";
 import type { Violation } from "./types.ts";
 
 /**
@@ -177,7 +178,7 @@ export const checkMarkup = (
   // them entirely on the .jsx/.tsx inputs this check advertises.
   for (const match of source.matchAll(/style\s*=\s*\{\{([^{}]*)\}\}/g)) {
     const body = match[1];
-    for (const pair of body.split(",")) {
+    for (const pair of splitTopLevel(body)) {
       const [rawKey, ...rest] = pair.split(":");
       if (rest.length === 0) continue;
       const key = rawKey.trim().replace(/["']/g, "");

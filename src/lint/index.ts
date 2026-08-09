@@ -117,6 +117,12 @@ export const checkFile = (file: string, options: CheckOptions = {}): Violation[]
 
 export const check = (options: CheckOptions = {}): Violation[] => {
   const roots = options.paths?.length ? options.paths : [process.cwd()];
+  // A typo must not read as a clean run. Silently scanning nothing is how a
+  // quality gate gets disabled without anyone noticing.
+  const missing = roots.filter((root) => !fs.existsSync(root));
+  if (missing.length > 0) {
+    throw new Error(`no such path: ${missing.join(", ")}`);
+  }
   return collectFiles(roots, options.ignore ?? []).flatMap((file) => checkFile(file, options));
 };
 

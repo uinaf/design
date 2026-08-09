@@ -10,6 +10,38 @@ import path from "node:path";
 
 // src/lint/rules-css.ts
 import postcss from "postcss";
+
+// src/lint/split.ts
+var splitTopLevel = (value2, separator = ",") => {
+  const parts = [];
+  let depth = 0;
+  let quote;
+  let current = "";
+  for (const char of value2) {
+    if (quote) {
+      current += char;
+      if (char === quote) quote = void 0;
+      continue;
+    }
+    if (char === '"' || char === "'") {
+      quote = char;
+      current += char;
+      continue;
+    }
+    if (char === "(") depth += 1;
+    if (char === ")") depth = Math.max(0, depth - 1);
+    if (char === separator && depth === 0) {
+      parts.push(current);
+      current = "";
+      continue;
+    }
+    current += char;
+  }
+  parts.push(current);
+  return parts.map((p) => p.trim()).filter(Boolean);
+};
+
+// src/lint/rules-css.ts
 var TYPE_SCALE = /* @__PURE__ */ new Set([
   "10px",
   "11px",
@@ -65,7 +97,7 @@ var NAMED_COLORS = new Set(
    seashell sienna silver skyblue slateblue slategray slategrey snow springgreen steelblue tan teal
    thistle tomato turquoise violet wheat white whitesmoke yellow yellowgreen`.split(/\s+/).filter(Boolean)
 );
-var COLOR_TOKEN = /#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?|oklch|lab|color)\s*\([^()]*\)|\b[a-z]{3,20}\b/gi;
+var COLOR_TOKEN = /#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color|color-mix)\s*\([^()]*\)|\b[a-z]{3,20}\b/gi;
 var disallowedColors = (value2) => [...value2.matchAll(COLOR_TOKEN)].map((m) => m[0].trim()).filter((color) => {
   const lower = color.toLowerCase();
   if (ALLOWED_RAW_COLORS.has(lower)) return false;
@@ -147,7 +179,7 @@ var checkCss = (css, file) => {
       }
     }
     if (prop === "box-shadow" && lower !== "none") {
-      const layers = value2.split(/,(?![^()]*\))/).map((l) => l.trim()).filter(Boolean);
+      const layers = splitTopLevel(value2);
       const allowed = layers.every(
         (layer) => layer.toLowerCase() === "none" || /^var\(\s*--(accent-glow|shadow-glow-accent|shadow-none)\s*\)$/.test(layer)
       );
@@ -336,7 +368,7 @@ var checkMarkup = (source, file, options = {}) => {
   }
   for (const match of source.matchAll(/style\s*=\s*\{\{([^{}]*)\}\}/g)) {
     const body = match[1];
-    for (const pair of body.split(",")) {
+    for (const pair of splitTopLevel(body)) {
       const [rawKey, ...rest] = pair.split(":");
       if (rest.length === 0) continue;
       const key = rawKey.trim().replace(/["']/g, "");
@@ -454,6 +486,10 @@ var checkFile = (file, options = {}) => {
 };
 var check = (options = {}) => {
   const roots = options.paths?.length ? options.paths : [process.cwd()];
+  const missing = roots.filter((root) => !fs.existsSync(root));
+  if (missing.length > 0) {
+    throw new Error(`no such path: ${missing.join(", ")}`);
+  }
   return collectFiles(roots, options.ignore ?? []).flatMap((file) => checkFile(file, options));
 };
 var countByRule = (violations2) => {
@@ -517,16 +553,18 @@ var paths = argv.filter((arg, index) => {
   const previous = argv[index - 1];
   return previous !== "--ignore" && previous !== "--abbreviations";
 });
-var violations = check({
-  paths,
-  ignore,
-  abbreviations: abbreviationsArg ? abbreviationsArg.split(",") : void 0
-});
-var counts = countByRule(violations);
-if (flag("json")) {
-  console.log(JSON.stringify({ violations, counts }, null, 2));
-  process.exit(hasErrors(violations) ? 1 : 0);
+var violations;
+try {
+  violations = check({
+    paths,
+    ignore,
+    abbreviations: abbreviationsArg ? abbreviationsArg.split(",") : void 0
+  });
+} catch (error) {
+  console.error(`design:check \u2014 ${error.message}`);
+  process.exit(1);
 }
+var counts = countByRule(violations);
 var ratchetPath = path2.resolve(RATCHET_FILE);
 if (flag("update-ratchet")) {
   fs2.writeFileSync(ratchetPath, `${JSON.stringify(counts, null, 2)}
@@ -544,6 +582,10 @@ if (flag("ratchet")) {
   }
   const baseline = JSON.parse(fs2.readFileSync(ratchetPath, "utf8"));
   const result = compareRatchet(baseline, counts);
+  if (flag("json")) {
+    console.log(JSON.stringify({ violations, counts, ratchet: result }, null, 2));
+    process.exit(result.passed ? 0 : 1);
+  }
   for (const { rule, was, now } of result.risen) {
     console.error(`${rule}: ${was} \u2192 ${now}`);
     for (const violation of violations.filter((v) => v.rule === rule)) {
@@ -563,6 +605,10 @@ design:check ratchet failed \u2014 ${result.risen.length} rule(s) got worse`);
   }
   console.log(`design:check ratchet ok \u2014 ${summarise(violations)}, none worse than baseline`);
   process.exit(0);
+}
+if (flag("json")) {
+  console.log(JSON.stringify({ violations, counts }, null, 2));
+  process.exit(hasErrors(violations) ? 1 : 0);
 }
 for (const violation of violations) console.log(formatViolation(violation));
 if (violations.length === 0) {

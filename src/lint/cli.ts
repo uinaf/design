@@ -52,18 +52,19 @@ const paths = argv.filter((arg, index) => {
   return previous !== "--ignore" && previous !== "--abbreviations";
 });
 
-const violations = check({
-  paths,
-  ignore,
-  abbreviations: abbreviationsArg ? abbreviationsArg.split(",") : undefined,
-});
-const counts = countByRule(violations);
-
-if (flag("json")) {
-  console.log(JSON.stringify({ violations, counts }, null, 2));
-  process.exit(hasErrors(violations) ? 1 : 0);
+let violations;
+try {
+  violations = check({
+    paths,
+    ignore,
+    abbreviations: abbreviationsArg ? abbreviationsArg.split(",") : undefined,
+  });
+} catch (error) {
+  // A usage mistake deserves a message, not a stack trace.
+  console.error(`design:check — ${(error as Error).message}`);
+  process.exit(1);
 }
-
+const counts = countByRule(violations);
 const ratchetPath = path.resolve(RATCHET_FILE);
 
 if (flag("update-ratchet")) {
@@ -72,6 +73,8 @@ if (flag("update-ratchet")) {
   process.exit(0);
 }
 
+// Evaluated before --json so the two compose: a machine-readable run must not
+// silently drop the gate it was asked to enforce.
 if (flag("ratchet")) {
   if (!fs.existsSync(ratchetPath)) {
     console.error(
@@ -81,6 +84,10 @@ if (flag("ratchet")) {
   }
   const baseline = JSON.parse(fs.readFileSync(ratchetPath, "utf8")) as Record<string, number>;
   const result = compareRatchet(baseline, counts);
+  if (flag("json")) {
+    console.log(JSON.stringify({ violations, counts, ratchet: result }, null, 2));
+    process.exit(result.passed ? 0 : 1);
+  }
   for (const { rule, was, now } of result.risen) {
     console.error(`${rule}: ${was} → ${now}`);
     for (const violation of violations.filter((v) => v.rule === rule)) {
@@ -99,6 +106,11 @@ if (flag("ratchet")) {
   }
   console.log(`design:check ratchet ok — ${summarise(violations)}, none worse than baseline`);
   process.exit(0);
+}
+
+if (flag("json")) {
+  console.log(JSON.stringify({ violations, counts }, null, 2));
+  process.exit(hasErrors(violations) ? 1 : 0);
 }
 
 for (const violation of violations) console.log(formatViolation(violation));

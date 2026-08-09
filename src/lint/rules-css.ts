@@ -1,4 +1,5 @@
 import postcss from "postcss";
+import { splitTopLevel } from "./split.ts";
 import type { Violation } from "./types.ts";
 
 /**
@@ -79,7 +80,7 @@ const NAMED_COLORS = new Set(
 );
 
 const COLOR_TOKEN =
-  /#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?|oklch|lab|color)\s*\([^()]*\)|\b[a-z]{3,20}\b/gi;
+  /#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color|color-mix)\s*\([^()]*\)|\b[a-z]{3,20}\b/gi;
 
 /** Each colour is judged on its own: `border: 1px solid #000` is allowed. */
 const disallowedColors = (value: string): string[] =>
@@ -193,10 +194,7 @@ export const checkCss = (css: string, file: string): Violation[] => {
     if (prop === "box-shadow" && lower !== "none") {
       // Split on top-level commas: an allowed token must not license extra
       // layers beside it, as `var(--shadow-none), 0 2px 4px red` would.
-      const layers = value
-        .split(/,(?![^()]*\))/)
-        .map((l) => l.trim())
-        .filter(Boolean);
+      const layers = splitTopLevel(value);
       const allowed = layers.every(
         (layer) =>
           layer.toLowerCase() === "none" ||

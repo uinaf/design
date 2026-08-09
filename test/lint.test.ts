@@ -404,3 +404,35 @@ describe("no-box-shadow checks every layer", () => {
     expect(rules(css("a{box-shadow:var(--shadow-glow-accent)}"))).not.toContain("no-box-shadow");
   });
 });
+
+describe("modern color functions", () => {
+  it("catches hwb, lch, oklab, and color-mix", () => {
+    for (const value of ["lch(50% 20 30)", "hwb(90 10% 10%)", "oklab(59% 0.1 0.1)"]) {
+      expect(rules(css(`a{color:${value}}`))).toContain("no-raw-color");
+    }
+  });
+});
+
+describe("missing scan roots", () => {
+  it("throw rather than reading as a clean run", async () => {
+    const { check: runCheck } = await import("../src/lint/index");
+    // A typo must not silently disable the gate.
+    expect(() => runCheck({ paths: ["definitely-not-a-real-path"] })).toThrow(/no such path/);
+  });
+});
+
+describe("JSX object styles with commas", () => {
+  it("do not break on a value containing its own commas", async () => {
+    const { checkFile } = await import("../src/lint/index");
+    const { writeFileSync, mkdtempSync } = await import("node:fs");
+    const { join } = await import("node:path");
+    const { tmpdir } = await import("node:os");
+    const dir = mkdtempSync(join(tmpdir(), "design-jsx3-"));
+    const file = join(dir, "G.tsx");
+    writeFileSync(
+      file,
+      `export const G = () => <div style={{ background: "linear-gradient(var(--fg), var(--bg))" }} />;\n`,
+    );
+    expect(checkFile(file).map((v) => v.rule)).toEqual([]);
+  });
+});
