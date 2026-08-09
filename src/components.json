@@ -58,7 +58,7 @@
         ".u-btn-lg"
       ],
       "use": "32px rhythm (26/38 sm/lg), 13px lowercase labels",
-      "markup": "<button class=\"u-btn u-btn-primary\">save</button><button class=\"u-btn u-btn-ghost\">cancel</button>",
+      "markup": "<button type=\"button\" class=\"u-btn u-btn-primary\">save</button><button type=\"button\" class=\"u-btn u-btn-ghost\">cancel</button>",
       "rules": [
         "hierarchy via fill weight: primary=white fill, secondary=outline, ghost=borderless",
         "default pairing = primary + ghost",
@@ -196,7 +196,7 @@
       "name": "pagination",
       "classes": [".u-pager"],
       "use": "under tables: 26px ghost numbers, current bordered",
-      "markup": "<nav class=\"u-pager\"><button disabled>← prev</button><a aria-current=\"page\" href=\"#\">01</a><a href=\"#\">02</a><button>next →</button></nav>"
+      "markup": "<nav class=\"u-pager\"><button type=\"button\" disabled>← prev</button><a aria-current=\"page\" href=\"#\">01</a><a href=\"#\">02</a><button type=\"button\">next →</button></nav>"
     },
     {
       "name": "empty-state",
