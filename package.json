@@ -30,6 +30,7 @@
     "./tokens.css": "./dist/css/tokens.css",
     "./components.css": "./dist/css/components.css",
     "./tokens.json": "./dist/tokens.json",
+    "./components.json": "./dist/components.json",
     "./cdn": {
       "types": "./dist/cdn.d.ts",
       "import": "./dist/cdn.js",
