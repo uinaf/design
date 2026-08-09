@@ -131,13 +131,15 @@ export const changedFiles = (base = "origin/main"): string[] => {
   // Enumeration must not swallow failures. A `base...HEAD` diff fails outright
   // when the two have no merge base (shallow clone, unrelated histories), and
   // treating that as "no files changed" reports a clean tree.
+  // NUL-delimited: git quotes and escapes paths containing non-ASCII or unusual
+  // characters in its default output, which would mangle the filename.
   const git = (args: string[]): string[] => {
     try {
-      return execFileSync("git", ["-C", repoRoot, ...args], {
+      return execFileSync("git", ["-C", repoRoot, ...args, "-z"], {
         encoding: "utf8",
         stdio: ["ignore", "pipe", "pipe"],
       })
-        .split("\n")
+        .split("\0")
         .filter(Boolean);
     } catch (error) {
       const stderr = String((error as { stderr?: Buffer }).stderr ?? "").trim();

@@ -528,10 +528,10 @@ var changedFiles = (base = "origin/main") => {
   }
   const git = (args) => {
     try {
-      return execFileSync("git", ["-C", repoRoot, ...args], {
+      return execFileSync("git", ["-C", repoRoot, ...args, "-z"], {
         encoding: "utf8",
         stdio: ["ignore", "pipe", "pipe"]
-      }).split("\n").filter(Boolean);
+      }).split("\0").filter(Boolean);
     } catch (error) {
       const stderr = String(error.stderr ?? "").trim();
       throw new Error(
