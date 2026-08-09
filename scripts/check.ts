@@ -64,18 +64,29 @@ const frontmatter = /^\uFEFF?---\r?\n([\s\S]*?)\r?\n---/.exec(skill)?.[1];
 if (!frontmatter) {
   fail("skills/uinaf-design/SKILL.md has no frontmatter");
 }
-// Shape, not a full YAML parse: enough to reject `name: [` or an empty
-// description, which a non-whitespace check would happily accept.
-const skillName = /^name:\s*"?([a-z][a-z0-9-]*)"?\s*$/m.exec(frontmatter as string)?.[1];
-if (!skillName) {
-  fail("skills/uinaf-design/SKILL.md frontmatter needs a slug-shaped `name`");
+type SkillFrontmatter = {
+  name?: unknown;
+  description?: unknown;
+  "disable-model-invocation"?: unknown;
+};
+const parseFrontmatter = (source: string): SkillFrontmatter => {
+  try {
+    return (parseYaml(source) ?? {}) as SkillFrontmatter;
+  } catch (error) {
+    return fail(`SKILL.md frontmatter is not valid YAML: ${(error as Error).message}`);
+  }
+};
+const meta = parseFrontmatter(frontmatter as string);
+
+if (meta.name !== "uinaf-design") {
+  fail(`SKILL.md declares name \`${String(meta.name)}\`, expected \`uinaf-design\``);
 }
-if (skillName !== "uinaf-design") {
-  fail(`SKILL.md declares name \`${skillName}\`, expected \`uinaf-design\``);
+if (typeof meta.description !== "string" || meta.description.trim().length < 40) {
+  fail("SKILL.md needs a substantive `description` string");
 }
-const description = /^description:\s*(.+)$/m.exec(frontmatter as string)?.[1]?.trim();
-if (!description || /^[[{|>]/.test(description) || description.replace(/^"|"$/g, "").length < 40) {
-  fail("skills/uinaf-design/SKILL.md needs a plain, substantive `description`");
+// The invocation policy is a deliberate decision (#11), not incidental.
+if (meta["disable-model-invocation"] !== true) {
+  fail("SKILL.md frontmatter must set disable-model-invocation: true");
 }
 
 const plugin = JSON.parse(
@@ -120,9 +131,6 @@ for (const key of ["display_name", "short_description", "default_prompt"] as con
 // The invocation policy is a deliberate decision (#11), not incidental.
 if (openaiConfig.policy?.allow_implicit_invocation !== false) {
   fail("agents/openai.yaml must set policy.allow_implicit_invocation: false");
-}
-if (!/^disable-model-invocation:\s*true$/m.test(frontmatter as string)) {
-  fail("SKILL.md frontmatter must set disable-model-invocation: true");
 }
 
 const packaged = (pkg.files ?? []).some((f) => f === "skills/uinaf-design");
