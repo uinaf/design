@@ -16,13 +16,20 @@ type ToolResult = { content?: Array<{ text?: string }> };
 
 let failures = 0;
 
+const PROPOSED_VERSION = "2026-07-28";
+// Set from the initialize response: after the handshake every request must
+// carry the version the server actually negotiated, not the one we proposed.
+let negotiatedVersion: string | undefined;
+
 const post = (body: unknown): Promise<Response> =>
   fetch(endpoint, {
     method: "POST",
     headers: {
       "content-type": "application/json",
       accept: "application/json, text/event-stream",
-      "mcp-protocol-version": "2025-11-25",
+      // Omitted on initialize — there is no negotiated version yet, and sending
+      // a proposed one there is rejected outright.
+      ...(negotiatedVersion ? { "mcp-protocol-version": negotiatedVersion } : {}),
     },
     body: JSON.stringify(body),
   });
@@ -65,11 +72,17 @@ const check = (label: string, condition: boolean, detail = ""): void => {
 console.log(`mcp smoke → ${endpoint}`);
 
 const init = (await rpc("initialize", {
-  protocolVersion: "2026-07-28",
+  protocolVersion: PROPOSED_VERSION,
   capabilities: {},
   clientInfo: { name: "smoke", version: "1" },
-})) as { serverInfo?: { name?: string } };
+})) as { serverInfo?: { name?: string }; protocolVersion?: string };
 check("initialize handshake", init.serverInfo?.name === "uinaf-design", JSON.stringify(init));
+check(
+  "initialize negotiates a protocol version",
+  Boolean(init.protocolVersion),
+  JSON.stringify(init),
+);
+negotiatedVersion = init.protocolVersion;
 
 // A lifecycle-enforcing server rejects everything until this arrives.
 await notify("notifications/initialized");
