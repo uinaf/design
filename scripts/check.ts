@@ -94,13 +94,19 @@ for (const entry of plugin.skills ?? []) {
 const openai = fs.existsSync(path.join(skillDir, "agents/openai.yaml"))
   ? fs.readFileSync(path.join(skillDir, "agents/openai.yaml"), "utf8")
   : fail("skills/uinaf-design/agents/openai.yaml is missing");
-for (const key of ["display_name:", "short_description:", "default_prompt:"]) {
-  if (!openai.includes(key)) {
-    fail(`agents/openai.yaml is missing \`${key.replace(":", "")}\``);
+// Anchored to the two-space key indentation. A bare includes() also matches
+// the same words inside the `default_prompt: |` block scalar, which is indented
+// further — so a file with no real keys at all would have passed.
+for (const key of ["display_name", "short_description", "default_prompt"]) {
+  if (!new RegExp(`^  ${key}:\\s*\\S`, "m").test(openai)) {
+    fail(`agents/openai.yaml is missing a top-level \`interface.${key}\``);
   }
 }
+if (!/^interface:\s*$/m.test(openai)) {
+  fail("agents/openai.yaml needs an `interface:` block");
+}
 // The invocation policy is a deliberate decision (#11), not incidental.
-if (!/^\s*allow_implicit_invocation:\s*false\s*$/m.test(openai)) {
+if (!/^  allow_implicit_invocation:\s*false\s*$/m.test(openai)) {
   fail("agents/openai.yaml must set policy.allow_implicit_invocation: false");
 }
 if (!/^disable-model-invocation:\s*true$/m.test(frontmatter as string)) {
