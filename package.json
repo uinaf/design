@@ -1,6 +1,6 @@
 {
   "name": "@uinaf/design",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "uinaf design tokens, CSS primitives, and agent guidance",
   "homepage": "https://design.uinaf.dev",
   "bugs": {
