@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { checkCss } from "./rules-css.ts";
 import { checkMarkup, setJsxStyleChecker, type MarkupOptions } from "./rules-markup.ts";
-import type { Severity, Violation } from "./types.ts";
+import type { Violation } from "./types.ts";
 
 export type { Severity, Violation } from "./types.ts";
 export { checkCss } from "./rules-css.ts";
@@ -167,6 +167,3 @@ export const summarise = (violations: Violation[]): string => {
   const plural = (n: number, word: string): string => `${n} ${word}${n === 1 ? "" : "s"}`;
   return `${plural(errors, "error")}, ${plural(warnings, "warning")}`;
 };
-
-export const severityOf = (rule: string, violations: Violation[]): Severity | undefined =>
-  violations.find((v) => v.rule === rule)?.severity;

@@ -372,3 +372,35 @@ describe("JSX object styles", () => {
     expect(checkFile(file).map((v) => v.rule)).toEqual([]);
   });
 });
+
+describe("no-raw-color catches named colors", () => {
+  it("flags CSS named colors", () => {
+    expect(rules(css("a{color:red}"))).toContain("no-raw-color");
+    expect(rules(css("a{background:rebeccapurple}"))).toContain("no-raw-color");
+  });
+  it("does not mistake ordinary keywords for colors", () => {
+    expect(rules(css("a{display:flex;position:absolute;overflow:hidden}"))).not.toContain(
+      "no-raw-color",
+    );
+    expect(rules(css("a{transition:color 160ms ease}"))).not.toContain("no-raw-color");
+    expect(rules(css("a{border:1px solid var(--border)}"))).not.toContain("no-raw-color");
+  });
+});
+
+describe("radius-ceiling covers corner properties", () => {
+  it("catches corner-specific and logical variants", () => {
+    expect(rules(css("a{border-top-left-radius:20px}"))).toContain("radius-ceiling");
+    expect(rules(css("a{border-start-end-radius:20px}"))).toContain("radius-ceiling");
+  });
+});
+
+describe("no-box-shadow checks every layer", () => {
+  it("does not let an allowed token license extra layers", () => {
+    expect(rules(css("a{box-shadow:var(--shadow-none), 0 2px 4px currentColor}"))).toContain(
+      "no-box-shadow",
+    );
+  });
+  it("still passes the single allowed glow", () => {
+    expect(rules(css("a{box-shadow:var(--shadow-glow-accent)}"))).not.toContain("no-box-shadow");
+  });
+});

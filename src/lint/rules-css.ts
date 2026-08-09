@@ -56,13 +56,43 @@ const ALLOWED_RAW_COLORS = new Set([
   "initial",
 ]);
 
-const COLOR_TOKEN = /#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?|oklch|lab|color)\s*\([^()]*\)/gi;
+// Named CSS colors bypass a hex/function-only matcher entirely.
+const NAMED_COLORS = new Set(
+  `aliceblue antiquewhite aqua aquamarine azure beige bisque black blanchedalmond blue blueviolet
+   brown burlywood cadetblue chartreuse chocolate coral cornflowerblue cornsilk crimson cyan
+   darkblue darkcyan darkgoldenrod darkgray darkgreen darkgrey darkkhaki darkmagenta darkolivegreen
+   darkorange darkorchid darkred darksalmon darkseagreen darkslateblue darkslategray darkslategrey
+   darkturquoise darkviolet deeppink deepskyblue dimgray dimgrey dodgerblue firebrick floralwhite
+   forestgreen fuchsia gainsboro ghostwhite gold goldenrod gray green greenyellow grey honeydew
+   hotpink indianred indigo ivory khaki lavender lavenderblush lawngreen lemonchiffon lightblue
+   lightcoral lightcyan lightgoldenrodyellow lightgray lightgreen lightgrey lightpink lightsalmon
+   lightseagreen lightskyblue lightslategray lightslategrey lightsteelblue lightyellow lime
+   limegreen linen magenta maroon mediumaquamarine mediumblue mediumorchid mediumpurple
+   mediumseagreen mediumslateblue mediumspringgreen mediumturquoise mediumvioletred midnightblue
+   mintcream mistyrose moccasin navajowhite navy oldlace olive olivedrab orange orangered orchid
+   palegoldenrod palegreen paleturquoise palevioletred papayawhip peachpuff peru pink plum
+   powderblue purple rebeccapurple red rosybrown royalblue saddlebrown salmon sandybrown seagreen
+   seashell sienna silver skyblue slateblue slategray slategrey snow springgreen steelblue tan teal
+   thistle tomato turquoise violet wheat white whitesmoke yellow yellowgreen`
+    .split(/\s+/)
+    .filter(Boolean),
+);
+
+const COLOR_TOKEN =
+  /#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?|oklch|lab|color)\s*\([^()]*\)|\b[a-z]{3,20}\b/gi;
 
 /** Each colour is judged on its own: `border: 1px solid #000` is allowed. */
 const disallowedColors = (value: string): string[] =>
   [...value.matchAll(COLOR_TOKEN)]
     .map((m) => m[0].trim())
-    .filter((color) => !ALLOWED_RAW_COLORS.has(color.toLowerCase()));
+    .filter((color) => {
+      const lower = color.toLowerCase();
+      if (ALLOWED_RAW_COLORS.has(lower)) return false;
+      // Bare words are only colors if they are named colors; `solid`, `inset`,
+      // and every other keyword in a compound value are not.
+      if (/^[a-z]+$/i.test(lower)) return NAMED_COLORS.has(lower);
+      return true;
+    });
 
 /**
  * A one-dimension pill (a dot, a bar) may use the pill radius. Matched against
@@ -130,7 +160,8 @@ export const checkCss = (css: string, file: string): Violation[] => {
       );
     }
 
-    if (prop === "border-radius" || /^border-[a-z]+-radius$/.test(prop)) {
+    // border-top-left-radius and the logical start/end variants all count.
+    if (prop === "border-radius" || /^border-([a-z]+-)+radius$/.test(prop)) {
       for (const part of value.split(SPACED_PROPERTY_SPLIT)) {
         const px = /^(\d+(?:\.\d+)?)px$/.exec(part);
         if (!px) continue;
@@ -160,7 +191,17 @@ export const checkCss = (css: string, file: string): Violation[] => {
     }
 
     if (prop === "box-shadow" && lower !== "none") {
-      const allowed = /var\(\s*--(accent-glow|shadow-glow-accent|shadow-none)\s*\)/.test(value);
+      // Split on top-level commas: an allowed token must not license extra
+      // layers beside it, as `var(--shadow-none), 0 2px 4px red` would.
+      const layers = value
+        .split(/,(?![^()]*\))/)
+        .map((l) => l.trim())
+        .filter(Boolean);
+      const allowed = layers.every(
+        (layer) =>
+          layer.toLowerCase() === "none" ||
+          /^var\(\s*--(accent-glow|shadow-glow-accent|shadow-none)\s*\)$/.test(layer),
+      );
       if (!allowed) {
         add(
           decl,
