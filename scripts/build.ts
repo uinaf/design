@@ -140,7 +140,12 @@ fs.writeFileSync(
       patterns: components.patterns.map((p) => ({
         ...p,
         slug: slug(p.name),
-        ...(p.markup ? { chunk: `/patterns/${slug(p.name)}.html` } : {}),
+        ...(p.markup
+          ? {
+              chunk: `https://design.uinaf.dev/patterns/${slug(p.name)}.html`,
+              chunkFile: `./patterns/${slug(p.name)}.html`,
+            }
+          : {}),
       })),
     },
     null,
