@@ -26,6 +26,24 @@ const SPACING_PROPERTIES =
 const SPACED_PROPERTY_SPLIT = /\s+/;
 
 const isToken = (value: string): boolean => /var\(\s*--/.test(value);
+
+/**
+ * Strip `var(--x)` references, keeping any fallback, so a raw color cannot hide
+ * behind a token in the same declaration: `var(--fg, #f00)` and
+ * `linear-gradient(var(--accent), #ff0000)` both still expose their raw value.
+ */
+const withoutTokenReferences = (value: string): string => {
+  let out = value;
+  let previous: string;
+  do {
+    previous = out;
+    out = out.replace(
+      /var\(\s*--[a-z0-9-]+\s*(?:,([^()]*))?\)/gi,
+      (_, fallback) => fallback ?? " ",
+    );
+  } while (out !== previous);
+  return out;
+};
 const hasRawColor = (value: string): boolean =>
   /#[0-9a-f]{3,8}\b/i.test(value) || /\b(rgba?|hsla?|oklch|lab|color)\s*\(/i.test(value);
 
@@ -42,9 +60,14 @@ const ALLOWED_RAW_COLORS = new Set([
   "initial",
 ]);
 
-/** A one-dimension pill (a dot, a bar) may use the pill radius. */
+/**
+ * A one-dimension pill (a dot, a bar) may use the pill radius. Matched against
+ * whole class-name segments, so `.sidebar` and `.toolbar` are not mistaken for
+ * bars and quietly exempted.
+ */
+const ONE_DIMENSIONAL_SEGMENT = /(^|[-_])(dot|pill|bar|spark|tick|avatar)s?([-_]|$)/i;
 const looksOneDimensional = (selector: string): boolean =>
-  /dot|pill|bar|spark|tick|avatar|badge/i.test(selector);
+  [...selector.matchAll(/\.([a-zA-Z0-9_-]+)/g)].some((m) => ONE_DIMENSIONAL_SEGMENT.test(m[1]));
 
 const LABEL_CONTEXT = /label|tag|kicker|caps|micro|crumb|th\b/i;
 
@@ -92,12 +115,8 @@ export const checkCss = (css: string, file: string): Violation[] => {
     // Custom properties are where raw values are supposed to live.
     const inTokenDefinition = prop.startsWith("--");
 
-    if (
-      !inTokenDefinition &&
-      hasRawColor(value) &&
-      !isToken(value) &&
-      !ALLOWED_RAW_COLORS.has(lower)
-    ) {
+    const withoutTokens = withoutTokenReferences(value);
+    if (!inTokenDefinition && hasRawColor(withoutTokens) && !ALLOWED_RAW_COLORS.has(lower)) {
       add(
         decl,
         "no-raw-color",

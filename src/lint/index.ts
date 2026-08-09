@@ -91,13 +91,14 @@ export const checkFile = (file: string, options: CheckOptions = {}): Violation[]
   // declarations are wrapped in a selector so the CSS rules see normal input;
   // the surrounding element's classes carry through so context-sensitive rules
   // (pill radius on a dot, uppercase on a label) still judge correctly.
-  for (const attr of source.matchAll(
-    /<[a-z][^>]*?(?:(?:class|className)\s*=\s*["'{]([^"'}]*)["'}][^>]*?)?style\s*=\s*["']([^"']*)["'][^>]*>/gi,
-  )) {
-    const declarations = attr[2]?.trim();
+  for (const tag of source.matchAll(/<[a-z][a-z0-9-]*\s[^>]*>/gi)) {
+    // Attributes are read independently: requiring class before style would
+    // check `<i style="…" class="u-dot">` with no selector at all.
+    const declarations = /\sstyle\s*=\s*["']([^"']*)["']/i.exec(tag[0])?.[1]?.trim();
     if (!declarations) continue;
-    const line = source.slice(0, attr.index ?? 0).split("\n").length;
-    const selector = (attr[1] ?? "")
+    const classes = /\s(?:class|className)\s*=\s*["'{]([^"'}]*)["'}]/i.exec(tag[0])?.[1];
+    const line = source.slice(0, tag.index ?? 0).split("\n").length;
+    const selector = (classes ?? "")
       .split(/\s+/)
       .filter(Boolean)
       .map((c) => `.${c}`)

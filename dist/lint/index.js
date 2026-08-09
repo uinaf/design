@@ -20,6 +20,18 @@ var MAX_RADIUS_PX = 6;
 var SPACING_PROPERTIES = /^(margin|padding)(-(top|right|bottom|left|inline|block)(-(start|end))?)?$|^gap$|^(row|column)-gap$/;
 var SPACED_PROPERTY_SPLIT = /\s+/;
 var isToken = (value) => /var\(\s*--/.test(value);
+var withoutTokenReferences = (value) => {
+  let out = value;
+  let previous;
+  do {
+    previous = out;
+    out = out.replace(
+      /var\(\s*--[a-z0-9-]+\s*(?:,([^()]*))?\)/gi,
+      (_, fallback) => fallback ?? " "
+    );
+  } while (out !== previous);
+  return out;
+};
 var hasRawColor = (value) => /#[0-9a-f]{3,8}\b/i.test(value) || /\b(rgba?|hsla?|oklch|lab|color)\s*\(/i.test(value);
 var ALLOWED_RAW_COLORS = /* @__PURE__ */ new Set([
   "#000",
@@ -33,7 +45,8 @@ var ALLOWED_RAW_COLORS = /* @__PURE__ */ new Set([
   "unset",
   "initial"
 ]);
-var looksOneDimensional = (selector) => /dot|pill|bar|spark|tick|avatar|badge/i.test(selector);
+var ONE_DIMENSIONAL_SEGMENT = /(^|[-_])(dot|pill|bar|spark|tick|avatar)s?([-_]|$)/i;
+var looksOneDimensional = (selector) => [...selector.matchAll(/\.([a-zA-Z0-9_-]+)/g)].some((m) => ONE_DIMENSIONAL_SEGMENT.test(m[1]));
 var LABEL_CONTEXT = /label|tag|kicker|caps|micro|crumb|th\b/i;
 var checkCss = (css, file) => {
   const violations = [];
@@ -68,7 +81,8 @@ var checkCss = (css, file) => {
     const lower = value.toLowerCase();
     const selector = decl.parent?.selector ?? "";
     const inTokenDefinition = prop.startsWith("--");
-    if (!inTokenDefinition && hasRawColor(value) && !isToken(value) && !ALLOWED_RAW_COLORS.has(lower)) {
+    const withoutTokens = withoutTokenReferences(value);
+    if (!inTokenDefinition && hasRawColor(withoutTokens) && !ALLOWED_RAW_COLORS.has(lower)) {
       add(
         decl,
         "no-raw-color",
@@ -375,13 +389,12 @@ var checkFile = (file, options = {}) => {
       violations.push({ ...violation, line: violation.line + offset });
     }
   }
-  for (const attr of source.matchAll(
-    /<[a-z][^>]*?(?:(?:class|className)\s*=\s*["'{]([^"'}]*)["'}][^>]*?)?style\s*=\s*["']([^"']*)["'][^>]*>/gi
-  )) {
-    const declarations = attr[2]?.trim();
+  for (const tag of source.matchAll(/<[a-z][a-z0-9-]*\s[^>]*>/gi)) {
+    const declarations = /\sstyle\s*=\s*["']([^"']*)["']/i.exec(tag[0])?.[1]?.trim();
     if (!declarations) continue;
-    const line = source.slice(0, attr.index ?? 0).split("\n").length;
-    const selector = (attr[1] ?? "").split(/\s+/).filter(Boolean).map((c) => `.${c}`).join("");
+    const classes = /\s(?:class|className)\s*=\s*["'{]([^"'}]*)["'}]/i.exec(tag[0])?.[1];
+    const line = source.slice(0, tag.index ?? 0).split("\n").length;
+    const selector = (classes ?? "").split(/\s+/).filter(Boolean).map((c) => `.${c}`).join("");
     for (const violation of checkCss(`${selector || "*"}{${declarations}}`, file)) {
       violations.push({ ...violation, line });
     }

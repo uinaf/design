@@ -297,3 +297,44 @@ describe("inline style attributes", () => {
     expect(checkFile(file).map((v) => v.rule)).not.toContain("radius-ceiling");
   });
 });
+
+describe("no-raw-color cannot hide behind a token", () => {
+  it("catches a raw fallback inside var()", () => {
+    expect(rules(css("a{color:var(--fg, #f00)}"))).toContain("no-raw-color");
+  });
+  it("catches a raw stop in a gradient beside a token", () => {
+    expect(rules(css("a{background:linear-gradient(var(--accent), #ff0000)}"))).toContain(
+      "no-raw-color",
+    );
+  });
+  it("still passes when every colour is a token", () => {
+    expect(rules(css("a{background:linear-gradient(var(--accent), var(--bg))}"))).not.toContain(
+      "no-raw-color",
+    );
+    expect(rules(css("a{color:var(--fg, var(--fg-muted))}"))).not.toContain("no-raw-color");
+  });
+});
+
+describe("pill radius exemption is segment-scoped", () => {
+  it("exempts genuine one-dimension elements", () => {
+    expect(rules(css(".u-dot{border-radius:9999px}"))).not.toContain("radius-ceiling");
+    expect(rules(css(".u-bars i{border-radius:9999px}"))).not.toContain("radius-ceiling");
+  });
+  it("does not exempt selectors that merely contain those letters", () => {
+    expect(rules(css(".sidebar{border-radius:9999px}"))).toContain("radius-ceiling");
+    expect(rules(css(".toolbar{border-radius:9999px}"))).toContain("radius-ceiling");
+  });
+});
+
+describe("inline styles are attribute-order independent", () => {
+  it("keeps element classes when style comes first", async () => {
+    const { checkFile } = await import("../src/lint/index");
+    const { writeFileSync, mkdtempSync } = await import("node:fs");
+    const { join } = await import("node:path");
+    const { tmpdir } = await import("node:os");
+    const dir = mkdtempSync(join(tmpdir(), "design-order-"));
+    const file = join(dir, "dot.html");
+    writeFileSync(file, `<i style="border-radius:9999px" class="u-dot"></i>\n`);
+    expect(checkFile(file).map((v) => v.rule)).not.toContain("radius-ceiling");
+  });
+});
