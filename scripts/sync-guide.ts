@@ -17,7 +17,9 @@ const previewSrc = path.join(root, "preview");
 const previewDest = path.join(guide, "preview");
 
 fs.mkdirSync(guide, { recursive: true });
+// tokens.css @imports ./components.css — both must land side by side.
 fs.copyFileSync(path.join(root, "dist/css/tokens.css"), path.join(guide, "tokens.css"));
+fs.copyFileSync(path.join(root, "dist/css/components.css"), path.join(guide, "components.css"));
 
 fs.rmSync(previewDest, { recursive: true, force: true });
 fs.cpSync(previewSrc, previewDest, { recursive: true });

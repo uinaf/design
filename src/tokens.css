@@ -1,6 +1,16 @@
-/* @uinaf/design tokens + styles. Load Berkeley Mono from CDN first:
-   https://cdn.uinaf.dev/fonts/berkeley-mono/variable/font.css */
+/* @uinaf/design — tokens, type, and primitives.
+   Berkeley Mono is licensed: loaded from the CDN, never bundled. */
 @import url("https://cdn.uinaf.dev/fonts/berkeley-mono/variable/font.css");
+@import url("./components.css");
+/* v2: smaller-but-hierarchical type scale (10→40), uppercase micro-labels
+   as the hierarchy device, ONE ui accent (phosphor lime, distilled from
+   the slime artwork), corner-tick panels, shared-hairline panel grids,
+   ruled tables, real button/input polish, more air inside containers.
+   ===================================================================== */
+
+/* Fonts: Berkeley Mono is licensed — repos load it from the CDN, never bundle it:
+   <link rel="stylesheet" href="https://cdn.uinaf.dev/fonts/berkeley-mono/variable/font.css">
+   (@font-face lives in that file; this stylesheet only references var(--font-mono).) */
 
 :root {
   /* ---------- Type families — mono is the only face ---------- */
@@ -656,6 +666,57 @@
 .u-sep {
   color: var(--fg-faint);
   user-select: none;
+}
+
+/* Topbar — app/product chrome. ONE row, never stacked: mark + product
+   name left, plain links right, at most one small button. Hairline
+   below, never sticky, no background. The stacked .u-header above is
+   uinaf.dev site chrome ONLY — product pages and dashboards use this. */
+.u-topbar {
+  border-bottom: 1px solid var(--border);
+}
+.u-topbar-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+  height: 56px;
+}
+.u-topbar-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  color: var(--fg);
+  font-size: var(--text-base);
+  text-decoration: none;
+}
+.u-topbar-mark img {
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--border);
+  display: block;
+}
+.u-topbar-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-5);
+  margin-left: auto;
+  font-size: var(--text-sm);
+}
+.u-topbar-nav a {
+  color: var(--fg-muted);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-snappy);
+}
+.u-topbar-nav a:hover {
+  color: var(--fg);
+}
+.u-topbar-nav a[aria-current="page"] {
+  color: var(--fg);
+}
+.u-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
 }
 
 /* Hero — kicker label, modest display, one sub line, actions. */
