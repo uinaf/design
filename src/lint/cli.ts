@@ -2,7 +2,9 @@
 import fs from "node:fs";
 import path from "node:path";
 import {
+  changedFiles,
   check,
+  gitRoot,
   compareRatchet,
   countByRule,
   formatViolation,
@@ -33,6 +35,8 @@ if (flag("help")) {
   design-check --ratchet         compare against ${RATCHET_FILE}, fail if any count rises
   design-check --update-ratchet  write the current counts as the new baseline
   design-check --json            machine-readable output
+  design-check --changed         only files this branch touched (vs origin/main)
+  design-check --base <ref>      base for --changed (default origin/main)
   design-check --ignore <part>   skip paths containing this substring (repeatable)
   design-check --abbreviations A,B  extra abbreviations allowed to keep their caps
 
@@ -50,6 +54,8 @@ const KNOWN_FLAGS = new Set([
   "--json",
   "--ignore",
   "--abbreviations",
+  "--changed",
+  "--base",
 ]);
 const unknown = argv.filter((arg) => arg.startsWith("--") && !KNOWN_FLAGS.has(arg));
 if (unknown.length > 0) {
@@ -68,14 +74,35 @@ const abbreviationsArg = value("abbreviations");
 const paths = argv.filter((arg, index) => {
   if (arg.startsWith("--")) return false;
   const previous = argv[index - 1];
-  return previous !== "--ignore" && previous !== "--abbreviations";
+  return previous !== "--ignore" && previous !== "--abbreviations" && previous !== "--base";
 });
+
+let changedRoot: string | undefined;
+if (flag("changed")) {
+  let touched: string[];
+  try {
+    touched = changedFiles(value("base") ?? "origin/main");
+  } catch (error) {
+    // Never fall through to a full scan or a clean report: the caller asked for
+    // changed files and we could not determine them.
+    console.error(`design:check — ${(error as Error).message}`);
+    process.exit(1);
+  }
+  if (touched.length === 0) {
+    console.log("design:check clean — no changed files to check");
+    process.exit(0);
+  }
+  paths.length = 0;
+  paths.push(...touched);
+  changedRoot = gitRoot();
+}
 
 let violations;
 try {
   violations = check({
     paths,
     ignore,
+    relativeTo: changedRoot,
     abbreviations: abbreviationsArg ? abbreviationsArg.split(",") : undefined,
   });
 } catch (error) {

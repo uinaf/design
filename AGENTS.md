@@ -38,10 +38,11 @@ Do not gate guide deploy on the release job. Credentials for each path are liste
 
 ## Docs map
 
-| Doc                 | When                                    |
-| ------------------- | --------------------------------------- |
-| `README.md`         | package install / consumer usage        |
-| `DESIGN.md`         | visual + voice rules                    |
-| `CONTRIBUTING.md`   | local setup and verify                  |
-| `docs/releasing.md` | npm + guide deploy pipelines            |
-| skill               | building UI that should feel like uinaf |
+| Doc                 | When                                      |
+| ------------------- | ----------------------------------------- |
+| `README.md`         | package install / consumer usage          |
+| `DESIGN.md`         | visual + voice rules                      |
+| `CONTRIBUTING.md`   | local setup and verify                    |
+| `docs/releasing.md` | npm + guide deploy pipelines              |
+| `docs/adoption.md`  | the paste-once drop-in for a product repo |
+| skill               | building UI that should feel like uinaf   |

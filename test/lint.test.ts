@@ -632,3 +632,135 @@ describe("topbar-single-row is scoped to one topbar", () => {
     );
   });
 });
+
+describe("skipped directories apply to explicit paths", () => {
+  it("never lints a dependency, even when handed the file directly", async () => {
+    const { collectFiles } = await import("../src/lint/index");
+    const { mkdtempSync, mkdirSync, writeFileSync } = await import("node:fs");
+    const { join } = await import("node:path");
+    const { tmpdir } = await import("node:os");
+    const dir = mkdtempSync(join(tmpdir(), "design-skip-"));
+    mkdirSync(join(dir, "node_modules", "pkg"), { recursive: true });
+    mkdirSync(join(dir, "src"), { recursive: true });
+    const dep = join(dir, "node_modules", "pkg", "index.html");
+    const own = join(dir, "src", "page.html");
+    writeFileSync(dep, "<p>x</p>");
+    writeFileSync(own, "<p>y</p>");
+    // A `git ls-files` result in a repo with a broken .gitignore looks like this.
+    const files = collectFiles([dep, own]);
+    expect(files).toEqual([own]);
+  });
+});
+
+describe("changedFiles", () => {
+  // Builds its own repo: depending on this checkout's refs made the test pass
+  // vacuously when it returned nothing, and fail in CI where origin/main is
+  // absent from a shallow clone.
+  const repo = async () => {
+    const { execFileSync } = await import("node:child_process");
+    const { mkdtempSync, mkdirSync, writeFileSync } = await import("node:fs");
+    const { join } = await import("node:path");
+    const { tmpdir } = await import("node:os");
+    const dir = mkdtempSync(join(tmpdir(), "design-changed-"));
+    const git = (...args: string[]) =>
+      execFileSync("git", ["-C", dir, ...args], { stdio: "ignore" });
+    git("init", "-q");
+    git("checkout", "-q", "-b", "feature");
+    git("config", "user.email", "t@example.com");
+    git("config", "user.name", "t");
+    mkdirSync(join(dir, "src"), { recursive: true });
+    writeFileSync(join(dir, "src", "page.html"), "<p>x</p>");
+    writeFileSync(join(dir, "README.md"), "not lintable");
+    git("add", "-A");
+    git("commit", "-q", "-m", "init");
+    git("update-ref", "refs/remotes/origin/main", "HEAD");
+    return { dir, git, join };
+  };
+
+  it("finds untracked, uncommitted, and committed changes", async () => {
+    const { changedFiles } = await import("../src/lint/index");
+    const { writeFileSync } = await import("node:fs");
+    const { dir, git, join } = await repo();
+    const cwd = process.cwd();
+    process.chdir(dir);
+    try {
+      expect(changedFiles()).toEqual([]);
+
+      // committed after the base: only the `base...HEAD` diff sees this one.
+      writeFileSync(join(dir, "src", "committed.css"), ".a{color:red}");
+      git("add", "-A");
+      git("commit", "-q", "-m", "second");
+      expect(changedFiles().map((f) => f.split("/").pop())).toEqual(["committed.css"]);
+
+      writeFileSync(join(dir, "src", "new.tsx"), "<p>y</p>");
+      writeFileSync(join(dir, "src", "page.html"), "<p>edited</p>");
+      expect(
+        changedFiles()
+          .map((f) => f.split("/").pop())
+          .sort(),
+      ).toEqual(["committed.css", "new.tsx", "page.html"]);
+    } finally {
+      process.chdir(cwd);
+    }
+  });
+
+  it("returns absolute paths when run from a subdirectory", async () => {
+    const { changedFiles } = await import("../src/lint/index");
+    const { writeFileSync, realpathSync } = await import("node:fs");
+    const { dir, join } = await repo();
+    const cwd = process.cwd();
+    // Git reports paths relative to cwd; resolving those against the repo root
+    // from a subdirectory silently dropped every one of them.
+    process.chdir(join(dir, "src"));
+    try {
+      writeFileSync(join(dir, "src", "new.tsx"), "<p>y</p>");
+      expect(changedFiles()).toEqual([join(realpathSync(dir), "src", "new.tsx")]);
+    } finally {
+      process.chdir(cwd);
+    }
+  });
+
+  it("ignores files the linter cannot check", async () => {
+    const { changedFiles } = await import("../src/lint/index");
+    const { writeFileSync } = await import("node:fs");
+    const { dir, join } = await repo();
+    const cwd = process.cwd();
+    process.chdir(dir);
+    try {
+      writeFileSync(join(dir, "notes.md"), "prose");
+      expect(changedFiles()).toEqual([]);
+    } finally {
+      process.chdir(cwd);
+    }
+  });
+});
+
+describe("--changed fails closed", () => {
+  it("refuses an unresolvable base rather than reporting a clean tree", async () => {
+    const { changedFiles } = await import("../src/lint/index");
+    // Silently dropping committed changes here would report clean and exit 0,
+    // which is the one thing a gate must never do.
+    expect(() => changedFiles("definitely-not-a-ref")).toThrow(/cannot resolve base ref/);
+  });
+});
+
+describe("skip names are judged inside the project only", () => {
+  it("does not suppress a repo that happens to live under a skipped name", async () => {
+    const { collectFiles } = await import("../src/lint/index");
+    const { mkdtempSync, mkdirSync, writeFileSync } = await import("node:fs");
+    const { join } = await import("node:path");
+    const { tmpdir } = await import("node:os");
+    // /…/dist/myrepo/src/page.html — `dist` is an ancestor, not the project's.
+    const base = mkdtempSync(join(tmpdir(), "design-anc-"));
+    const repo = join(base, "dist", "myrepo");
+    mkdirSync(join(repo, "src"), { recursive: true });
+    mkdirSync(join(repo, "node_modules", "pkg"), { recursive: true });
+    const own = join(repo, "src", "page.html");
+    const dep = join(repo, "node_modules", "pkg", "index.html");
+    writeFileSync(own, "<p>x</p>");
+    writeFileSync(dep, "<p>y</p>");
+    // Judged against the repo root: `dist` above it is irrelevant, but
+    // node_modules inside it is still skipped.
+    expect(collectFiles([own, dep], [], repo)).toEqual([own]);
+  });
+});

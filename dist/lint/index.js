@@ -1,4 +1,5 @@
 // src/lint/index.ts
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -470,7 +471,7 @@ setJsxStyleChecker((property, value, classes) => {
   const selector = classes.split(/\s+/).filter(Boolean).map((c) => `.${c}`).join("") || "*";
   return checkCss(`${selector}{${property}:${value}}`, "jsx").map((v) => ({ ...v, line: 1 }));
 });
-var collectFiles = (roots, ignore = []) => {
+var collectFiles = (roots, ignore = [], relativeTo = process.cwd()) => {
   const found = [];
   const ignored = (file) => ignore.some((pattern) => file.includes(pattern));
   const seen = /* @__PURE__ */ new Set();
@@ -482,7 +483,10 @@ var collectFiles = (roots, ignore = []) => {
     seen.add(real);
     if (stat.isFile()) {
       const ext = path.extname(target).toLowerCase();
-      if ((CSS_EXTENSIONS.has(ext) || MARKUP_EXTENSIONS.has(ext)) && !ignored(target)) {
+      const within = path.relative(relativeTo, target);
+      const judged = within && !within.startsWith("..") ? within : target;
+      const inSkipped = judged.split(path.sep).slice(0, -1).some((segment) => SKIP_DIRECTORIES.has(segment));
+      if ((CSS_EXTENSIONS.has(ext) || MARKUP_EXTENSIONS.has(ext)) && !ignored(target) && !inSkipped) {
         found.push(target);
       }
       return;
@@ -505,6 +509,66 @@ var applySuppressions = (source, violations) => {
   return violations.filter(
     (violation) => !rules.some((s) => s.line === violation.line && (s.rule === "" || s.rule === violation.rule))
   );
+};
+var changedFiles = (base = "origin/main") => {
+  const run = (args) => {
+    try {
+      return execFileSync("git", args, { encoding: "utf8" }).split("\n").filter(Boolean);
+    } catch {
+      return [];
+    }
+  };
+  const [repoRoot] = run(["rev-parse", "--show-toplevel"]);
+  if (!repoRoot) {
+    throw new Error("--changed needs a git repository");
+  }
+  const git = (args) => {
+    try {
+      return execFileSync("git", ["-C", repoRoot, args[0], "-z", ...args.slice(1)], {
+        encoding: "utf8",
+        stdio: ["ignore", "pipe", "pipe"]
+      }).split("\0").filter(Boolean);
+    } catch (error) {
+      const stderr = String(error.stderr ?? "").trim();
+      throw new Error(
+        `--changed could not run \`git ${args.join(" ")}\`${stderr ? `: ${stderr}` : ""}`
+      );
+    }
+  };
+  let hasBase = true;
+  try {
+    execFileSync("git", ["rev-parse", "--verify", "--quiet", `${base}^{commit}`], {
+      stdio: "ignore"
+    });
+  } catch {
+    hasBase = false;
+  }
+  if (!hasBase) {
+    throw new Error(
+      `--changed cannot resolve base ref \`${base}\`. Fetch it, or pass --base <ref> (e.g. --base main).`
+    );
+  }
+  const linted = (file) => {
+    const ext = path.extname(file).toLowerCase();
+    return CSS_EXTENSIONS.has(ext) || MARKUP_EXTENSIONS.has(ext);
+  };
+  return [
+    .../* @__PURE__ */ new Set([
+      ...git(["diff", "--name-only", "--diff-filter=d", `${base}...HEAD`]),
+      ...git(["diff", "--name-only", "--diff-filter=d", "HEAD"]),
+      ...git(["ls-files", "--others", "--exclude-standard"])
+    ])
+  ].filter(linted).map((file) => path.resolve(repoRoot, file)).filter((file) => fs.existsSync(file)).sort();
+};
+var gitRoot = () => {
+  try {
+    return execFileSync("git", ["rev-parse", "--show-toplevel"], {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"]
+    }).trim();
+  } catch {
+    return void 0;
+  }
 };
 var checkFile = (file, options = {}) => {
   const source = fs.readFileSync(file, "utf8");
@@ -535,7 +599,9 @@ var check = (options = {}) => {
   if (missing.length > 0) {
     throw new Error(`no such path: ${missing.join(", ")}`);
   }
-  return collectFiles(roots, options.ignore ?? []).flatMap((file) => checkFile(file, options));
+  return collectFiles(roots, options.ignore ?? [], options.relativeTo).flatMap(
+    (file) => checkFile(file, options)
+  );
 };
 var countByRule = (violations) => {
   const counts = {};
@@ -567,6 +633,7 @@ var summarise = (violations) => {
   return `${plural(errors, "error")}, ${plural(warnings, "warning")}`;
 };
 export {
+  changedFiles,
   check,
   checkCss,
   checkFile,
@@ -575,6 +642,7 @@ export {
   compareRatchet,
   countByRule,
   formatViolation,
+  gitRoot,
   hasErrors,
   summarise
 };

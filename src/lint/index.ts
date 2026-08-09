@@ -1,3 +1,4 @@
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { checkCss } from "./rules-css.ts";
@@ -26,6 +27,8 @@ export type CheckOptions = MarkupOptions & {
   /** Files or directories to scan; defaults to the working directory. */
   paths?: string[];
   ignore?: string[];
+  /** Root that skip-directory names are judged against. */
+  relativeTo?: string;
 };
 
 // JSX object styles are judged by the same CSS rules as everything else.
@@ -39,7 +42,13 @@ setJsxStyleChecker((property, value, classes) => {
   return checkCss(`${selector}{${property}:${value}}`, "jsx").map((v) => ({ ...v, line: 1 }));
 });
 
-export const collectFiles = (roots: string[], ignore: string[] = []): string[] => {
+export const collectFiles = (
+  roots: string[],
+  ignore: string[] = [],
+  /** Segments above this are not the project's; a repo living under a directory
+   *  called `dist` must not have every file skipped. */
+  relativeTo: string = process.cwd(),
+): string[] => {
   const found: string[] = [];
   const ignored = (file: string): boolean => ignore.some((pattern) => file.includes(pattern));
   // statSync follows symlinks, so a directory linking to an ancestor would
@@ -54,7 +63,23 @@ export const collectFiles = (roots: string[], ignore: string[] = []): string[] =
     seen.add(real);
     if (stat.isFile()) {
       const ext = path.extname(target).toLowerCase();
-      if ((CSS_EXTENSIONS.has(ext) || MARKUP_EXTENSIONS.has(ext)) && !ignored(target)) {
+      // Skipped directories apply to explicit file arguments too. A caller
+      // passing a glob or a `git ls-files` result should never end up linting
+      // its own dependencies.
+      // Inside the project, only segments below its root count — a repo living
+      // under a directory called `dist` must not have every file suppressed.
+      // Outside it, fall back to the whole path and stay conservative.
+      const within = path.relative(relativeTo, target);
+      const judged = within && !within.startsWith("..") ? within : target;
+      const inSkipped = judged
+        .split(path.sep)
+        .slice(0, -1)
+        .some((segment) => SKIP_DIRECTORIES.has(segment));
+      if (
+        (CSS_EXTENSIONS.has(ext) || MARKUP_EXTENSIONS.has(ext)) &&
+        !ignored(target) &&
+        !inSkipped
+      ) {
         found.push(target);
       }
       return;
@@ -90,6 +115,100 @@ const applySuppressions = (source: string, violations: Violation[]): Violation[]
     (violation) =>
       !rules.some((s) => s.line === violation.line && (s.rule === "" || s.rule === violation.rule)),
   );
+};
+
+/**
+ * Files this branch touched: committed changes against the base, uncommitted
+ * edits to tracked files, and untracked new files. All three matter — a Stop
+ * hook runs mid-work, so the most common case is an edit that is not committed
+ * yet, and a brand new component is untracked.
+ *
+ * Enumerated through git argv rather than a shell pipeline, so a filename with
+ * a space in it survives.
+ */
+export const changedFiles = (base = "origin/main"): string[] => {
+  const run = (args: string[]): string[] => {
+    try {
+      return execFileSync("git", args, { encoding: "utf8" }).split("\n").filter(Boolean);
+    } catch {
+      return [];
+    }
+  };
+  const [repoRoot] = run(["rev-parse", "--show-toplevel"]);
+  if (!repoRoot) {
+    throw new Error("--changed needs a git repository");
+  }
+  // Every subsequent command runs from the repository root. Git reports paths
+  // relative to the current directory, so running from a subdirectory would
+  // return paths that resolve nowhere and report a clean tree.
+  // Enumeration must not swallow failures. A `base...HEAD` diff fails outright
+  // when the two have no merge base (shallow clone, unrelated histories), and
+  // treating that as "no files changed" reports a clean tree.
+  // NUL-delimited: git quotes and escapes paths containing non-ASCII or unusual
+  // characters in its default output, which would mangle the filename.
+  const git = (args: string[]): string[] => {
+    try {
+      // -z goes before revisions: git does not reliably parse options after a
+      // rev or pathspec, and a trailing -z can be taken as a pathspec instead.
+      return execFileSync("git", ["-C", repoRoot, args[0], "-z", ...args.slice(1)], {
+        encoding: "utf8",
+        stdio: ["ignore", "pipe", "pipe"],
+      })
+        .split("\0")
+        .filter(Boolean);
+    } catch (error) {
+      const stderr = String((error as { stderr?: Buffer }).stderr ?? "").trim();
+      throw new Error(
+        `--changed could not run \`git ${args.join(" ")}\`${stderr ? `: ${stderr}` : ""}`,
+      );
+    }
+  };
+  let hasBase = true;
+  try {
+    execFileSync("git", ["rev-parse", "--verify", "--quiet", `${base}^{commit}`], {
+      stdio: "ignore",
+    });
+  } catch {
+    hasBase = false;
+  }
+  // Failing open here would drop every committed change and report a clean
+  // tree, which is the one thing this check must never do.
+  if (!hasBase) {
+    throw new Error(
+      `--changed cannot resolve base ref \`${base}\`. Fetch it, or pass --base <ref> (e.g. --base main).`,
+    );
+  }
+  const linted = (file: string): boolean => {
+    const ext = path.extname(file).toLowerCase();
+    return CSS_EXTENSIONS.has(ext) || MARKUP_EXTENSIONS.has(ext);
+  };
+  return [
+    ...new Set([
+      ...git(["diff", "--name-only", "--diff-filter=d", `${base}...HEAD`]),
+      ...git(["diff", "--name-only", "--diff-filter=d", "HEAD"]),
+      ...git(["ls-files", "--others", "--exclude-standard"]),
+    ]),
+  ]
+    .filter(linted)
+    .map((file) => path.resolve(repoRoot, file))
+    .filter((file) => fs.existsSync(file))
+    .sort();
+};
+
+/**
+ * The git root, which is what skip-directory names must be judged against.
+ * Inferring a root from the changed files instead would take `node_modules` as
+ * the root when every changed file sits inside it, and lint the lot.
+ */
+export const gitRoot = (): string | undefined => {
+  try {
+    return execFileSync("git", ["rev-parse", "--show-toplevel"], {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+    }).trim();
+  } catch {
+    return undefined;
+  }
 };
 
 export const checkFile = (file: string, options: CheckOptions = {}): Violation[] => {
@@ -135,7 +254,9 @@ export const check = (options: CheckOptions = {}): Violation[] => {
   if (missing.length > 0) {
     throw new Error(`no such path: ${missing.join(", ")}`);
   }
-  return collectFiles(roots, options.ignore ?? []).flatMap((file) => checkFile(file, options));
+  return collectFiles(roots, options.ignore ?? [], options.relativeTo).flatMap((file) =>
+    checkFile(file, options),
+  );
 };
 
 export const countByRule = (violations: Violation[]): Record<string, number> => {

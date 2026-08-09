@@ -5,6 +5,7 @@ import fs2 from "node:fs";
 import path2 from "node:path";
 
 // src/lint/index.ts
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -476,7 +477,7 @@ setJsxStyleChecker((property, value2, classes) => {
   const selector = classes.split(/\s+/).filter(Boolean).map((c) => `.${c}`).join("") || "*";
   return checkCss(`${selector}{${property}:${value2}}`, "jsx").map((v) => ({ ...v, line: 1 }));
 });
-var collectFiles = (roots, ignore2 = []) => {
+var collectFiles = (roots, ignore2 = [], relativeTo = process.cwd()) => {
   const found = [];
   const ignored = (file) => ignore2.some((pattern) => file.includes(pattern));
   const seen = /* @__PURE__ */ new Set();
@@ -488,7 +489,10 @@ var collectFiles = (roots, ignore2 = []) => {
     seen.add(real);
     if (stat.isFile()) {
       const ext = path.extname(target).toLowerCase();
-      if ((CSS_EXTENSIONS.has(ext) || MARKUP_EXTENSIONS.has(ext)) && !ignored(target)) {
+      const within = path.relative(relativeTo, target);
+      const judged = within && !within.startsWith("..") ? within : target;
+      const inSkipped = judged.split(path.sep).slice(0, -1).some((segment) => SKIP_DIRECTORIES.has(segment));
+      if ((CSS_EXTENSIONS.has(ext) || MARKUP_EXTENSIONS.has(ext)) && !ignored(target) && !inSkipped) {
         found.push(target);
       }
       return;
@@ -511,6 +515,66 @@ var applySuppressions = (source, violations2) => {
   return violations2.filter(
     (violation) => !rules.some((s) => s.line === violation.line && (s.rule === "" || s.rule === violation.rule))
   );
+};
+var changedFiles = (base = "origin/main") => {
+  const run = (args) => {
+    try {
+      return execFileSync("git", args, { encoding: "utf8" }).split("\n").filter(Boolean);
+    } catch {
+      return [];
+    }
+  };
+  const [repoRoot] = run(["rev-parse", "--show-toplevel"]);
+  if (!repoRoot) {
+    throw new Error("--changed needs a git repository");
+  }
+  const git = (args) => {
+    try {
+      return execFileSync("git", ["-C", repoRoot, args[0], "-z", ...args.slice(1)], {
+        encoding: "utf8",
+        stdio: ["ignore", "pipe", "pipe"]
+      }).split("\0").filter(Boolean);
+    } catch (error) {
+      const stderr = String(error.stderr ?? "").trim();
+      throw new Error(
+        `--changed could not run \`git ${args.join(" ")}\`${stderr ? `: ${stderr}` : ""}`
+      );
+    }
+  };
+  let hasBase = true;
+  try {
+    execFileSync("git", ["rev-parse", "--verify", "--quiet", `${base}^{commit}`], {
+      stdio: "ignore"
+    });
+  } catch {
+    hasBase = false;
+  }
+  if (!hasBase) {
+    throw new Error(
+      `--changed cannot resolve base ref \`${base}\`. Fetch it, or pass --base <ref> (e.g. --base main).`
+    );
+  }
+  const linted = (file) => {
+    const ext = path.extname(file).toLowerCase();
+    return CSS_EXTENSIONS.has(ext) || MARKUP_EXTENSIONS.has(ext);
+  };
+  return [
+    .../* @__PURE__ */ new Set([
+      ...git(["diff", "--name-only", "--diff-filter=d", `${base}...HEAD`]),
+      ...git(["diff", "--name-only", "--diff-filter=d", "HEAD"]),
+      ...git(["ls-files", "--others", "--exclude-standard"])
+    ])
+  ].filter(linted).map((file) => path.resolve(repoRoot, file)).filter((file) => fs.existsSync(file)).sort();
+};
+var gitRoot = () => {
+  try {
+    return execFileSync("git", ["rev-parse", "--show-toplevel"], {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"]
+    }).trim();
+  } catch {
+    return void 0;
+  }
 };
 var checkFile = (file, options = {}) => {
   const source = fs.readFileSync(file, "utf8");
@@ -541,7 +605,9 @@ var check = (options = {}) => {
   if (missing.length > 0) {
     throw new Error(`no such path: ${missing.join(", ")}`);
   }
-  return collectFiles(roots, options.ignore ?? []).flatMap((file) => checkFile(file, options));
+  return collectFiles(roots, options.ignore ?? [], options.relativeTo).flatMap(
+    (file) => checkFile(file, options)
+  );
 };
 var countByRule = (violations2) => {
   const counts2 = {};
@@ -588,6 +654,8 @@ if (flag("help")) {
   design-check --ratchet         compare against ${RATCHET_FILE}, fail if any count rises
   design-check --update-ratchet  write the current counts as the new baseline
   design-check --json            machine-readable output
+  design-check --changed         only files this branch touched (vs origin/main)
+  design-check --base <ref>      base for --changed (default origin/main)
   design-check --ignore <part>   skip paths containing this substring (repeatable)
   design-check --abbreviations A,B  extra abbreviations allowed to keep their caps
 
@@ -601,7 +669,9 @@ var KNOWN_FLAGS = /* @__PURE__ */ new Set([
   "--update-ratchet",
   "--json",
   "--ignore",
-  "--abbreviations"
+  "--abbreviations",
+  "--changed",
+  "--base"
 ]);
 var unknown = argv.filter((arg) => arg.startsWith("--") && !KNOWN_FLAGS.has(arg));
 if (unknown.length > 0) {
@@ -619,13 +689,31 @@ var abbreviationsArg = value("abbreviations");
 var paths = argv.filter((arg, index) => {
   if (arg.startsWith("--")) return false;
   const previous = argv[index - 1];
-  return previous !== "--ignore" && previous !== "--abbreviations";
+  return previous !== "--ignore" && previous !== "--abbreviations" && previous !== "--base";
 });
+var changedRoot;
+if (flag("changed")) {
+  let touched;
+  try {
+    touched = changedFiles(value("base") ?? "origin/main");
+  } catch (error) {
+    console.error(`design:check \u2014 ${error.message}`);
+    process.exit(1);
+  }
+  if (touched.length === 0) {
+    console.log("design:check clean \u2014 no changed files to check");
+    process.exit(0);
+  }
+  paths.length = 0;
+  paths.push(...touched);
+  changedRoot = gitRoot();
+}
 var violations;
 try {
   violations = check({
     paths,
     ignore,
+    relativeTo: changedRoot,
     abbreviations: abbreviationsArg ? abbreviationsArg.split(",") : void 0
   });
 } catch (error) {

@@ -42,6 +42,7 @@ import { CDN } from "@uinaf/design/cdn";
 ## Docs
 
 - [Design spec](DESIGN.md)
+- [Adopting in a product repo](docs/adoption.md)
 - [Contributing](CONTRIBUTING.md)
 - [Releasing](docs/releasing.md)
 - [Security](SECURITY.md)

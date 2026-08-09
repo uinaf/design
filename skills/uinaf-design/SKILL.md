@@ -33,7 +33,7 @@ not the package name.
 
 If the repo already has violations, do not try to fix the whole codebase. Record
 the baseline **before you touch anything** — `npm run design:check -- --update-ratchet`
-on a clean tree, then commit `.design-ratchet.json`. Running it afterwards bakes
+on a clean tree, then commit `.design-ratchet.json`. Running it afterward bakes
 your own new violations into the baseline and the ratchet will never catch them.
 From then on add `--ratchet`, which fails only when a count rises, so your change
 is held to green without inheriting the backlog.
