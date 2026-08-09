@@ -98,7 +98,7 @@ export const checkFile = (file: string, options: CheckOptions = {}): Violation[]
   if (CSS_EXTENSIONS.has(ext)) return applySuppressions(source, checkCss(source, file));
   // Markup files can carry <style> blocks; both rule sets apply.
   const violations = checkMarkup(source, file, options);
-  for (const block of source.matchAll(/<style[^>]{0,500}>([\s\S]*?)<\/style\s{0,8}>/g)) {
+  for (const block of source.matchAll(/<style[^>]{0,500}>([\s\S]{0,100000}?)<\/style\s{0,8}>/g)) {
     const offset = source.slice(0, block.index ?? 0).split("\n").length - 1;
     for (const violation of checkCss(block[1], file)) {
       violations.push({ ...violation, line: violation.line + offset });

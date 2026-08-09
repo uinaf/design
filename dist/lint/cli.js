@@ -378,7 +378,7 @@ var checkMarkup = (source, file, options = {}) => {
     }
   }
   const blank = (m) => " ".repeat(m.length);
-  const renderable = source.replace(/<!--[\s\S]*?-->/g, blank).replace(/\/\*[\s\S]*?\*\//g, blank).replace(/(^|\n)[^\S\n]{0,80}\/\/[^\n]*/g, blank).replace(/<script\b[\s\S]*?<\/script\s{0,8}>/gi, blank).replace(/<style\b[\s\S]*?<\/style\s{0,8}>/gi, blank);
+  const renderable = source.replace(/<!--[\s\S]{0,4000}?-->/g, blank).replace(/\/\*[\s\S]{0,4000}?\*\//g, blank).replace(/(^|\n)[^\S\n]{0,80}\/\/[^\n]{0,2000}/g, blank).replace(/<script\b[\s\S]{0,20000}?<\/script\s{0,8}>/gi, blank).replace(/<style\b[\s\S]{0,20000}?<\/style\s{0,8}>/gi, blank);
   for (const match of renderable.matchAll(EMOJI)) {
     add(
       match.index ?? 0,
@@ -514,7 +514,7 @@ var checkFile = (file, options = {}) => {
   const ext = path.extname(file).toLowerCase();
   if (CSS_EXTENSIONS.has(ext)) return applySuppressions(source, checkCss(source, file));
   const violations2 = checkMarkup(source, file, options);
-  for (const block of source.matchAll(/<style[^>]{0,500}>([\s\S]*?)<\/style\s{0,8}>/g)) {
+  for (const block of source.matchAll(/<style[^>]{0,500}>([\s\S]{0,100000}?)<\/style\s{0,8}>/g)) {
     const offset = source.slice(0, block.index ?? 0).split("\n").length - 1;
     for (const violation of checkCss(block[1], file)) {
       violations2.push({ ...violation, line: violation.line + offset });

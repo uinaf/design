@@ -171,13 +171,15 @@ export const checkMarkup = (
   // Only text that actually renders: an emoji in a comment or a JS string is
   // source, not UI, and flagging it makes the rule noise in any .tsx file.
   const blank = (m: string): string => " ".repeat(m.length);
+  // Bodies are bounded: an unterminated `<!--` would otherwise make each start
+  // position scan to end of file, which is quadratic on a crafted input.
   const renderable = source
-    .replace(/<!--[\s\S]*?-->/g, blank)
-    .replace(/\/\*[\s\S]*?\*\//g, blank)
-    .replace(/(^|\n)[^\S\n]{0,80}\/\/[^\n]*/g, blank)
+    .replace(/<!--[\s\S]{0,4000}?-->/g, blank)
+    .replace(/\/\*[\s\S]{0,4000}?\*\//g, blank)
+    .replace(/(^|\n)[^\S\n]{0,80}\/\/[^\n]{0,2000}/g, blank)
     // `</script >` is a valid end tag; a bare `</script>` match can be evaded.
-    .replace(/<script\b[\s\S]*?<\/script\s{0,8}>/gi, blank)
-    .replace(/<style\b[\s\S]*?<\/style\s{0,8}>/gi, blank);
+    .replace(/<script\b[\s\S]{0,20000}?<\/script\s{0,8}>/gi, blank)
+    .replace(/<style\b[\s\S]{0,20000}?<\/style\s{0,8}>/gi, blank);
   for (const match of renderable.matchAll(EMOJI)) {
     add(
       match.index ?? 0,
