@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import * as esbuild from "esbuild";
 import { CDN } from "../src/cdn.ts";
 
 const root = path.resolve(import.meta.dirname, "..");
@@ -173,6 +174,59 @@ fs.writeFileSync(
     null,
     2,
   )}\n`,
+);
+
+// The lint ships as real JS. Node refuses to strip types for anything under
+// node_modules, so a consumer running `design-check` from the installed package
+// cannot execute TypeScript source however new their runtime is.
+const lintOut = path.join(root, "dist/lint");
+fs.rmSync(lintOut, { recursive: true, force: true });
+await esbuild.build({
+  entryPoints: [path.join(root, "src/lint/cli.ts"), path.join(root, "src/lint/index.ts")],
+  outdir: lintOut,
+  platform: "node",
+  target: "node24",
+  format: "esm",
+  bundle: true,
+  packages: "external",
+});
+// esbuild emits no declarations, and the ./lint export is a public API.
+fs.writeFileSync(
+  path.join(lintOut, "index.d.ts"),
+  `export type Severity = "error" | "warn";
+export type Violation = {
+  rule: string;
+  severity: Severity;
+  file: string;
+  line: number;
+  message: string;
+  fix: string;
+};
+export type MarkupOptions = { abbreviations?: string[] };
+export type CheckOptions = MarkupOptions & { paths?: string[]; ignore?: string[] };
+export type RatchetResult = {
+  passed: boolean;
+  risen: Array<{ rule: string; was: number; now: number }>;
+  improved: Array<{ rule: string; was: number; now: number }>;
+};
+export declare const check: (options?: CheckOptions) => Violation[];
+export declare const checkFile: (file: string, options?: CheckOptions) => Violation[];
+export declare const checkCss: (css: string, file: string) => Violation[];
+export declare const checkMarkup: (
+  source: string,
+  file: string,
+  options?: MarkupOptions,
+) => Violation[];
+export declare const collectFiles: (roots: string[], ignore?: string[]) => string[];
+export declare const countByRule: (violations: Violation[]) => Record<string, number>;
+export declare const compareRatchet: (
+  baseline: Record<string, number>,
+  current: Record<string, number>,
+) => RatchetResult;
+export declare const formatViolation: (violation: Violation) => string;
+export declare const hasErrors: (violations: Violation[]) => boolean;
+export declare const summarise: (violations: Violation[]) => string;
+`,
 );
 
 const literalType = (value: unknown, indent = 0): string => {
