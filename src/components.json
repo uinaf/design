@@ -147,8 +147,8 @@
       "use": "micro-label headers, hairline rules, numerics right (data-num)",
       "rules": ["first column brightest", "row hover = subtle bg; selected = accent-soft tint"],
       "never": ["zebra stripes", "heavy grid lines"],
-      "markup": "<table class=\"u-table\">\n  <thead><tr><th>service</th><th>status</th><th class=\"num\">p99</th></tr></thead>\n  <tbody>\n    <tr><td>gateway</td><td><span class=\"cell-status\"><i class=\"u-dot u-dot--live\"></i>live</span></td><td class=\"num\">41ms</td></tr>\n    <tr data-selected=\"\"><td>healthd</td><td><span class=\"cell-status\"><i class=\"u-dot u-dot--ok\"></i>ok</span></td><td class=\"num\">8ms</td></tr>\n    <tr><td>relay</td><td><span class=\"cell-status\"><i class=\"u-dot\"></i>idle</span></td><td class=\"num\">—</td></tr>\n  </tbody>\n</table>",
-      "$markupSource": "derived from preview/components-table.html"
+      "markup": "<table class=\"u-table\">\n  <thead><tr><th>service</th><th>status</th><th data-num>p99</th></tr></thead>\n  <tbody>\n    <tr><td>gateway</td><td><i class=\"u-dot u-dot--live\"></i>live</td><td data-num>41ms</td></tr>\n    <tr data-selected=\"\"><td>healthd</td><td><i class=\"u-dot u-dot--ok\"></i>ok</td><td data-num>8ms</td></tr>\n    <tr><td>relay</td><td><i class=\"u-dot\"></i>idle</td><td data-num>—</td></tr>\n  </tbody>\n</table>",
+      "$markupSource": "derived from preview/components-table.html; [data-num] and u-* classes only"
     },
     {
       "name": "shell",

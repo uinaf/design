@@ -87,18 +87,31 @@ const components = JSON.parse(fs.readFileSync(path.join(root, "src/components.js
 };
 
 const componentsCss = fs.readFileSync(path.join(root, "src/components.css"), "utf8");
+const allCss = `${css}${componentsCss}`;
+// u-* classes are the public contract; every class the CSS defines — including
+// scoped helpers like `.u-crumbs .sep` — is what markup is allowed to use.
+const publicClasses = new Set([...allCss.matchAll(/\.(u-[a-zA-Z0-9_-]+)/g)].map((m) => m[1]));
 const definedClasses = new Set(
-  [...`${css}${componentsCss}`.matchAll(/\.(u-[a-zA-Z0-9_-]+)/g)].map((m) => m[1]),
+  [...allCss.matchAll(/\.([a-zA-Z_][a-zA-Z0-9_-]*)/g)].map((m) => m[1]),
 );
-const undefinedClasses = components.patterns.flatMap((p) =>
+// Both the declared contract and the markup itself: a chunk that styles itself
+// with a class nobody ships is the exact drift this artifact exists to prevent.
+const declared = components.patterns.flatMap((p) =>
   p.classes
     .map((c) => c.replace(/^\./, "").split(/[\s:>,[]/)[0])
-    .filter((c) => c.startsWith("u-") && !definedClasses.has(c))
-    .map((c) => `${p.name} → .${c}`),
+    .filter((c) => c.startsWith("u-") && !publicClasses.has(c))
+    .map((c) => `${p.name} classes → .${c}`),
 );
+const inMarkup = components.patterns.flatMap((p) =>
+  [...(p.markup ?? "").matchAll(/class="([^"]*)"/g)]
+    .flatMap((m) => m[1].split(/\s+/))
+    .filter((c) => c && !definedClasses.has(c))
+    .map((c) => `${p.name} markup → .${c}`),
+);
+const undefinedClasses = [...declared, ...inMarkup];
 if (undefinedClasses.length > 0) {
   throw new Error(
-    `components.json names classes the CSS does not define:\n  ${undefinedClasses.join("\n  ")}`,
+    `components.json uses classes the CSS does not define:\n  ${undefinedClasses.join("\n  ")}`,
   );
 }
 
