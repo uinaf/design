@@ -346,10 +346,10 @@ var checkMarkup = (source, file, options = {}) => {
       );
     }
   }
-  const shellOnRow = /(?:class|className)\s{0,8}=\s{0,8}["'{][^"'}]*\bu-shell-(\w+)[^"'}]*\bu-topbar-row\b/.exec(
+  const shellOnRow = /(?:class|className)\s{0,8}=\s{0,8}["'{][^"'}]{0,300}\bu-shell-(\w{1,40})[^"'}]{0,300}\bu-topbar-row\b/.exec(
     source
   );
-  const shellOnRowReversed = /(?:class|className)\s{0,8}=\s{0,8}["'{][^"'}]*\bu-topbar-row\b[^"'}]*\bu-shell-(\w+)/.exec(
+  const shellOnRowReversed = /(?:class|className)\s{0,8}=\s{0,8}["'{][^"'}]{0,300}\bu-topbar-row\b[^"'}]{0,300}\bu-shell-(\w{1,40})/.exec(
     source
   );
   const isFullPage = /<(main|article|section)\b/i.test(source) || /<\/header>\s*<\w/i.test(source);
@@ -431,7 +431,7 @@ var checkMarkup = (source, file, options = {}) => {
   }
   const abbreviations = /* @__PURE__ */ new Set([...DEFAULT_ABBREVIATIONS, ...options.abbreviations ?? []]);
   for (const match of source.matchAll(
-    /<(button|h1|h2|h3|a|span|label|th)\b[^>]{0,2000}(?:class|className)\s{0,8}=\s{0,8}["'{][^"'}]*\bu-[^"'}]*["'}][^>]{0,2000}>([^<>{]{2,80})</g
+    /<(button|h1|h2|h3|a|span|label|th)\b[^>]{0,2000}(?:class|className)\s{0,8}=\s{0,8}["'{][^"'}]{0,300}\bu-[^"'}]{0,300}["'}][^>]{0,2000}>([^<>{]{2,80})</g
   )) {
     const copy = match[2].trim();
     const firstWord = copy.split(/\s+/)[0]?.replace(/[^\w-]/g, "") ?? "";

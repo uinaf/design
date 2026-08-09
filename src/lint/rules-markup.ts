@@ -137,11 +137,11 @@ export const checkMarkup = (
   // The topbar row and the page content must share a shell class, or the page
   // gets two different gutters and the nav visibly fails to line up.
   const shellOnRow =
-    /(?:class|className)\s{0,8}=\s{0,8}["'{][^"'}]*\bu-shell-(\w+)[^"'}]*\bu-topbar-row\b/.exec(
+    /(?:class|className)\s{0,8}=\s{0,8}["'{][^"'}]{0,300}\bu-shell-(\w{1,40})[^"'}]{0,300}\bu-topbar-row\b/.exec(
       source,
     );
   const shellOnRowReversed =
-    /(?:class|className)\s{0,8}=\s{0,8}["'{][^"'}]*\bu-topbar-row\b[^"'}]*\bu-shell-(\w+)/.exec(
+    /(?:class|className)\s{0,8}=\s{0,8}["'{][^"'}]{0,300}\bu-topbar-row\b[^"'}]{0,300}\bu-shell-(\w{1,40})/.exec(
       source,
     );
   // A pattern chunk is a fragment: it demonstrates the topbar and legitimately
@@ -253,7 +253,7 @@ export const checkMarkup = (
   // Visible copy inside elements that carry uinaf classes; anything outside the
   // design system is somebody else's text and not this check's business.
   for (const match of source.matchAll(
-    /<(button|h1|h2|h3|a|span|label|th)\b[^>]{0,2000}(?:class|className)\s{0,8}=\s{0,8}["'{][^"'}]*\bu-[^"'}]*["'}][^>]{0,2000}>([^<>{]{2,80})</g,
+    /<(button|h1|h2|h3|a|span|label|th)\b[^>]{0,2000}(?:class|className)\s{0,8}=\s{0,8}["'{][^"'}]{0,300}\bu-[^"'}]{0,300}["'}][^>]{0,2000}>([^<>{]{2,80})</g,
   )) {
     const copy = match[2].trim();
     const firstWord = copy.split(/\s+/)[0]?.replace(/[^\w-]/g, "") ?? "";
