@@ -7,6 +7,8 @@
  *   node scripts/smoke-mcp.ts [baseUrl]     # default http://localhost:8788
  */
 
+export {}; // top-level await requires this file to be a module
+
 const base = (process.argv[2] ?? "http://localhost:8788").replace(/\/$/, "");
 const endpoint = `${base}/mcp`;
 
@@ -14,16 +16,27 @@ type ToolResult = { content?: Array<{ text?: string }> };
 
 let failures = 0;
 
-const rpc = async (method: string, params?: unknown): Promise<Record<string, unknown>> => {
-  const response = await fetch(endpoint, {
+const post = (body: unknown): Promise<Response> =>
+  fetch(endpoint, {
     method: "POST",
     headers: {
       "content-type": "application/json",
       accept: "application/json, text/event-stream",
       "mcp-protocol-version": "2025-11-25",
     },
-    body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
+    body: JSON.stringify(body),
   });
+
+/** Notifications carry no id and expect no response. */
+const notify = async (method: string): Promise<void> => {
+  const response = await post({ jsonrpc: "2.0", method });
+  if (!response.ok && response.status !== 202) {
+    throw new Error(`${method}: HTTP ${response.status}`);
+  }
+};
+
+const rpc = async (method: string, params?: unknown): Promise<Record<string, unknown>> => {
+  const response = await post({ jsonrpc: "2.0", id: 1, method, params });
   if (!response.ok) throw new Error(`${method}: HTTP ${response.status}`);
   const body = await response.text();
   // Streamable HTTP may answer as an SSE frame or as plain JSON.
@@ -57,6 +70,9 @@ const init = (await rpc("initialize", {
   clientInfo: { name: "smoke", version: "1" },
 })) as { serverInfo?: { name?: string } };
 check("initialize handshake", init.serverInfo?.name === "uinaf-design", JSON.stringify(init));
+
+// A lifecycle-enforcing server rejects everything until this arrives.
+await notify("notifications/initialized");
 
 const { tools = [] } = (await rpc("tools/list")) as {
   tools?: Array<{ name: string; description?: string }>;
