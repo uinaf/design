@@ -1,0 +1,70 @@
+<!doctype html>
+<!-- @dsCard group="Components" name="footer, timeline, ledger" subtitle="site footer · spine timeline · def rows · version chip" viewport="760x780" -->
+<html lang="en"><head><meta charset="utf-8"><title>components — footer, timeline, ledger</title>
+<link rel="stylesheet" href="/tokens.css">
+<style>html,body{margin:0}body.uinaf{padding:32px;display:flex;flex-direction:column;gap:24px}</style>
+<!-- guide-chrome -->
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="icon" href="https://cdn.uinaf.dev/images/uinaf-computer.png" type="image/png" />
+<style id="guide-chrome">
+  html { background: var(--bg, #0a0a0a); }
+  body.uinaf {
+    box-sizing: border-box;
+    max-width: 48rem;
+    margin-inline: auto;
+    min-height: 100vh;
+  }
+  .guide-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px 16px;
+    margin: 0 0 8px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border, #222);
+    font-size: 13px;
+  }
+  .guide-bar a {
+    color: var(--fg-muted, #888);
+    text-decoration: none;
+  }
+  .guide-bar a:hover { color: var(--accent, #b6ff3c); }
+  .guide-bar .sep { color: var(--fg-faint, #555); }
+  .guide-bar .title { color: var(--fg, #ddd); }
+  .guide-bar .sub { color: var(--fg-subtle, #777); font-size: 11px; }
+</style>
+</head><body class="uinaf">
+<nav class="guide-bar" aria-label="guide">
+  <a href="/">← design</a>
+  <span class="sep">·</span>
+  <span class="u-label">Components</span>
+  <span class="sep">·</span>
+  <span class="title">footer, timeline, ledger</span>
+  <span class="sub">site footer · spine timeline · def rows · version chip</span>
+</nav>
+
+<div class="u-label">footer — .u-footer, three quiet columns, no headers</div>
+<div class="u-footer"><div class="u-footer-grid" style="padding-inline:8px">
+<div class="u-footer-col"><span>undefined is not a function LLC</span><span>175 SW 7th Street STE 1517-1115</span><span>Miami, FL 33130</span></div>
+<div class="u-footer-col"><a href="#">projects</a><a href="#">slopzapper ↗</a><a href="#">intake ↗</a></div>
+<div class="u-footer-col"><a href="#">dev@uinaf.dev</a><a href="#">github ↗</a><a href="#">x ↗</a></div>
+</div></div>
+<div class="u-label">timeline — .u-timeline, data-live marks the current row</div>
+<div class="u-timeline">
+<div class="u-timeline-row"><span class="u-meta">2016</span><p style="font-size:13px">founded. two people, one crt.</p></div>
+<div class="u-timeline-row"><span class="u-meta">2016–26</span><p style="font-size:13px">shipped for terminals, browsers, phones, TVs, set-top boxes.</p></div>
+<div class="u-timeline-row" data-live><span class="u-meta">now</span><p style="font-size:13px">ten years in, still having fun.</p></div>
+</div>
+<div class="u-label">definition rows — .u-def, ledger style</div>
+<div>
+<div class="u-def"><span class="u-def-term">what</span><p class="u-def-desc">we build software. if it has a screen, we've probably shipped for it.</p></div>
+<div class="u-def"><span class="u-def-term">since</span><p class="u-def-desc">2016. ten years in, still having fun.</p></div>
+<div class="u-def"><span class="u-def-term">where</span><p class="u-def-desc">miami, fl · github.com/uinaf</p></div>
+</div>
+<div class="u-label">version chip — .u-version, metadata not status</div>
+<div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
+<span style="font-size:var(--text-md);color:var(--fg)">autoreview</span><span class="u-version">v0.7.1</span>
+<span style="font-size:var(--text-md);color:var(--fg);margin-left:16px">slopomatic</span><span class="u-version">v1.3.0</span>
+<span style="font-size:var(--text-md);color:var(--fg);margin-left:16px">attach</span><span class="u-version">cli-v0.5.1</span>
+</div>
+</body></html>

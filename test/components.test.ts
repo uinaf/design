@@ -54,18 +54,27 @@ describe("components.json", () => {
       .map((p) => p.name)
       .sort();
     expect(withMarkup).toEqual([
+      "banner",
       "breadcrumbs",
       "button",
       "card",
+      "choice",
+      "def-rows",
       "field",
+      "footer",
       "micro-label",
       "pagination",
       "panel",
       "panel-grid",
+      "skeleton",
       "stat",
+      "switch",
       "table",
       "tag+dot",
+      "timeline",
+      "tooltip",
       "topbar",
+      "version",
     ]);
   });
 });

@@ -1,0 +1,29 @@
+<!doctype html>
+<!-- @dsCard group="Components" name="Code & terminal" subtitle="diff with findings · CLI transcript · log stream" viewport="880x800" -->
+<html lang="en"><head><meta charset="utf-8"><title>uinaf — code & terminal</title>
+<link rel="stylesheet" href="../dist/css/tokens.css">
+<style>html,body{margin:0;padding:0}body.uinaf{padding:32px 36px;display:flex;flex-direction:column;gap:16px}</style>
+</head><body class="uinaf">
+<div class="u-label">diff — tinted lines, a finding pinned to its line. how slopzapper comments</div>
+<div class="u-diff" style="max-width:680px">
+<div class="ln"><span class="no">41</span><span>  const key = await deriveKey(secret);</span></div>
+<div class="ln del"><span class="no">42</span><span>- cache.set(url, key);</span></div>
+<div class="ln add"><span class="no">42</span><span>+ cache.set(url, key, { ttl: 300 });</span></div>
+<div class="u-finding"><span class="u-dot u-dot--warn" style="flex:none"></span><span><strong style="font-weight:400;color:var(--fg)">unbounded cache before this change.</strong> ttl fixes growth, but eviction on key rotation is still missing — see <code>deriveKey</code>.</span></div>
+<div class="ln"><span class="no">43</span><span>  return key;</span></div>
+</div>
+<hr>
+<div class="u-label">CLI transcript — dim prompt, fg command, muted output</div>
+<pre class="u-term" style="max-width:680px"><span class="ps1">$</span> attach put ./shot.png --repo uinaf/slopzapper --pr 512
+<span class="out">uploading… 482.1 KiB</span>
+<span class="ok">✓</span> <span class="out">https://attach.uinaf.dev/p/Jw5tQUBK0ao5rRzItyF0Fg</span>
+<span class="ps1">$</span> <span class="u-caret"></span></pre>
+<hr>
+<div class="u-label">log stream — faint timestamps, leveled, message stays muted</div>
+<pre class="u-log" style="max-width:680px"><span class="row"><span class="t">14:02:11.402</span><span class="lv">info</span><span class="msg">sandbox warm · pool=3 t=210ms</span></span>
+<span class="row"><span class="t">14:02:11.688</span><span class="lv">info</span><span class="msg">clone uinaf/slopzapper#512 @ 9c41f2e</span></span>
+<span class="row" data-warn><span class="t">14:02:14.010</span><span class="lv">warn</span><span class="msg">github rate remaining=41 · backing off 2s</span></span>
+<span class="row"><span class="t">14:02:19.334</span><span class="lv">info</span><span class="msg">build ok · 3.2s</span></span>
+<span class="row" data-err><span class="t">14:02:24.902</span><span class="lv">error</span><span class="msg">test FAIL webhook_dedupe_test.go:88 — retry scheduled</span></span></pre>
+<p class="u-meta">code never wraps — scroll it. levels color the level word only, never the message. the caret is the one thing allowed to blink.</p>
+</body></html>

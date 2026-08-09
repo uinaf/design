@@ -1,0 +1,25 @@
+<!doctype html>
+<!-- @dsCard group="Components" name="loading, tooltip, banner" subtitle="skeleton shimmer · data-tip · announcement line" viewport="720x560" -->
+<html lang="en"><head><meta charset="utf-8"><title>components — loading, tooltip, banner</title>
+<link rel="stylesheet" href="../dist/css/tokens.css">
+<style>html,body{margin:0}body.uinaf{padding:32px;display:flex;flex-direction:column;gap:24px}</style>
+</head><body class="uinaf">
+<div class="u-label">skeleton — .u-skeleton, shape mirrors the content</div>
+<div class="u-panel" style="display:flex;flex-direction:column;gap:12px;max-width:420px">
+<div class="u-skeleton u-skeleton--title"></div>
+<div class="u-skeleton u-skeleton--text"></div>
+<div class="u-skeleton u-skeleton--text" style="width:80%"></div>
+<div style="display:flex;gap:12px;margin-top:8px"><div class="u-skeleton u-skeleton--stat" style="flex:1"></div><div class="u-skeleton u-skeleton--stat" style="flex:1"></div></div>
+</div>
+<div class="u-label">tooltip — .u-tip + data-tip, hover the row</div>
+<div style="display:flex;gap:16px;padding-top:28px">
+<button type="button" class="u-btn u-tip" data-tip="runs the whole suite, ~3 min">re-review</button>
+<span class="u-tip u-tag" data-tip="pushed 2026-08-09 14:12 UTC" tabindex="0"><span class="u-dot u-dot--ok"></span>passing</span>
+<span class="u-tip u-version" data-tip="released 3 days ago" tabindex="0">v1.3.0</span>
+</div>
+<div class="u-label">banner — .u-banner, sits above the topbar</div>
+<div style="border:1px solid var(--border)">
+<div class="u-banner"><span class="u-label--accent u-label">new</span><span>slopzapper now re-reviews on push</span><a class="u-link" href="#">changelog</a></div>
+<div class="u-topbar"><div class="u-shell-base u-topbar-row"><span class="u-topbar-mark"><img src="https://cdn.uinaf.dev/images/uinaf-computer.png" alt="">slopzapper</span><nav class="u-topbar-nav"><a href="#">docs</a></nav></div></div>
+</div>
+</body></html>

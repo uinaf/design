@@ -1,0 +1,31 @@
+<!doctype html>
+<!-- @dsCard group="Components" name="Navigation" subtitle="app topbar = ONE row · stacked header is uinaf.dev site chrome only" viewport="900x640" -->
+<html lang="en"><head>
+<meta charset="utf-8">
+<title>uinaf — navigation</title>
+<link rel="stylesheet" href="../dist/css/tokens.css">
+<style>html,body{margin:0;padding:0}body.uinaf{padding:32px 36px;display:flex;flex-direction:column;gap:14px}.spec{border:1px solid var(--border);background:var(--bg)}.no{color:var(--error)}</style>
+</head><body class="uinaf">
+<div class="u-label">app topbar — products, dashboards, logged-in views</div>
+<div class="spec">
+<header class="u-topbar"><div class="u-shell-base u-topbar-row">
+<a href="#" class="u-topbar-mark"><img src="https://cdn.uinaf.dev/images/uinaf-computer.png" alt="">slopzapper</a>
+<nav class="u-topbar-nav"><a href="#" aria-current="page">overview</a><a href="#">reviews</a><a href="#">repos</a><a href="#">docs</a></nav>
+<div class="u-topbar-actions"><a class="u-btn u-btn-sm u-btn-primary" href="#">new review</a></div>
+</div></header>
+<div class="u-shell-base" style="padding-block:24px 28px"><h1>reviews</h1><p class="u-meta" style="margin-top:6px">the page title outranks the chrome</p></div>
+</div>
+<p class="u-meta">one 56px row: 20px framed mark + product name left · plain links right, current page brightest · at most one small button · hairline below · never sticky.</p>
+<hr>
+<div class="u-label">site header — uinaf.dev pages only</div>
+<div class="spec" style="padding:24px 28px">
+<div class="u-header" style="margin-bottom:0">
+<span class="u-header-mark"><img src="https://cdn.uinaf.dev/images/uinaf-computer.png" alt=""><span class="u-header-name">uinaf</span></span>
+<p class="u-header-tagline">we bet you've seen us before</p>
+<nav class="u-nav"><a class="u-link-plain" href="#">blog</a><span class="u-sep">·</span><a class="u-link-plain" href="#">projects</a><span class="u-sep">·</span><a class="u-link-plain" href="#">status</a></nav>
+</div>
+</div>
+<hr>
+<div class="u-label no">never</div>
+<p style="font-size:13px;color:var(--fg-muted)">mark on one row, links on a second row, on a product page — that's the site header leaking where it doesn't belong. and no hero kicker that restates the nav (<span class="u-code">UINAF · REVIEW BOT</span> under a nav that already says the product name). kickers add info — a category, a status — or don't exist.</p>
+</body></html>
