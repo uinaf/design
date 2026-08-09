@@ -104,18 +104,15 @@ jobs:
         if: steps.release.outputs.new_release_published == 'true'
         env:
           RELEASE_VERSION: ${{ steps.release.outputs.new_release_version }}
-        run: |
-          npm pkg set version="$RELEASE_VERSION"
-          git add -- package.json
-
-      - name: Normalize commit target
-        if: steps.release.outputs.new_release_published == 'true'
-        run: git remote set-url origin "https://github.com/${GITHUB_REPOSITORY}.git"
+        run: npm pkg set version="$RELEASE_VERSION"
 
       - name: Commit released package version
         if: steps.release.outputs.new_release_published == 'true'
-        uses: grafana/github-api-commit-action@b1d81091e8480dd11fcea8bc1f0ab977a0376ca5 # v1.0.0
+        uses: planetscale/ghcommit-action@a6b150b81dca5dd027baa898604418eec9e11465 # v0.2.22
         with:
-          commit-message: "chore(release): ${{ steps.release.outputs.new_release_version }} [skip ci]"
-          success-if-no-changes: true
-          token: ${{ steps.release-bot.outputs.token }}
+          commit_message: "chore(release): ${{ steps.release.outputs.new_release_version }} [skip ci]"
+          repo: ${{ github.repository }}
+          branch: main
+          file_pattern: package.json
+        env:
+          GITHUB_TOKEN: ${{ steps.release-bot.outputs.token }}
