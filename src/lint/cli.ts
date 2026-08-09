@@ -130,9 +130,14 @@ if (flag("ratchet")) {
   }
   const baseline = JSON.parse(fs.readFileSync(ratchetPath, "utf8")) as Record<string, number>;
   const result = compareRatchet(baseline, counts);
+  // An error already in the baseline would otherwise pass forever: the ratchet
+  // only fails on a rise. Errors are never an acceptable steady state, so they
+  // fail here too — which is what --help has always promised.
+  const errored = hasErrors(violations);
+  const passed = result.passed && !errored;
   if (flag("json")) {
-    console.log(JSON.stringify({ violations, counts, ratchet: result }, null, 2));
-    process.exit(result.passed ? 0 : 1);
+    console.log(JSON.stringify({ violations, counts, ratchet: result, errors: errored }, null, 2));
+    process.exit(passed ? 0 : 1);
   }
   for (const { rule, was, now } of result.risen) {
     console.error(`${rule}: ${was} → ${now}`);
@@ -146,8 +151,17 @@ if (flag("ratchet")) {
     );
     console.log(`run \`design-check --update-ratchet\` to lock the improvement in`);
   }
-  if (!result.passed) {
-    console.error(`\ndesign:check ratchet failed — ${result.risen.length} rule(s) got worse`);
+  if (errored) {
+    for (const violation of violations.filter((v) => v.severity === "error")) {
+      console.error(formatViolation(violation));
+    }
+  }
+  if (!passed) {
+    const why = [
+      result.risen.length > 0 ? `${result.risen.length} rule(s) got worse` : "",
+      errored ? "errors are never allowed, baseline or not" : "",
+    ].filter(Boolean);
+    console.error(`\ndesign:check ratchet failed — ${why.join("; ")}`);
     process.exit(1);
   }
   console.log(`design:check ratchet ok — ${summarise(violations)}, none worse than baseline`);

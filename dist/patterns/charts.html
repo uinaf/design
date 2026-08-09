@@ -8,6 +8,21 @@
 </head>
 <body class="uinaf">
 <!-- In your project: @import "@uinaf/design/css"; then copy the markup below. -->
-<div class="u-bars"><i style="height:34%"></i><i style="height:52%"></i><i style="height:41%"></i><i style="height:66%"></i><i style="height:47%"></i><i style="height:75%"></i><i data-hot style="height:88%"></i></div>
+<!-- sparkline inside a stat -->
+<div class="u-stat"><span class="u-label">reviews / day</span><span class="u-stat-value">128</span><svg class="u-spark" viewBox="0 0 100 28" preserveAspectRatio="none"><polyline points="0,22 14,18 28,20 42,12 56,15 70,8 84,10 100,4"></polyline></svg></div>
+
+<!-- bars -->
+<div class="u-bars"><i style="height:34%"></i><i style="height:52%"></i><i style="height:41%"></i><i style="height:66%"></i><i data-hot style="height:88%"></i></div>
+
+<!-- line chart with axis and legend -->
+<svg class="u-chart" viewBox="0 0 200 100" preserveAspectRatio="none"><polyline points="0,70 40,58 80,62 120,40 160,44 200,26"></polyline></svg>
+<div class="u-axis"><span>aug 03</span><span>today</span></div>
+<div class="u-legend"><span><i style="background:var(--viz-1)"></i>p50</span><span><i style="background:var(--viz-2)"></i>p95</span></div>
+
+<!-- uptime strip -->
+<div class="u-uptime"><i></i><i></i><i></i><i data-warn></i><i></i><i data-down></i><i></i><i></i></div>
+
+<!-- stacked share bar -->
+<div class="u-stack"><i style="width:44%;background:var(--viz-1)"></i><i style="width:26%;background:var(--viz-2)"></i><i style="width:18%;background:var(--viz-3)"></i><i style="width:12%;background:var(--viz-4)"></i></div>
 </body>
 </html>

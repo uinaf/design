@@ -46,7 +46,7 @@
         ".u-btn-lg"
       ],
       "use": "32px rhythm (26/38 sm/lg), 13px lowercase labels",
-      "markup": "<button type=\"button\" class=\"u-btn u-btn-primary\">save</button><button type=\"button\" class=\"u-btn u-btn-ghost\">cancel</button>",
+      "markup": "<button type=\"button\" class=\"u-btn u-btn-primary\">save</button>\n<button type=\"button\" class=\"u-btn u-btn-accent\">review</button>\n<button type=\"button\" class=\"u-btn u-btn-ghost\">cancel</button>\n<button type=\"button\" class=\"u-btn u-btn-sm\">retry</button>\n<button type=\"button\" class=\"u-btn u-btn-lg u-btn-primary\">get started</button>",
       "rules": [
         "hierarchy via fill weight: primary=white fill, secondary=outline, ghost=borderless",
         "default pairing = primary + ghost",
@@ -98,7 +98,7 @@
       "never": [
         "chart junk: legends for one series, fills beyond the rare accent area, glows"
       ],
-      "markup": "<div class=\"u-bars\"><i style=\"height:34%\"></i><i style=\"height:52%\"></i><i style=\"height:41%\"></i><i style=\"height:66%\"></i><i style=\"height:47%\"></i><i style=\"height:75%\"></i><i data-hot style=\"height:88%\"></i></div>",
+      "markup": "<!-- sparkline inside a stat -->\n<div class=\"u-stat\"><span class=\"u-label\">reviews / day</span><span class=\"u-stat-value\">128</span><svg class=\"u-spark\" viewBox=\"0 0 100 28\" preserveAspectRatio=\"none\"><polyline points=\"0,22 14,18 28,20 42,12 56,15 70,8 84,10 100,4\"></polyline></svg></div>\n\n<!-- bars -->\n<div class=\"u-bars\"><i style=\"height:34%\"></i><i style=\"height:52%\"></i><i style=\"height:41%\"></i><i style=\"height:66%\"></i><i data-hot style=\"height:88%\"></i></div>\n\n<!-- line chart with axis and legend -->\n<svg class=\"u-chart\" viewBox=\"0 0 200 100\" preserveAspectRatio=\"none\"><polyline points=\"0,70 40,58 80,62 120,40 160,44 200,26\"></polyline></svg>\n<div class=\"u-axis\"><span>aug 03</span><span>today</span></div>\n<div class=\"u-legend\"><span><i style=\"background:var(--viz-1)\"></i>p50</span><span><i style=\"background:var(--viz-2)\"></i>p95</span></div>\n\n<!-- uptime strip -->\n<div class=\"u-uptime\"><i></i><i></i><i></i><i data-warn></i><i></i><i data-down></i><i></i><i></i></div>\n\n<!-- stacked share bar -->\n<div class=\"u-stack\"><i style=\"width:44%;background:var(--viz-1)\"></i><i style=\"width:26%;background:var(--viz-2)\"></i><i style=\"width:18%;background:var(--viz-3)\"></i><i style=\"width:12%;background:var(--viz-4)\"></i></div>",
       "slug": "charts",
       "chunk": "https://design.uinaf.dev/patterns/charts.html",
       "chunkFile": "./patterns/charts.html"
@@ -204,7 +204,7 @@
         ".u-help--error"
       ],
       "use": "micro-label above a 32px control on a slightly raised fill",
-      "markup": "<label class=\"u-field\"><span class=\"u-label\">email</span><input class=\"u-input\" type=\"email\"><span class=\"u-help\">we reply within a day.</span></label>",
+      "markup": "<label class=\"u-field\"><span class=\"u-label\">email</span><input class=\"u-input\" type=\"email\"><span class=\"u-help\">we reply within a day.</span></label>\n<label class=\"u-field\"><span class=\"u-label\">region</span><select class=\"u-select\"><option>eu-central</option><option>us-east</option></select></label>\n<label class=\"u-field\"><span class=\"u-label\">message</span><textarea class=\"u-textarea\" placeholder=\"what are you building?\"></textarea></label>\n<label class=\"u-field\"><span class=\"u-label\">api key</span><input class=\"u-input\" aria-invalid=\"true\" value=\"uinaf_sk_…9f2\"><span class=\"u-help u-help--error\">key expired 2026-07-30. rotate it.</span></label>",
       "rules": [
         "focus brightens the border — no rings, no glow; caret is accent",
         "errors: muted red border + one dry sentence"
@@ -271,7 +271,7 @@
       "rules": [
         "row is one .u-link-plain when it links"
       ],
-      "markup": "<ul class=\"u-list u-list--ruled\" style=\"margin-top: 8px\">\n            <li class=\"u-list-row\" style=\"display: flex;gap: 16px;align-items: baseline\">\n              <span class=\"u-meta\">01</span\n              ><span\n                >install the github app on the repos you care about.</span\n              >\n            </li>\n            <li class=\"u-list-row\" style=\"display: flex;gap: 16px;align-items: baseline\">\n              <span class=\"u-meta\">02</span\n              ><span\n                >open a PR. a sandbox clones it, builds it, runs it.</span\n              >\n            </li>\n            <li class=\"u-list-row\" style=\"display: flex;gap: 16px;align-items: baseline\">\n              <span class=\"u-meta\">03</span\n              ><span\n                >one review lands. push fixes — it re-checks, quietly.</span\n              >\n            </li>\n          </ul>",
+      "markup": "<ul class=\"u-list u-list--ruled\">\n  <li class=\"u-list-row\">\n    <a class=\"u-link-plain\" href=\"#\">\n      <span class=\"u-list-title\">sandbox review</span>\n      <span class=\"u-list-meta\">2026-08-09</span>\n    </a>\n    <p class=\"u-list-desc\">a sandbox clones the PR, builds it, and runs it.</p>\n  </li>\n  <li class=\"u-list-row\">\n    <a class=\"u-link-plain\" href=\"#\">\n      <span class=\"u-list-title\">device auth</span>\n      <span class=\"u-list-meta\">2026-07-22</span>\n    </a>\n    <p class=\"u-list-desc\">one code, one confirm, no password field.</p>\n  </li>\n</ul>",
       "slug": "list",
       "chunk": "https://design.uinaf.dev/patterns/list.html",
       "chunkFile": "./patterns/list.html"
@@ -315,7 +315,7 @@
         ".u-meta"
       ],
       "use": "THE hierarchy device: kicks off sections, heads tables, labels fields, captions stats",
-      "markup": "<span class=\"u-label\">recent reviews</span>",
+      "markup": "<span class=\"u-label\">recent reviews</span>\n<span class=\"u-label u-label--accent\">new</span>\n<span class=\"u-meta\">128 runs</span>",
       "rules": [
         "11px uppercase tracked dim — the only uppercase besides abbreviations",
         "fix weak hierarchy with a micro-label + space, never with size"
@@ -469,7 +469,7 @@
         "if unsure, narrow",
         "never widen a shell to fit one element"
       ],
-      "markup": "<header class=\"u-topbar\"><div class=\"u-shell-base u-topbar-row\">…</div></header>\n<main class=\"u-shell-base\">…</main>",
+      "markup": "<header class=\"u-topbar\"><div class=\"u-shell-base u-topbar-row\">…</div></header>\n<main class=\"u-shell-base\">…</main>\n\n<!-- one product picks one width and keeps it -->\n<main class=\"u-shell-narrow\">…</main>\n<main class=\"u-shell-wide\">…</main>",
       "slug": "shell",
       "chunk": "https://design.uinaf.dev/patterns/shell.html",
       "chunkFile": "./patterns/shell.html"
@@ -504,7 +504,7 @@
         ".u-skeleton--stat"
       ],
       "use": "loading placeholder shaped like the content it replaces",
-      "markup": "<div class=\"u-skeleton u-skeleton--title\"></div>\n<div class=\"u-skeleton u-skeleton--text\" style=\"margin-top:12px\"></div>",
+      "markup": "<div class=\"u-skeleton u-skeleton--title\"></div>\n<div class=\"u-skeleton u-skeleton--text\" style=\"margin-top:12px\"></div>\n<div style=\"display:flex;gap:12px;margin-top:12px\"><div class=\"u-skeleton u-skeleton--stat\" style=\"flex:1\"></div><div class=\"u-skeleton u-skeleton--stat\" style=\"flex:1\"></div></div>",
       "rules": [
         "match the real element’s height so nothing shifts when it resolves",
         "the sheen stops under prefers-reduced-motion"
@@ -595,7 +595,7 @@
         ".u-dot--live"
       ],
       "use": "status = a small muted dot + a lowercase word",
-      "markup": "<span class=\"u-tag\"><span class=\"u-dot u-dot--ok\"></span>pass</span>",
+      "markup": "<span class=\"u-tag\"><span class=\"u-dot u-dot--ok\"></span>pass</span>\n<span class=\"u-tag\"><span class=\"u-dot u-dot--warn\"></span>flaky</span>\n<span class=\"u-tag\"><span class=\"u-dot u-dot--error\"></span>fail</span>\n<span class=\"u-tag\"><span class=\"u-dot u-dot--live\"></span>running</span>",
       "rules": [
         "tags stay bordered — a filled tag would outrank the buttons",
         "--live glows accent: reserve for genuinely live things"

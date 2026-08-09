@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vite-plus/test";
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { attributeValues } from "./attributes.ts";
 
 const root = resolve(import.meta.dirname, "..");
 
@@ -61,9 +62,7 @@ describe("components.json", () => {
     // `.u-btn` be satisfied by `u-btn-primary`, or by the name appearing in an
     // id or in visible copy.
     const classTokens = (markup: string): Set<string> =>
-      new Set(
-        [...markup.matchAll(/class="([^"]*)"/g)].flatMap((m) => m[1].split(/\s+/)).filter(Boolean),
-      );
+      new Set(attributeValues(markup, "class").flatMap((v) => v.split(/\s+/).filter(Boolean)));
     const mismatched = components.patterns
       .filter((p) => {
         const used = classTokens(p.markup ?? "");
@@ -71,6 +70,56 @@ describe("components.json", () => {
       })
       .map((p) => p.name);
     expect(mismatched).toEqual([]);
+  });
+});
+
+/**
+ * A class nothing demonstrates is how `_ds_bundle.js` (#31) and
+ * `colors_and_type.css` (#15) shipped broken: no code path read them, so no
+ * code path could fail. These two gates give every class a reader.
+ */
+describe("every class is demonstrated", () => {
+  const classTokens = (html: string): string[] =>
+    attributeValues(html, "class").flatMap((v) => v.split(/\s+/).filter(Boolean));
+
+  const markupCorpus = components.patterns.map((p) => p.markup ?? "");
+  const htmlCorpus = ["preview", "pages", "templates"].flatMap((dir) =>
+    readdirSync(resolve(root, dir))
+      .filter((f) => f.endsWith(".html"))
+      .map((f) => readFileSync(resolve(root, dir, f), "utf8")),
+  );
+
+  // Standalone utilities with no markup of their own: `.u-h1`…`.u-p` and
+  // `.u-hr` are the escape hatches for consumers who cannot put `.uinaf` on an
+  // ancestor (the CSS pairs each with its element selector), and `.u-frame` /
+  // `.u-code-bleed` are opt-in modifiers applied to a host element. Every other
+  // class has to appear somewhere a consumer can copy it.
+  const STANDALONE = new Set(["u-h1", "u-h2", "u-h3", "u-p", "u-hr", "u-frame", "u-code-bleed"]);
+
+  it("shows every u-* class the CSS defines somewhere copyable", () => {
+    const shown = new Set([...htmlCorpus, ...markupCorpus].flatMap(classTokens));
+    const orphans = [...definedClasses].filter((c) => !shown.has(c) && !STANDALONE.has(c));
+    expect(orphans.sort()).toEqual([]);
+  });
+
+  it("keeps the standalone allowlist free of entries that are now demonstrated", () => {
+    // Otherwise the allowlist only ever grows, and it stops meaning anything.
+    const shown = new Set([...htmlCorpus, ...markupCorpus].flatMap(classTokens));
+    const stale = [...STANDALONE].filter((c) => shown.has(c) || !definedClasses.has(c));
+    expect(stale.sort()).toEqual([]);
+  });
+
+  it("demonstrates every contract class in the contract itself", () => {
+    // components.json is what the MCP tools and the skill serve to agents. A
+    // class named there with its only example in a preview card is a class the
+    // agent cannot use.
+    const shown = new Set(markupCorpus.flatMap(classTokens));
+    const undemonstrated = components.patterns.flatMap((p) =>
+      referenced(p)
+        .filter((c) => !shown.has(c))
+        .map((c) => `${p.name} → .${c}`),
+    );
+    expect(undemonstrated.sort()).toEqual([]);
   });
 });
 

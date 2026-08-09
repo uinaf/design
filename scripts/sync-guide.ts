@@ -30,9 +30,12 @@ fs.cpSync(path.join(root, "dist/patterns"), patternsDest, { recursive: true });
 fs.rmSync(previewDest, { recursive: true, force: true });
 fs.cpSync(previewSrc, previewDest, { recursive: true });
 
-const parseCard = (html: string): CardMeta => {
+// Fails closed, like the @page marker below. A default of "Other / preview"
+// publishes a broken card under a label that reads like a deliberate choice,
+// so the defect survives review.
+const parseCard = (html: string, file: string): CardMeta => {
   const m = html.match(/@dsCard\s+group="([^"]+)"\s+name="([^"]+)"(?:\s+subtitle="([^"]*)")?/);
-  if (!m) return { group: "Other", name: "preview", subtitle: "" };
+  if (!m) throw new Error(`preview/${file} has no @dsCard group="…" name="…" marker`);
   return { group: m[1], name: m[2], subtitle: m[3] ?? "" };
 };
 
@@ -83,7 +86,7 @@ const guideBar = (meta: CardMeta): string => {
 
 const rewritePreviewHtml = (filePath: string): CardMeta => {
   let html = fs.readFileSync(filePath, "utf8");
-  const meta = parseCard(html);
+  const meta = parseCard(html, path.basename(filePath));
 
   html = html
     .replace(/href="[^"]*tokens\.css[^"]*"/g, 'href="/tokens.css"')
