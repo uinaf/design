@@ -288,5 +288,5 @@
       ]
     }
   ],
-  "$markupCoverage": "12 of 31 patterns carry markup and have a generated chunk. 11 came from upstream; table and card were derived from their preview cards. The rest serve classes and rules only."
+  "$markupCoverage": "12 of 31 patterns carry markup and have a generated chunk. 11 came from upstream (card arrived as a placeholder stub and was filled from its preview card); table was added from its preview card. The other 19 serve classes and rules only."
 }
