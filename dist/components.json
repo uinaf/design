@@ -265,7 +265,7 @@
         ".u-shell-base",
         ".u-shell-wide"
       ],
-      "use": "narrow 36rem (default — prose, home) · base 48rem (indexes, tables) · wide 72rem (dashboards, rare)",
+      "use": "narrow 40rem (default — prose, home, detail) · base 48rem (data-dense: tables, dashboards) · wide 72rem (rare) · one product = one width",
       "rules": [
         "if unsure, narrow",
         "never widen a shell to fit one element"
