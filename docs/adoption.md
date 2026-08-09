@@ -148,6 +148,18 @@ It now fails only when a violation count _rises_, so the existing backlog can
 migrate gradually instead of blocking every change. When a count falls, the check
 says so; re-record to lock the improvement in.
 
+One upgrade note: when a new release adds a rule, your baseline has no entry for
+it, so every existing instance reads as a rise from zero and `--ratchet` fails on
+the upgrade. That is not your code getting worse. Read the new rule, then
+re-record on a clean tree:
+
+```sh
+npm run design:check -- --update-ratchet
+```
+
+Warnings count toward the ratchet as well as errors, so this applies even to a
+rule that never fails a plain run.
+
 Be clear about what this does and does not guarantee. It is a non-increasing
 count, not a clean bill of health: removing one `radius-ceiling` and adding
 another leaves the count at one and passes. It stops the codebase getting worse,

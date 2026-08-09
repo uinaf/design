@@ -439,6 +439,17 @@ var checkMarkup = (source, file, options = {}) => {
       );
     }
   }
+  for (const match of source.matchAll(/<button\b([^>]{0,2000})>/gi)) {
+    const attributes = match[1] ?? "";
+    if (/(?:^|\s)type\s{0,8}=/i.test(attributes)) continue;
+    add(
+      match.index ?? 0,
+      "button-type",
+      "warn",
+      "<button> without an explicit type",
+      'add type="button" \u2014 a bare <button> defaults to type="submit" and will submit any form it sits in'
+    );
+  }
   const abbreviations = /* @__PURE__ */ new Set([...DEFAULT_ABBREVIATIONS, ...options.abbreviations ?? []]);
   for (const match of source.matchAll(
     /<(button|h1|h2|h3|a|span|label|th)\b[^>]{0,2000}(?:class|className)\s{0,8}=\s{0,8}["'{][^"'}]{0,300}\bu-[^"'}]{0,300}["'}][^>]{0,2000}>([^<>{]{2,80})</g

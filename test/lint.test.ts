@@ -156,6 +156,48 @@ describe("no-icon-fonts", () => {
   });
 });
 
+describe("button-type", () => {
+  it("passes when the type is explicit", () => {
+    expect(rules(markup('<button type="button" class="u-btn">save</button>'))).not.toContain(
+      "button-type",
+    );
+    expect(rules(markup('<button type="submit" class="u-btn">save</button>'))).not.toContain(
+      "button-type",
+    );
+  });
+  it("warns on a bare button, which defaults to submit", () => {
+    const found = markup('<button class="u-btn">save</button>');
+    expect(rules(found)).toContain("button-type");
+    // A new rule must not turn every consumer's build red on upgrade.
+    expect(found.find((v) => v.rule === "button-type")?.severity).toBe("warn");
+  });
+  it("accepts JSX and attribute spacing", () => {
+    expect(rules(markup('<button type={kind} className="u-btn">go</button>'))).not.toContain(
+      "button-type",
+    );
+    expect(rules(markup('<button  TYPE = "button" class="u-btn">go</button>'))).not.toContain(
+      "button-type",
+    );
+  });
+  it("does not mistake another attribute ending in type", () => {
+    // A word boundary matches inside `data-type=` too, which would let a bare
+    // button pass. Both spellings must still report.
+    expect(rules(markup('<button data-mimetype="x" class="u-btn">go</button>'))).toContain(
+      "button-type",
+    );
+    expect(rules(markup('<button data-type="x" class="u-btn">go</button>'))).toContain(
+      "button-type",
+    );
+    expect(rules(markup('<button formtype="x" class="u-btn">go</button>'))).toContain(
+      "button-type",
+    );
+  });
+  it("reports each offender, so the ratchet counts them", () => {
+    const found = markup('<button class="u-btn">a</button><button class="u-btn">b</button>');
+    expect(found.filter((v) => v.rule === "button-type")).toHaveLength(2);
+  });
+});
+
 describe("status-shape", () => {
   it("passes on a dot and a word", () => {
     expect(rules(markup('<span><i class="u-dot u-dot--ok"></i>ok</span>'))).not.toContain(
