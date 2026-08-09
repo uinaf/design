@@ -75,7 +75,7 @@ export const collectFiles = (roots: string[], ignore: string[] = []): string[] =
  * silently drops every other rule too. Omit the rule name to suppress all.
  */
 const DISABLE_NEXT_LINE =
-  /(?:<!--|\/\*)\s*design-check-disable-next-line\s*([a-z-]*)\s*(?:-->|\*\/)/g;
+  /(?:<!--|\/\*)\s{0,8}design-check-disable-next-line\s{0,8}([a-z-]*)\s{0,8}(?:-->|\*\/)/g;
 
 const suppressions = (source: string): Array<{ line: number; rule: string }> =>
   [...source.matchAll(DISABLE_NEXT_LINE)].map((match) => ({
@@ -98,7 +98,7 @@ export const checkFile = (file: string, options: CheckOptions = {}): Violation[]
   if (CSS_EXTENSIONS.has(ext)) return applySuppressions(source, checkCss(source, file));
   // Markup files can carry <style> blocks; both rule sets apply.
   const violations = checkMarkup(source, file, options);
-  for (const block of source.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)) {
+  for (const block of source.matchAll(/<style[^>]{0,500}>([\s\S]*?)<\/style\s{0,8}>/g)) {
     const offset = source.slice(0, block.index ?? 0).split("\n").length - 1;
     for (const violation of checkCss(block[1], file)) {
       violations.push({ ...violation, line: violation.line + offset });
@@ -108,10 +108,10 @@ export const checkFile = (file: string, options: CheckOptions = {}): Violation[]
   // declarations are wrapped in a selector so the CSS rules see normal input;
   // the surrounding element's classes carry through so context-sensitive rules
   // (pill radius on a dot, uppercase on a label) still judge correctly.
-  for (const tag of source.matchAll(/<[a-z][a-z0-9-]*\s[^>]*>/gi)) {
+  for (const tag of source.matchAll(/<[a-z][a-z0-9-]{0,40}\s[^>]{0,2000}>/gi)) {
     // Attributes are read independently: requiring class before style would
     // check `<i style="…" class="u-dot">` with no selector at all.
-    const declarations = /\sstyle\s*=\s*["']([^"']*)["']/i.exec(tag[0])?.[1]?.trim();
+    const declarations = /\sstyle\s{0,8}=\s{0,8}["']([^"']*)["']/i.exec(tag[0])?.[1]?.trim();
     if (!declarations) continue;
     const classes = /\s(?:class|className)\s*=\s*["'{]([^"'}]*)["'}]/i.exec(tag[0])?.[1];
     const line = source.slice(0, tag.index ?? 0).split("\n").length;

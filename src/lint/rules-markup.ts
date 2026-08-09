@@ -44,7 +44,7 @@ const lineOf = (source: string, index: number): number => source.slice(0, index)
 /** Class attribute in either dialect, static values only. */
 // Anchored so `data-class=` and `subclass=` are not read as class attributes.
 const CLASS_ATTR =
-  /(?<![\w-])(?:class|className)\s*=\s*(?:"([^"]*)"|'([^']*)'|\{\s*"([^"]*)"\s*\}|\{\s*'([^']*)'\s*\})/g;
+  /(?<![\w-])(?:class|className)\s{0,8}=\s{0,8}(?:"([^"]*)"|'([^']*)'|\{\s{0,8}"([^"]*)"\s{0,8}\}|\{\s{0,8}'([^']*)'\s{0,8}\})/g;
 
 const classOccurrences = (source: string, wanted: string): number[] => {
   const hits: number[] = [];
@@ -137,9 +137,13 @@ export const checkMarkup = (
   // The topbar row and the page content must share a shell class, or the page
   // gets two different gutters and the nav visibly fails to line up.
   const shellOnRow =
-    /(?:class|className)\s*=\s*["'{][^"'}]*\bu-shell-(\w+)[^"'}]*\bu-topbar-row\b/.exec(source);
+    /(?:class|className)\s{0,8}=\s{0,8}["'{][^"'}]*\bu-shell-(\w+)[^"'}]*\bu-topbar-row\b/.exec(
+      source,
+    );
   const shellOnRowReversed =
-    /(?:class|className)\s*=\s*["'{][^"'}]*\bu-topbar-row\b[^"'}]*\bu-shell-(\w+)/.exec(source);
+    /(?:class|className)\s{0,8}=\s{0,8}["'{][^"'}]*\bu-topbar-row\b[^"'}]*\bu-shell-(\w+)/.exec(
+      source,
+    );
   // A pattern chunk is a fragment: it demonstrates the topbar and legitimately
   // has no page content to share a gutter with. Only a full page can violate this.
   const isFullPage = /<(main|article|section)\b/i.test(source) || /<\/header>\s*<\w/i.test(source);
@@ -166,12 +170,14 @@ export const checkMarkup = (
 
   // Only text that actually renders: an emoji in a comment or a JS string is
   // source, not UI, and flagging it makes the rule noise in any .tsx file.
+  const blank = (m: string): string => " ".repeat(m.length);
   const renderable = source
-    .replace(/<!--[\s\S]*?-->/g, (m) => " ".repeat(m.length))
-    .replace(/\/\*[\s\S]*?\*\//g, (m) => " ".repeat(m.length))
-    .replace(/(^|\n)\s*\/\/[^\n]*/g, (m) => " ".repeat(m.length))
-    .replace(/<script[\s\S]*?<\/script>/gi, (m) => " ".repeat(m.length))
-    .replace(/<style[\s\S]*?<\/style>/gi, (m) => " ".repeat(m.length));
+    .replace(/<!--[\s\S]*?-->/g, blank)
+    .replace(/\/\*[\s\S]*?\*\//g, blank)
+    .replace(/(^|\n)[^\S\n]{0,80}\/\/[^\n]*/g, blank)
+    // `</script >` is a valid end tag; a bare `</script>` match can be evaded.
+    .replace(/<script\b[\s\S]*?<\/script\s{0,8}>/gi, blank)
+    .replace(/<style\b[\s\S]*?<\/style\s{0,8}>/gi, blank);
   for (const match of renderable.matchAll(EMOJI)) {
     add(
       match.index ?? 0,
@@ -199,12 +205,12 @@ export const checkMarkup = (
   // JSX expresses inline styles as objects, so the quoted-string scan misses
   // them entirely on the .jsx/.tsx inputs this check advertises.
   for (const match of source.matchAll(
-    /<[a-z][a-z0-9-]*\s[^>]*?style\s*=\s*\{\{((?:[^{}]|\{[^{}]*\})*)\}\}/gi,
+    /<[a-z][a-z0-9-]{0,40}\s[^>]{0,2000}?style\s{0,8}=\s{0,8}\{\{((?:[^{}]|\{[^{}]*\})*)\}\}/gi,
   )) {
     const body = match[1];
     // Carry the element's classes through, so a pill radius still passes on a
     // .u-dot in JSX exactly as it does in HTML.
-    const jsxClasses = /(?<![\w-])(?:class|className)\s*=\s*["'{]([^"'}]*)["'}]/i.exec(
+    const jsxClasses = /(?<![\w-])(?:class|className)\s{0,8}=\s{0,8}["'{]([^"'}]*)["'}]/i.exec(
       match[0],
     )?.[1];
     for (const pair of splitTopLevel(body)) {
@@ -230,7 +236,7 @@ export const checkMarkup = (
 
   // A filled band with a coloured left edge is the SaaS alert box the system
   // replaces with a dot and a word.
-  for (const match of source.matchAll(/style\s*=\s*["'{]([^"'}]*)["'}]/g)) {
+  for (const match of source.matchAll(/style\s{0,8}=\s{0,8}["'{]([^"'}]*)["'}]/g)) {
     const style = match[1].toLowerCase();
     if (/border-left\s*:/.test(style) && /background(-color)?\s*:/.test(style)) {
       add(
@@ -247,7 +253,7 @@ export const checkMarkup = (
   // Visible copy inside elements that carry uinaf classes; anything outside the
   // design system is somebody else's text and not this check's business.
   for (const match of source.matchAll(
-    /<(button|h1|h2|h3|a|span|label|th)\b[^>]*(?:class|className)\s*=\s*["'{][^"'}]*\bu-[^"'}]*["'}][^>]*>([^<>{]{2,80})</g,
+    /<(button|h1|h2|h3|a|span|label|th)\b[^>]{0,2000}(?:class|className)\s{0,8}=\s{0,8}["'{][^"'}]*\bu-[^"'}]*["'}][^>]{0,2000}>([^<>{]{2,80})</g,
   )) {
     const copy = match[2].trim();
     const firstWord = copy.split(/\s+/)[0]?.replace(/[^\w-]/g, "") ?? "";

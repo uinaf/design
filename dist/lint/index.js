@@ -290,7 +290,7 @@ var DEFAULT_ABBREVIATIONS = [
   "uinaf"
 ];
 var lineOf = (source, index) => source.slice(0, index).split("\n").length;
-var CLASS_ATTR = /(?<![\w-])(?:class|className)\s*=\s*(?:"([^"]*)"|'([^']*)'|\{\s*"([^"]*)"\s*\}|\{\s*'([^']*)'\s*\})/g;
+var CLASS_ATTR = /(?<![\w-])(?:class|className)\s{0,8}=\s{0,8}(?:"([^"]*)"|'([^']*)'|\{\s{0,8}"([^"]*)"\s{0,8}\}|\{\s{0,8}'([^']*)'\s{0,8}\})/g;
 var classOccurrences = (source, wanted) => {
   const hits = [];
   for (const match of source.matchAll(CLASS_ATTR)) {
@@ -346,8 +346,12 @@ var checkMarkup = (source, file, options = {}) => {
       );
     }
   }
-  const shellOnRow = /(?:class|className)\s*=\s*["'{][^"'}]*\bu-shell-(\w+)[^"'}]*\bu-topbar-row\b/.exec(source);
-  const shellOnRowReversed = /(?:class|className)\s*=\s*["'{][^"'}]*\bu-topbar-row\b[^"'}]*\bu-shell-(\w+)/.exec(source);
+  const shellOnRow = /(?:class|className)\s{0,8}=\s{0,8}["'{][^"'}]*\bu-shell-(\w+)[^"'}]*\bu-topbar-row\b/.exec(
+    source
+  );
+  const shellOnRowReversed = /(?:class|className)\s{0,8}=\s{0,8}["'{][^"'}]*\bu-topbar-row\b[^"'}]*\bu-shell-(\w+)/.exec(
+    source
+  );
   const isFullPage = /<(main|article|section)\b/i.test(source) || /<\/header>\s*<\w/i.test(source);
   const shell = shellOnRow?.[1] ?? shellOnRowReversed?.[1];
   if (shell && isFullPage) {
@@ -367,7 +371,8 @@ var checkMarkup = (source, file, options = {}) => {
       );
     }
   }
-  const renderable = source.replace(/<!--[\s\S]*?-->/g, (m) => " ".repeat(m.length)).replace(/\/\*[\s\S]*?\*\//g, (m) => " ".repeat(m.length)).replace(/(^|\n)\s*\/\/[^\n]*/g, (m) => " ".repeat(m.length)).replace(/<script[\s\S]*?<\/script>/gi, (m) => " ".repeat(m.length)).replace(/<style[\s\S]*?<\/style>/gi, (m) => " ".repeat(m.length));
+  const blank = (m) => " ".repeat(m.length);
+  const renderable = source.replace(/<!--[\s\S]*?-->/g, blank).replace(/\/\*[\s\S]*?\*\//g, blank).replace(/(^|\n)[^\S\n]{0,80}\/\/[^\n]*/g, blank).replace(/<script\b[\s\S]*?<\/script\s{0,8}>/gi, blank).replace(/<style\b[\s\S]*?<\/style\s{0,8}>/gi, blank);
   for (const match of renderable.matchAll(EMOJI)) {
     add(
       match.index ?? 0,
@@ -391,10 +396,10 @@ var checkMarkup = (source, file, options = {}) => {
     }
   }
   for (const match of source.matchAll(
-    /<[a-z][a-z0-9-]*\s[^>]*?style\s*=\s*\{\{((?:[^{}]|\{[^{}]*\})*)\}\}/gi
+    /<[a-z][a-z0-9-]{0,40}\s[^>]{0,2000}?style\s{0,8}=\s{0,8}\{\{((?:[^{}]|\{[^{}]*\})*)\}\}/gi
   )) {
     const body = match[1];
-    const jsxClasses = /(?<![\w-])(?:class|className)\s*=\s*["'{]([^"'}]*)["'}]/i.exec(
+    const jsxClasses = /(?<![\w-])(?:class|className)\s{0,8}=\s{0,8}["'{]([^"'}]*)["'}]/i.exec(
       match[0]
     )?.[1];
     for (const pair of splitTopLevel(body)) {
@@ -412,7 +417,7 @@ var checkMarkup = (source, file, options = {}) => {
       }
     }
   }
-  for (const match of source.matchAll(/style\s*=\s*["'{]([^"'}]*)["'}]/g)) {
+  for (const match of source.matchAll(/style\s{0,8}=\s{0,8}["'{]([^"'}]*)["'}]/g)) {
     const style = match[1].toLowerCase();
     if (/border-left\s*:/.test(style) && /background(-color)?\s*:/.test(style)) {
       add(
@@ -426,7 +431,7 @@ var checkMarkup = (source, file, options = {}) => {
   }
   const abbreviations = /* @__PURE__ */ new Set([...DEFAULT_ABBREVIATIONS, ...options.abbreviations ?? []]);
   for (const match of source.matchAll(
-    /<(button|h1|h2|h3|a|span|label|th)\b[^>]*(?:class|className)\s*=\s*["'{][^"'}]*\bu-[^"'}]*["'}][^>]*>([^<>{]{2,80})</g
+    /<(button|h1|h2|h3|a|span|label|th)\b[^>]{0,2000}(?:class|className)\s{0,8}=\s{0,8}["'{][^"'}]*\bu-[^"'}]*["'}][^>]{0,2000}>([^<>{]{2,80})</g
   )) {
     const copy = match[2].trim();
     const firstWord = copy.split(/\s+/)[0]?.replace(/[^\w-]/g, "") ?? "";
@@ -486,7 +491,7 @@ var collectFiles = (roots, ignore = []) => {
   for (const root of roots) walk(root);
   return found.sort();
 };
-var DISABLE_NEXT_LINE = /(?:<!--|\/\*)\s*design-check-disable-next-line\s*([a-z-]*)\s*(?:-->|\*\/)/g;
+var DISABLE_NEXT_LINE = /(?:<!--|\/\*)\s{0,8}design-check-disable-next-line\s{0,8}([a-z-]*)\s{0,8}(?:-->|\*\/)/g;
 var suppressions = (source) => [...source.matchAll(DISABLE_NEXT_LINE)].map((match) => ({
   line: source.slice(0, match.index ?? 0).split("\n").length + 1,
   rule: match[1] ?? ""
@@ -503,14 +508,14 @@ var checkFile = (file, options = {}) => {
   const ext = path.extname(file).toLowerCase();
   if (CSS_EXTENSIONS.has(ext)) return applySuppressions(source, checkCss(source, file));
   const violations = checkMarkup(source, file, options);
-  for (const block of source.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)) {
+  for (const block of source.matchAll(/<style[^>]{0,500}>([\s\S]*?)<\/style\s{0,8}>/g)) {
     const offset = source.slice(0, block.index ?? 0).split("\n").length - 1;
     for (const violation of checkCss(block[1], file)) {
       violations.push({ ...violation, line: violation.line + offset });
     }
   }
-  for (const tag of source.matchAll(/<[a-z][a-z0-9-]*\s[^>]*>/gi)) {
-    const declarations = /\sstyle\s*=\s*["']([^"']*)["']/i.exec(tag[0])?.[1]?.trim();
+  for (const tag of source.matchAll(/<[a-z][a-z0-9-]{0,40}\s[^>]{0,2000}>/gi)) {
+    const declarations = /\sstyle\s{0,8}=\s{0,8}["']([^"']*)["']/i.exec(tag[0])?.[1]?.trim();
     if (!declarations) continue;
     const classes = /\s(?:class|className)\s*=\s*["'{]([^"'}]*)["'}]/i.exec(tag[0])?.[1];
     const line = source.slice(0, tag.index ?? 0).split("\n").length;

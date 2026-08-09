@@ -590,3 +590,23 @@ describe("JSX object styles keep selector context", () => {
     ).toContain("radius-ceiling");
   });
 });
+
+describe("script and style stripping is not evadable", () => {
+  it("handles end tags with whitespace, which a bare </script> match misses", () => {
+    expect(rules(markup('<script>const m = "🚀";</script >\n<p>ok</p>'))).not.toContain("no-emoji");
+    expect(rules(markup("<style>/* 🚀 */</style >\n<p>ok</p>"))).not.toContain("no-emoji");
+  });
+});
+
+describe("pathological input does not hang the check", () => {
+  it("completes on adversarial repetition", () => {
+    // CodeQL flagged polynomial backtracking on these shapes; the quantifiers
+    // are bounded so a crafted file cannot stall a CI run.
+    const start = Date.now();
+    checkMarkup(`${'class="'.repeat(20000)}`, "t.html");
+    checkMarkup(`${"<!--".repeat(20000)}`, "t.html");
+    checkMarkup(`${"<a ".repeat(20000)}`, "t.html");
+    checkMarkup(`${"class={{".repeat(20000)}`, "t.html");
+    expect(Date.now() - start).toBeLessThan(3000);
+  });
+});
