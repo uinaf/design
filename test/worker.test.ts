@@ -84,3 +84,11 @@ describe("malformed and cased Accept parameters", () => {
     expect(accepts("text/markdown;q=0.9, text/html;q=0.001")).toBe(true);
   });
 });
+
+describe("duplicated ranges", () => {
+  it("does not let header order decide between duplicates", () => {
+    // Both orderings must agree; Array.find would disagree with itself here.
+    expect(accepts("text/markdown;q=0, text/markdown;q=1, text/html;q=0.5")).toBe(true);
+    expect(accepts("text/markdown;q=1, text/markdown;q=0, text/html;q=0.5")).toBe(true);
+  });
+});

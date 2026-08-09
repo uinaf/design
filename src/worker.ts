@@ -27,18 +27,28 @@ const parseAccept = (header: string): MediaRange[] =>
     })
     .filter((r) => r.type !== "");
 
-/** The most specific range matching a media type, with how specific it was. */
+/**
+ * The most specific range matching a media type, with how specific it was.
+ * A duplicated range must not make the result depend on header order, so the
+ * best q within a specificity tier wins rather than the first one seen.
+ */
 const matchFor = (
   ranges: MediaRange[],
   type: string,
   subtype: string,
 ): { q: number; specificity: number } => {
-  const exact = ranges.find((r) => r.type === type && r.subtype === subtype);
-  if (exact) return { q: exact.q, specificity: 2 };
-  const typeWildcard = ranges.find((r) => r.type === type && r.subtype === "*");
-  if (typeWildcard) return { q: typeWildcard.q, specificity: 1 };
-  const anything = ranges.find((r) => r.type === "*" && r.subtype === "*");
-  return anything ? { q: anything.q, specificity: 0 } : { q: 0, specificity: -1 };
+  const tiers: Array<[number, (r: MediaRange) => boolean]> = [
+    [2, (r) => r.type === type && r.subtype === subtype],
+    [1, (r) => r.type === type && r.subtype === "*"],
+    [0, (r) => r.type === "*" && r.subtype === "*"],
+  ];
+  for (const [specificity, matches] of tiers) {
+    const found = ranges.filter(matches);
+    if (found.length > 0) {
+      return { q: Math.max(...found.map((r) => r.q)), specificity };
+    }
+  }
+  return { q: 0, specificity: -1 };
 };
 
 /**
