@@ -24,9 +24,11 @@ disable-model-invocation: true
 Install once per repo: `npm i @uinaf/design`.
 
 If the repo already has violations, do not try to fix the whole codebase. Record
-the current state once with `npx design-check --update-ratchet src` and commit
-`.design-ratchet.json`. From then on `--ratchet` fails only when a count rises,
-so your change is held to green without inheriting the backlog.
+the baseline **before you touch anything** — `npx design-check --update-ratchet src`
+on a clean tree, then commit `.design-ratchet.json`. Running it afterwards bakes
+your own new violations into the baseline and the ratchet will never catch them.
+From then on `--ratchet` fails only when a count rises, so your change is held to
+green without inheriting the backlog.
 
 Fonts: Berkeley Mono is licensed and loads from
 `https://cdn.uinaf.dev/fonts/berkeley-mono/variable/font.css`. Never bundle it.
