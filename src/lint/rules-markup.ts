@@ -68,6 +68,19 @@ const EMOJI = /\p{Emoji_Presentation}|\p{Emoji}\uFE0F/gu;
 const ICON_FONT_CLASS =
   /^(?:(?:fa|fas|far|fab|fa-solid|fa-regular|glyphicon|mdi)-[a-z0-9-]+|material-icons(?:-[a-z]+)?|glyphicon)$/;
 
+/** React leaves these unitless; everything else gets px appended to a number. */
+const UNITLESS_PROPERTIES = new Set([
+  "line-height",
+  "font-weight",
+  "opacity",
+  "z-index",
+  "flex",
+  "flex-grow",
+  "flex-shrink",
+  "order",
+  "zoom",
+]);
+
 export type MarkupOptions = { abbreviations?: string[] };
 
 /** Injected by the runner so JSX object styles reuse the real CSS rules. */
@@ -183,13 +196,18 @@ export const checkMarkup = (
       const [rawKey, ...rest] = pair.split(":");
       if (rest.length === 0) continue;
       const key = rawKey.trim().replace(/["']/g, "");
-      const raw = rest
-        .join(":")
-        .trim()
-        .replace(/^["']|["']$/g, "");
+      const rawText = rest.join(":").trim();
+      const quoted = /^["']/.test(rawText);
+      const raw = rawText.replace(/^["']|["']$/g, "");
       if (!key || !raw) continue;
       const property = key.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
-      for (const violation of jsxStyleRules(property, raw)) {
+      // React reads a bare number on a length property as pixels, so
+      // `{ padding: 7, borderRadius: 20 }` is 7px and 20px.
+      const value =
+        !quoted && /^-?\d+(?:\.\d+)?$/.test(raw) && !UNITLESS_PROPERTIES.has(property)
+          ? `${raw}px`
+          : raw;
+      for (const violation of jsxStyleRules(property, value)) {
         add(match.index ?? 0, violation.rule, violation.severity, violation.message, violation.fix);
       }
     }

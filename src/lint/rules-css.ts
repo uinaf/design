@@ -36,12 +36,25 @@ const isToken = (value: string): boolean => /var\(\s*--/.test(value);
  * survives the strip.
  */
 const withoutTokenReferences = (value: string): string => {
-  let out = value;
-  let previous: string;
-  do {
-    previous = out;
-    out = out.replace(/var\(\s*--[a-z0-9-]+\s*(?:,[^()]*)?\)/gi, " ");
-  } while (out !== previous);
+  let out = "";
+  for (let i = 0; i < value.length; i += 1) {
+    if (!/^var\(\s*--/i.test(value.slice(i, i + 8))) {
+      out += value[i];
+      continue;
+    }
+    // Consume the whole call, including a fallback that itself has parens.
+    let depth = 0;
+    let j = i;
+    for (; j < value.length; j += 1) {
+      if (value[j] === "(") depth += 1;
+      if (value[j] === ")") {
+        depth -= 1;
+        if (depth === 0) break;
+      }
+    }
+    out += " ";
+    i = j;
+  }
   return out;
 };
 const ALLOWED_RAW_COLORS = new Set([
@@ -246,8 +259,10 @@ export const checkCss = (css: string, file: string): Violation[] => {
       }
     }
 
-    if (SPACING_PROPERTIES.test(prop) && !inTokenDefinition && !isToken(value)) {
-      for (const part of value.split(SPACED_PROPERTY_SPLIT)) {
+    if (SPACING_PROPERTIES.test(prop) && !inTokenDefinition) {
+      // Strip tokens rather than skipping the declaration: `var(--sp-2) 7px`
+      // must still flag the 7px sitting beside the token.
+      for (const part of withoutTokenReferences(value).split(SPACED_PROPERTY_SPLIT)) {
         const px = /^(-?\d+(?:\.\d+)?)px$/.exec(part);
         if (!px) continue;
         const size = Math.abs(Number.parseFloat(px[1]));

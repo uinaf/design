@@ -59,12 +59,24 @@ var SPACING_PROPERTIES = /^(margin|padding)(-(top|right|bottom|left|inline|block
 var SPACED_PROPERTY_SPLIT = /\s+/;
 var isToken = (value2) => /var\(\s*--/.test(value2);
 var withoutTokenReferences = (value2) => {
-  let out = value2;
-  let previous;
-  do {
-    previous = out;
-    out = out.replace(/var\(\s*--[a-z0-9-]+\s*(?:,[^()]*)?\)/gi, " ");
-  } while (out !== previous);
+  let out = "";
+  for (let i = 0; i < value2.length; i += 1) {
+    if (!/^var\(\s*--/i.test(value2.slice(i, i + 8))) {
+      out += value2[i];
+      continue;
+    }
+    let depth = 0;
+    let j = i;
+    for (; j < value2.length; j += 1) {
+      if (value2[j] === "(") depth += 1;
+      if (value2[j] === ")") {
+        depth -= 1;
+        if (depth === 0) break;
+      }
+    }
+    out += " ";
+    i = j;
+  }
   return out;
 };
 var ALLOWED_RAW_COLORS = /* @__PURE__ */ new Set([
@@ -219,8 +231,8 @@ var checkCss = (css, file) => {
         );
       }
     }
-    if (SPACING_PROPERTIES.test(prop) && !inTokenDefinition && !isToken(value2)) {
-      for (const part of value2.split(SPACED_PROPERTY_SPLIT)) {
+    if (SPACING_PROPERTIES.test(prop) && !inTokenDefinition) {
+      for (const part of withoutTokenReferences(value2).split(SPACED_PROPERTY_SPLIT)) {
         const px = /^(-?\d+(?:\.\d+)?)px$/.exec(part);
         if (!px) continue;
         const size = Math.abs(Number.parseFloat(px[1]));
@@ -290,6 +302,17 @@ var classOccurrences = (source, wanted) => {
 };
 var EMOJI = new RegExp("\\p{Emoji_Presentation}|\\p{Emoji}\\uFE0F", "gu");
 var ICON_FONT_CLASS = /^(?:(?:fa|fas|far|fab|fa-solid|fa-regular|glyphicon|mdi)-[a-z0-9-]+|material-icons(?:-[a-z]+)?|glyphicon)$/;
+var UNITLESS_PROPERTIES = /* @__PURE__ */ new Set([
+  "line-height",
+  "font-weight",
+  "opacity",
+  "z-index",
+  "flex",
+  "flex-grow",
+  "flex-shrink",
+  "order",
+  "zoom"
+]);
 var jsxStyleRules = () => [];
 var setJsxStyleChecker = (checker) => {
   jsxStyleRules = checker;
@@ -373,10 +396,13 @@ var checkMarkup = (source, file, options = {}) => {
       const [rawKey, ...rest] = pair.split(":");
       if (rest.length === 0) continue;
       const key = rawKey.trim().replace(/["']/g, "");
-      const raw = rest.join(":").trim().replace(/^["']|["']$/g, "");
+      const rawText = rest.join(":").trim();
+      const quoted = /^["']/.test(rawText);
+      const raw = rawText.replace(/^["']|["']$/g, "");
       if (!key || !raw) continue;
       const property = key.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
-      for (const violation of jsxStyleRules(property, raw)) {
+      const value2 = !quoted && /^-?\d+(?:\.\d+)?$/.test(raw) && !UNITLESS_PROPERTIES.has(property) ? `${raw}px` : raw;
+      for (const violation of jsxStyleRules(property, value2)) {
         add(match.index ?? 0, violation.rule, violation.severity, violation.message, violation.fix);
       }
     }

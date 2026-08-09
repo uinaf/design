@@ -467,3 +467,45 @@ describe("file collection survives symlink cycles", () => {
     expect(files.filter((f) => f.endsWith("page.html")).length).toBe(1);
   });
 });
+
+describe("React numeric style values", () => {
+  const jsx = async (source: string) => {
+    const { checkFile } = await import("../src/lint/index");
+    const { writeFileSync, mkdtempSync } = await import("node:fs");
+    const { join } = await import("node:path");
+    const { tmpdir } = await import("node:os");
+    const dir = mkdtempSync(join(tmpdir(), "design-num-"));
+    const file = join(dir, "C.tsx");
+    writeFileSync(file, source);
+    return checkFile(file).map((v) => v.rule);
+  };
+
+  it("are treated as pixels, the way React does", async () => {
+    const found = await jsx(
+      `export const C = () => <div style={{ padding: 7, borderRadius: 20 }} />;`,
+    );
+    expect(found).toContain("spacing-grid");
+    expect(found).toContain("radius-ceiling");
+  });
+
+  it("leaves genuinely unitless properties alone", async () => {
+    expect(
+      await jsx(`export const C = () => <div style={{ lineHeight: 2, zIndex: 40 }} />;`),
+    ).toEqual([]);
+  });
+});
+
+describe("token references with functional fallbacks", () => {
+  it("are consumed whole, parens and all", () => {
+    expect(rules(css("a{color:var(--fg, rgb(1 2 3))}"))).not.toContain("no-raw-color");
+  });
+});
+
+describe("spacing-grid is not disabled by a sibling token", () => {
+  it("still flags a raw value beside a token", () => {
+    expect(rules(css("a{padding:var(--sp-2) 7px}"))).toContain("spacing-grid");
+  });
+  it("passes when the raw sibling is on the grid", () => {
+    expect(rules(css("a{padding:var(--sp-2) 8px}"))).not.toContain("spacing-grid");
+  });
+});
