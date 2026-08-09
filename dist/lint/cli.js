@@ -526,7 +526,19 @@ var changedFiles = (base = "origin/main") => {
   if (!repoRoot) {
     throw new Error("--changed needs a git repository");
   }
-  const git = (args) => run(["-C", repoRoot, ...args]);
+  const git = (args) => {
+    try {
+      return execFileSync("git", ["-C", repoRoot, ...args], {
+        encoding: "utf8",
+        stdio: ["ignore", "pipe", "pipe"]
+      }).split("\n").filter(Boolean);
+    } catch (error) {
+      const stderr = String(error.stderr ?? "").trim();
+      throw new Error(
+        `--changed could not run \`git ${args.join(" ")}\`${stderr ? `: ${stderr}` : ""}`
+      );
+    }
+  };
   let hasBase = true;
   try {
     execFileSync("git", ["rev-parse", "--verify", "--quiet", `${base}^{commit}`], {

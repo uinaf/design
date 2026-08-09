@@ -128,7 +128,24 @@ export const changedFiles = (base = "origin/main"): string[] => {
   // Every subsequent command runs from the repository root. Git reports paths
   // relative to the current directory, so running from a subdirectory would
   // return paths that resolve nowhere and report a clean tree.
-  const git = (args: string[]): string[] => run(["-C", repoRoot, ...args]);
+  // Enumeration must not swallow failures. A `base...HEAD` diff fails outright
+  // when the two have no merge base (shallow clone, unrelated histories), and
+  // treating that as "no files changed" reports a clean tree.
+  const git = (args: string[]): string[] => {
+    try {
+      return execFileSync("git", ["-C", repoRoot, ...args], {
+        encoding: "utf8",
+        stdio: ["ignore", "pipe", "pipe"],
+      })
+        .split("\n")
+        .filter(Boolean);
+    } catch (error) {
+      const stderr = String((error as { stderr?: Buffer }).stderr ?? "").trim();
+      throw new Error(
+        `--changed could not run \`git ${args.join(" ")}\`${stderr ? `: ${stderr}` : ""}`,
+      );
+    }
+  };
   let hasBase = true;
   try {
     execFileSync("git", ["rev-parse", "--verify", "--quiet", `${base}^{commit}`], {
