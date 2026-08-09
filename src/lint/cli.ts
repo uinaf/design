@@ -4,7 +4,7 @@ import path from "node:path";
 import {
   changedFiles,
   check,
-  repoRootOf,
+  gitRoot,
   compareRatchet,
   countByRule,
   formatViolation,
@@ -94,7 +94,7 @@ if (flag("changed")) {
   }
   paths.length = 0;
   paths.push(...touched);
-  changedRoot = repoRootOf(touched);
+  changedRoot = gitRoot();
 }
 
 let violations;

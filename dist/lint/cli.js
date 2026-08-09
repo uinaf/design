@@ -566,16 +566,15 @@ var changedFiles = (base = "origin/main") => {
     ])
   ].filter(linted).map((file) => path.resolve(repoRoot, file)).filter((file) => fs.existsSync(file)).sort();
 };
-var repoRootOf = (files) => {
-  if (files.length === 0) return void 0;
-  const split = files.map((f) => path.dirname(f).split(path.sep));
-  const common = [];
-  for (let i = 0; i < split[0].length; i += 1) {
-    const segment = split[0][i];
-    if (split.every((parts) => parts[i] === segment)) common.push(segment);
-    else break;
+var gitRoot = () => {
+  try {
+    return execFileSync("git", ["rev-parse", "--show-toplevel"], {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"]
+    }).trim();
+  } catch {
+    return void 0;
   }
-  return common.join(path.sep) || path.sep;
 };
 var checkFile = (file, options = {}) => {
   const source = fs.readFileSync(file, "utf8");
@@ -707,7 +706,7 @@ if (flag("changed")) {
   }
   paths.length = 0;
   paths.push(...touched);
-  changedRoot = repoRootOf(touched);
+  changedRoot = gitRoot();
 }
 var violations;
 try {
