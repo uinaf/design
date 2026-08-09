@@ -22,10 +22,10 @@ Required on the `release` GitHub Environment:
 
 npm trusted publisher is already registered for this repo / workflow file (`release.yml`) / `release` environment.
 
-After npm and the immutable GitHub Release publish successfully, the workflow
-stages the released `package.json` version and commits it back to `main` through
-GitHub's API as the authenticated App. GitHub signs that commit; the
-`[skip ci]` marker prevents a recursive release run.
+During semantic-release preparation, npm stages the released `package.json`
+version and `@jno21/semantic-release-github-commit` commits it to `main` through
+GitHub's API as the authenticated App. GitHub signs that commit, and the release
+tag points to it. The `[skip ci]` marker prevents a recursive release run.
 
 Manual publish is only for emergency recovery:
 
