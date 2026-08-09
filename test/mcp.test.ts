@@ -44,3 +44,21 @@ describe("mcp runtime config", () => {
     expect(wrangler).toMatch(/run_worker_first = \[\s*"\/mcp"/);
   });
 });
+
+describe("search_guidelines input bounds", () => {
+  it("ignores one-character terms that match almost everything", () => {
+    // "a"/"e" occur thousands of times; scoring on them is noise, and counting
+    // them by splitting the document is a cheap way to spike a public endpoint.
+    expect(rankSections(spec, "a e i o u").hits).toEqual([]);
+  });
+
+  it("caps how many terms one query can carry", () => {
+    const many = Array.from({ length: 200 }, (_, i) => `term${i}`).join(" ");
+    expect(() => rankSections(spec, many)).not.toThrow();
+    expect(rankSections(spec, many).hits.length).toBeLessThanOrEqual(3);
+  });
+
+  it("still ranks a normal multi-word query", () => {
+    expect(rankSections(spec, "type scale").hits.length).toBeGreaterThan(0);
+  });
+});

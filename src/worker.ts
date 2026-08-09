@@ -98,8 +98,11 @@ export default {
     // Stateless Streamable HTTP: a fresh server per request, no Durable Object.
     // Built here so the factory closes over env, and invoked from inside fetch
     // because Wrangler treats a function default export as a WorkerEntrypoint.
-    if (pathname === "/mcp") {
-      return createMcpHandler(() => createServer(env), { route: "/mcp" })(request, env, ctx);
+    if (pathname === "/mcp" || pathname === "/mcp/") {
+      // The handler matches its route exactly, so /mcp/ must be normalised
+      // before it is handed over or it falls through to a 404.
+      const normalised = pathname === "/mcp" ? request : new Request(new URL("/mcp", url), request);
+      return createMcpHandler(() => createServer(env), { route: "/mcp" })(normalised, env, ctx);
     }
 
     // Anything that mutates has no business here; let the asset binding answer

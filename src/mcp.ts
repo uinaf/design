@@ -26,8 +26,14 @@ type Tokens = { groups: Record<string, Record<string, string>> };
 
 const text = (body: string) => ({ content: [{ type: "text" as const, text: body }] });
 
-const asset = async (env: Env, path: string): Promise<Response> =>
-  env.ASSETS.fetch(new Request(`https://design.uinaf.dev${path}`));
+/** A missing artifact is a deploy fault; say which path, not an opaque 500. */
+const asset = async (env: Env, path: string): Promise<Response> => {
+  const response = await env.ASSETS.fetch(new Request(`https://design.uinaf.dev${path}`));
+  if (!response.ok) {
+    throw new Error(`design.uinaf.dev${path} is unavailable (HTTP ${response.status}).`);
+  }
+  return response;
+};
 
 const json = async <T>(env: Env, path: string): Promise<T> =>
   (await asset(env, path)).json() as Promise<T>;
@@ -36,17 +42,37 @@ const json = async <T>(env: Env, path: string): Promise<T> =>
  * Section-level keyword scoring. A heading match counts double: a section
  * titled "color" answers "color" better than one that merely mentions it.
  */
+/** Occurrences without allocating: split() on a one-character term over a long
+ *  document builds an enormous array, which is a cheap way to spike a public
+ *  endpoint. */
+const countOccurrences = (haystack: string, needle: string): number => {
+  let count = 0;
+  let index = haystack.indexOf(needle);
+  while (index !== -1) {
+    count += 1;
+    index = haystack.indexOf(needle, index + needle.length);
+  }
+  return count;
+};
+
+const MIN_TERM_LENGTH = 2;
+const MAX_TERMS = 8;
+
 export const rankSections = (
   spec: string,
   query: string,
 ): { hits: Array<{ heading: string; body: string; score: number }>; sections: string[] } => {
-  const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
+  const terms = query
+    .toLowerCase()
+    .split(/\s+/)
+    .filter((t) => t.length >= MIN_TERM_LENGTH)
+    .slice(0, MAX_TERMS);
   const sections = spec.split(/\n(?=## )/).map((body) => {
     const heading = body.split("\n")[0].replace(/^#+\s*/, "");
     const haystack = body.toLowerCase();
+    const lowerHeading = heading.toLowerCase();
     const score = terms.reduce(
-      (sum, term) =>
-        sum + (heading.toLowerCase().includes(term) ? 2 : 0) + (haystack.split(term).length - 1),
+      (sum, term) => sum + (lowerHeading.includes(term) ? 2 : 0) + countOccurrences(haystack, term),
       0,
     );
     return { heading, body, score };
