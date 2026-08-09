@@ -121,7 +121,7 @@ A misconfigured hook cannot quietly pass.
 codebase, and do not remove the hook.
 
 Record the baseline **on a clean tree, before making changes** — running it
-afterwards bakes your own new violations into the baseline and the ratchet will
+afterward bakes your own new violations into the baseline and the ratchet will
 never catch them:
 
 ```sh

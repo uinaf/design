@@ -680,19 +680,41 @@ describe("changedFiles", () => {
   it("finds untracked, uncommitted, and committed changes", async () => {
     const { changedFiles } = await import("../src/lint/index");
     const { writeFileSync } = await import("node:fs");
-    const { dir, join } = await repo();
+    const { dir, git, join } = await repo();
     const cwd = process.cwd();
     process.chdir(dir);
     try {
       expect(changedFiles()).toEqual([]);
+
+      // committed after the base: only the `base...HEAD` diff sees this one.
+      writeFileSync(join(dir, "src", "committed.css"), ".a{color:red}");
+      git("add", "-A");
+      git("commit", "-q", "-m", "second");
+      expect(changedFiles().map((f) => f.split("/").pop())).toEqual(["committed.css"]);
+
       writeFileSync(join(dir, "src", "new.tsx"), "<p>y</p>");
-      expect(changedFiles().map((f) => f.split("/").pop())).toEqual(["new.tsx"]);
       writeFileSync(join(dir, "src", "page.html"), "<p>edited</p>");
       expect(
         changedFiles()
           .map((f) => f.split("/").pop())
           .sort(),
-      ).toEqual(["new.tsx", "page.html"]);
+      ).toEqual(["committed.css", "new.tsx", "page.html"]);
+    } finally {
+      process.chdir(cwd);
+    }
+  });
+
+  it("returns absolute paths when run from a subdirectory", async () => {
+    const { changedFiles } = await import("../src/lint/index");
+    const { writeFileSync, realpathSync } = await import("node:fs");
+    const { dir, join } = await repo();
+    const cwd = process.cwd();
+    // Git reports paths relative to cwd; resolving those against the repo root
+    // from a subdirectory silently dropped every one of them.
+    process.chdir(join(dir, "src"));
+    try {
+      writeFileSync(join(dir, "src", "new.tsx"), "<p>y</p>");
+      expect(changedFiles()).toEqual([join(realpathSync(dir), "src", "new.tsx")]);
     } finally {
       process.chdir(cwd);
     }
@@ -719,15 +741,6 @@ describe("--changed fails closed", () => {
     // Silently dropping committed changes here would report clean and exit 0,
     // which is the one thing a gate must never do.
     expect(() => changedFiles("definitely-not-a-ref")).toThrow(/cannot resolve base ref/);
-  });
-
-  it("returns absolute paths so a subdirectory run still finds them", async () => {
-    const { changedFiles } = await import("../src/lint/index");
-    // Git reports paths relative to cwd; resolving those against the repo root
-    // from a subdirectory silently dropped every one of them.
-    for (const file of changedFiles("HEAD")) {
-      expect(file.startsWith("/")).toBe(true);
-    }
   });
 });
 
