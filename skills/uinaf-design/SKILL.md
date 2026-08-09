@@ -17,18 +17,26 @@ disable-model-invocation: true
    `/tokens.json` when writing custom CSS.
 3. **Prefer the MCP tools when connected** (`https://design.uinaf.dev/mcp`):
    `list_patterns`, `get_pattern`, `get_tokens`, `search_guidelines`.
-4. **Finish on green.** The adherence check must pass before you are done —
-   `npx design-check src` in a clean repo, or `npx design-check --ratchet src`
-   in one with a recorded baseline. Red is not done, and neither is silencing it.
+4. **Finish on green.** `npm run design:check` must pass before you are done.
+   Red is not done, and neither is silencing it.
 
-Install once per repo: `npm i @uinaf/design`.
+Set up once per repo: `npm i -D @uinaf/design`, then add the script so the
+command always resolves to the installed binary:
+
+```json
+{ "scripts": { "design:check": "design-check src" } }
+```
+
+Always run it through the script. A bare `npx design-check` resolves against the
+public registry when the package is not installed locally, and the bin name is
+not the package name.
 
 If the repo already has violations, do not try to fix the whole codebase. Record
-the baseline **before you touch anything** — `npx design-check --update-ratchet src`
+the baseline **before you touch anything** — `npm run design:check -- --update-ratchet`
 on a clean tree, then commit `.design-ratchet.json`. Running it afterwards bakes
 your own new violations into the baseline and the ratchet will never catch them.
-From then on `--ratchet` fails only when a count rises, so your change is held to
-green without inheriting the backlog.
+From then on add `--ratchet`, which fails only when a count rises, so your change
+is held to green without inheriting the backlog.
 
 Fonts: Berkeley Mono is licensed and loads from
 `https://cdn.uinaf.dev/fonts/berkeley-mono/variable/font.css`. Never bundle it.

@@ -12,7 +12,7 @@ interface:
 
     Output: lead with what was built and which patterns it came from, then the design:check result.
 
-    Stop rules: finish only when `npx design-check` passes. If a choice is not covered by a pattern or the spec, ask instead of inventing.
+    Stop rules: finish only when `npm run design:check` passes. If a choice is not covered by a pattern or the spec, ask instead of inventing.
 
 policy:
   allow_implicit_invocation: false

@@ -59,7 +59,7 @@ if ((pkg.files ?? []).some((f) => f === "fonts" || f.includes("font"))) {
 // `pnpm run skill:lint` remains the richer, optional gate.
 const skillDir = path.join(root, "skills/uinaf-design");
 const skill = fs.readFileSync(path.join(skillDir, "SKILL.md"), "utf8");
-const frontmatter = /^---\n([\s\S]*?)\n---/.exec(skill)?.[1];
+const frontmatter = /^\uFEFF?---\r?\n([\s\S]*?)\r?\n---/.exec(skill)?.[1];
 if (!frontmatter) {
   fail("skills/uinaf-design/SKILL.md has no frontmatter");
 }
@@ -80,8 +80,11 @@ if (!description || /^[[{|>]/.test(description) || description.replace(/^"|"$/g,
 const plugin = JSON.parse(
   fs.readFileSync(path.join(skillDir, ".tessl-plugin/plugin.json"), "utf8"),
 ) as { name?: string; skills?: string[] };
-if (!plugin.name || !plugin.skills?.length) {
-  fail("skills/uinaf-design/.tessl-plugin/plugin.json needs a name and a skills list");
+if (plugin.name !== "uinaf/uinaf-design") {
+  fail(`plugin.json declares name \`${plugin.name}\`, expected \`uinaf/uinaf-design\``);
+}
+if (!plugin.skills?.includes("SKILL.md")) {
+  fail("plugin.json skills must list SKILL.md");
 }
 for (const entry of plugin.skills ?? []) {
   if (!fs.existsSync(path.join(skillDir, entry))) {
@@ -97,7 +100,7 @@ for (const key of ["display_name:", "short_description:", "default_prompt:"]) {
   }
 }
 // The invocation policy is a deliberate decision (#11), not incidental.
-if (!/allow_implicit_invocation:\s*false/.test(openai)) {
+if (!/^\s*allow_implicit_invocation:\s*false\s*$/m.test(openai)) {
   fail("agents/openai.yaml must set policy.allow_implicit_invocation: false");
 }
 if (!/^disable-model-invocation:\s*true$/m.test(frontmatter as string)) {

@@ -74,6 +74,7 @@
     "@types/node": "^24.0.0",
     "agents": "^0.20.1",
     "esbuild": "^0.28.2",
+    "tessl": "0.94.0",
     "typescript": "^5.9.2",
     "vite": "npm:@voidzero-dev/vite-plus-core@0.2.8",
     "vite-plus": "0.2.8",
