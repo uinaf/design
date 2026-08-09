@@ -8,15 +8,18 @@ disable-model-invocation: true
 
 ## The workflow
 
-1. **Never write uinaf UI from memory.** Fetch the nearest pattern first:
-   `https://design.uinaf.dev/components.json` to find it, then
-   `/patterns/<name>.md` for the markup. Copy it, then adapt the content — do
-   not reinterpret the design.
+1. **Never write uinaf UI from memory.** Fetch first, then adapt the content —
+   do not reinterpret the design.
+   - Building a **whole page**? Start from a reference page:
+     `/pages/<name>.md` — `product-landing`, `dashboard`, `login`, `settings`,
+     `docs`, `device-auth`. Keep the structure; the layout is the design.
+   - Building **one component**? `https://design.uinaf.dev/components.json` to
+     find the nearest pattern, then `/patterns/<name>.md` for its markup.
 2. **Import the CSS and use what is there.** `@import "@uinaf/design/css";`
    gives tokens and every pattern class. Take exact values from
    `/tokens.json` when writing custom CSS.
 3. **Prefer the MCP tools when connected** (`https://design.uinaf.dev/mcp`):
-   `list_patterns`, `get_pattern`, `get_tokens`, `search_guidelines`.
+   `get_page`, `list_patterns`, `get_pattern`, `get_tokens`, `search_guidelines`.
 4. **Finish on green.** `npm run design:check` must pass before you are done.
    Red is not done, and neither is silencing it.
 
@@ -67,6 +70,7 @@ The lint enforces these — do not fight it.
 
 | Where                 | What                                                    |
 | --------------------- | ------------------------------------------------------- |
+| `/pages/<name>.md`    | a whole reference screen, markup included               |
 | `/components.json`    | every pattern: classes, use, rules, nevers              |
 | `/patterns/<name>.md` | one pattern, contract plus copyable markup              |
 | `/tokens.json`        | tokens grouped by role                                  |

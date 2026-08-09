@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "guide",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["exec", "wrangler", "dev", "--port", "8788"],
+      "port": 8788
+    }
+  ]
+}

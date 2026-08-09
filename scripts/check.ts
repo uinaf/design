@@ -42,6 +42,26 @@ for (const [name, value] of grouped) {
   }
 }
 
+// The six reference pages are a published contract: the skill, the adoption
+// doc, and get_page all name them, so a rename silently breaks all three.
+const REFERENCE_PAGES = [
+  "product-landing",
+  "dashboard",
+  "login",
+  "settings",
+  "docs",
+  "device-auth",
+];
+for (const name of REFERENCE_PAGES) {
+  const source = path.join(root, "pages", `${name}.html`);
+  if (!fs.existsSync(source)) {
+    fail(`pages/${name}.html is missing — get_page and the skill both name it`);
+  }
+  if (!/@page\s+name="[^"]+"\s+description="[^"]*"/.test(fs.readFileSync(source, "utf8"))) {
+    fail(`pages/${name}.html needs an @page name="…" description="…" marker`);
+  }
+}
+
 if (fs.existsSync(path.join(root, "fonts"))) {
   fail("fonts/ must not exist in package root");
 }

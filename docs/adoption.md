@@ -33,11 +33,13 @@ Paste into the repo's `AGENTS.md` or `CLAUDE.md`.
 
 This repo's UI is uinaf-branded.
 
-1. **Never write uinaf UI from memory.** Fetch the pattern first:
-   `https://design.uinaf.dev/components.json` to find it, then
-   `/patterns/<name>.md` for the markup. Copy it and adapt the content — do not
-   reinterpret the design. If the `design-uinaf` MCP server is connected, prefer
-   its tools: `get_pattern`, `get_tokens`, `search_guidelines`, `list_patterns`.
+1. **Never write uinaf UI from memory.** Fetch first, then adapt the content —
+   do not reinterpret the design. For a whole page, start from a reference
+   screen: `https://design.uinaf.dev/pages/<name>.md` (`product-landing`,
+   `dashboard`, `login`, `settings`, `docs`, `device-auth`). For one component,
+   `/components.json` to find the pattern, then `/patterns/<name>.md` for its
+   markup. If the `design-uinaf` MCP server is connected, prefer its tools:
+   `get_page`, `get_pattern`, `get_tokens`, `search_guidelines`, `list_patterns`.
 2. **Styles come from `@uinaf/design`.** `@import "@uinaf/design/css";` gives
    tokens and every `u-*` class. Take exact values from `/tokens.json` when
    writing custom CSS. No raw hex, no radius over 6px, no shadows, one accent per

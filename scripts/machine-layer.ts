@@ -97,6 +97,51 @@ ${related.length ? `\n**Related patterns**\n${related.map((p) => `- [${p.name}](
   );
 }
 
+// Reference pages: whole screens an agent can start from instead of assembling
+// one out of patterns. The markdown twin carries the page's full markup, so a
+// single fetch is enough to build the screen.
+const pages = JSON.parse(fs.readFileSync(path.join(guide, "pages.json"), "utf8")) as Array<{
+  slug: string;
+  name: string;
+  description: string;
+}>;
+
+for (const name of fs.readdirSync(path.join(guide, "pages"))) {
+  if (name.endsWith(".md")) fs.rmSync(path.join(guide, "pages", name));
+}
+
+for (const page of pages) {
+  const html = fs.readFileSync(path.join(guide, "pages", `${page.slug}.html`), "utf8");
+  const classes = [
+    ...new Set(
+      [...html.matchAll(/class="([^"]*)"/g)]
+        .flatMap((m) => m[1].split(/\s+/))
+        .filter((c) => c.startsWith("u-")),
+    ),
+  ].sort();
+  const related = components.patterns.filter((p) =>
+    p.classes.some((c) => classes.includes(c.replace(/^\./, ""))),
+  );
+  write(
+    `pages/${page.slug}.md`,
+    `# ${page.name}
+
+${page.description}
+
+Rendered page: /pages/${page.slug}.html
+
+**Classes used** — ${classes.length ? classes.map((c) => `.${c}`).join(", ") : "none"}
+${related.length ? `\n**Patterns on this page**\n${related.map((p) => `- [${p.name}](/patterns/${p.slug}.md) — ${p.use}`).join("\n")}\n` : ""}
+\`\`\`html
+${html.trim()}
+\`\`\`
+
+Copy the markup and replace the content. Import \`@uinaf/design/css\` for the
+classes above; take any custom value from /tokens.json.
+`,
+  );
+}
+
 // Reference docs served as-is; they are already markdown.
 for (const [source, name] of [
   ["DESIGN.md", "design"],
@@ -120,6 +165,12 @@ Machine-readable by design: fetch a pattern instead of writing UI from memory.
 - /components.json — the pattern contract, ${components.patterns.length} patterns
 - /tokens.json — design tokens, grouped
 - /design.md — the spec: voice, type, color, structure, layout, guardrails
+
+## Reference pages (${pages.length})
+
+Whole screens. Start here when building a page rather than a component.
+
+${pages.map((p) => `- [${p.name}](/pages/${p.slug}.md) — ${p.description}`).join("\n")}
 
 ## Patterns with copyable markup (${withMarkup.length})
 
@@ -155,6 +206,12 @@ write(
 
 - [components.json](https://design.uinaf.dev/components.json): every pattern with classes, use, rules, and nevers. ${withMarkup.length} carry copyable markup.
 - [tokens.json](https://design.uinaf.dev/tokens.json): design tokens grouped by role.
+
+## Reference pages
+
+Whole screens, markup included. Prefer these over assembling a page from patterns.
+
+${pages.map((p) => `- [${p.name}](https://design.uinaf.dev/pages/${p.slug}.md): ${p.description}`).join("\n")}
 
 ## Patterns
 
@@ -194,6 +251,7 @@ write(
 
 const twins = fs.readdirSync(path.join(guide, "patterns")).filter((f) => f.endsWith(".md")).length;
 const cards = fs.readdirSync(path.join(guide, "preview")).filter((f) => f.endsWith(".md")).length;
+const pageTwins = fs.readdirSync(path.join(guide, "pages")).filter((f) => f.endsWith(".md")).length;
 console.log(
-  `machine layer: ${twins} pattern twins, ${cards} preview twins, llms.txt, index.md, skill discovery`,
+  `machine layer: ${twins} pattern twins, ${cards} preview twins, ${pageTwins} page twins, llms.txt, index.md, skill discovery`,
 );

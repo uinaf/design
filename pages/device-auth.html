@@ -1,0 +1,67 @@
+<!doctype html>
+<!-- @page name="device auth" description="CLI pairing: one code, one instruction, a waiting dot" -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>uinaf — device auth</title>
+    <link rel="stylesheet" href="../dist/css/tokens.css" />
+    <style>
+      html,
+      body {
+        margin: 0;
+      }
+      body.uinaf {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        box-sizing: border-box;
+      }
+    </style>
+  </head>
+  <body class="uinaf">
+    <div style="width: 100%; max-width: 360px; display: flex; flex-direction: column; gap: 16px">
+      <div
+        class="u-panel u-ticks"
+        style="padding: 32px; display: flex; flex-direction: column; gap: 24px"
+      >
+        <a
+          href="#"
+          class="u-link-plain"
+          style="display: inline-flex; align-items: center; gap: 8px; color: var(--fg-strong)"
+          ><img
+            src="https://cdn.uinaf.dev/images/uinaf-computer.png"
+            alt=""
+            width="20"
+            height="20"
+            style="display: block; border: 1px solid var(--border)"
+          /><span style="font-size: 14px">attach</span></a
+        >
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <h2 style="font-size: 16px">device authorization</h2>
+          <p style="font-size: 13px">
+            enter this code at <code>github.com/login/device</code> to authorize the CLI.
+          </p>
+        </div>
+        <div
+          style="
+            border: 1px solid var(--border);
+            background: var(--neutral-925);
+            padding: 16px;
+            text-align: center;
+            font-size: 24px;
+            letter-spacing: 0.2em;
+            color: var(--fg);
+          "
+        >
+          HJKD-PLQZ
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
+          <span class="u-tag"><span class="u-dot u-dot--live"></span>waiting</span>
+          <span class="u-meta">expires in 14:32</span>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

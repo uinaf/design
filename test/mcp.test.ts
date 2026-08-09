@@ -31,6 +31,57 @@ describe("search_guidelines ranking", () => {
   });
 });
 
+describe("reference pages", () => {
+  const pages = JSON.parse(readFileSync(resolve(root, "guide/pages.json"), "utf8")) as Array<{
+    slug: string;
+    name: string;
+    description: string;
+  }>;
+  const published = (slug: string) =>
+    readFileSync(resolve(root, "guide/pages", `${slug}.html`), "utf8");
+
+  it("publishes exactly the six pages get_page and the skill name", () => {
+    expect(pages.map((p) => p.slug).sort()).toEqual([
+      "dashboard",
+      "device-auth",
+      "docs",
+      "login",
+      "product-landing",
+      "settings",
+    ]);
+  });
+
+  it("strips the authoring marker from published output", () => {
+    // The marker is build metadata. Publishing it leaks it into get_page's
+    // markup, which an agent would then copy into a product repo.
+    for (const page of pages) {
+      expect(published(page.slug)).not.toMatch(/@page|@dsCard/);
+    }
+  });
+
+  it("points every page at the served stylesheet, not the source tree", () => {
+    for (const page of pages) {
+      const html = published(page.slug);
+      expect(html).toContain('href="/tokens.css"');
+      expect(html).not.toContain("../dist/");
+    }
+  });
+
+  it("resolves no template placeholders into published markup", () => {
+    // The upstream dashboard template ships an unbound `sc-for` loop; shipping
+    // it would hand an agent `{{ row.PR }}` as if it were markup.
+    for (const page of pages) {
+      expect(published(page.slug)).not.toMatch(/\{\{|<sc-|<x-dc/);
+    }
+  });
+
+  it("describes each page, since get_page lists descriptions on an unknown name", () => {
+    for (const page of pages) {
+      expect(page.description.trim().length).toBeGreaterThan(20);
+    }
+  });
+});
+
 describe("mcp runtime config", () => {
   const wrangler = readFileSync(resolve(root, "wrangler.toml"), "utf8");
 

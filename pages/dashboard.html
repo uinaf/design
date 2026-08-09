@@ -1,0 +1,189 @@
+<!doctype html>
+<!-- @page name="dashboard" description="app shell on the wide shell: one-row topbar with current-page marker, stat strip, ruled data table" -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>uinaf — dashboard</title>
+    <link rel="stylesheet" href="../dist/css/tokens.css" />
+    <style>
+      body {
+        margin: 0;
+        background: var(--bg);
+      }
+    </style>
+  </head>
+  <body class="uinaf">
+    <div style="min-height: 100vh; display: flex; flex-direction: column">
+      <header class="u-topbar">
+        <div class="u-shell-wide u-topbar-row">
+          <a href="#" class="u-topbar-mark"
+            ><img
+              src="https://cdn.uinaf.dev/images/uinaf-computer.png"
+              alt="slopzapper mark"
+            />slopzapper</a
+          >
+          <nav class="u-topbar-nav">
+            <a href="#" aria-current="page">overview</a><a href="#">reviews</a><a href="#">repos</a
+            ><a href="#">settings</a>
+          </nav>
+          <div class="u-topbar-actions">
+            <a class="u-btn u-btn-sm u-btn-primary" href="#">new review</a>
+          </div>
+        </div>
+      </header>
+      <main class="u-shell-wide" style="flex: 1; width: 100%; padding-block: 32px 48px">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 16px;
+            flex-wrap: wrap;
+          "
+        >
+          <h1>overview</h1>
+          <span class="u-meta">last event 3m ago</span>
+        </div>
+
+        <div class="u-panel-grid" style="grid-template-columns: repeat(4, 1fr); margin-top: 24px">
+          <div class="u-stat">
+            <span class="u-label">reviews today</span><span class="u-stat-value">128</span
+            ><svg class="u-spark" viewBox="0 0 100 28" preserveAspectRatio="none">
+              <polyline points="0,22 14,18 28,20 42,12 56,15 70,8 84,10 100,4"></polyline>
+            </svg>
+          </div>
+          <div class="u-stat">
+            <span class="u-label">merged unchanged</span><span class="u-stat-value">61%</span
+            ><span class="u-stat-note">of reviewed PRs</span>
+          </div>
+          <div class="u-stat">
+            <span class="u-label">median turnaround</span><span class="u-stat-value">3m 12s</span
+            ><span class="u-stat-note">clone → comment</span>
+          </div>
+          <div class="u-stat">
+            <span class="u-label">queue</span><span class="u-stat-value">7</span
+            ><span class="u-stat-note">PRs waiting</span>
+          </div>
+        </div>
+
+        <div style="margin-top: 40px">
+          <span class="u-label">recent reviews</span>
+          <div class="u-toolbar" style="margin-top: 12px">
+            <input class="u-input" type="search" placeholder="search PRs…" />
+            <select class="u-select">
+              <option>all repos</option>
+              <option>uinaf/slopzapper</option>
+              <option>uinaf/healthd</option>
+              <option>uinaf/tccutil-rs</option>
+            </select>
+            <span class="count">128 reviews</span>
+          </div>
+          <table class="u-table" style="margin-top: 8px">
+            <thead>
+              <tr>
+                <th>PR</th>
+                <th>repo</th>
+                <th>verdict</th>
+                <th data-num>findings</th>
+                <th data-num>duration</th>
+                <th data-num>when</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>#412</td>
+                <td>uinaf/slopzapper</td>
+                <td>
+                  <span style="display: inline-flex; align-items: center; gap: 8px"
+                    ><span class="u-dot u-dot--live"></span>running</span
+                  >
+                </td>
+                <td data-num>—</td>
+                <td data-num>0:41</td>
+                <td data-num>now</td>
+              </tr>
+              <tr>
+                <td>#411</td>
+                <td>uinaf/slopzapper</td>
+                <td>
+                  <span style="display: inline-flex; align-items: center; gap: 8px"
+                    ><span class="u-dot u-dot--error"></span>findings</span
+                  >
+                </td>
+                <td data-num>7</td>
+                <td data-num>2:18</td>
+                <td data-num>12m</td>
+              </tr>
+              <tr>
+                <td>#96</td>
+                <td>uinaf/healthd</td>
+                <td>
+                  <span style="display: inline-flex; align-items: center; gap: 8px"
+                    ><span class="u-dot u-dot--ok"></span>clean</span
+                  >
+                </td>
+                <td data-num>0</td>
+                <td data-num>1:04</td>
+                <td data-num>1h</td>
+              </tr>
+              <tr>
+                <td>#95</td>
+                <td>uinaf/healthd</td>
+                <td>
+                  <span style="display: inline-flex; align-items: center; gap: 8px"
+                    ><span class="u-dot u-dot--warn"></span>ambiguous</span
+                  >
+                </td>
+                <td data-num>2</td>
+                <td data-num>3:52</td>
+                <td data-num>4h</td>
+              </tr>
+              <tr>
+                <td>#38</td>
+                <td>uinaf/tccutil-rs</td>
+                <td>
+                  <span style="display: inline-flex; align-items: center; gap: 8px"
+                    ><span class="u-dot u-dot--ok"></span>clean</span
+                  >
+                </td>
+                <td data-num>0</td>
+                <td data-num>0:57</td>
+                <td data-num>yesterday</td>
+              </tr>
+              <tr>
+                <td>#37</td>
+                <td>uinaf/tccutil-rs</td>
+                <td>
+                  <span style="display: inline-flex; align-items: center; gap: 8px"
+                    ><span class="u-dot u-dot--error"></span>findings</span
+                  >
+                </td>
+                <td data-num>3</td>
+                <td data-num>2:40</td>
+                <td data-num>2d</td>
+              </tr>
+            </tbody>
+          </table>
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              gap: 16px;
+              flex-wrap: wrap;
+              margin-top: 12px;
+            "
+          >
+            <span class="u-meta">1–6 of 128</span>
+            <nav class="u-pager">
+              <button type="button" disabled>← prev</button><a href="#" aria-current="page">01</a
+              ><a href="#">02</a><a href="#">03</a><span style="color: var(--fg-faint)">…</span
+              ><a href="#">22</a><button type="button">next →</button>
+            </nav>
+          </div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

@@ -115,4 +115,32 @@ for (const name of fs.readdirSync(previewDest).sort()) {
 
 fs.writeFileSync(path.join(guide, "previews.json"), `${JSON.stringify(catalog, null, 2)}\n`);
 
-console.log(`guide synced (${catalog.length} previews)`);
+/**
+ * Reference pages are whole screens, not cards, so they get no guide chrome —
+ * a second bar above a page that already owns a topbar would break the one-row
+ * rule the pages exist to demonstrate. The marker comment is authoring
+ * metadata and is stripped rather than published.
+ */
+const pagesSrc = path.join(root, "pages");
+const pagesDest = path.join(guide, "pages");
+fs.rmSync(pagesDest, { recursive: true, force: true });
+fs.cpSync(pagesSrc, pagesDest, { recursive: true });
+
+const pages: Array<{ slug: string; name: string; description: string }> = [];
+for (const file of fs.readdirSync(pagesDest).sort()) {
+  if (!file.endsWith(".html")) continue;
+  const target = path.join(pagesDest, file);
+  const html = fs.readFileSync(target, "utf8");
+  const m = /@page\s+name="([^"]+)"\s+description="([^"]*)"/.exec(html);
+  if (!m) throw new Error(`pages/${file} has no @page marker`);
+  fs.writeFileSync(
+    target,
+    html
+      .replace(/^\s*<!--\s*@page[\s\S]*?-->\s*$\n?/m, "")
+      .replace(/href="[^"]*tokens\.css[^"]*"/g, 'href="/tokens.css"'),
+  );
+  pages.push({ slug: file.replace(/\.html$/, ""), name: m[1], description: m[2] });
+}
+fs.writeFileSync(path.join(guide, "pages.json"), `${JSON.stringify(pages, null, 2)}\n`);
+
+console.log(`guide synced (${catalog.length} previews, ${pages.length} pages)`);
