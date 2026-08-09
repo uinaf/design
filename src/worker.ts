@@ -8,6 +8,9 @@
  * resolved here so both spellings work.
  */
 
+import { createMcpHandler } from "agents/mcp/server";
+import { createServer } from "./mcp.ts";
+
 type MediaRange = { type: string; subtype: string; q: number };
 
 const parseAccept = (header: string): MediaRange[] =>
@@ -88,9 +91,19 @@ const varyOnAccept = (response: Response): Response => {
 };
 
 export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
     const { pathname } = url;
+
+    // Stateless Streamable HTTP: a fresh server per request, no Durable Object.
+    // Built here so the factory closes over env, and invoked from inside fetch
+    // because Wrangler treats a function default export as a WorkerEntrypoint.
+    if (pathname === "/mcp" || pathname === "/mcp/") {
+      // The handler matches its route exactly, so /mcp/ must be normalised
+      // before it is handed over or it falls through to a 404.
+      const normalised = pathname === "/mcp" ? request : new Request(new URL("/mcp", url), request);
+      return createMcpHandler(() => createServer(env), { route: "/mcp" })(normalised, env, ctx);
+    }
 
     // Anything that mutates has no business here; let the asset binding answer
     // with its own method handling rather than returning a page for a POST.
