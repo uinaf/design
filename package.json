@@ -11,6 +11,9 @@
     "type": "git",
     "url": "git+https://github.com/uinaf/design.git"
   },
+  "bin": {
+    "design-check": "./dist/lint/cli.js"
+  },
   "files": [
     "dist",
     "DESIGN.md",
@@ -36,7 +39,11 @@
       "import": "./dist/cdn.js",
       "default": "./dist/cdn.js"
     },
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./lint": {
+      "import": "./dist/lint/index.js",
+      "default": "./dist/lint/index.js"
+    }
   },
   "publishConfig": {
     "access": "public",
@@ -47,19 +54,24 @@
     "guide:sync": "node scripts/build.ts && node scripts/sync-guide.ts && node scripts/machine-layer.ts",
     "check": "wrangler types && vp check && node scripts/check.ts",
     "test": "wrangler types && vp test run",
-    "verify": "wrangler types && vp check && node scripts/check.ts && vp test run && node scripts/build.ts && node scripts/sync-guide.ts && node scripts/machine-layer.ts",
+    "verify": "wrangler types && vp check && node scripts/check.ts && vp test run && node scripts/build.ts && node scripts/sync-guide.ts && node scripts/machine-layer.ts && pnpm run design:check",
     "deploy": "pnpm run guide:sync && wrangler deploy",
     "prepare": "vp config --no-agent",
     "prepublishOnly": "pnpm run verify",
     "fmt": "vp fmt",
     "lint": "vp lint",
     "types:worker": "wrangler types",
-    "smoke:mcp": "node scripts/smoke-mcp.ts"
+    "smoke:mcp": "node scripts/smoke-mcp.ts",
+    "design:check": "node src/lint/cli.ts preview guide --ignore guide/tokens.css --ignore guide/components.css"
+  },
+  "dependencies": {
+    "postcss": "^8.5.26"
   },
   "devDependencies": {
     "@modelcontextprotocol/server": "2.0.0",
     "@types/node": "^24.0.0",
     "agents": "^0.20.1",
+    "esbuild": "^0.28.2",
     "typescript": "^5.9.2",
     "vite": "npm:@voidzero-dev/vite-plus-core@0.2.8",
     "vite-plus": "0.2.8",

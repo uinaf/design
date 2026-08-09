@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import * as esbuild from "esbuild";
 import { CDN } from "../src/cdn.ts";
 
 const root = path.resolve(import.meta.dirname, "..");
@@ -174,6 +175,21 @@ fs.writeFileSync(
     2,
   )}\n`,
 );
+
+// The lint ships as real JS. Node refuses to strip types for anything under
+// node_modules, so a consumer running `design-check` from the installed package
+// cannot execute TypeScript source however new their runtime is.
+const lintOut = path.join(root, "dist/lint");
+fs.rmSync(lintOut, { recursive: true, force: true });
+await esbuild.build({
+  entryPoints: [path.join(root, "src/lint/cli.ts"), path.join(root, "src/lint/index.ts")],
+  outdir: lintOut,
+  platform: "node",
+  target: "node24",
+  format: "esm",
+  bundle: true,
+  packages: "external",
+});
 
 const literalType = (value: unknown, indent = 0): string => {
   const pad = "  ".repeat(indent);
