@@ -57,6 +57,7 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0
+          ref: main
       - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
         with:
           standalone: true
@@ -96,7 +97,8 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.release-bot.outputs.token }}
           RELEASE_TAG: ${{ steps.release.outputs.new_release_git_tag }}
-        run: gh release verify "$RELEASE_TAG"
+        run: |
+          test "$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$RELEASE_TAG" --jq .immutable)" = true
 
       - name: Stage released package version
         if: steps.release.outputs.new_release_published == 'true'
@@ -105,6 +107,10 @@ jobs:
         run: |
           npm pkg set version="$RELEASE_VERSION"
           git add -- package.json
+
+      - name: Normalize commit target
+        if: steps.release.outputs.new_release_published == 'true'
+        run: git remote set-url origin "https://github.com/${GITHUB_REPOSITORY}.git"
 
       - name: Commit released package version
         if: steps.release.outputs.new_release_published == 'true'
