@@ -30,14 +30,14 @@ import { CDN } from "@uinaf/design/cdn";
 
 ## Package contents
 
-| Path                           | Purpose                                      |
-| ------------------------------ | -------------------------------------------- |
-| `dist/css/tokens.css`          | CSS custom properties + component primitives |
-| `dist/tokens.js`               | Flat token map                               |
-| `DESIGN.md`                    | Full design spec                             |
-| `preview/`                     | Canonical pattern cards                      |
-| `templates/`                   | Starter HTML                                 |
-| `.agents/skills/uinaf-design/` | Agent skill                                  |
+| Path                   | Purpose                                      |
+| ---------------------- | -------------------------------------------- |
+| `dist/css/tokens.css`  | CSS custom properties + component primitives |
+| `dist/tokens.js`       | Flat token map                               |
+| `DESIGN.md`            | Full design spec                             |
+| `preview/`             | Canonical pattern cards                      |
+| `templates/`           | Starter HTML                                 |
+| `skills/uinaf-design/` | Agent skill                                  |
 
 ## Docs
 

@@ -172,7 +172,7 @@ ${components.patterns.map((p) => `- [${p.name}](https://design.uinaf.dev/pattern
 `,
 );
 
-const skill = fs.readFileSync(path.join(root, ".agents/skills/uinaf-design/SKILL.md"), "utf8");
+const skill = fs.readFileSync(path.join(root, "skills/uinaf-design/SKILL.md"), "utf8");
 write(".well-known/skills/uinaf-design/SKILL.md", skill);
 write(
   ".well-known/skills/index.json",

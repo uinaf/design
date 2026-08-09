@@ -1,0 +1,18 @@
+interface:
+  display_name: "uinaf design"
+  short_description: "Build uinaf-branded UI from fetched patterns"
+  default_prompt: |
+    Use $uinaf-design.
+
+    Goal: build or restyle a uinaf-branded interface without inventing the design.
+
+    Fetch the nearest pattern from design.uinaf.dev before writing any component — /components.json to find it, /patterns/<name>.md for the markup — and adapt the content rather than reinterpreting the design. Import @uinaf/design/css and use its tokens and classes. Prefer the design.uinaf.dev MCP tools when they are connected.
+
+    Boundaries: do not introduce raw colors, radii over 6px, shadows, emoji, or icon fonts. One accent element per view. Product nav is one topbar row sharing its shell class with the content.
+
+    Output: lead with what was built and which patterns it came from, then the design:check result.
+
+    Stop rules: finish only when `npx design-check` passes. If a choice is not covered by a pattern or the spec, ask instead of inventing.
+
+policy:
+  allow_implicit_invocation: false
