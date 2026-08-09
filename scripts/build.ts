@@ -104,15 +104,19 @@ if (undefinedClasses.length > 0) {
 
 const slug = (name: string): string => name.replace(/\+/g, "-").replace(/[^a-z0-9-]/gi, "-");
 
+// Absolute so a chunk previews correctly wherever it is opened — served from the
+// guide, opened from dist/patterns/, or saved anywhere else. In a real project,
+// import the package instead of linking this URL.
 const patternPage = (p: Pattern): string => `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>uinaf — ${p.name}</title>
-<link rel="stylesheet" href="/tokens.css">
+<link rel="stylesheet" href="https://design.uinaf.dev/tokens.css">
 </head>
 <body class="uinaf">
+<!-- In your project: @import "@uinaf/design/css"; then copy the markup below. -->
 ${p.markup}
 </body>
 </html>
