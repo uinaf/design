@@ -11,13 +11,15 @@ disable-model-invocation: true
 1. **Never write uinaf UI from memory.** Fetch first, then adapt the content —
    do not reinterpret the design.
    - Building a **whole page**? Start from a reference page:
-     `/pages/<name>.md` — `product-landing`, `dashboard`, `login`, `settings`,
-     `docs`, `device-auth`. Keep the structure; the layout is the design.
+     `https://design.uinaf.dev/pages/<name>.md` — `product-landing`,
+     `dashboard`, `login`, `settings`, `docs`, `device-auth`. Keep the
+     structure; the layout is the design.
    - Building **one component**? `https://design.uinaf.dev/components.json` to
-     find the nearest pattern, then `/patterns/<name>.md` for its markup.
+     find the nearest pattern, then
+     `https://design.uinaf.dev/patterns/<name>.md` for its markup.
 2. **Import the CSS and use what is there.** `@import "@uinaf/design/css";`
    gives tokens and every pattern class. Take exact values from
-   `/tokens.json` when writing custom CSS.
+   `https://design.uinaf.dev/tokens.json` when writing custom CSS.
 3. **Prefer the MCP tools when connected** (`https://design.uinaf.dev/mcp`):
    `get_page`, `list_patterns`, `get_pattern`, `get_tokens`, `search_guidelines`.
 4. **Finish on green.** `npm run design:check` must pass before you are done.
@@ -67,6 +69,9 @@ The lint enforces these — do not fight it.
 - Status is a dot plus a word, never a filled banner
 
 ## Reference
+
+Every path below is on `https://design.uinaf.dev`, never a route in the repo
+you are working in.
 
 | Where                 | What                                                    |
 | --------------------- | ------------------------------------------------------- |
