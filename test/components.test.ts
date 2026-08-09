@@ -56,8 +56,19 @@ describe("components.json", () => {
   it("gives every pattern markup that uses at least one of its own classes", () => {
     // Markup copied from the wrong card would still be non-empty. It has to
     // actually demonstrate the pattern it is filed under.
+    //
+    // Whole tokens inside class attributes only: a substring search would let
+    // `.u-btn` be satisfied by `u-btn-primary`, or by the name appearing in an
+    // id or in visible copy.
+    const classTokens = (markup: string): Set<string> =>
+      new Set(
+        [...markup.matchAll(/class="([^"]*)"/g)].flatMap((m) => m[1].split(/\s+/)).filter(Boolean),
+      );
     const mismatched = components.patterns
-      .filter((p) => !p.classes.some((c) => p.markup?.includes(`${c.replace(/^\./, "")}`)))
+      .filter((p) => {
+        const used = classTokens(p.markup ?? "");
+        return !p.classes.some((c) => used.has(c.replace(/^\./, "")));
+      })
       .map((p) => p.name);
     expect(mismatched).toEqual([]);
   });

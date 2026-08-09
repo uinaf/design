@@ -152,7 +152,7 @@
       "never": [
         "a kicker that repeats the product name, studio name, or anything in the nav — `UINAF · REVIEW BOT` under a slopzapper nav is the canonical failure; no kicker beats a redundant one"
       ],
-      "markup": "<div class=\"u-hero\" style=\"animation: ue 220ms cubic-bezier(0.22, 1, 0.36, 1) both\">\n          <span class=\"u-label\">AI code review · runs the code</span>\n          <h1 class=\"u-hero-title\">PR review that actually runs the PR.</h1>\n          <p class=\"u-hero-sub\">\n            every PR gets cloned into a cloudflare sandbox, built, exercised, and reviewed. findings\n            only, no vibes.\n          </p>\n          <div class=\"u-hero-actions\">\n            <a class=\"u-btn u-btn-primary\" href=\"#\">add to github ↗</a\n            ><a class=\"u-btn u-btn-ghost\" href=\"/docs\">read the docs</a>\n          </div>\n        </div>"
+      "markup": "<div class=\"u-hero\">\n<span class=\"u-label\">AI code review · runs the code</span>\n<h1 class=\"u-hero-title\">PR review that actually runs the PR.</h1>\n<p class=\"u-hero-sub\">every PR gets cloned into a cloudflare sandbox, built, exercised, and reviewed. findings only, no vibes.</p>\n<div class=\"u-hero-actions\">\n<a class=\"u-btn u-btn-primary\" href=\"#\">add to github ↗</a>\n<a class=\"u-btn u-btn-ghost\" href=\"#\">read the docs</a>\n</div>\n</div>"
     },
     {
       "name": "list",
@@ -369,7 +369,7 @@
       "classes": [".u-toolbar"],
       "use": "above tables: search + filter + right-aligned count",
       "rules": ["at most two filters — a third means the table needs a redesign"],
-      "markup": "<div class=\"u-toolbar\">\n<input class=\"u-input\" type=\"search\" placeholder=\"search runs…\">\n<select class=\"u-select\"><option>all repos</option><option>uinaf/slopzapper</option><option>uinaf/healthd</option></select>\n<span class=\"u-meta\">128 runs</span>\n</div>"
+      "markup": "<div class=\"u-toolbar\">\n<input class=\"u-input\" type=\"search\" placeholder=\"search runs…\">\n<select class=\"u-select\"><option>all repos</option><option>uinaf/slopzapper</option><option>uinaf/healthd</option></select>\n<span class=\"count\">128 runs</span>\n</div>"
     },
     {
       "name": "tooltip",
