@@ -64,3 +64,14 @@ describe("Accept quality weights", () => {
     expect(accepts("text/html, */*")).toBe(false);
   });
 });
+
+describe("malformed and cased Accept parameters", () => {
+  it("treats the q parameter name case-insensitively", () => {
+    expect(accepts("text/markdown;Q=0, text/html;q=0.5")).toBe(false);
+    expect(accepts("text/html;Q=0.1, text/markdown;Q=1")).toBe(true);
+  });
+
+  it("does not promote an unparseable weight to full preference", () => {
+    expect(accepts("text/markdown;q=invalid, text/html;q=0.5")).toBe(false);
+  });
+});

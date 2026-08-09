@@ -16,9 +16,12 @@ const parseAccept = (header: string): MediaRange[] =>
     .map((part) => {
       const [media = "", ...params] = part.trim().split(";");
       const [type = "", subtype = ""] = media.trim().toLowerCase().split("/");
-      const qParam = params.map((p) => p.trim()).find((p) => p.startsWith("q="));
-      const q = qParam ? Number.parseFloat(qParam.slice(2)) : 1;
-      return { type, subtype, q: Number.isFinite(q) ? Math.min(Math.max(q, 0), 1) : 1 };
+      // Parameter names are case-insensitive: `;Q=0` rejects just as `;q=0` does.
+      const qParam = params.map((p) => p.trim().toLowerCase()).find((p) => p.startsWith("q="));
+      if (!qParam) return { type, subtype, q: 1 };
+      // A malformed weight must not be promoted to full preference.
+      const q = Number.parseFloat(qParam.slice(2));
+      return { type, subtype, q: Number.isFinite(q) ? Math.min(Math.max(q, 0), 1) : 0 };
     })
     .filter((r) => r.type !== "");
 
