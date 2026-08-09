@@ -61,7 +61,7 @@ var isToken = (value2) => /var\(\s*--/.test(value2);
 var withoutTokenReferences = (value2) => {
   let out = "";
   for (let i = 0; i < value2.length; i += 1) {
-    if (!/^var\(\s*--/i.test(value2.slice(i, i + 8))) {
+    if (!/^var\(\s*--/i.test(value2.slice(i, i + 64))) {
       out += value2[i];
       continue;
     }
@@ -339,15 +339,18 @@ var checkMarkup = (source, file, options = {}) => {
       );
     }
   }
-  const topbars = classOccurrences(source, "u-topbar");
-  const rows = classOccurrences(source, "u-topbar-row");
-  if (topbars.length > 0 && rows.length > 1) {
-    for (const index of rows.slice(1)) {
+  for (const header of source.matchAll(
+    /<header\b[^>]{0,2000}\bu-topbar\b[^>]{0,2000}>([\s\S]{0,20000}?)<\/header\s{0,8}>/gi
+  )) {
+    const rows = classOccurrences(header[1], "u-topbar-row");
+    if (rows.length <= 1) continue;
+    const base = (header.index ?? 0) + header[0].indexOf(header[1]);
+    for (const offset of rows.slice(1)) {
       add(
-        index,
+        base + offset,
         "topbar-single-row",
         "error",
-        `${rows.length} .u-topbar-row elements \u2014 product nav is ONE row`,
+        `${rows.length} .u-topbar-row elements in one .u-topbar \u2014 product nav is ONE row`,
         "collapse to a single 56px row: mark and name left, links right, at most one small button"
       );
     }
@@ -586,10 +589,27 @@ if (flag("help")) {
   design-check --update-ratchet  write the current counts as the new baseline
   design-check --json            machine-readable output
   design-check --ignore <part>   skip paths containing this substring (repeatable)
+  design-check --abbreviations A,B  extra abbreviations allowed to keep their caps
 
 Exit code is 0 when clean, 1 when there are errors (or, with --ratchet, when a
 count rises). Warnings alone do not fail.`);
   process.exit(0);
+}
+var KNOWN_FLAGS = /* @__PURE__ */ new Set([
+  "--help",
+  "--ratchet",
+  "--update-ratchet",
+  "--json",
+  "--ignore",
+  "--abbreviations"
+]);
+var unknown = argv.filter((arg) => arg.startsWith("--") && !KNOWN_FLAGS.has(arg));
+if (unknown.length > 0) {
+  console.error(
+    `design:check \u2014 unknown flag${unknown.length > 1 ? "s" : ""}: ${unknown.join(", ")}
+Run \`design-check --help\` for the supported options.`
+  );
+  process.exit(1);
 }
 var ignore = argv.reduce((acc, arg, index) => {
   if (arg === "--ignore" && argv[index + 1]) acc.push(argv[index + 1]);

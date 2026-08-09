@@ -55,7 +55,7 @@ var isToken = (value) => /var\(\s*--/.test(value);
 var withoutTokenReferences = (value) => {
   let out = "";
   for (let i = 0; i < value.length; i += 1) {
-    if (!/^var\(\s*--/i.test(value.slice(i, i + 8))) {
+    if (!/^var\(\s*--/i.test(value.slice(i, i + 64))) {
       out += value[i];
       continue;
     }
@@ -333,15 +333,18 @@ var checkMarkup = (source, file, options = {}) => {
       );
     }
   }
-  const topbars = classOccurrences(source, "u-topbar");
-  const rows = classOccurrences(source, "u-topbar-row");
-  if (topbars.length > 0 && rows.length > 1) {
-    for (const index of rows.slice(1)) {
+  for (const header of source.matchAll(
+    /<header\b[^>]{0,2000}\bu-topbar\b[^>]{0,2000}>([\s\S]{0,20000}?)<\/header\s{0,8}>/gi
+  )) {
+    const rows = classOccurrences(header[1], "u-topbar-row");
+    if (rows.length <= 1) continue;
+    const base = (header.index ?? 0) + header[0].indexOf(header[1]);
+    for (const offset of rows.slice(1)) {
       add(
-        index,
+        base + offset,
         "topbar-single-row",
         "error",
-        `${rows.length} .u-topbar-row elements \u2014 product nav is ONE row`,
+        `${rows.length} .u-topbar-row elements in one .u-topbar \u2014 product nav is ONE row`,
         "collapse to a single 56px row: mark and name left, links right, at most one small button"
       );
     }

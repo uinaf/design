@@ -34,10 +34,29 @@ if (flag("help")) {
   design-check --update-ratchet  write the current counts as the new baseline
   design-check --json            machine-readable output
   design-check --ignore <part>   skip paths containing this substring (repeatable)
+  design-check --abbreviations A,B  extra abbreviations allowed to keep their caps
 
 Exit code is 0 when clean, 1 when there are errors (or, with --ratchet, when a
 count rises). Warnings alone do not fail.`);
   process.exit(0);
+}
+
+// An unknown flag is a mistake, not a no-op: silently ignoring `--write` would
+// run the check without doing what the caller asked.
+const KNOWN_FLAGS = new Set([
+  "--help",
+  "--ratchet",
+  "--update-ratchet",
+  "--json",
+  "--ignore",
+  "--abbreviations",
+]);
+const unknown = argv.filter((arg) => arg.startsWith("--") && !KNOWN_FLAGS.has(arg));
+if (unknown.length > 0) {
+  console.error(
+    `design:check — unknown flag${unknown.length > 1 ? "s" : ""}: ${unknown.join(", ")}\nRun \`design-check --help\` for the supported options.`,
+  );
+  process.exit(1);
 }
 
 const ignore = argv.reduce<string[]>((acc, arg, index) => {

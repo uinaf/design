@@ -610,3 +610,25 @@ describe("pathological input does not hang the check", () => {
     expect(Date.now() - start).toBeLessThan(3000);
   });
 });
+
+describe("token references with unusual whitespace", () => {
+  it("are still recognised", () => {
+    // `var(   --fg)` is valid CSS; a fixed-window check would miss it.
+    expect(rules(css("a{color:var(   --fg)}"))).not.toContain("no-raw-color");
+    expect(rules(css("a{padding:var(  --sp-2  )}"))).not.toContain("spacing-grid");
+  });
+});
+
+describe("topbar-single-row is scoped to one topbar", () => {
+  const row = '<div class="u-shell-base u-topbar-row"></div>';
+  const topbar = `<header class="u-topbar">${row}</header>`;
+
+  it("does not flag two separate topbars with one row each", () => {
+    expect(rules(markup(topbar + topbar))).not.toContain("topbar-single-row");
+  });
+  it("still flags a single topbar that stacks its rows", () => {
+    expect(rules(markup(`<header class="u-topbar">${row}${row}</header>`))).toContain(
+      "topbar-single-row",
+    );
+  });
+});

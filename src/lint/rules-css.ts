@@ -38,7 +38,9 @@ const isToken = (value: string): boolean => /var\(\s*--/.test(value);
 const withoutTokenReferences = (value: string): string => {
   let out = "";
   for (let i = 0; i < value.length; i += 1) {
-    if (!/^var\(\s*--/i.test(value.slice(i, i + 8))) {
+    // Whitespace inside var( is valid and unbounded in principle; slicing a
+    // fixed window would miss `var(   --fg)` and report a false raw colour.
+    if (!/^var\(\s*--/i.test(value.slice(i, i + 64))) {
       out += value[i];
       continue;
     }

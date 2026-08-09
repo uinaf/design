@@ -154,8 +154,8 @@ export type RatchetResult = {
 
 /**
  * Compare against the recorded baseline. Legacy pages migrate gradually; new
- * violations are blocked. A count that falls updates the baseline so it can
- * never drift back up.
+ * violations are blocked. Falling counts are reported as `improved` so the
+ * caller can re-record the baseline; this function does not write anything.
  */
 export const compareRatchet = (
   baseline: Record<string, number>,
