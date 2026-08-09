@@ -108,9 +108,12 @@ const declared = components.patterns.flatMap((p) =>
     .filter((c) => c.startsWith("u-") && !publicClasses.has(c))
     .map((c) => `${p.name} classes → .${c}`),
 );
+// All three HTML attribute forms — double-quoted, single-quoted, and bare —
+// or markup could dodge the guard just by changing its quoting.
+const classAttr = /class\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/g;
 const inMarkup = components.patterns.flatMap((p) =>
-  [...(p.markup ?? "").matchAll(/class="([^"]*)"/g)]
-    .flatMap((m) => m[1].split(/\s+/))
+  [...(p.markup ?? "").matchAll(classAttr)]
+    .flatMap((m) => (m[1] ?? m[2] ?? m[3] ?? "").split(/\s+/))
     .filter((c) => c && !definedClasses.has(c))
     .map((c) => `${p.name} markup → .${c}`),
 );
