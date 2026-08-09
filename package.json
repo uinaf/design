@@ -53,7 +53,8 @@
     "prepublishOnly": "pnpm run verify",
     "fmt": "vp fmt",
     "lint": "vp lint",
-    "types:worker": "wrangler types"
+    "types:worker": "wrangler types",
+    "smoke:mcp": "node scripts/smoke-mcp.ts"
   },
   "devDependencies": {
     "@modelcontextprotocol/server": "2.0.0",
