@@ -69,3 +69,23 @@ describe("components.json", () => {
     ]);
   });
 });
+
+describe("class extraction", () => {
+  it("does not treat URL fragments as defined classes", () => {
+    // cdn.uinaf.dev/…/font.css would otherwise contribute `dev` and `css`,
+    // letting markup use those names without the CSS defining anything.
+    const raw =
+      readFileSync(resolve(root, "src/tokens.css"), "utf8") +
+      readFileSync(resolve(root, "src/components.css"), "utf8");
+    const stripped = raw
+      .replace(/\/\*[\s\S]*?\*\//g, " ")
+      .replace(/url\([^)]*\)/g, " ")
+      .replace(/"[^"]*"|'[^']*'/g, " ");
+    const defined = new Set(
+      [...stripped.matchAll(/\.([a-zA-Z_][a-zA-Z0-9_-]*)/g)].map((m) => m[1]),
+    );
+    expect(defined.has("dev")).toBe(false);
+    expect(defined.has("css")).toBe(false);
+    expect(defined.has("uinaf")).toBe(true);
+  });
+});

@@ -87,7 +87,13 @@ const components = JSON.parse(fs.readFileSync(path.join(root, "src/components.js
 };
 
 const componentsCss = fs.readFileSync(path.join(root, "src/components.css"), "utf8");
-const allCss = `${css}${componentsCss}`;
+// Strip comments and url()/quoted content first: `cdn.uinaf.dev/…/font.css`
+// otherwise contributes `uinaf`, `dev`, and `css` as if they were selectors,
+// which would let a markup class by those names slip past the drift guard.
+const allCss = `${css}${componentsCss}`
+  .replace(/\/\*[\s\S]*?\*\//g, " ")
+  .replace(/url\([^)]*\)/g, " ")
+  .replace(/"[^"]*"|'[^']*'/g, " ");
 // u-* classes are the public contract; every class the CSS defines — including
 // scoped helpers like `.u-crumbs .sep` — is what markup is allowed to use.
 const publicClasses = new Set([...allCss.matchAll(/\.(u-[a-zA-Z0-9_-]+)/g)].map((m) => m[1]));
