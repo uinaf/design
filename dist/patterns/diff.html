@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>uinaf — diff</title>
+<link rel="stylesheet" href="https://design.uinaf.dev/tokens.css">
+</head>
+<body class="uinaf">
+<!-- In your project: @import "@uinaf/design/css"; then copy the markup below. -->
+<div class="u-diff" style="max-width:680px">
+<div class="ln"><span class="no">41</span><span>  const key = await deriveKey(secret);</span></div>
+<div class="ln del"><span class="no">42</span><span>- cache.set(url, key);</span></div>
+<div class="ln add"><span class="no">42</span><span>+ cache.set(url, key, { ttl: 300 });</span></div>
+<div class="u-finding"><span class="u-dot u-dot--warn" style="flex:none"></span><span><strong>unbounded cache before this change.</strong> ttl fixes growth, but eviction on key rotation is still missing — see <code>deriveKey</code>.</span></div>
+<div class="ln"><span class="no">43</span><span>  return key;</span></div>
+</div>
+</body>
+</html>

@@ -68,7 +68,8 @@
         "bars neutral with ONE hot period",
         "SVG for spark/line (data, not decoration); CSS for bars/dots/stack"
       ],
-      "never": ["chart junk: legends for one series, fills beyond the rare accent area, glows"]
+      "never": ["chart junk: legends for one series, fills beyond the rare accent area, glows"],
+      "markup": "<div class=\"u-bars\"><i style=\"height:34%\"></i><i style=\"height:52%\"></i><i style=\"height:41%\"></i><i style=\"height:66%\"></i><i style=\"height:47%\"></i><i style=\"height:75%\"></i><i data-hot style=\"height:88%\"></i></div>"
     },
     {
       "name": "choice",
@@ -92,7 +93,8 @@
       "rules": [
         "never wrap code — scroll it",
         "abbreviations in code stay as written (--pr flags, url vars)"
-      ]
+      ],
+      "markup": "<p class=\"u-prose\">run <code class=\"u-code\">attach put ./shot.png</code>, or press <kbd class=\"u-kbd\">⌘k</kbd>.</p>\n<pre class=\"u-pre\">attach login\nattach put ./shot.png --repo owner/repo --pr 12</pre>"
     },
     {
       "name": "def-rows",
@@ -109,14 +111,16 @@
       "name": "diff",
       "classes": [".u-diff", ".u-finding"],
       "use": "tinted add/del lines; findings pin to their line as hairline inset panels",
-      "rules": ["finding = dot + bold-lead dry sentence with file/line specificity"]
+      "rules": ["finding = dot + bold-lead dry sentence with file/line specificity"],
+      "markup": "<div class=\"u-diff\" style=\"max-width:680px\">\n<div class=\"ln\"><span class=\"no\">41</span><span>  const key = await deriveKey(secret);</span></div>\n<div class=\"ln del\"><span class=\"no\">42</span><span>- cache.set(url, key);</span></div>\n<div class=\"ln add\"><span class=\"no\">42</span><span>+ cache.set(url, key, { ttl: 300 });</span></div>\n<div class=\"u-finding\"><span class=\"u-dot u-dot--warn\" style=\"flex:none\"></span><span><strong>unbounded cache before this change.</strong> ttl fixes growth, but eviction on key rotation is still missing — see <code>deriveKey</code>.</span></div>\n<div class=\"ln\"><span class=\"no\">43</span><span>  return key;</span></div>\n</div>"
     },
     {
       "name": "empty-state",
       "classes": [".u-empty"],
       "use": "dashed region, one dry line, one action",
       "rules": ["a code snippet may stand in as the action for CLI products"],
-      "never": ["illustrations", "multi-paragraph explanations"]
+      "never": ["illustrations", "multi-paragraph explanations"],
+      "markup": "<div class=\"u-empty\" style=\"max-width:560px\">\n<p>no runs for this repo yet. install the github app or trigger one from the CLI.</p>\n<pre class=\"u-pre\">slopomatic init --run demo</pre>\n<a class=\"u-btn u-btn-primary\" href=\"#\">install app ↗</a>\n</div>"
     },
     {
       "name": "field",
@@ -147,7 +151,8 @@
       "rules": ["the kicker must ADD information (category, status, live stat)"],
       "never": [
         "a kicker that repeats the product name, studio name, or anything in the nav — `UINAF · REVIEW BOT` under a slopzapper nav is the canonical failure; no kicker beats a redundant one"
-      ]
+      ],
+      "markup": "<div class=\"u-hero\" style=\"animation: ue 220ms cubic-bezier(0.22, 1, 0.36, 1) both\">\n          <span class=\"u-label\">AI code review · runs the code</span>\n          <h1 class=\"u-hero-title\">PR review that actually runs the PR.</h1>\n          <p class=\"u-hero-sub\">\n            every PR gets cloned into a cloudflare sandbox, built, exercised, and reviewed. findings\n            only, no vibes.\n          </p>\n          <div class=\"u-hero-actions\">\n            <a class=\"u-btn u-btn-primary\" href=\"#\">add to github ↗</a\n            ><a class=\"u-btn u-btn-ghost\" href=\"/docs\">read the docs</a>\n          </div>\n        </div>"
     },
     {
       "name": "list",
@@ -160,13 +165,15 @@
         ".u-list-desc"
       ],
       "use": "index rows: title left, meta right, one-line desc; ruled when long",
-      "rules": ["row is one .u-link-plain when it links"]
+      "rules": ["row is one .u-link-plain when it links"],
+      "markup": "<ul class=\"u-list u-list--ruled\" style=\"margin-top: 8px\">\n            <li class=\"u-list-row\" style=\"display: flex;gap: 16px;align-items: baseline\">\n              <span class=\"u-meta\">01</span\n              ><span\n                >install the github app on the repos you care about.</span\n              >\n            </li>\n            <li class=\"u-list-row\" style=\"display: flex;gap: 16px;align-items: baseline\">\n              <span class=\"u-meta\">02</span\n              ><span\n                >open a PR. a sandbox clones it, builds it, runs it.</span\n              >\n            </li>\n            <li class=\"u-list-row\" style=\"display: flex;gap: 16px;align-items: baseline\">\n              <span class=\"u-meta\">03</span\n              ><span\n                >one review lands. push fixes — it re-checks, quietly.</span\n              >\n            </li>\n          </ul>"
     },
     {
       "name": "log",
       "classes": [".u-log"],
       "use": "faint timestamps, leveled rows",
-      "rules": ["the level word takes the color — never the message"]
+      "rules": ["the level word takes the color — never the message"],
+      "markup": "<pre class=\"u-log\" style=\"max-width:680px\"><span class=\"row\"><span class=\"t\">14:02:11.402</span><span class=\"lv\">info</span><span class=\"msg\">sandbox warm · pool=3 t=210ms</span></span>\n<span class=\"row\"><span class=\"t\">14:02:11.688</span><span class=\"lv\">info</span><span class=\"msg\">clone uinaf/slopzapper#512 @ 9c41f2e</span></span>\n<span class=\"row\" data-warn><span class=\"t\">14:02:14.010</span><span class=\"lv\">warn</span><span class=\"msg\">github rate remaining=41 · backing off 2s</span></span>\n<span class=\"row\"><span class=\"t\">14:02:19.334</span><span class=\"lv\">info</span><span class=\"msg\">build ok · 3.2s</span></span>\n<span class=\"row\" data-err><span class=\"t\">14:02:24.902</span><span class=\"lv\">error</span><span class=\"msg\">test FAIL webhook_dedupe_test.go:88 — retry scheduled</span></span></pre>"
     },
     {
       "name": "menu",
@@ -176,7 +183,8 @@
         "words not icons — words are shorter",
         "one danger item max, ruled off with <hr>",
         "toggle via hidden attribute (css ships [hidden]{display:none})"
-      ]
+      ],
+      "markup": "<div class=\"u-menu\"><button class=\"u-btn u-btn-sm\" id=\"menu-btn\" type=\"button\" aria-haspopup=\"menu\">···</button>\n<div class=\"u-menu-list\" id=\"menu-list\" hidden>\n<button type=\"button\">re-review</button>\n<button type=\"button\">copy link</button>\n<a href=\"#\">open PR ↗</a>\n<hr>\n<button type=\"button\" class=\"danger\">delete run</button>\n</div></div>"
     },
     {
       "name": "micro-label",
@@ -195,14 +203,17 @@
       "use": "confirm destructive actions",
       "rules": [
         "title / body / primary+ghost pair; cancel is a button — no ✕",
-        "overlay click + esc close; toggle via hidden attribute"
-      ]
+        "overlay click + esc close; toggle via hidden attribute",
+        "the overlay carries `hidden`; the app toggles it — a copied modal must not cover the page on load"
+      ],
+      "markup": "<div class=\"u-overlay\" hidden>\n<div class=\"u-modal u-ticks\">\n<h2 class=\"u-modal-title\">uninstall slopzapper?</h2>\n<p class=\"u-modal-body\">removes the app from all 12 repos. runs are kept 30 days, then deleted. reinstalling restores nothing.</p>\n<div class=\"u-modal-actions\"><button class=\"u-btn u-btn-ghost\" id=\"cancel\" type=\"button\">cancel</button><button class=\"u-btn u-btn-primary\" type=\"button\">uninstall</button></div>\n</div>\n</div>"
     },
     {
       "name": "notice",
       "classes": [".u-notice"],
       "use": "the allowed non-banner: hairline box, dot carries the color",
-      "rules": ["text stays muted — the dot is the signal"]
+      "rules": ["text stays muted — the dot is the signal"],
+      "markup": "<div class=\"u-notice\"><span class=\"u-dot u-dot--ok\" style=\"flex:none\"></span><span>webhook verified. reviews start on the next PR.</span></div>"
     },
     {
       "name": "pagination",
@@ -233,7 +244,8 @@
       "classes": [".u-progress"],
       "use": "segment ticks + `2/5` count",
       "rules": ["filled=neutral, accent=the segment running NOW"],
-      "never": ["bars, percentages, spinners — progress is countable or it isn't shown"]
+      "never": ["bars, percentages, spinners — progress is countable or it isn't shown"],
+      "markup": "<span class=\"u-progress\"><i data-on></i><i data-on></i><i data-live></i><i></i><i></i><span>2/5 units</span></span>"
     },
     {
       "name": "prose",
@@ -241,27 +253,31 @@
       "use": "long-form at narrow measure",
       "rules": [
         "three link families, never mixed on one surface: prose (dim underline, phosphor hover) · plain chrome (opacity fade) · whole-card"
-      ]
+      ],
+      "markup": "<p class=\"u-prose\" style=\"max-width:52ch\">underline is the affordance; hover goes phosphor. write to <a class=\"u-link\" href=\"#\">dev@uinaf.dev</a> or read the <a class=\"u-link\" href=\"#\">source ↗</a>. the underline never disappears.</p>"
     },
     {
       "name": "segmented",
       "classes": [".u-segmented"],
       "use": "2-4 short exclusive views (7d/30d/90d)",
       "rules": ["26px bordered group; active = raised bg", "aria-pressed carries state"],
-      "never": ["actions in a segmented control"]
+      "never": ["actions in a segmented control"],
+      "markup": "<div class=\"u-segmented\" id=\"seg\"><button type=\"button\" aria-pressed=\"true\">7d</button><button type=\"button\" aria-pressed=\"false\">30d</button><button type=\"button\" aria-pressed=\"false\">90d</button></div>"
     },
     {
       "name": "shell",
       "classes": [".u-shell-narrow", ".u-shell-base", ".u-shell-wide"],
       "use": "narrow 40rem (default — prose, home, detail) · base 48rem (data-dense: tables, dashboards) · wide 72rem (rare) · one product = one width",
-      "rules": ["if unsure, narrow", "never widen a shell to fit one element"]
+      "rules": ["if unsure, narrow", "never widen a shell to fit one element"],
+      "markup": "<header class=\"u-topbar\"><div class=\"u-shell-base u-topbar-row\">…</div></header>\n<main class=\"u-shell-base\">…</main>"
     },
     {
       "name": "site-header",
       "classes": [".u-header", ".u-header-mark", ".u-header-name", ".u-header-tagline", ".u-nav"],
       "use": "uinaf.dev family sites ONLY (stacked mark → tagline → nav)",
       "rules": ["the page title outranks the chrome"],
-      "never": ["on product pages — that's what the topbar is for"]
+      "never": ["on product pages — that's what the topbar is for"],
+      "markup": "<div class=\"u-header\" style=\"margin-bottom:0\">\n<span class=\"u-header-mark\"><img src=\"https://cdn.uinaf.dev/images/uinaf-computer.png\" alt=\"\"><span class=\"u-header-name\">uinaf</span></span>\n<p class=\"u-header-tagline\">we bet you've seen us before</p>\n<nav class=\"u-nav\"><a class=\"u-link-plain\" href=\"#\">blog</a><span class=\"u-sep\">·</span><a class=\"u-link-plain\" href=\"#\">projects</a><span class=\"u-sep\">·</span><a class=\"u-link-plain\" href=\"#\">status</a></nav>\n</div>"
     },
     {
       "name": "skeleton",
@@ -302,7 +318,8 @@
       "name": "tabs",
       "classes": [".u-tabs"],
       "use": "in-page view switching under the topbar",
-      "rules": ["current = fg + 1px underline; tabs switch views, never trigger actions"]
+      "rules": ["current = fg + 1px underline; tabs switch views, never trigger actions"],
+      "markup": "<nav class=\"u-tabs\" style=\"max-width:520px\"><a href=\"#\" aria-current=\"page\">findings</a><a href=\"#\">files</a><a href=\"#\">timeline</a><a href=\"#\">raw</a></nav>"
     },
     {
       "name": "tag+dot",
@@ -326,7 +343,8 @@
       "name": "terminal",
       "classes": [".u-term", ".u-caret"],
       "use": "CLI transcript: dim prompt, fg command, muted output",
-      "rules": ["the accent caret is the ONE thing allowed to blink"]
+      "rules": ["the accent caret is the ONE thing allowed to blink"],
+      "markup": "<pre class=\"u-term\" style=\"max-width:680px\"><span class=\"ps1\">$</span> attach put ./shot.png --repo uinaf/slopzapper --pr 512\n<span class=\"out\">uploading… 482.1 KiB</span>\n<span class=\"ok\">✓</span> <span class=\"out\">https://attach.uinaf.dev/p/Jw5tQUBK0ao5rRzItyF0Fg</span>\n<span class=\"ps1\">$</span> <span class=\"u-caret\"></span></pre>"
     },
     {
       "name": "timeline",
@@ -343,13 +361,15 @@
       "name": "toast",
       "classes": [".u-toasts", ".u-toast"],
       "use": "bottom right, dot + dry past-tense line",
-      "rules": ["gone in 3s, max 3 stacked", "past tense: `saved.` not `saving your changes!`"]
+      "rules": ["gone in 3s, max 3 stacked", "past tense: `saved.` not `saving your changes!`"],
+      "markup": "<div class=\"u-toasts\">\n<div class=\"u-toast\"><span class=\"u-dot u-dot--ok\"></span>saved.</div>\n</div>"
     },
     {
       "name": "toolbar",
       "classes": [".u-toolbar"],
       "use": "above tables: search + filter + right-aligned count",
-      "rules": ["at most two filters — a third means the table needs a redesign"]
+      "rules": ["at most two filters — a third means the table needs a redesign"],
+      "markup": "<div class=\"u-toolbar\">\n<input class=\"u-input\" type=\"search\" placeholder=\"search runs…\">\n<select class=\"u-select\"><option>all repos</option><option>uinaf/slopzapper</option><option>uinaf/healthd</option></select>\n<span class=\"u-meta\">128 runs</span>\n</div>"
     },
     {
       "name": "tooltip",
