@@ -256,6 +256,21 @@ export const checkMarkup = (
     }
   }
 
+  // A <button> defaults to type="submit". Inside a form that turns a styled
+  // button into an accidental submit, and this markup is meant to be copied.
+  // Bounded quantifier: the attribute list is scanned once, never backtracked.
+  for (const match of source.matchAll(/<button\b([^>]{0,2000})>/gi)) {
+    const attributes = match[1] ?? "";
+    if (/\btype\s{0,8}=/i.test(attributes)) continue;
+    add(
+      match.index ?? 0,
+      "button-type",
+      "warn",
+      "<button> without an explicit type",
+      'add type="button" — a bare <button> defaults to type="submit" and will submit any form it sits in',
+    );
+  }
+
   const abbreviations = new Set([...DEFAULT_ABBREVIATIONS, ...(options.abbreviations ?? [])]);
   // Visible copy inside elements that carry uinaf classes; anything outside the
   // design system is somebody else's text and not this check's business.
