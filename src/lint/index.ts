@@ -114,33 +114,49 @@ const applySuppressions = (source: string, violations: Violation[]): Violation[]
  * a space in it survives.
  */
 export const changedFiles = (base = "origin/main"): string[] => {
-  const git = (args: string[]): string[] => {
+  const run = (args: string[]): string[] => {
     try {
       return execFileSync("git", args, { encoding: "utf8" }).split("\n").filter(Boolean);
     } catch {
       return [];
     }
   };
-  const hasBase = (): boolean => {
-    try {
-      execFileSync("git", ["rev-parse", "--verify", "--quiet", base], { stdio: "ignore" });
-      return true;
-    } catch {
-      return false;
-    }
-  };
+  const [repoRoot] = run(["rev-parse", "--show-toplevel"]);
+  if (!repoRoot) {
+    throw new Error("--changed needs a git repository");
+  }
+  // Every subsequent command runs from the repository root. Git reports paths
+  // relative to the current directory, so running from a subdirectory would
+  // return paths that resolve nowhere and report a clean tree.
+  const git = (args: string[]): string[] => run(["-C", repoRoot, ...args]);
+  let hasBase = true;
+  try {
+    execFileSync("git", ["rev-parse", "--verify", "--quiet", `${base}^{commit}`], {
+      stdio: "ignore",
+    });
+  } catch {
+    hasBase = false;
+  }
+  // Failing open here would drop every committed change and report a clean
+  // tree, which is the one thing this check must never do.
+  if (!hasBase) {
+    throw new Error(
+      `--changed cannot resolve base ref \`${base}\`. Fetch it, or pass --base <ref> (e.g. --base main).`,
+    );
+  }
   const linted = (file: string): boolean => {
     const ext = path.extname(file).toLowerCase();
     return CSS_EXTENSIONS.has(ext) || MARKUP_EXTENSIONS.has(ext);
   };
   return [
     ...new Set([
-      ...(hasBase() ? git(["diff", "--name-only", "--diff-filter=d", `${base}...HEAD`]) : []),
+      ...git(["diff", "--name-only", "--diff-filter=d", `${base}...HEAD`]),
       ...git(["diff", "--name-only", "--diff-filter=d", "HEAD"]),
       ...git(["ls-files", "--others", "--exclude-standard"]),
     ]),
   ]
     .filter(linted)
+    .map((file) => path.resolve(repoRoot, file))
     .filter((file) => fs.existsSync(file))
     .sort();
 };

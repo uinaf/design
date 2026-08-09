@@ -661,3 +661,21 @@ describe("changedFiles", () => {
     }
   });
 });
+
+describe("--changed fails closed", () => {
+  it("refuses an unresolvable base rather than reporting a clean tree", async () => {
+    const { changedFiles } = await import("../src/lint/index");
+    // Silently dropping committed changes here would report clean and exit 0,
+    // which is the one thing a gate must never do.
+    expect(() => changedFiles("definitely-not-a-ref")).toThrow(/cannot resolve base ref/);
+  });
+
+  it("returns absolute paths so a subdirectory run still finds them", async () => {
+    const { changedFiles } = await import("../src/lint/index");
+    // Git reports paths relative to cwd; resolving those against the repo root
+    // from a subdirectory silently dropped every one of them.
+    for (const file of changedFiles("HEAD")) {
+      expect(file.startsWith("/")).toBe(true);
+    }
+  });
+});

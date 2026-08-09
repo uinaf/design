@@ -77,7 +77,15 @@ const paths = argv.filter((arg, index) => {
 });
 
 if (flag("changed")) {
-  const touched = changedFiles(value("base") ?? "origin/main");
+  let touched: string[];
+  try {
+    touched = changedFiles(value("base") ?? "origin/main");
+  } catch (error) {
+    // Never fall through to a full scan or a clean report: the caller asked for
+    // changed files and we could not determine them.
+    console.error(`design:check — ${(error as Error).message}`);
+    process.exit(1);
+  }
   if (touched.length === 0) {
     console.log("design:check clean — no changed files to check");
     process.exit(0);

@@ -509,32 +509,42 @@ var applySuppressions = (source, violations) => {
   );
 };
 var changedFiles = (base = "origin/main") => {
-  const git = (args) => {
+  const run = (args) => {
     try {
       return execFileSync("git", args, { encoding: "utf8" }).split("\n").filter(Boolean);
     } catch {
       return [];
     }
   };
-  const hasBase = () => {
-    try {
-      execFileSync("git", ["rev-parse", "--verify", "--quiet", base], { stdio: "ignore" });
-      return true;
-    } catch {
-      return false;
-    }
-  };
+  const [repoRoot] = run(["rev-parse", "--show-toplevel"]);
+  if (!repoRoot) {
+    throw new Error("--changed needs a git repository");
+  }
+  const git = (args) => run(["-C", repoRoot, ...args]);
+  let hasBase = true;
+  try {
+    execFileSync("git", ["rev-parse", "--verify", "--quiet", `${base}^{commit}`], {
+      stdio: "ignore"
+    });
+  } catch {
+    hasBase = false;
+  }
+  if (!hasBase) {
+    throw new Error(
+      `--changed cannot resolve base ref \`${base}\`. Fetch it, or pass --base <ref> (e.g. --base main).`
+    );
+  }
   const linted = (file) => {
     const ext = path.extname(file).toLowerCase();
     return CSS_EXTENSIONS.has(ext) || MARKUP_EXTENSIONS.has(ext);
   };
   return [
     .../* @__PURE__ */ new Set([
-      ...hasBase() ? git(["diff", "--name-only", "--diff-filter=d", `${base}...HEAD`]) : [],
+      ...git(["diff", "--name-only", "--diff-filter=d", `${base}...HEAD`]),
       ...git(["diff", "--name-only", "--diff-filter=d", "HEAD"]),
       ...git(["ls-files", "--others", "--exclude-standard"])
     ])
-  ].filter(linted).filter((file) => fs.existsSync(file)).sort();
+  ].filter(linted).map((file) => path.resolve(repoRoot, file)).filter((file) => fs.existsSync(file)).sort();
 };
 var checkFile = (file, options = {}) => {
   const source = fs.readFileSync(file, "utf8");
