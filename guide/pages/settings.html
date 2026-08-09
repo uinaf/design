@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>uinaf — settings</title>
+    <link rel="stylesheet" href="/tokens.css" />
+    <style>
+      html,
+      body {
+        margin: 0;
+      }
+      body.uinaf {
+        min-height: 100vh;
+      }
+      main {
+        padding-bottom: 64px;
+      }
+      .sect {
+        margin-top: 48px;
+        max-width: 420px;
+      }
+      .sect .u-field {
+        margin-top: 16px;
+      }
+    </style>
+  </head>
+  <body class="uinaf">
+    <header class="u-topbar">
+      <div class="u-shell-base u-topbar-row">
+        <a href="#" class="u-topbar-mark"
+          ><img src="https://cdn.uinaf.dev/images/uinaf-computer.png" alt="" />slopzapper</a
+        >
+        <nav class="u-topbar-nav">
+          <a href="#">overview</a><a href="#">reviews</a><a href="#">repos</a
+          ><a href="#" aria-current="page">settings</a>
+        </nav>
+        <div class="u-topbar-actions">
+          <a class="u-btn u-btn-sm u-btn-primary" href="#">new review</a>
+        </div>
+      </div>
+    </header>
+    <main class="u-shell-base">
+      <h1 style="margin-top: 32px">settings</h1>
+      <div class="sect">
+        <span class="u-label">reviews</span>
+        <label class="u-field"
+          ><span class="u-label" style="letter-spacing: 0">trigger</span
+          ><select class="u-select">
+            <option>on open + push</option>
+            <option>on open only</option>
+            <option>mention only</option>
+          </select></label
+        >
+        <label class="u-field"
+          ><span class="u-label" style="letter-spacing: 0">max inline findings</span
+          ><input class="u-input" type="number" value="10" style="max-width: 120px" /><span
+            class="u-help"
+            >the rest fold into the summary comment.</span
+          ></label
+        >
+      </div>
+      <div class="sect">
+        <span class="u-label">notifications</span>
+        <label class="u-field"
+          ><span class="u-label" style="letter-spacing: 0">slack webhook URL</span
+          ><input class="u-input" type="url" placeholder="https://hooks.slack.com/…" /><span
+            class="u-help"
+            >one message per finished review. leave empty for none.</span
+          ></label
+        >
+      </div>
+      <div style="display: flex; gap: 12px; margin-top: 32px">
+        <button class="u-btn u-btn-primary" type="button" id="save">save</button
+        ><button class="u-btn u-btn-ghost" type="button">cancel</button>
+      </div>
+      <div class="sect" style="max-width: none">
+        <span class="u-label">danger</span>
+        <div
+          style="
+            border: 1px dashed var(--border);
+            padding: 20px;
+            margin-top: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+          "
+        >
+          <p style="font-size: 13px; max-width: 46ch">
+            uninstalling removes the app from all repos. runs are kept 30 days, then deleted.
+          </p>
+          <a class="u-btn" href="#">uninstall ↗</a>
+        </div>
+      </div>
+    </main>
+    <div class="u-toasts" id="toasts"></div>
+    <script>
+      document.getElementById("save").onclick = () => {
+        const t = document.createElement("div");
+        t.className = "u-toast";
+        t.innerHTML = '<span class="u-dot u-dot--ok"></span>saved.';
+        const b = document.getElementById("toasts");
+        b.appendChild(t);
+        while (b.children.length > 3) b.firstChild.remove();
+        setTimeout(() => t.remove(), 3000);
+      };
+    </script>
+  </body>
+</html>

@@ -1,0 +1,95 @@
+<!doctype html>
+<!-- @page name="docs" description="two-column docs: quiet side nav, prose + code at readable measure" -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>uinaf — docs</title>
+    <link rel="stylesheet" href="../dist/css/tokens.css" />
+    <style>
+      html,
+      body {
+        margin: 0;
+      }
+      body.uinaf {
+        min-height: 100vh;
+      }
+      main {
+        padding-bottom: 64px;
+      }
+      .cols {
+        display: grid;
+        grid-template-columns: 150px 1fr;
+        gap: 48px;
+        margin-top: 40px;
+      }
+      .toc {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        font-size: 13px;
+      }
+      .toc a {
+        color: var(--fg-subtle);
+        text-decoration: none;
+      }
+      .toc a:hover {
+        color: var(--fg);
+      }
+      .toc a[aria-current="page"] {
+        color: var(--fg);
+      }
+      @media (max-width: 640px) {
+        .cols {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body class="uinaf">
+    <header class="u-topbar">
+      <div class="u-shell-base u-topbar-row">
+        <a href="#" class="u-topbar-mark"
+          ><img src="https://cdn.uinaf.dev/images/uinaf-computer.png" alt="" />attach</a
+        >
+        <nav class="u-topbar-nav">
+          <a href="#" aria-current="page">docs</a><a href="#">source ↗</a>
+        </nav>
+      </div>
+    </header>
+    <main class="u-shell-base">
+      <div class="cols">
+        <nav class="toc">
+          <span class="u-label" style="margin-bottom: 4px">docs</span>
+          <a href="#">install</a>
+          <a href="#" aria-current="page">quick start</a>
+          <a href="#">auth contract</a>
+          <a href="#">deploy</a>
+          <a href="#">releasing</a>
+        </nav>
+        <article class="u-prose">
+          <h1 style="margin-top: 0">quick start</h1>
+          <p>
+            authorize once, then put files. every upload returns a public preview URL you can paste
+            into a PR.
+          </p>
+          <pre class="u-pre">
+attach login
+attach put ./shot.png --repo owner/repo --pr 12</pre>
+          <p>
+            <code>put</code> prints a <code>/p/…</code> preview URL. pass <code>--markdown</code> to
+            get an embeddable raw <code>/o/…</code> link instead.
+          </p>
+          <h2>deleting</h2>
+          <pre class="u-pre">attach delete &lt;url-or-key&gt;</pre>
+          <p>deletion is immediate. objects expire on their own after 30 days regardless.</p>
+          <h2>auth</h2>
+          <p>
+            upload auth is <code>att_</code> keys only — never github tokens. agents enroll through
+            the github app; humans use the device flow.
+          </p>
+        </article>
+      </div>
+    </main>
+  </body>
+</html>

@@ -2,7 +2,7 @@ import { McpServer } from "@modelcontextprotocol/server";
 import { z } from "zod";
 
 /**
- * The four read tools over build output. Kept deliberately small — large tool
+ * The five read tools over build output. Kept deliberately small — large tool
  * counts burn an agent's context before it has done any work.
  *
  * Every response is assembled from artifacts the build produced, so the tools
@@ -23,6 +23,7 @@ type Pattern = {
 
 type Components = { patterns: Pattern[] };
 type Tokens = { groups: Record<string, Record<string, string>> };
+type Page = { slug: string; name: string; description: string };
 
 const text = (body: string) => ({ content: [{ type: "text" as const, text: body }] });
 
@@ -189,6 +190,37 @@ export const createServer = (env: Env): McpServer => {
         `## ${found[0]}\n${Object.entries(found[1])
           .map(([k, v]) => `${k}: ${v}`)
           .join("\n")}`,
+      );
+    },
+  );
+
+  server.registerTool(
+    "get_page",
+    {
+      description:
+        "Get a whole reference page — a complete, on-brand screen with its full markup. Call this BEFORE building a page, in preference to assembling one from patterns. Pages: product-landing, dashboard, login, settings, docs, device-auth.",
+      inputSchema: {
+        name: z.string().optional().describe("Page name, e.g. 'dashboard'; omit to list them"),
+      },
+    },
+    async ({ name }) => {
+      const pages = await json<Page[]>(env, "/pages.json");
+      const list = pages.map((p) => `${p.slug} — ${p.description}`).join("\n");
+      if (name === undefined || name.trim() === "") {
+        return text(`Reference pages:\n${list}`);
+      }
+      const wanted = name.trim().toLowerCase();
+      const page =
+        pages.find((p) => p.slug.toLowerCase() === wanted) ??
+        pages.find((p) => p.name.toLowerCase() === wanted);
+      if (!page) {
+        return text(
+          `No reference page named "${name}". Valid pages:\n${list}\n\nFor a single component use get_pattern instead.`,
+        );
+      }
+      const html = await (await asset(env, `/pages/${page.slug}.html`)).text();
+      return text(
+        `# ${page.name}\n\n${page.description}\n\nRendered: https://design.uinaf.dev/pages/${page.slug}.html\n\n\`\`\`html\n${html.trim()}\n\`\`\`\n\nImport \`@uinaf/design/css\`, copy the markup, and replace the content. Keep the structure — the layout is the design.`,
       );
     },
   );

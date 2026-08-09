@@ -1,0 +1,64 @@
+<!doctype html>
+<!-- @page name="login" description="auth page: centered corner-tick panel, OAuth-only sign-in, no marketing, no kicker" -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>uinaf — login</title>
+    <link rel="stylesheet" href="../dist/css/tokens.css" />
+    <style>
+      body {
+        margin: 0;
+        background: var(--bg);
+      }
+      @keyframes ue {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        [style*="animation"] {
+          animation: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body class="uinaf">
+    <div style="min-height: 100vh; display: grid; place-items: center; padding: 24px">
+      <div
+        style="
+          width: 100%;
+          max-width: 360px;
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+          animation: ue 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+        "
+      >
+        <div
+          class="u-panel u-ticks"
+          style="padding: 32px; display: flex; flex-direction: column; gap: 24px"
+        >
+          <a href="#" class="u-topbar-mark"
+            ><img
+              src="https://cdn.uinaf.dev/images/uinaf-computer.png"
+              alt="slopzapper mark"
+            />slopzapper</a
+          >
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <h2 style="font-size: 16px">sign in</h2>
+            <p style="font-size: 13px">reviews wait for no one. they do, actually.</p>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 12px">
+            <a class="u-btn u-btn-primary" href="#">continue with github ↗</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

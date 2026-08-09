@@ -1,0 +1,32 @@
+[
+  {
+    "slug": "dashboard",
+    "name": "dashboard",
+    "description": "app shell on the wide shell: one-row topbar with current-page marker, stat strip, ruled data table"
+  },
+  {
+    "slug": "device-auth",
+    "name": "device auth",
+    "description": "CLI pairing: one code, one instruction, a waiting dot"
+  },
+  {
+    "slug": "docs",
+    "name": "docs",
+    "description": "two-column docs: quiet side nav, prose + code at readable measure"
+  },
+  {
+    "slug": "login",
+    "name": "login",
+    "description": "auth page: centered corner-tick panel, OAuth-only sign-in, no marketing, no kicker"
+  },
+  {
+    "slug": "product-landing",
+    "name": "product landing",
+    "description": "marketing page: one-row topbar, hero with a non-redundant kicker, stat strip, feature grid, steps, footer"
+  },
+  {
+    "slug": "settings",
+    "name": "settings",
+    "description": "app settings: field sections, ruled groups, dashed danger zone"
+  }
+]

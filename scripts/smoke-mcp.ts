@@ -92,9 +92,9 @@ const { tools = [] } = (await rpc("tools/list")) as {
 };
 const names = tools.map((t) => t.name).sort();
 check(
-  "tools/list returns the four read tools",
+  "tools/list returns the five read tools",
   JSON.stringify(names) ===
-    JSON.stringify(["get_pattern", "get_tokens", "list_patterns", "search_guidelines"]),
+    JSON.stringify(["get_page", "get_pattern", "get_tokens", "list_patterns", "search_guidelines"]),
   names.join(", "),
 );
 check(
@@ -135,6 +135,28 @@ const badGroup = await call("get_tokens", { group: "bogus" });
 check(
   "get_tokens error lists valid groups",
   badGroup.includes("typography") && badGroup.includes("No token group"),
+);
+
+// Every page, because a page that 404s from the asset binding is invisible to
+// unit tests — the tool would still answer, just with a broken artifact.
+for (const name of ["product-landing", "dashboard", "login", "settings", "docs", "device-auth"]) {
+  const page = await call("get_page", { name });
+  check(
+    `get_page returns ${name} with markup`,
+    page.includes("```html") && page.includes("class=") && !page.includes("@page"),
+  );
+}
+
+const pageList = await call("get_page");
+check(
+  "get_page with no name lists the pages",
+  pageList.includes("dashboard") && pageList.includes("login"),
+);
+
+const badPage = await call("get_page", { name: "nonsense" });
+check(
+  "get_page error lists valid pages",
+  badPage.includes("No reference page named") && badPage.includes("dashboard"),
 );
 
 const color = await call("search_guidelines", { query: "accent" });

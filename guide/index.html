@@ -167,9 +167,21 @@
       <div id="catalog"></div>
     </main>
     <script type="module">
-      const res = await fetch("/previews.json")
-      const items = await res.json()
-      const order = ["Brand", "Colors", "Type", "Spacing", "Components", "Motion"]
+      const [previews, pages] = await Promise.all(
+        ["/previews.json", "/pages.json"].map((u) => fetch(u).then((r) => r.json())),
+      )
+      const items = [
+        // Whole screens first: an agent or a human building a page should land
+        // on a finished one before a component card.
+        ...pages.map((p) => ({
+          group: "Pages",
+          name: p.name,
+          subtitle: p.description,
+          href: `/pages/${p.slug}`,
+        })),
+        ...previews.map((p) => ({ ...p, href: `/preview/${p.slug}` })),
+      ]
+      const order = ["Pages", "Brand", "Colors", "Type", "Spacing", "Components", "Motion"]
       const groups = new Map()
       for (const item of items) {
         const list = groups.get(item.group) ?? []
@@ -190,7 +202,7 @@
         const ul = document.createElement("ul")
         for (const item of groups.get(group)) {
           const li = document.createElement("li")
-          li.innerHTML = `<a href="/preview/${item.slug}"><span class="name">${item.name.toLowerCase()}</span><span class="sub">${item.subtitle}</span></a>`
+          li.innerHTML = `<a href="${item.href}"><span class="name">${item.name.toLowerCase()}</span><span class="sub">${item.subtitle}</span></a>`
           ul.appendChild(li)
         }
         section.append(label, ul)

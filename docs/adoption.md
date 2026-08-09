@@ -33,13 +33,18 @@ Paste into the repo's `AGENTS.md` or `CLAUDE.md`.
 
 This repo's UI is uinaf-branded.
 
-1. **Never write uinaf UI from memory.** Fetch the pattern first:
-   `https://design.uinaf.dev/components.json` to find it, then
-   `/patterns/<name>.md` for the markup. Copy it and adapt the content — do not
-   reinterpret the design. If the `design-uinaf` MCP server is connected, prefer
-   its tools: `get_pattern`, `get_tokens`, `search_guidelines`, `list_patterns`.
+1. **Never write uinaf UI from memory.** Fetch first, then adapt the content —
+   do not reinterpret the design. For a whole page, start from a reference
+   screen: `https://design.uinaf.dev/pages/<name>.md` (`product-landing`,
+   `dashboard`, `login`, `settings`, `docs`, `device-auth`). For one component,
+   `https://design.uinaf.dev/components.json` to find the pattern, then
+   `https://design.uinaf.dev/patterns/<name>.md` for its markup. Every path here
+   is on design.uinaf.dev, not a route in this repo. If the `design-uinaf` MCP
+   server is connected, prefer its tools:
+   `get_page`, `get_pattern`, `get_tokens`, `search_guidelines`, `list_patterns`.
 2. **Styles come from `@uinaf/design`.** `@import "@uinaf/design/css";` gives
-   tokens and every `u-*` class. Take exact values from `/tokens.json` when
+   tokens and every `u-*` class. Take exact values from
+   `https://design.uinaf.dev/tokens.json` when
    writing custom CSS. No raw hex, no radius over 6px, no shadows, one accent per
    view, type only from the scale (10/11/13/14/16/20/24/32/40).
 3. **Copy is lowercase** except micro-labels and abbreviations — `PR` not `pr`,
