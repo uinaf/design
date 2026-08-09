@@ -100,7 +100,7 @@
   "duration-fast": "160ms",
   "duration-base": "220ms",
   "stagger-step": "45ms",
-  "container-narrow": "36rem",
+  "container-narrow": "40rem",
   "container-base": "48rem",
   "container-wide": "72rem"
 }

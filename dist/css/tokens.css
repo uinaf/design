@@ -158,7 +158,7 @@
   --stagger-step: 45ms; /* @kind other */
 
   /* ---------- Layout ---------- */
-  --container-narrow: 36rem;
+  --container-narrow: 40rem;
   --container-base: 48rem;
   --container-wide: 72rem;
 }

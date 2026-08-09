@@ -71,7 +71,7 @@ no 18px. pick the nearest step.
 
 ## layout
 
-- three shells: narrow 36rem (default — prose, home), base 48rem (indexes, tables), wide 72rem (dashboards, rare — cap inner prose at narrow). if unsure, narrow.
+- three shells: narrow 40rem (default — prose, home, detail), base 48rem (data-dense: tables, dashboards), wide 72rem (rare — cap inner prose at narrow). if unsure, narrow. one product = one width: a data-dense view may step UP to base, but a detail page never shrinks below its index/home.
 - hero formula: micro-label kicker (optionally with a live dot) → 32px title (≤22ch) → one 14px sub-line (≤46ch) → primary + tertiary buttons → optional stat strip. see the project page template.
 - never widen a shell to fit one element — let the element break out or redesign it.
 
