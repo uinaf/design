@@ -19,9 +19,11 @@ const parseAccept = (header: string): MediaRange[] =>
       // Parameter names are case-insensitive: `;Q=0` rejects just as `;q=0` does.
       const qParam = params.map((p) => p.trim().toLowerCase()).find((p) => p.startsWith("q="));
       if (!qParam) return { type, subtype, q: 1 };
-      // A malformed weight must not be promoted to full preference.
-      const q = Number.parseFloat(qParam.slice(2));
-      return { type, subtype, q: Number.isFinite(q) ? Math.min(Math.max(q, 0), 1) : 0 };
+      // RFC 9110 qvalue grammar. parseFloat alone accepts "1abc" as 1, which
+      // would let a malformed weight win a negotiation outright.
+      const raw = qParam.slice(2);
+      const valid = /^(?:0(?:\.\d{0,3})?|1(?:\.0{0,3})?)$/.test(raw);
+      return { type, subtype, q: valid ? Number.parseFloat(raw) : 0 };
     })
     .filter((r) => r.type !== "");
 

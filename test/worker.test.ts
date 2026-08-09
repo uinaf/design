@@ -73,5 +73,14 @@ describe("malformed and cased Accept parameters", () => {
 
   it("does not promote an unparseable weight to full preference", () => {
     expect(accepts("text/markdown;q=invalid, text/html;q=0.5")).toBe(false);
+    // parseFloat would read these as 1 and 0.5 and hand markdown the win.
+    expect(accepts("text/markdown;q=1abc, text/html;q=0.5")).toBe(false);
+    expect(accepts("text/markdown;q=0.5xyz, text/html;q=0.1")).toBe(false);
+    expect(accepts("text/markdown;q=2, text/html;q=0.5")).toBe(false);
+  });
+
+  it("still accepts well-formed weights", () => {
+    expect(accepts("text/markdown;q=1.0, text/html;q=0.5")).toBe(true);
+    expect(accepts("text/markdown;q=0.9, text/html;q=0.001")).toBe(true);
   });
 });
