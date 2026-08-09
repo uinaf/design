@@ -148,7 +148,9 @@ export const changedFiles = (base = "origin/main"): string[] => {
   // characters in its default output, which would mangle the filename.
   const git = (args: string[]): string[] => {
     try {
-      return execFileSync("git", ["-C", repoRoot, ...args, "-z"], {
+      // -z goes before revisions: git does not reliably parse options after a
+      // rev or pathspec, and a trailing -z can be taken as a pathspec instead.
+      return execFileSync("git", ["-C", repoRoot, args[0], "-z", ...args.slice(1)], {
         encoding: "utf8",
         stdio: ["ignore", "pipe", "pipe"],
       })

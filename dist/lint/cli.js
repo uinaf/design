@@ -530,7 +530,7 @@ var changedFiles = (base = "origin/main") => {
   }
   const git = (args) => {
     try {
-      return execFileSync("git", ["-C", repoRoot, ...args, "-z"], {
+      return execFileSync("git", ["-C", repoRoot, args[0], "-z", ...args.slice(1)], {
         encoding: "utf8",
         stdio: ["ignore", "pipe", "pipe"]
       }).split("\0").filter(Boolean);

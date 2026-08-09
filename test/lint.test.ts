@@ -653,11 +653,62 @@ describe("skipped directories apply to explicit paths", () => {
 });
 
 describe("changedFiles", () => {
-  it("only returns files the linter can actually check", async () => {
+  // Builds its own repo: depending on this checkout's refs made the test pass
+  // vacuously when it returned nothing, and fail in CI where origin/main is
+  // absent from a shallow clone.
+  const repo = async () => {
+    const { execFileSync } = await import("node:child_process");
+    const { mkdtempSync, mkdirSync, writeFileSync } = await import("node:fs");
+    const { join } = await import("node:path");
+    const { tmpdir } = await import("node:os");
+    const dir = mkdtempSync(join(tmpdir(), "design-changed-"));
+    const git = (...args: string[]) =>
+      execFileSync("git", ["-C", dir, ...args], { stdio: "ignore" });
+    git("init", "-q");
+    git("checkout", "-q", "-b", "feature");
+    git("config", "user.email", "t@example.com");
+    git("config", "user.name", "t");
+    mkdirSync(join(dir, "src"), { recursive: true });
+    writeFileSync(join(dir, "src", "page.html"), "<p>x</p>");
+    writeFileSync(join(dir, "README.md"), "not lintable");
+    git("add", "-A");
+    git("commit", "-q", "-m", "init");
+    git("update-ref", "refs/remotes/origin/main", "HEAD");
+    return { dir, git, join };
+  };
+
+  it("finds untracked, uncommitted, and committed changes", async () => {
     const { changedFiles } = await import("../src/lint/index");
-    // Runs against this repo; whatever it returns must be lintable and real.
-    for (const file of changedFiles()) {
-      expect(file).toMatch(/\.(css|html|htm|jsx|tsx|astro|svelte|vue)$/);
+    const { writeFileSync } = await import("node:fs");
+    const { dir, join } = await repo();
+    const cwd = process.cwd();
+    process.chdir(dir);
+    try {
+      expect(changedFiles()).toEqual([]);
+      writeFileSync(join(dir, "src", "new.tsx"), "<p>y</p>");
+      expect(changedFiles().map((f) => f.split("/").pop())).toEqual(["new.tsx"]);
+      writeFileSync(join(dir, "src", "page.html"), "<p>edited</p>");
+      expect(
+        changedFiles()
+          .map((f) => f.split("/").pop())
+          .sort(),
+      ).toEqual(["new.tsx", "page.html"]);
+    } finally {
+      process.chdir(cwd);
+    }
+  });
+
+  it("ignores files the linter cannot check", async () => {
+    const { changedFiles } = await import("../src/lint/index");
+    const { writeFileSync } = await import("node:fs");
+    const { dir, join } = await repo();
+    const cwd = process.cwd();
+    process.chdir(dir);
+    try {
+      writeFileSync(join(dir, "notes.md"), "prose");
+      expect(changedFiles()).toEqual([]);
+    } finally {
+      process.chdir(cwd);
     }
   });
 });
