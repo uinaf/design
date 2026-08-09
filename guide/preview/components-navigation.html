@@ -1,0 +1,70 @@
+<!doctype html>
+<!-- @dsCard group="Components" name="Navigation" subtitle="app topbar = ONE row · stacked header is uinaf.dev site chrome only" viewport="900x640" -->
+<html lang="en"><head>
+<meta charset="utf-8">
+<title>uinaf — navigation</title>
+<link rel="stylesheet" href="/tokens.css">
+<style>html,body{margin:0;padding:0}body.uinaf{padding:32px 36px;display:flex;flex-direction:column;gap:14px}.spec{border:1px solid var(--border);background:var(--bg)}.no{color:var(--error)}</style>
+<!-- guide-chrome -->
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="icon" href="https://cdn.uinaf.dev/images/uinaf-computer.png" type="image/png" />
+<style id="guide-chrome">
+  html { background: var(--bg, #0a0a0a); }
+  body.uinaf {
+    box-sizing: border-box;
+    max-width: 48rem;
+    margin-inline: auto;
+    min-height: 100vh;
+  }
+  .guide-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px 16px;
+    margin: 0 0 8px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border, #222);
+    font-size: 13px;
+  }
+  .guide-bar a {
+    color: var(--fg-muted, #888);
+    text-decoration: none;
+  }
+  .guide-bar a:hover { color: var(--accent, #b6ff3c); }
+  .guide-bar .sep { color: var(--fg-faint, #555); }
+  .guide-bar .title { color: var(--fg, #ddd); }
+  .guide-bar .sub { color: var(--fg-subtle, #777); font-size: 11px; }
+</style>
+</head><body class="uinaf">
+<nav class="guide-bar" aria-label="guide">
+  <a href="/">← design</a>
+  <span class="sep">·</span>
+  <span class="u-label">Components</span>
+  <span class="sep">·</span>
+  <span class="title">Navigation</span>
+  <span class="sub">app topbar = ONE row · stacked header is uinaf.dev site chrome only</span>
+</nav>
+
+<div class="u-label">app topbar — products, dashboards, logged-in views</div>
+<div class="spec">
+<header class="u-topbar"><div class="u-shell-base u-topbar-row">
+<a href="#" class="u-topbar-mark"><img src="https://cdn.uinaf.dev/images/uinaf-computer.png" alt="">slopzapper</a>
+<nav class="u-topbar-nav"><a href="#" aria-current="page">overview</a><a href="#">reviews</a><a href="#">repos</a><a href="#">docs</a></nav>
+<div class="u-topbar-actions"><a class="u-btn u-btn-sm u-btn-primary" href="#">new review</a></div>
+</div></header>
+<div class="u-shell-base" style="padding-block:24px 28px"><h1>reviews</h1><p class="u-meta" style="margin-top:6px">the page title outranks the chrome</p></div>
+</div>
+<p class="u-meta">one 56px row: 20px framed mark + product name left · plain links right, current page brightest · at most one small button · hairline below · never sticky.</p>
+<hr>
+<div class="u-label">site header — uinaf.dev pages only</div>
+<div class="spec" style="padding:24px 28px">
+<div class="u-header" style="margin-bottom:0">
+<span class="u-header-mark"><img src="https://cdn.uinaf.dev/images/uinaf-computer.png" alt=""><span class="u-header-name">uinaf</span></span>
+<p class="u-header-tagline">we bet you've seen us before</p>
+<nav class="u-nav"><a class="u-link-plain" href="#">blog</a><span class="u-sep">·</span><a class="u-link-plain" href="#">projects</a><span class="u-sep">·</span><a class="u-link-plain" href="#">status</a></nav>
+</div>
+</div>
+<hr>
+<div class="u-label no">never</div>
+<p style="font-size:13px;color:var(--fg-muted)">mark on one row, links on a second row, on a product page — that's the site header leaking where it doesn't belong. and no hero kicker that restates the nav (<span class="u-code">UINAF · REVIEW BOT</span> under a nav that already says the product name). kickers add info — a category, a status — or don't exist.</p>
+</body></html>

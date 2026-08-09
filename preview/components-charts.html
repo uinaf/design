@@ -1,0 +1,44 @@
+<!doctype html>
+<!-- @dsCard group="Components" name="Charts" subtitle="series 1 = accent, 2+ = slime · SVG lines, CSS bars · quiet grids" viewport="880x760" -->
+<html lang="en"><head><meta charset="utf-8"><title>uinaf — charts</title>
+<link rel="stylesheet" href="../dist/css/tokens.css">
+<style>html,body{margin:0;padding:0}body.uinaf{padding:32px 36px;display:flex;flex-direction:column;gap:16px}.two{display:grid;grid-template-columns:1fr 1fr;gap:32px}</style>
+</head><body class="uinaf">
+<div class="u-label">sparkline — inside a stat, no axes</div>
+<div class="u-panel-grid" style="grid-template-columns:repeat(3,1fr);max-width:640px">
+<div class="u-stat"><span class="u-label">reviews / day</span><span class="u-stat-value">128</span><svg class="u-spark" viewBox="0 0 100 28" preserveAspectRatio="none"><path class="area" d="M0,22 L14,18 28,20 42,12 56,15 70,8 84,10 100,4 L100,28 L0,28 Z"></path><polyline points="0,22 14,18 28,20 42,12 56,15 70,8 84,10 100,4"></polyline></svg></div>
+<div class="u-stat"><span class="u-label">median turnaround</span><span class="u-stat-value">3m 12s</span><svg class="u-spark" viewBox="0 0 100 28" preserveAspectRatio="none"><polyline points="0,10 14,12 28,9 42,16 56,14 70,18 84,16 100,20"></polyline></svg></div>
+<div class="u-stat"><span class="u-label">queue</span><span class="u-stat-value">7</span><span class="u-stat-note">PRs waiting</span></div>
+</div>
+<hr>
+<div class="two">
+<div>
+<div class="u-label" style="margin-bottom:12px">bars — neutral, ONE hot period</div>
+<div class="u-bars"><i style="height:34%"></i><i style="height:52%"></i><i style="height:41%"></i><i style="height:66%"></i><i style="height:47%"></i><i style="height:75%"></i><i data-hot style="height:88%"></i></div>
+<div class="u-axis"><span>aug 03</span><span>today</span></div>
+</div>
+<div>
+<div class="u-label" style="margin-bottom:12px">line — hairline grid, accent series</div>
+<svg class="u-chart" viewBox="0 0 200 100" preserveAspectRatio="none">
+<line class="grid" x1="0" y1="25" x2="200" y2="25"></line><line class="grid" x1="0" y1="50" x2="200" y2="50"></line><line class="grid" x1="0" y1="75" x2="200" y2="75"></line><line class="grid" x1="0" y1="99" x2="200" y2="99"></line>
+<path class="line2" d="M0,70 C30,66 45,74 70,68 S120,80 145,74 185,60 200,64"></path>
+<path class="line" d="M0,55 C25,48 50,60 75,42 S125,30 150,38 185,20 200,24"></path>
+</svg>
+<div class="u-legend" style="margin-top:8px"><span><i style="background:var(--viz-1)"></i>p50</span><span><i style="background:var(--viz-2)"></i>p95</span></div>
+</div>
+</div>
+<hr>
+<div class="two">
+<div>
+<div class="u-label" style="margin-bottom:12px">uptime strip — 30 days, quiet status colors</div>
+<div class="u-uptime"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i data-warn></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i data-down></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+<p class="u-meta" style="margin-top:8px">99.2% · one incident, 2026-07-24</p>
+</div>
+<div>
+<div class="u-label" style="margin-bottom:12px">distribution — stacked, slime series</div>
+<div class="u-stack"><i style="width:44%;background:var(--viz-1)"></i><i style="width:26%;background:var(--viz-2)"></i><i style="width:18%;background:var(--viz-3)"></i><i style="width:12%;background:var(--viz-4)"></i></div>
+<div class="u-legend" style="margin-top:10px"><span><i style="background:var(--viz-1)"></i>logic 44%</span><span><i style="background:var(--viz-2)"></i>tests 26%</span><span><i style="background:var(--viz-3)"></i>style 18%</span><span><i style="background:var(--viz-4)"></i>docs 12%</span></div>
+</div>
+</div>
+<p class="u-meta">no chart junk: no fills except the rare accent area, no legends when one series, grid lines only where the eye needs them. charts never glow.</p>
+</body></html>

@@ -3,49 +3,25 @@
   "$css": "tokens.css auto-imports components.css; import one file (@uinaf/design/css)",
   "patterns": [
     {
-      "name": "micro-label",
-      "classes": [".u-label", ".u-label--accent", ".u-meta"],
-      "use": "THE hierarchy device: kicks off sections, heads tables, labels fields, captions stats",
-      "markup": "<span class=\"u-label\">recent reviews</span>",
+      "name": "banner",
+      "classes": [".u-banner"],
+      "use": "one-line site-wide notice pinned above the topbar — a deprecation, a migration date, a status link",
+      "markup": "<div class=\"u-banner\">scheduled maintenance 02:00–03:00 UTC <a href=\"#\">status ↗</a></div>",
       "rules": [
-        "11px uppercase tracked dim — the only uppercase besides abbreviations",
-        "fix weak hierarchy with a micro-label + space, never with size"
+        "a single centred line, hairline rule underneath, muted at 11px",
+        "sits above the topbar and scrolls away with the page"
       ],
-      "never": ["accent color except one active marker per view"]
+      "never": [
+        "a filled color band, an icon, or a dismiss ✕ — that is a notice, not a banner",
+        "stacking two of them"
+      ]
     },
     {
-      "name": "panel",
-      "classes": [".u-panel", ".u-ticks"],
-      "use": "bordered region for grouping DATA (whitespace groups prose)",
-      "markup": "<div class=\"u-panel u-ticks\">…</div>",
-      "rules": [
-        "20px air inside",
-        "corner ticks (.u-ticks) for technical-drawing framing on panels, figures, hero bands"
-      ],
-      "never": ["borders around prose", "background bands to mark sections"]
-    },
-    {
-      "name": "panel-grid",
-      "classes": [".u-panel-grid"],
-      "use": "panels sharing single hairlines — stat strips, feature grids, kanban",
-      "markup": "<div class=\"u-panel-grid\" style=\"grid-template-columns:repeat(3,1fr)\"><div class=\"u-stat\">…</div>…</div>",
-      "rules": ["1px gap over border color = shared hairlines, no double borders"]
-    },
-    {
-      "name": "stat",
-      "classes": [".u-stat", ".u-stat-value", ".u-stat-note"],
-      "use": "label / value / note; lives in panels or panel grids",
-      "markup": "<div class=\"u-stat\"><span class=\"u-label\">queue</span><span class=\"u-stat-value\">7</span><span class=\"u-stat-note\">PRs waiting</span></div>",
-      "rules": ["value is 24px — same step as page titles", "a sparkline may replace the note"]
-    },
-    {
-      "name": "card",
-      "classes": [".u-card"],
-      "use": "the indexable link primitive — the WHOLE card is one link",
-      "markup": "<a class=\"u-card u-link-plain\" href=\"#\">\n  <span class=\"u-label\">healthd</span>\n  <p class=\"u-meta\">small daemon for machine health checks and reporting.</p>\n</a>",
-      "rules": ["hover: border brightens + 2px lift; press compresses"],
-      "never": ["links inside a card-link"],
-      "$markupSource": "stub filled from preview/components-card.html using u-* primitives only"
+      "name": "breadcrumbs",
+      "classes": [".u-crumbs"],
+      "use": "path with / separators",
+      "markup": "<nav class=\"u-crumbs\"><a href=\"#\">uinaf/slopzapper</a><span class=\"sep\">/</span><span aria-current=\"page\">runs</span></nav>",
+      "rules": ["current page brightest"]
     },
     {
       "name": "button",
@@ -67,6 +43,82 @@
       "never": ["two fills side by side", "more than one .u-btn-accent per surface (usually zero)"]
     },
     {
+      "name": "card",
+      "classes": [".u-card"],
+      "use": "the indexable link primitive — the WHOLE card is one link",
+      "markup": "<a class=\"u-card u-link-plain\" href=\"#\">\n  <span class=\"u-label\">healthd</span>\n  <p class=\"u-meta\">small daemon for machine health checks and reporting.</p>\n</a>",
+      "rules": ["hover: border brightens + 2px lift; press compresses"],
+      "never": ["links inside a card-link"],
+      "$markupSource": "stub filled from preview/components-card.html using u-* primitives only"
+    },
+    {
+      "name": "charts",
+      "classes": [
+        ".u-spark",
+        ".u-bars",
+        ".u-chart",
+        ".u-uptime",
+        ".u-stack",
+        ".u-legend",
+        ".u-axis"
+      ],
+      "use": "sparklines in stats · bars · line · uptime strip · stacked distribution",
+      "rules": [
+        "series 1 = accent, 2+ = slime (cyan/purple/magenta/green)",
+        "bars neutral with ONE hot period",
+        "SVG for spark/line (data, not decoration); CSS for bars/dots/stack"
+      ],
+      "never": ["chart junk: legends for one series, fills beyond the rare accent area, glows"]
+    },
+    {
+      "name": "choice",
+      "classes": [".u-check"],
+      "use": "checkbox and radio — the only styled boolean inputs",
+      "markup": "<label class=\"u-check\"><input type=\"checkbox\" checked> review draft PRs</label>\n<label class=\"u-check\"><input type=\"radio\" name=\"trigger\" checked> on open + push</label>",
+      "rules": [
+        "the box carries the accent when checked; the text stays muted",
+        "radio is the same box with a pill radius — no custom glyphs",
+        "always wrap in the label so the text is a hit target"
+      ],
+      "never": [
+        "a bare input without .u-check — the native control is not on-brand",
+        "a switch for anything behind a save button — see the switch pattern"
+      ]
+    },
+    {
+      "name": "code",
+      "classes": [".u-code", ".u-pre", ".u-kbd"],
+      "use": "inline chips on raised fill; blocks darker, 13px",
+      "rules": [
+        "never wrap code — scroll it",
+        "abbreviations in code stay as written (--pr flags, url vars)"
+      ]
+    },
+    {
+      "name": "def-rows",
+      "classes": [".u-def", ".u-def-term", ".u-def-desc"],
+      "use": "term/description rows for metadata, specs, and settings summaries",
+      "markup": "<dl>\n<div class=\"u-def\"><dt class=\"u-def-term\">trigger</dt><dd class=\"u-def-desc\">on open + push</dd></div>\n<div class=\"u-def\"><dt class=\"u-def-term\">max findings</dt><dd class=\"u-def-desc\">10 inline, rest folded</dd></div>\n</dl>",
+      "rules": [
+        "hairline rules between rows carry the structure — the term column is fixed at 120px",
+        "the term is a micro-label; the description is body text"
+      ],
+      "never": ["boxing the list or banding alternate rows"]
+    },
+    {
+      "name": "diff",
+      "classes": [".u-diff", ".u-finding"],
+      "use": "tinted add/del lines; findings pin to their line as hairline inset panels",
+      "rules": ["finding = dot + bold-lead dry sentence with file/line specificity"]
+    },
+    {
+      "name": "empty-state",
+      "classes": [".u-empty"],
+      "use": "dashed region, one dry line, one action",
+      "rules": ["a code snippet may stand in as the action for CLI products"],
+      "never": ["illustrations", "multi-paragraph explanations"]
+    },
+    {
       "name": "field",
       "classes": [".u-field", ".u-input", ".u-select", ".u-textarea", ".u-help", ".u-help--error"],
       "use": "micro-label above a 32px control on a slightly raised fill",
@@ -78,46 +130,15 @@
       "never": ["error banners", "floating labels"]
     },
     {
-      "name": "tag+dot",
-      "classes": [
-        ".u-tag",
-        ".u-dot",
-        ".u-dot--ok",
-        ".u-dot--warn",
-        ".u-dot--error",
-        ".u-dot--live"
-      ],
-      "use": "status = a small muted dot + a lowercase word",
-      "markup": "<span class=\"u-tag\"><span class=\"u-dot u-dot--ok\"></span>pass</span>",
+      "name": "footer",
+      "classes": [".u-footer", ".u-footer-grid", ".u-footer-col"],
+      "use": "page footer: a few quiet link columns over a hairline",
+      "markup": "<footer class=\"u-footer\"><div class=\"u-shell-base u-footer-grid\">\n<div class=\"u-footer-col\"><span>uinaf</span><span>undefined is not a function</span></div>\n<div class=\"u-footer-col\"><a href=\"#\">docs</a><a href=\"#\">status</a></div>\n<div class=\"u-footer-col\"><a href=\"#\">github ↗</a><a href=\"#\">npm ↗</a></div>\n</div></footer>",
       "rules": [
-        "tags stay bordered — a filled tag would outrank the buttons",
-        "--live glows accent: reserve for genuinely live things"
+        "shares the page shell class so it lines up with the content gutter",
+        "collapses to one column under 640px"
       ],
-      "never": ["neon status", "filled banners"]
-    },
-    {
-      "name": "topbar",
-      "classes": [
-        ".u-topbar",
-        ".u-topbar-row",
-        ".u-topbar-mark",
-        ".u-topbar-nav",
-        ".u-topbar-actions"
-      ],
-      "use": "EVERY product page, dashboard, logged-in view",
-      "markup": "<header class=\"u-topbar\"><div class=\"u-shell-base u-topbar-row\"><a class=\"u-topbar-mark\" href=\"/\"><img src=\"https://cdn.uinaf.dev/images/webp/uinaf-computer-240w.webp\" alt=\"\">slopzapper</a><nav class=\"u-topbar-nav\"><a aria-current=\"page\" href=\"#\">overview</a>…</nav><div class=\"u-topbar-actions\"><a class=\"u-btn u-btn-sm u-btn-primary\" href=\"#\">new review</a></div></div></header>",
-      "rules": [
-        "ONE 56px row: 20px framed mark + name left, plain links right (current brightest), max one small button",
-        "the row and the content below share the same shell class — one gutter"
-      ],
-      "never": ["two stacked rows (the classic agent failure)", "sticky, backgrounds, shadows"]
-    },
-    {
-      "name": "site-header",
-      "classes": [".u-header", ".u-header-mark", ".u-header-name", ".u-header-tagline", ".u-nav"],
-      "use": "uinaf.dev family sites ONLY (stacked mark → tagline → nav)",
-      "rules": ["the page title outranks the chrome"],
-      "never": ["on product pages — that's what the topbar is for"]
+      "never": ["a sitemap of every route, or social icons"]
     },
     {
       "name": "hero",
@@ -142,39 +163,10 @@
       "rules": ["row is one .u-link-plain when it links"]
     },
     {
-      "name": "table",
-      "classes": [".u-table"],
-      "use": "micro-label headers, hairline rules, numerics right (data-num)",
-      "rules": ["first column brightest", "row hover = subtle bg; selected = accent-soft tint"],
-      "never": ["zebra stripes", "heavy grid lines"],
-      "markup": "<table class=\"u-table\">\n  <thead><tr><th>service</th><th>status</th><th data-num>p99</th></tr></thead>\n  <tbody>\n    <tr><td>gateway</td><td><i class=\"u-dot u-dot--live\"></i>live</td><td data-num>41ms</td></tr>\n    <tr data-selected=\"\"><td>healthd</td><td><i class=\"u-dot u-dot--ok\"></i>ok</td><td data-num>8ms</td></tr>\n    <tr><td>relay</td><td><i class=\"u-dot\"></i>idle</td><td data-num>—</td></tr>\n  </tbody>\n</table>",
-      "$markupSource": "derived from preview/components-table.html; [data-num] and u-* classes only"
-    },
-    {
-      "name": "shell",
-      "classes": [".u-shell-narrow", ".u-shell-base", ".u-shell-wide"],
-      "use": "narrow 40rem (default — prose, home, detail) · base 48rem (data-dense: tables, dashboards) · wide 72rem (rare) · one product = one width",
-      "rules": ["if unsure, narrow", "never widen a shell to fit one element"]
-    },
-    {
-      "name": "tabs",
-      "classes": [".u-tabs"],
-      "use": "in-page view switching under the topbar",
-      "rules": ["current = fg + 1px underline; tabs switch views, never trigger actions"]
-    },
-    {
-      "name": "segmented",
-      "classes": [".u-segmented"],
-      "use": "2-4 short exclusive views (7d/30d/90d)",
-      "rules": ["26px bordered group; active = raised bg", "aria-pressed carries state"],
-      "never": ["actions in a segmented control"]
-    },
-    {
-      "name": "breadcrumbs",
-      "classes": [".u-crumbs"],
-      "use": "path with / separators",
-      "markup": "<nav class=\"u-crumbs\"><a href=\"#\">uinaf/slopzapper</a><span class=\"sep\">/</span><span aria-current=\"page\">runs</span></nav>",
-      "rules": ["current page brightest"]
+      "name": "log",
+      "classes": [".u-log"],
+      "use": "faint timestamps, leveled rows",
+      "rules": ["the level word takes the color — never the message"]
     },
     {
       "name": "menu",
@@ -187,23 +179,15 @@
       ]
     },
     {
-      "name": "toolbar",
-      "classes": [".u-toolbar"],
-      "use": "above tables: search + filter + right-aligned count",
-      "rules": ["at most two filters — a third means the table needs a redesign"]
-    },
-    {
-      "name": "pagination",
-      "classes": [".u-pager"],
-      "use": "under tables: 26px ghost numbers, current bordered",
-      "markup": "<nav class=\"u-pager\"><button type=\"button\" disabled>← prev</button><a aria-current=\"page\" href=\"#\">01</a><a href=\"#\">02</a><button type=\"button\">next →</button></nav>"
-    },
-    {
-      "name": "empty-state",
-      "classes": [".u-empty"],
-      "use": "dashed region, one dry line, one action",
-      "rules": ["a code snippet may stand in as the action for CLI products"],
-      "never": ["illustrations", "multi-paragraph explanations"]
+      "name": "micro-label",
+      "classes": [".u-label", ".u-label--accent", ".u-meta"],
+      "use": "THE hierarchy device: kicks off sections, heads tables, labels fields, captions stats",
+      "markup": "<span class=\"u-label\">recent reviews</span>",
+      "rules": [
+        "11px uppercase tracked dim — the only uppercase besides abbreviations",
+        "fix weak hierarchy with a micro-label + space, never with size"
+      ],
+      "never": ["accent color except one active marker per view"]
     },
     {
       "name": "modal",
@@ -215,16 +199,34 @@
       ]
     },
     {
-      "name": "toast",
-      "classes": [".u-toasts", ".u-toast"],
-      "use": "bottom right, dot + dry past-tense line",
-      "rules": ["gone in 3s, max 3 stacked", "past tense: `saved.` not `saving your changes!`"]
-    },
-    {
       "name": "notice",
       "classes": [".u-notice"],
       "use": "the allowed non-banner: hairline box, dot carries the color",
       "rules": ["text stays muted — the dot is the signal"]
+    },
+    {
+      "name": "pagination",
+      "classes": [".u-pager"],
+      "use": "under tables: 26px ghost numbers, current bordered",
+      "markup": "<nav class=\"u-pager\"><button type=\"button\" disabled>← prev</button><a aria-current=\"page\" href=\"#\">01</a><a href=\"#\">02</a><button type=\"button\">next →</button></nav>"
+    },
+    {
+      "name": "panel",
+      "classes": [".u-panel", ".u-ticks"],
+      "use": "bordered region for grouping DATA (whitespace groups prose)",
+      "markup": "<div class=\"u-panel u-ticks\">…</div>",
+      "rules": [
+        "20px air inside",
+        "corner ticks (.u-ticks) for technical-drawing framing on panels, figures, hero bands"
+      ],
+      "never": ["borders around prose", "background bands to mark sections"]
+    },
+    {
+      "name": "panel-grid",
+      "classes": [".u-panel-grid"],
+      "use": "panels sharing single hairlines — stat strips, feature grids, kanban",
+      "markup": "<div class=\"u-panel-grid\" style=\"grid-template-columns:repeat(3,1fr)\"><div class=\"u-stat\">…</div>…</div>",
+      "rules": ["1px gap over border color = shared hairlines, no double borders"]
     },
     {
       "name": "progress",
@@ -234,29 +236,91 @@
       "never": ["bars, percentages, spinners — progress is countable or it isn't shown"]
     },
     {
-      "name": "charts",
-      "classes": [
-        ".u-spark",
-        ".u-bars",
-        ".u-chart",
-        ".u-uptime",
-        ".u-stack",
-        ".u-legend",
-        ".u-axis"
-      ],
-      "use": "sparklines in stats · bars · line · uptime strip · stacked distribution",
+      "name": "prose",
+      "classes": [".u-prose", ".u-link", ".u-link-plain"],
+      "use": "long-form at narrow measure",
       "rules": [
-        "series 1 = accent, 2+ = slime (cyan/purple/magenta/green)",
-        "bars neutral with ONE hot period",
-        "SVG for spark/line (data, not decoration); CSS for bars/dots/stack"
-      ],
-      "never": ["chart junk: legends for one series, fills beyond the rare accent area, glows"]
+        "three link families, never mixed on one surface: prose (dim underline, phosphor hover) · plain chrome (opacity fade) · whole-card"
+      ]
     },
     {
-      "name": "diff",
-      "classes": [".u-diff", ".u-finding"],
-      "use": "tinted add/del lines; findings pin to their line as hairline inset panels",
-      "rules": ["finding = dot + bold-lead dry sentence with file/line specificity"]
+      "name": "segmented",
+      "classes": [".u-segmented"],
+      "use": "2-4 short exclusive views (7d/30d/90d)",
+      "rules": ["26px bordered group; active = raised bg", "aria-pressed carries state"],
+      "never": ["actions in a segmented control"]
+    },
+    {
+      "name": "shell",
+      "classes": [".u-shell-narrow", ".u-shell-base", ".u-shell-wide"],
+      "use": "narrow 40rem (default — prose, home, detail) · base 48rem (data-dense: tables, dashboards) · wide 72rem (rare) · one product = one width",
+      "rules": ["if unsure, narrow", "never widen a shell to fit one element"]
+    },
+    {
+      "name": "site-header",
+      "classes": [".u-header", ".u-header-mark", ".u-header-name", ".u-header-tagline", ".u-nav"],
+      "use": "uinaf.dev family sites ONLY (stacked mark → tagline → nav)",
+      "rules": ["the page title outranks the chrome"],
+      "never": ["on product pages — that's what the topbar is for"]
+    },
+    {
+      "name": "skeleton",
+      "classes": [".u-skeleton", ".u-skeleton--text", ".u-skeleton--title", ".u-skeleton--stat"],
+      "use": "loading placeholder shaped like the content it replaces",
+      "markup": "<div class=\"u-skeleton u-skeleton--title\"></div>\n<div class=\"u-skeleton u-skeleton--text\" style=\"margin-top:12px\"></div>",
+      "rules": [
+        "match the real element’s height so nothing shifts when it resolves",
+        "the sheen stops under prefers-reduced-motion"
+      ],
+      "never": ["a spinner, or a skeleton for something that loads instantly"]
+    },
+    {
+      "name": "stat",
+      "classes": [".u-stat", ".u-stat-value", ".u-stat-note"],
+      "use": "label / value / note; lives in panels or panel grids",
+      "markup": "<div class=\"u-stat\"><span class=\"u-label\">queue</span><span class=\"u-stat-value\">7</span><span class=\"u-stat-note\">PRs waiting</span></div>",
+      "rules": ["value is 24px — same step as page titles", "a sparkline may replace the note"]
+    },
+    {
+      "name": "switch",
+      "classes": [".u-switch"],
+      "use": "a toggle for a setting that applies immediately, with no save step",
+      "markup": "<label class=\"u-switch\"><input type=\"checkbox\" checked> notify on finish</label>",
+      "rules": ["use a switch only for instant-apply; anything behind a save button is a checkbox"],
+      "never": ["pairing a switch with a save button"]
+    },
+    {
+      "name": "table",
+      "classes": [".u-table"],
+      "use": "micro-label headers, hairline rules, numerics right (data-num)",
+      "rules": ["first column brightest", "row hover = subtle bg; selected = accent-soft tint"],
+      "never": ["zebra stripes", "heavy grid lines"],
+      "markup": "<table class=\"u-table\">\n  <thead><tr><th>service</th><th>status</th><th data-num>p99</th></tr></thead>\n  <tbody>\n    <tr><td>gateway</td><td><i class=\"u-dot u-dot--live\"></i>live</td><td data-num>41ms</td></tr>\n    <tr data-selected=\"\"><td>healthd</td><td><i class=\"u-dot u-dot--ok\"></i>ok</td><td data-num>8ms</td></tr>\n    <tr><td>relay</td><td><i class=\"u-dot\"></i>idle</td><td data-num>—</td></tr>\n  </tbody>\n</table>",
+      "$markupSource": "derived from preview/components-table.html; [data-num] and u-* classes only"
+    },
+    {
+      "name": "tabs",
+      "classes": [".u-tabs"],
+      "use": "in-page view switching under the topbar",
+      "rules": ["current = fg + 1px underline; tabs switch views, never trigger actions"]
+    },
+    {
+      "name": "tag+dot",
+      "classes": [
+        ".u-tag",
+        ".u-dot",
+        ".u-dot--ok",
+        ".u-dot--warn",
+        ".u-dot--error",
+        ".u-dot--live"
+      ],
+      "use": "status = a small muted dot + a lowercase word",
+      "markup": "<span class=\"u-tag\"><span class=\"u-dot u-dot--ok\"></span>pass</span>",
+      "rules": [
+        "tags stay bordered — a filled tag would outrank the buttons",
+        "--live glows accent: reserve for genuinely live things"
+      ],
+      "never": ["neon status", "filled banners"]
     },
     {
       "name": "terminal",
@@ -265,27 +329,63 @@
       "rules": ["the accent caret is the ONE thing allowed to blink"]
     },
     {
-      "name": "log",
-      "classes": [".u-log"],
-      "use": "faint timestamps, leveled rows",
-      "rules": ["the level word takes the color — never the message"]
+      "name": "timeline",
+      "classes": [".u-timeline", ".u-timeline-row"],
+      "use": "time-ordered events — a run log, an audit trail, a changelog",
+      "markup": "<div class=\"u-timeline\">\n<div class=\"u-timeline-row\" data-live><span class=\"u-meta\">now</span><span>cloning uinaf/slopzapper</span></div>\n<div class=\"u-timeline-row\"><span class=\"u-meta\">12m</span><span>review posted — 7 findings</span></div>\n</div>",
+      "rules": [
+        "a single hairline spine on the left, timestamps in a fixed 72px column",
+        "data-live turns the timestamp accent — at most one row"
+      ],
+      "never": ["dots or icons on the spine, or a second accent row"]
     },
     {
-      "name": "code",
-      "classes": [".u-code", ".u-pre", ".u-kbd"],
-      "use": "inline chips on raised fill; blocks darker, 13px",
-      "rules": [
-        "never wrap code — scroll it",
-        "abbreviations in code stay as written (--pr flags, url vars)"
-      ]
+      "name": "toast",
+      "classes": [".u-toasts", ".u-toast"],
+      "use": "bottom right, dot + dry past-tense line",
+      "rules": ["gone in 3s, max 3 stacked", "past tense: `saved.` not `saving your changes!`"]
     },
     {
-      "name": "prose",
-      "classes": [".u-prose", ".u-link", ".u-link-plain"],
-      "use": "long-form at narrow measure",
+      "name": "toolbar",
+      "classes": [".u-toolbar"],
+      "use": "above tables: search + filter + right-aligned count",
+      "rules": ["at most two filters — a third means the table needs a redesign"]
+    },
+    {
+      "name": "tooltip",
+      "classes": [".u-tip"],
+      "use": "a short clarification on hover or focus, from a data-tip attribute",
+      "markup": "<button type=\"button\" class=\"u-btn u-btn-sm u-tip\" data-tip=\"re-runs against the latest commit\">retry</button>",
       "rules": [
-        "three link families, never mixed on one surface: prose (dim underline, phosphor hover) · plain chrome (opacity fade) · whole-card"
-      ]
+        "CSS-only: put the text in data-tip, keep it to a few words",
+        "appears on focus-visible too, so it is reachable by keyboard"
+      ],
+      "never": ["a tooltip carrying information the user needs to complete the task"]
+    },
+    {
+      "name": "topbar",
+      "classes": [
+        ".u-topbar",
+        ".u-topbar-row",
+        ".u-topbar-mark",
+        ".u-topbar-nav",
+        ".u-topbar-actions"
+      ],
+      "use": "EVERY product page, dashboard, logged-in view",
+      "markup": "<header class=\"u-topbar\"><div class=\"u-shell-base u-topbar-row\"><a class=\"u-topbar-mark\" href=\"/\"><img src=\"https://cdn.uinaf.dev/images/webp/uinaf-computer-240w.webp\" alt=\"\">slopzapper</a><nav class=\"u-topbar-nav\"><a aria-current=\"page\" href=\"#\">overview</a>…</nav><div class=\"u-topbar-actions\"><a class=\"u-btn u-btn-sm u-btn-primary\" href=\"#\">new review</a></div></div></header>",
+      "rules": [
+        "ONE 56px row: 20px framed mark + name left, plain links right (current brightest), max one small button",
+        "the row and the content below share the same shell class — one gutter"
+      ],
+      "never": ["two stacked rows (the classic agent failure)", "sticky, backgrounds, shadows"]
+    },
+    {
+      "name": "version",
+      "classes": [".u-version"],
+      "use": "a small inert version or commit chip beside a title",
+      "markup": "<span class=\"u-version\">v1.5.2</span>",
+      "rules": ["inert by default — hairline border, subtle text, 10px"],
+      "never": ["using it as a status pill, or coloring it"]
     }
   ],
   "$markupCoverage": "12 of 31 patterns carry markup and have a generated chunk. 11 came from upstream (card arrived as a placeholder stub and was filled from its preview card); table was added from its preview card. The other 19 serve classes and rules only."
