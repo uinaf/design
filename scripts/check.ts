@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import { parse as parseYaml } from "yaml";
 import path from "node:path";
 
 const root = path.resolve(import.meta.dirname, "..");
@@ -94,19 +95,30 @@ for (const entry of plugin.skills ?? []) {
 const openai = fs.existsSync(path.join(skillDir, "agents/openai.yaml"))
   ? fs.readFileSync(path.join(skillDir, "agents/openai.yaml"), "utf8")
   : fail("skills/uinaf-design/agents/openai.yaml is missing");
-// Anchored to the two-space key indentation. A bare includes() also matches
-// the same words inside the `default_prompt: |` block scalar, which is indented
-// further — so a file with no real keys at all would have passed.
-for (const key of ["display_name", "short_description", "default_prompt"]) {
-  if (!new RegExp(`^  ${key}:\\s*\\S`, "m").test(openai)) {
-    fail(`agents/openai.yaml is missing a top-level \`interface.${key}\``);
+// Parsed, not pattern-matched. Regex checks cannot tell a real key from the
+// same words inside a `default_prompt: |` block scalar, and cannot see that the
+// document is malformed at all — this file ships to consumers and drives the
+// Codex picker, so it has to actually be valid YAML.
+type OpenAiConfig = {
+  interface?: { display_name?: unknown; short_description?: unknown; default_prompt?: unknown };
+  policy?: { allow_implicit_invocation?: unknown };
+};
+const parseOpenAi = (source: string): OpenAiConfig => {
+  try {
+    return (parseYaml(source) ?? {}) as OpenAiConfig;
+  } catch (error) {
+    return fail(`agents/openai.yaml is not valid YAML: ${(error as Error).message}`);
+  }
+};
+const openaiConfig = parseOpenAi(openai);
+for (const key of ["display_name", "short_description", "default_prompt"] as const) {
+  const value = openaiConfig.interface?.[key];
+  if (typeof value !== "string" || value.trim() === "") {
+    fail(`agents/openai.yaml needs a non-empty string at interface.${key}`);
   }
 }
-if (!/^interface:\s*$/m.test(openai)) {
-  fail("agents/openai.yaml needs an `interface:` block");
-}
 // The invocation policy is a deliberate decision (#11), not incidental.
-if (!/^  allow_implicit_invocation:\s*false\s*$/m.test(openai)) {
+if (openaiConfig.policy?.allow_implicit_invocation !== false) {
   fail("agents/openai.yaml must set policy.allow_implicit_invocation: false");
 }
 if (!/^disable-model-invocation:\s*true$/m.test(frontmatter as string)) {
