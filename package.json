@@ -44,15 +44,16 @@
   },
   "scripts": {
     "build": "node scripts/build.ts",
-    "guide:sync": "node scripts/build.ts && node scripts/sync-guide.ts",
-    "check": "vp check && node scripts/check.ts",
-    "test": "vp test run",
-    "verify": "vp check && node scripts/check.ts && vp test run && node scripts/build.ts && node scripts/sync-guide.ts",
+    "guide:sync": "node scripts/build.ts && node scripts/sync-guide.ts && node scripts/machine-layer.ts",
+    "check": "wrangler types && vp check && node scripts/check.ts",
+    "test": "wrangler types && vp test run",
+    "verify": "wrangler types && vp check && node scripts/check.ts && vp test run && node scripts/build.ts && node scripts/sync-guide.ts && node scripts/machine-layer.ts",
     "deploy": "pnpm run guide:sync && wrangler deploy",
     "prepare": "vp config --no-agent",
     "prepublishOnly": "pnpm run verify",
     "fmt": "vp fmt",
-    "lint": "vp lint"
+    "lint": "vp lint",
+    "types:worker": "wrangler types"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
