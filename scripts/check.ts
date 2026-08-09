@@ -54,9 +54,12 @@ for (const template of fs.readdirSync(templatesDir)) {
     const source = fs.readFileSync(path.join(dir, file), "utf8");
     for (const [, reference] of source.matchAll(/["']([^"']+\.css)["']/g)) {
       if (reference.startsWith("https://cdn.uinaf.dev/")) continue;
-      // ds-base.js resolves its list against the package root.
-      const resolved = path.join(root, reference.replace(/^(?:\.\.\/)+/, ""));
-      if (!resolved.startsWith(path.join(root, "dist/css/")) || !fs.existsSync(resolved)) {
+      // ds-base.js resolves its list against the package root. Containment via
+      // path.relative, so `..` inside a reference cannot escape dist/css.
+      const resolved = path.resolve(root, reference.replace(/^(?:\.\.\/)+/, ""));
+      const inside = path.relative(path.resolve(root, "dist/css"), resolved);
+      const contained = inside !== "" && !inside.startsWith("..") && !path.isAbsolute(inside);
+      if (!contained || !fs.existsSync(resolved)) {
         fail(
           `templates/${template}/${file} references ${reference}, which the package does not ship. Stylesheets must live in dist/css/.`,
         );
