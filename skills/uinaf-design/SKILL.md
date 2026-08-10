@@ -68,6 +68,16 @@ The lint enforces these — do not fight it.
 - Do not group prose with borders, or mark sections with background bands
 - Status is a dot plus a word, never a filled banner
 
+Icons are a last resort and the set is closed. Glyphs come first — `↗` external,
+`·` separator, `···` menu, `←` `→` pagination, `.u-dot` status. When a pattern
+genuinely needs one, pick from the eight 16-grid stroke svgs at
+`https://design.uinaf.dev/assets/icons/`: search, copy, download, refresh, file,
+folder, branch, warning. Stroke scales inversely with size — 16/1.5 default,
+12/1.75 in tags and meta rows, 20/1.25 in large buttons and empty states. Never
+import an icon library, never paste from a third-party set (lucide, feather,
+heroicons, geist), and never put an icon beside a word that already says it. A
+new icon is a pull request to the set, in its idiom — never an inline invention.
+
 ## Reference
 
 Every path below is on `https://design.uinaf.dev`, never a route in the repo

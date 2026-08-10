@@ -276,6 +276,11 @@ var STANDALONE_MODIFIERS = /* @__PURE__ */ new Set([
   "u-code--bleed"
 ]);
 var MODIFIER = /^(u-[a-z0-9-]*[a-z0-9])--[a-z0-9-]+$/;
+var ICON_RAMP = /* @__PURE__ */ new Map([
+  [12, 1.75],
+  [16, 1.5],
+  [20, 1.25]
+]);
 var UNITLESS_PROPERTIES = /* @__PURE__ */ new Set([
   "line-height",
   "font-weight",
@@ -382,6 +387,59 @@ var checkMarkup = (source, file) => {
         "warn",
         `${token} without its base class ${base}`,
         `add ${base} alongside it \u2014 a modifier overrides part of its base, so on its own it renders as unstyled content with one property changed`
+      );
+    }
+  }
+  for (const match of source.matchAll(/<svg\b([^>]{0,2000})>/gi)) {
+    const attributes = match[1] ?? "";
+    const property = (name) => {
+      const styled = new RegExp(
+        `(?:^|[;"'{\\s])${name}\\s{0,8}:\\s{0,8}(-?[\\d.]{1,12})`,
+        "i"
+      ).exec(attributes);
+      const attribute = new RegExp(
+        `(?:^|\\s)${name}\\s{0,8}=\\s{0,8}["']?(-?[\\d.]{1,12})`,
+        "i"
+      ).exec(attributes);
+      const raw = styled?.[1] ?? attribute?.[1];
+      return raw === void 0 ? void 0 : Number.parseFloat(raw);
+    };
+    const width = property("width");
+    const height = property("height");
+    const stroke = property("stroke-width");
+    if (width === void 0 && stroke === void 0) continue;
+    const expected = width === void 0 ? void 0 : ICON_RAMP.get(width);
+    if (width !== void 0 && expected === void 0) {
+      add(
+        match.index ?? 0,
+        "icon-size-ramp",
+        "warn",
+        `icon rendered at ${width}px`,
+        "icons render at 16px, 12px in tags and meta rows, or 20px in large buttons and empty states \u2014 nothing between"
+      );
+    } else if (width !== void 0 && height !== void 0 && height !== width) {
+      add(
+        match.index ?? 0,
+        "icon-size-ramp",
+        "warn",
+        `icon is ${width}\xD7${height}, not square`,
+        "the set is drawn on a 16-grid: render it square, so the stroke stays even"
+      );
+    } else if (expected !== void 0 && stroke !== void 0 && stroke !== expected) {
+      add(
+        match.index ?? 0,
+        "icon-size-ramp",
+        "warn",
+        `${width}px icon with stroke-width ${stroke}`,
+        `use stroke-width ${expected} at ${width}px \u2014 the ramp thickens the stroke as the glyph shrinks so the weight reads the same`
+      );
+    } else if (width === void 0 && stroke !== void 0 && ![...ICON_RAMP.values()].includes(stroke)) {
+      add(
+        match.index ?? 0,
+        "icon-size-ramp",
+        "warn",
+        `stroke-width ${stroke} is off the ramp`,
+        "the only stroke widths are 1.5 at 16px, 1.75 at 12px, and 1.25 at 20px"
       );
     }
   }

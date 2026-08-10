@@ -337,6 +337,56 @@ describe("modifier-base", () => {
   });
 });
 
+describe("icon-size-ramp", () => {
+  const ramp = (source: string) => markup(source).filter((v) => v.rule === "icon-size-ramp");
+
+  it("passes on each of the three pairs, in either spelling", () => {
+    expect(ramp('<svg width="16" height="16" stroke-width="1.5"></svg>')).toEqual([]);
+    expect(ramp('<svg style="width:12px;height:12px;stroke-width:1.75"></svg>')).toEqual([]);
+    expect(ramp('<svg style="width:20px;height:20px;stroke-width:1.25"></svg>')).toEqual([]);
+  });
+
+  it("says nothing about an svg carrying neither a size nor a stroke", () => {
+    // Sparklines, charts, and icons sized by a class. Reading the 16-grid
+    // viewBox as a 16px render would flag every one of them.
+    expect(ramp('<svg class="u-spark" viewBox="0 0 100 28"></svg>')).toEqual([]);
+    expect(ramp('<svg class="icon" viewBox="0 0 16 16"></svg>')).toEqual([]);
+  });
+
+  it("warns on a stroke that does not match the size", () => {
+    const [violation] = ramp('<svg width="20" height="20" stroke-width="1.5"></svg>');
+    expect(violation.message).toContain("1.5");
+    expect(violation.fix).toContain("1.25");
+    // Same reason as modifier-base: the rule ships in the tarball.
+    expect(violation.severity).toBe("warn");
+  });
+
+  it("warns on a size off the ramp, before judging its stroke", () => {
+    const found = ramp('<svg width="18" height="18" stroke-width="1.5"></svg>');
+    expect(found).toHaveLength(1);
+    expect(found[0].message).toContain("18px");
+  });
+
+  it("warns on a non-square icon", () => {
+    expect(ramp('<svg width="16" height="20" stroke-width="1.5"></svg>')[0].message).toContain(
+      "16×20",
+    );
+  });
+
+  it("warns on an off-ramp stroke even when the size comes from a class", () => {
+    expect(
+      ramp('<svg class="icon" stroke-width="2" viewBox="0 0 16 16"></svg>')[0].message,
+    ).toContain("2");
+    expect(ramp('<svg class="icon" stroke-width="1.75" viewBox="0 0 16 16"></svg>')).toEqual([]);
+  });
+
+  it("lets inline style win over the presentation attribute, as CSS does", () => {
+    expect(ramp('<svg width="16" style="width:20px;height:20px;stroke-width:1.25"></svg>')).toEqual(
+      [],
+    );
+  });
+});
+
 describe("status-shape", () => {
   it("passes on a dot and a word", () => {
     expect(rules(markup('<span><i class="u-dot u-dot--ok"></i>ok</span>'))).not.toContain(
