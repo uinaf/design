@@ -4,11 +4,13 @@
 #   SMOKE_PORT       port to bind (default 8788; set it per worktree)
 #   SMOKE_TIMEOUT    seconds to wait for the worker to answer (default 90)
 #   SMOKE_ARTIFACTS  directory for the server and smoke logs (default .smoke)
+#   SMOKE_BUILD_TIMEOUT  seconds allowed to build a missing guide (default 300)
 set -euo pipefail
 
 port="${SMOKE_PORT:-8788}"
 timeout_seconds="${SMOKE_TIMEOUT:-90}"
 artifacts="${SMOKE_ARTIFACTS:-.smoke}"
+build_timeout="${SMOKE_BUILD_TIMEOUT:-300}"
 
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 mkdir -p "$artifacts"
@@ -35,6 +37,7 @@ fi
 
 server_pid=""
 client_pid=""
+sync_pid=""
 interrupted=""
 guide_lock=""
 
@@ -42,16 +45,24 @@ guide_lock=""
 # TERM then KILL, because a wrapper that ignores TERM would otherwise leave this
 # waiting forever on every exit path — and `wait` returns when the wrapper goes,
 # which is not the same as the listener going.
+# A wrapper's children outlive a signal sent to the wrapper alone, so everything
+# long-running here starts in its own process group and is signalled by group.
+stop_group() {
+  local pid="$1" signal="${2:-TERM}"
+  kill "-$signal" -- "-$pid" 2>/dev/null || kill "-$signal" "$pid" 2>/dev/null || true
+}
+
 cleanup() {
   local status=$?
+  [ -n "$sync_pid" ] && stop_group "$sync_pid" KILL
   [ -n "$guide_lock" ] && rmdir "$guide_lock" 2>/dev/null
   [ -n "$server_pid" ] || return "$status"
-  kill -- "-$server_pid" 2>/dev/null || kill "$server_pid" 2>/dev/null || true
+  stop_group "$server_pid" TERM
   for _ in 1 2 3 4 5; do
     kill -0 -- "-$server_pid" 2>/dev/null || break
     sleep 1
   done
-  kill -9 -- "-$server_pid" 2>/dev/null || kill -9 "$server_pid" 2>/dev/null || true
+  stop_group "$server_pid" KILL
   wait "$server_pid" 2>/dev/null || true
   # A warning here would be swallowed: an EXIT trap keeps the pre-trap status, so
   # a passing contract run would still exit 0 with a listener left behind — the
@@ -94,15 +105,39 @@ if [ ! -f guide/design.md ]; then
   guide_lock="$lock"
   if [ ! -f guide/design.md ]; then
     echo "smoke: guide assets are missing; building them first"
-    if ! pnpm run guide:sync >"$artifacts/guide-sync.log" 2>&1; then
+    # Backgrounded and bounded, like everything else here: in the foreground a
+    # hung build blocks the INT/TERM traps and the Worker never even starts.
+    set -m
+    pnpm run guide:sync >"$artifacts/guide-sync.log" 2>&1 &
+    sync_pid=$!
+    set +m
+    sync_deadline=$(($(date +%s) + build_timeout))
+    while kill -0 "$sync_pid" 2>/dev/null; do
+      [ -n "$interrupted" ] && {
+        stop_group "$sync_pid" KILL
+        echo "smoke: interrupted while building the guide" >&2
+        exit 130
+      }
+      [ "$(date +%s)" -lt "$sync_deadline" ] || {
+        stop_group "$sync_pid" KILL
+        echo "smoke: guide:sync did not finish within ${build_timeout}s." >&2
+        exit 1
+      }
+      sleep 1
+    done
+    wait "$sync_pid" || {
       echo "smoke: guide:sync failed. Last lines of $artifacts/guide-sync.log:" >&2
       tail -20 "$artifacts/guide-sync.log" >&2
       exit 1
-    fi
+    }
+    sync_pid=""
   fi
   rmdir "$guide_lock" 2>/dev/null || true
   guide_lock=""
 fi
+
+# The boot deadline is for the boot. Building the guide above must not eat it.
+deadline=$(($(date +%s) + timeout_seconds))
 
 set -m
 pnpm exec wrangler dev --port "$port" --persist-to "$artifacts/wrangler-state" >"$server_log" 2>&1 &
