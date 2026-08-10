@@ -9,7 +9,7 @@ one typeface, near-black, hairline borders, one accent, visible structure.
 | file                     | what                                                                                           |
 | ------------------------ | ---------------------------------------------------------------------------------------------- |
 | `@uinaf/design/css`      | tokens + ready styles implementing everything below. the only css you import                   |
-| `templates/`             | starting points: uinaf.dev homepage, blog index, blog post                                     |
+| `templates/`             | uinaf.dev's own surfaces, plus fixed-size `export-*` artboards for OG and README images        |
 | Berkeley Mono (CDN only) | `https://cdn.uinaf.dev/fonts/berkeley-mono/variable/font.css` — never vendored in this package |
 | brand images (CDN only)  | `https://cdn.uinaf.dev/images/…` — see the `CDN` export; never vendored in this package        |
 | `preview/`               | one card per pattern — the canonical reference for each                                        |

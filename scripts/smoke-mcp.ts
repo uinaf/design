@@ -99,9 +99,16 @@ const { tools = [] } = (await rpc("tools/list")) as {
 };
 const names = tools.map((t) => t.name).sort();
 check(
-  "tools/list returns the five read tools",
+  "tools/list returns the six read tools",
   JSON.stringify(names) ===
-    JSON.stringify(["get_page", "get_pattern", "get_tokens", "list_patterns", "search_guidelines"]),
+    JSON.stringify([
+      "get_page",
+      "get_pattern",
+      "get_template",
+      "get_tokens",
+      "list_patterns",
+      "search_guidelines",
+    ]),
   names.join(", "),
 );
 check(
@@ -178,6 +185,51 @@ const badPage = await call("get_page", { name: "nonsense" });
 check(
   "get_page error lists valid pages",
   badPage.includes("No reference page named") && badPage.includes("dashboard"),
+);
+
+// Same reason as the pages loop: a template whose asset never synced would still
+// answer the tool, with a 404 body. Every template, marker stripped.
+for (const name of [
+  "homepage",
+  "blog-index",
+  "blog-post",
+  "changelog",
+  "projects",
+  "project-page",
+  "roadmap",
+  "status",
+  "not-found",
+  "export-og-card",
+  "export-og-card-post",
+  "export-readme-banner",
+  "export-repo-banner",
+]) {
+  const template = await call("get_template", { name });
+  check(
+    `get_template returns ${name} with markup`,
+    template.includes("```html") && template.includes("class=") && !template.includes("@template"),
+  );
+}
+
+// The canvas size is the one thing that separates an artboard from a page. An
+// artboard answering without it reads as a surface to adapt.
+const artboard = await call("get_template", { name: "export-readme-banner" });
+check(
+  "get_template states the fixed canvas of an export artboard",
+  artboard.includes("2560×568"),
+  artboard.slice(0, 300),
+);
+
+const templateList = await call("get_template");
+check(
+  "get_template with no name lists the templates",
+  templateList.includes("homepage") && templateList.includes("export-og-card"),
+);
+
+const badTemplate = await call("get_template", { name: "nonsense" });
+check(
+  "get_template error lists valid templates",
+  badTemplate.includes("No template named") && badTemplate.includes("homepage"),
 );
 
 const color = await call("search_guidelines", { query: "accent" });

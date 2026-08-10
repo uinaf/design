@@ -149,4 +149,72 @@ for (const file of fs.readdirSync(pagesDest).sort()) {
 }
 fs.writeFileSync(path.join(guide, "pages.json"), `${JSON.stringify(pages, null, 2)}\n`);
 
-console.log(`guide synced (${catalog.length} previews, ${pages.length} pages)`);
+/**
+ * Templates are whole surfaces too, so they publish like pages: no guide chrome,
+ * marker stripped, `@template` fails closed.
+ *
+ * Four of them are export artboards — fixed canvases up to 2560px wide, sized
+ * for the file they become rather than for a viewport. Published untouched they
+ * would be a page you scroll sideways to read, so the artboard is zoomed to fit.
+ * `zoom` and not `transform`, because zoom reflows: a scaled canvas leaves no
+ * dead space under it.
+ */
+const exportFit = (width: number): string => `<style id="export-fit">
+  html { background: var(--bg); }
+  body.uinaf { margin: 0; zoom: var(--export-fit, 1); }
+</style>
+<script>
+  const fit = () =>
+    document.documentElement.style.setProperty(
+      "--export-fit",
+      String(Math.min(1, window.innerWidth / ${width})),
+    )
+  fit()
+  addEventListener("resize", fit)
+</script>
+`;
+
+type TemplateEntry = {
+  slug: string;
+  name: string;
+  description: string;
+  canvas?: { width: number; height: number };
+};
+
+const templatesSrc = path.join(root, "templates");
+const templatesDest = path.join(guide, "templates");
+fs.rmSync(templatesDest, { recursive: true, force: true });
+fs.cpSync(templatesSrc, templatesDest, { recursive: true });
+
+const templates: TemplateEntry[] = [];
+for (const file of fs.readdirSync(templatesDest).sort()) {
+  if (!file.endsWith(".html")) continue;
+  const target = path.join(templatesDest, file);
+  const html = fs.readFileSync(target, "utf8");
+  const m = /@template\s+name="([^"]+)"\s+description="([^"]*)"/.exec(html);
+  if (!m) throw new Error(`templates/${file} has no @template marker`);
+  const slug = file.replace(/\.html$/, "");
+
+  let published = html
+    .replace(/^\s*<!--\s*@template[\s\S]*?-->\s*$\n?/m, "")
+    .replace(/href="[^"]*tokens\.css[^"]*"/g, 'href="/tokens.css"');
+
+  // The artboard is the first element in the body and states its own size, so
+  // the fit factor is read off the markup rather than declared twice.
+  let canvas: TemplateEntry["canvas"];
+  if (slug.startsWith("export-")) {
+    const size = /width:\s*(\d+)px;\s*height:\s*(\d+)px/.exec(published);
+    if (!size)
+      throw new Error(`templates/${file} is an export artboard with no width:…px;height:…px`);
+    canvas = { width: Number(size[1]), height: Number(size[2]) };
+    published = published.replace(/<\/head>/i, `${exportFit(canvas.width)}</head>`);
+  }
+
+  fs.writeFileSync(target, published);
+  templates.push({ slug, name: m[1], description: m[2], ...(canvas ? { canvas } : {}) });
+}
+fs.writeFileSync(path.join(guide, "templates.json"), `${JSON.stringify(templates, null, 2)}\n`);
+
+console.log(
+  `guide synced (${catalog.length} previews, ${pages.length} pages, ${templates.length} templates)`,
+);

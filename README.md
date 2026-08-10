@@ -36,7 +36,7 @@ import { CDN } from "@uinaf/design/cdn";
 | `dist/tokens.js`       | Flat token map                               |
 | `DESIGN.md`            | Full design spec                             |
 | `preview/`             | Canonical pattern cards                      |
-| `templates/`           | Starter HTML                                 |
+| `templates/`           | uinaf.dev surfaces + export artboards        |
 | `skills/uinaf-design/` | Agent skill                                  |
 
 ## Docs

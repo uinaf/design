@@ -14,6 +14,11 @@ disable-model-invocation: true
      `https://design.uinaf.dev/pages/<name>.md` — `product-landing`,
      `dashboard`, `login`, `settings`, `docs`, `device-auth`. Keep the
      structure; the layout is the design.
+   - Building a **uinaf-owned surface** — uinaf.dev itself, a blog, a repo's
+     social image? `https://design.uinaf.dev/templates/<name>.md` — `homepage`,
+     `blog-index`, `blog-post`, `changelog`, `projects`, `project-page`,
+     `roadmap`, `status`, `not-found`, and the `export-*` artboards. An artboard
+     is a fixed canvas; render it at the size it states, do not adapt it.
    - Building **one component**? `https://design.uinaf.dev/components.json` to
      find the nearest pattern, then
      `https://design.uinaf.dev/patterns/<name>.md` for its markup.
@@ -21,7 +26,8 @@ disable-model-invocation: true
    gives tokens and every pattern class. Take exact values from
    `https://design.uinaf.dev/tokens.json` when writing custom CSS.
 3. **Prefer the MCP tools when connected** (`https://design.uinaf.dev/mcp`):
-   `get_page`, `list_patterns`, `get_pattern`, `get_tokens`, `search_guidelines`.
+   `get_page`, `get_template`, `list_patterns`, `get_pattern`, `get_tokens`,
+   `search_guidelines`.
 4. **Finish on green.** `npm run design:check` must pass before you are done.
    Red is not done, and neither is silencing it.
 
@@ -83,14 +89,15 @@ new icon is a pull request to the set, in its idiom — never an inline inventio
 Every path below is on `https://design.uinaf.dev`, never a route in the repo
 you are working in.
 
-| Where                 | What                                                    |
-| --------------------- | ------------------------------------------------------- |
-| `/pages/<name>.md`    | a whole reference screen, markup included               |
-| `/components.json`    | every pattern: classes, use, rules, nevers              |
-| `/patterns/<name>.md` | one pattern, contract plus copyable markup              |
-| `/tokens.json`        | tokens grouped by role                                  |
-| `/design.md`          | the spec: voice, type, color, structure, layout, motion |
-| `/llms.txt`           | index of the above                                      |
+| Where                  | What                                                    |
+| ---------------------- | ------------------------------------------------------- |
+| `/pages/<name>.md`     | a whole reference screen, markup included               |
+| `/templates/<name>.md` | a uinaf.dev surface or a fixed-size export artboard     |
+| `/components.json`     | every pattern: classes, use, rules, nevers              |
+| `/patterns/<name>.md`  | one pattern, contract plus copyable markup              |
+| `/tokens.json`         | tokens grouped by role                                  |
+| `/design.md`           | the spec: voice, type, color, structure, layout, motion |
+| `/llms.txt`            | index of the above                                      |
 
 ## When a choice is not covered
 

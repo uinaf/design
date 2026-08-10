@@ -82,6 +82,114 @@ describe("reference pages", () => {
   });
 });
 
+describe("published templates", () => {
+  const templates = JSON.parse(
+    readFileSync(resolve(root, "guide/templates.json"), "utf8"),
+  ) as Array<{
+    slug: string;
+    name: string;
+    description: string;
+    canvas?: { width: number; height: number };
+  }>;
+  const published = (slug: string) =>
+    readFileSync(resolve(root, "guide/templates", `${slug}.html`), "utf8");
+
+  it("publishes every template in the source tree", () => {
+    expect(templates.map((t) => t.slug).sort()).toEqual([
+      "blog-index",
+      "blog-post",
+      "changelog",
+      "export-og-card",
+      "export-og-card-post",
+      "export-readme-banner",
+      "export-repo-banner",
+      "homepage",
+      "not-found",
+      "project-page",
+      "projects",
+      "roadmap",
+      "status",
+    ]);
+  });
+
+  it("strips the authoring marker from published output", () => {
+    for (const template of templates) {
+      expect(published(template.slug)).not.toMatch(/@template|@dsCard/);
+    }
+  });
+
+  it("points every template at the served stylesheet, not the source tree", () => {
+    for (const template of templates) {
+      const html = published(template.slug);
+      expect(html).toContain('href="/tokens.css"');
+      expect(html).not.toContain("../dist/");
+    }
+  });
+
+  it("resolves no template placeholders into published markup", () => {
+    for (const template of templates) {
+      expect(published(template.slug)).not.toMatch(/\{\{|<sc-|<x-dc/);
+    }
+  });
+
+  it("describes each template, since get_template lists descriptions", () => {
+    for (const template of templates) {
+      expect(template.description.trim().length).toBeGreaterThan(20);
+    }
+  });
+
+  // The canvas is what tells get_template an artboard is a file, not a page, and
+  // it is also the fit divisor. A hand-typed size that drifts from the artboard
+  // would scale the wrong surface and mislabel it in the same stroke, so both
+  // come from the markup and both are checked against it.
+  const artboards = () => templates.filter((t) => t.slug.startsWith("export-"));
+
+  it("carries a canvas for every export artboard and none for a page", () => {
+    expect(artboards().map((t) => t.slug).length).toBe(4);
+    for (const template of templates) {
+      expect(Boolean(template.canvas)).toBe(template.slug.startsWith("export-"));
+    }
+  });
+
+  it("takes each canvas from the artboard's own declared size", () => {
+    for (const template of artboards()) {
+      const { width, height } = template.canvas!;
+      expect(published(template.slug)).toContain(`width:${width}px;height:${height}px`);
+    }
+  });
+
+  it("fits each artboard to the viewport by its own width", () => {
+    for (const template of artboards()) {
+      const html = published(template.slug);
+      expect(html).toContain('id="export-fit"');
+      expect(html).toContain(`window.innerWidth / ${template.canvas!.width}`);
+    }
+  });
+
+  it("leaves the site templates unzoomed", () => {
+    for (const template of templates.filter((t) => !t.slug.startsWith("export-"))) {
+      expect(published(template.slug)).not.toContain("export-fit");
+    }
+  });
+});
+
+describe("verify order", () => {
+  const scripts = (
+    JSON.parse(readFileSync(resolve(root, "package.json"), "utf8")) as {
+      scripts: Record<string, string>;
+    }
+  ).scripts;
+
+  it("builds the guide before the tests that read it", () => {
+    // The page and template suites above assert on published output. `guide/` is
+    // gitignored, so on a cold checkout — every CI run — tests placed before
+    // `guide:sync` fail on a missing file rather than on the contract.
+    const { verify } = scripts;
+    expect(verify).toContain("guide:sync");
+    expect(verify.indexOf("guide:sync")).toBeLessThan(verify.indexOf("vp test run"));
+  });
+});
+
 describe("mcp runtime config", () => {
   const wrangler = readFileSync(resolve(root, "wrangler.toml"), "utf8");
 

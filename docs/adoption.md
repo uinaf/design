@@ -41,7 +41,8 @@ This repo's UI is uinaf-branded.
    `https://design.uinaf.dev/patterns/<name>.md` for its markup. Every path here
    is on design.uinaf.dev, not a route in this repo. If the `design-uinaf` MCP
    server is connected, prefer its tools:
-   `get_page`, `get_pattern`, `get_tokens`, `search_guidelines`, `list_patterns`.
+   `get_page`, `get_template`, `get_pattern`, `get_tokens`, `search_guidelines`,
+   `list_patterns`.
 2. **Styles come from `@uinaf/design`.** `@import "@uinaf/design/css";` gives
    tokens and every `u-*` class. Take exact values from
    `https://design.uinaf.dev/tokens.json` when
