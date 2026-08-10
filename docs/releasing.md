@@ -2,12 +2,25 @@
 
 ## Pipelines
 
-| Workflow                        | On push to `main`                                                   |
-| ------------------------------- | ------------------------------------------------------------------- |
-| `.github/workflows/main.yml`    | verify → secrets → guide deploy (`production`)                      |
-| `.github/workflows/release.yml` | verify → secrets → npm publish (`release`, OIDC + `uinaf-releaser`) |
+A push to `main` runs one workflow, `.github/workflows/release.yml`:
 
-Guide deploy stays independent of npm so `design.uinaf.dev` keeps shipping even when a release job fails. Do not make deploy `needs: [release]`.
+```text
+verify ──┐
+         ├──> deploy   guide to design.uinaf.dev  (production environment)
+secrets ─┘
+         └──> release  npm publish, OIDC + uinaf-releaser  (release environment)
+```
+
+`verify` and `secrets` are the shared gate, called from `verify.yml` and
+`secrets.yml` so one definition serves pull requests, the merge queue, and this
+push. They were copied into two push-to-`main` workflows before, so every merge
+ran the whole gate twice and the two runs raced the same commit.
+
+`deploy` and `release` are siblings, not a chain. Guide deploy stays independent
+of npm so `design.uinaf.dev` keeps shipping even when a release job fails. Do
+not make deploy `needs: [release]`.
+
+The file name `release.yml` is load-bearing — see below.
 
 ## npm
 
@@ -20,7 +33,16 @@ Required on the `release` GitHub Environment:
 | `UINAF_RELEASE_APP_CLIENT_ID`   | var    | GitHub App client id for the releaser bot   |
 | `UINAF_RELEASE_APP_PRIVATE_KEY` | secret | GitHub App private key for the releaser bot |
 
-npm trusted publisher is already registered for this repo / workflow file (`release.yml`) / `release` environment.
+npm trusted publisher is already registered for this repo / workflow file
+(`release.yml`) / `release` environment. The registration is by **file path**,
+so `.github/workflows/release.yml` cannot be renamed or moved without editing
+the trusted publisher on npmjs.com first. A rename fails the publish with an
+identity mismatch, and nothing earlier in the run reports it.
+
+Deleting the `release` environment deletes both rows above with it, and there is
+no repo-level fallback: `create-github-app-token` then runs with empty inputs and
+the job fails at that step. The private key cannot be read back from GitHub —
+recreating it means generating a new one in the App settings.
 
 During semantic-release preparation, npm stages the released `package.json`
 version and `@jno21/semantic-release-github-commit` commits it to `main` through
@@ -36,7 +58,7 @@ npm publish --access public
 
 ## Guide
 
-CI deploys from `.github/workflows/main.yml` via the `production` GitHub Environment.
+CI deploys from the `deploy` job in `.github/workflows/release.yml` via the `production` GitHub Environment.
 
 Required on `production`:
 

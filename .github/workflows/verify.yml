@@ -4,14 +4,22 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
   merge_group:
+  # release.yml calls this for pushes to main. One definition serves every
+  # trigger; a second copy is how the gate drifts from the gate that guards
+  # the branch it ships from.
+  workflow_call:
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
+  # `github.workflow` and `github.ref` resolve to the caller's, so a called run
+  # groups under its caller and never collides with a PR run.
   group: verify-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  # A superseded pull request run is waste. A superseded push to main is not:
+  # it is the run whose result the release and deploy jobs need.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   verify:
