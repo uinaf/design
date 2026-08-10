@@ -104,16 +104,20 @@ check(
 
 const list = await call("list_patterns");
 check("list_patterns includes topbar", list.includes("topbar"));
-check("list_patterns flags patterns without markup", list.includes("(no markup yet)"));
+// Every pattern has carried markup since #33, and a unit test holds that
+// invariant. The served listing has to agree: a pattern the server reports as
+// empty is one an agent will not copy, whatever the JSON on disk says.
+check("list_patterns reports no pattern without markup", !list.includes("(no markup yet)"), list);
 
 const topbar = await call("get_pattern", { name: "topbar" });
 check("get_pattern returns markup", topbar.includes("u-topbar-row") && topbar.includes("```html"));
 check("get_pattern returns rules", topbar.toLowerCase().includes("56px"));
 
-const gap = await call("get_pattern", { name: "modal" });
+const modal = await call("get_pattern", { name: "modal" });
 check(
-  "get_pattern explains a missing-markup pattern",
-  gap.includes("No markup is published") && gap.includes("u-modal"),
+  "get_pattern returns markup for a non-headline pattern too",
+  modal.includes("u-modal") && modal.includes("```html"),
+  modal.slice(0, 200),
 );
 
 const unknown = await call("get_pattern", { name: "nonsense" });

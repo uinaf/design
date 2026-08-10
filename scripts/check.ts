@@ -98,6 +98,7 @@ if (fs.existsSync(path.join(root, "fonts"))) {
 
 type PackageJson = {
   files?: string[];
+  scripts?: Record<string, string>;
 };
 
 const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8")) as PackageJson;
@@ -127,6 +128,52 @@ for (const entry of shipped) {
   if (!fs.existsSync(path.join(root, entry))) {
     fail(`package.json files lists ${entry}, which does not exist`);
   }
+}
+
+// A script no gate runs is a check that cannot fail. `scripts/smoke-mcp.ts` sat
+// behind a `smoke:mcp` package script for two releases asserting that some
+// patterns still had no markup — false since #33 — and nothing noticed, because
+// nothing ran it. Every runnable script now has to be reachable from `verify`,
+// or be listed here as deliberately manual with the reason.
+const MANUAL: Record<string, string> = {};
+const scripts = pkg.scripts ?? {};
+const reached = new Set<string>();
+// Comments are stripped first, or this paragraph would mark smoke-mcp.ts
+// reachable by naming its path — a guard that a comment can satisfy is the
+// fail-open it exists to prevent.
+const stripComments = (source: string): string =>
+  source
+    .replace(/\/\*[\s\S]*?\*\//g, " ")
+    .replace(/(^|\s)\/\/[^\n]*/gm, "$1")
+    .replace(/(^|\s)#[^\n]*/gm, "$1");
+const collect = (source: string): string[] =>
+  [...stripComments(source).matchAll(/scripts\/([\w.-]+\.(?:ts|sh|mjs|js))/g)].map((m) => m[1]);
+const walk = (name: string, seen: Set<string>): void => {
+  if (seen.has(name)) return;
+  seen.add(name);
+  const body = scripts[name];
+  if (body === undefined) return;
+  for (const file of collect(body)) {
+    if (reached.has(file)) continue;
+    reached.add(file);
+    // A shell entrypoint hides its real work from package.json: smoke.sh is
+    // what runs smoke-mcp.ts. Follow one file into the next.
+    const source = path.join(root, "scripts", file);
+    if (fs.existsSync(source)) {
+      for (const nested of collect(fs.readFileSync(source, "utf8"))) reached.add(nested);
+    }
+  }
+  for (const [, referenced] of body.matchAll(/pnpm run ([\w:-]+)/g)) walk(referenced, seen);
+};
+walk("verify", new Set());
+const orphaned = fs
+  .readdirSync(path.join(root, "scripts"))
+  .filter((file) => /\.(?:ts|sh|mjs|js)$/.test(file))
+  .filter((file) => !reached.has(file) && !(file in MANUAL));
+if (orphaned.length > 0) {
+  fail(
+    `scripts/${orphaned.join(", scripts/")} — nothing in \`pnpm run verify\` runs this.\nWire it into verify, or add it to MANUAL in scripts/check.ts with the reason it stays manual.`,
+  );
 }
 
 // The skill ships inside the npm tarball, so a malformed one is publishable.

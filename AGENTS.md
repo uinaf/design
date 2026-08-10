@@ -21,12 +21,16 @@
 ## Commands
 
 ```sh
-pnpm install --frozen-lockfile
-pnpm run verify
-pnpm run deploy
+pnpm install --frozen-lockfile   # bootstrap — Node from .node-version, pnpm from packageManager
+pnpm run verify                  # the gate CI runs; ends in the real-surface smoke
+pnpm run smoke                   # that smoke alone: boots the Worker, calls /mcp, tears it down
 ```
 
 Prefer `vp` for lint/format/test: `pnpm exec vp check`, `pnpm exec vp test run`.
+
+`pnpm run smoke` binds port 8788 and always kills the server it started. Set `SMOKE_PORT` to run it from a second worktree; logs land in `.smoke/` (gitignored).
+
+`pnpm run deploy` publishes the working tree to **production** `design.uinaf.dev`. It is outside `verify` on purpose and must not run unattended — CI deploys from `main` (`.github/workflows/main.yml`). To see your change, run `pnpm run smoke` or `pnpm exec wrangler dev`.
 
 ## Pipelines
 

@@ -15,7 +15,7 @@ pnpm exec vp config --no-agent
 pnpm run verify
 ```
 
-That builds tokens, syncs `guide/`, and runs checks + tests.
+That builds tokens, syncs `guide/`, runs checks + tests, then boots the Worker and exercises the `/mcp` contract against it. The last step alone is `pnpm run smoke`; it binds port 8788 (override with `SMOKE_PORT`) and writes its logs to `.smoke/`.
 
 ## Preview locally
 
