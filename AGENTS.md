@@ -28,7 +28,7 @@ pnpm run smoke                   # that smoke alone: boots the Worker, calls /mc
 
 Prefer `vp` for lint/format/test: `pnpm exec vp check`, `pnpm exec vp test run`.
 
-`pnpm run smoke` binds port 8788 and always kills the server it started. Set `SMOKE_PORT` to run it from a second worktree; logs land in `.smoke/` (gitignored).
+`pnpm run smoke` syncs the guide, binds port 8788, and always kills the server it started. Set `SMOKE_PORT` to run it from a second worktree; logs land in `.smoke/` (gitignored). Two runs in the _same_ checkout will fight over `guide/` — use a separate worktree, or call `./scripts/smoke.sh` directly once the guide is built.
 
 `pnpm run deploy` publishes the working tree to **production** `design.uinaf.dev`. It is outside `verify` on purpose and must not run unattended — CI deploys from `main` (`.github/workflows/main.yml`). To see your change, run `pnpm run smoke` or `pnpm exec wrangler dev`.
 

@@ -61,7 +61,7 @@
     "fmt": "vp fmt",
     "lint": "vp lint",
     "types:worker": "wrangler types",
-    "smoke": "./scripts/smoke.sh",
+    "smoke": "pnpm run guide:sync && ./scripts/smoke.sh",
     "smoke:mcp": "node scripts/smoke-mcp.ts",
     "design:check": "node src/lint/cli.ts preview pages templates guide --ratchet --ignore guide/tokens.css --ignore guide/components.css --ignore templates/export-",
     "design:check:update": "node src/lint/cli.ts preview pages templates guide --update-ratchet --ignore guide/tokens.css --ignore guide/components.css --ignore templates/export-",

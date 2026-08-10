@@ -4,13 +4,11 @@
 #   SMOKE_PORT       port to bind (default 8788; set it per worktree)
 #   SMOKE_TIMEOUT    seconds to wait for the worker to answer (default 90)
 #   SMOKE_ARTIFACTS  directory for the server and smoke logs (default .smoke)
-#   SMOKE_BUILD_TIMEOUT  seconds allowed to build a missing guide (default 300)
 set -euo pipefail
 
 port="${SMOKE_PORT:-8788}"
 timeout_seconds="${SMOKE_TIMEOUT:-90}"
 artifacts="${SMOKE_ARTIFACTS:-.smoke}"
-build_timeout="${SMOKE_BUILD_TIMEOUT:-300}"
 
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 mkdir -p "$artifacts"
@@ -41,16 +39,11 @@ fi
 
 server_pid=""
 client_pid=""
-sync_pid=""
 interrupted=""
-guide_lock=""
 
-# wrangler dev spawns workerd children; the negative pid signals the group.
-# TERM then KILL, because a wrapper that ignores TERM would otherwise leave this
-# waiting forever on every exit path — and `wait` returns when the wrapper goes,
-# which is not the same as the listener going.
-# A wrapper's children outlive a signal sent to the wrapper alone, so everything
-# long-running here starts in its own process group and is signalled by group.
+# wrangler dev spawns workerd children, and a signal to the wrapper alone leaves
+# them running. TERM then KILL by group: a wrapper that ignores TERM would
+# otherwise leave this waiting forever on every exit path.
 stop_group() {
   local pid="$1" signal="${2:-TERM}"
   kill "-$signal" -- "-$pid" 2>/dev/null || kill "-$signal" "$pid" 2>/dev/null || true
@@ -58,8 +51,6 @@ stop_group() {
 
 cleanup() {
   local status=$?
-  [ -n "$sync_pid" ] && stop_group "$sync_pid" KILL
-  [ -n "$guide_lock" ] && rmdir "$guide_lock" 2>/dev/null
   [ -n "$server_pid" ] || return "$status"
   stop_group "$server_pid" TERM
   for _ in 1 2 3 4 5; do
@@ -87,66 +78,6 @@ on_signal() {
 }
 trap cleanup EXIT
 trap on_signal INT TERM
-
-# guide/design.md is gitignored and written by machine-layer.ts, so a clean
-# checkout has nothing for search_guidelines to read. SMOKE_PORT isolates the
-# listener, not this: concurrent runs in one checkout would both rewrite dist/
-# and guide/. The lock is the gate rather than the file, because design.md
-# appears partway through the build — testing it first let a second run skip the
-# lock and boot against a guide still being written. Warm runs take and release.
-lock=".smoke-guide.lock"
-waited=0
-# Outlast the builder's own budget, or every waiter fails while the run holding
-# the lock is still inside its allowance.
-lock_cap=$((build_timeout + 30))
-while ! mkdir "$lock" 2>/dev/null; do
-  [ -n "$interrupted" ] && {
-    echo "smoke: interrupted while waiting for another run to build the guide" >&2
-    exit 130
-  }
-  sleep 1
-  waited=$((waited + 1))
-  [ "$waited" -lt "$lock_cap" ] || {
-    echo "smoke: waited ${lock_cap}s for another run to build the guide; remove $lock if it is stale." >&2
-    exit 1
-  }
-done
-guide_lock="$lock"
-
-if [ ! -f guide/design.md ]; then
-  echo "smoke: guide assets are missing; building them first"
-  # Backgrounded and bounded, like everything else here: in the foreground a
-  # hung build blocks the INT/TERM traps and the Worker never even starts.
-  set -m
-  pnpm run guide:sync >"$artifacts/guide-sync.log" 2>&1 &
-  sync_pid=$!
-  set +m
-  sync_deadline=$(($(date +%s) + build_timeout))
-  while kill -0 "$sync_pid" 2>/dev/null; do
-    [ -n "$interrupted" ] && {
-      stop_group "$sync_pid" KILL
-      echo "smoke: interrupted while building the guide" >&2
-      exit 130
-    }
-    [ "$(date +%s)" -lt "$sync_deadline" ] || {
-      stop_group "$sync_pid" KILL
-      echo "smoke: guide:sync did not finish within ${build_timeout}s." >&2
-      exit 1
-    }
-    sleep 1
-  done
-  wait "$sync_pid" || {
-    echo "smoke: guide:sync failed. Last lines of $artifacts/guide-sync.log:" >&2
-    tail -20 "$artifacts/guide-sync.log" >&2
-    exit 1
-  }
-  sync_pid=""
-fi
-rmdir "$guide_lock" 2>/dev/null || true
-guide_lock=""
-
-# The boot deadline is for the boot. Building the guide above must not eat it.
-deadline=$(($(date +%s) + timeout_seconds))
 
 set -m
 pnpm exec wrangler dev --port "$port" --persist-to "$artifacts/wrangler-state" >"$server_log" 2>&1 &
