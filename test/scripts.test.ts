@@ -1,52 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import { existsSync, readdirSync, readFileSync } from "node:fs";
-import { resolve } from "node:path";
-import { invokedPackageScripts, invokedScripts, reachableFrom } from "./reachability.ts";
-
-const root = resolve(import.meta.dirname, "..");
-const pkg = JSON.parse(readFileSync(resolve(root, "package.json"), "utf8")) as {
-  scripts?: Record<string, string>;
-};
-const packageScripts = pkg.scripts ?? {};
-
-/**
- * Scripts deliberately left out of `verify`, each with the reason. The reason is
- * enforced below: an exemption nobody had to justify is how the thing being
- * exempted stops being noticed.
- */
-const MANUAL: Record<string, string> = {};
-
-describe("every script has a reader", () => {
-  const readScript = (file: string): string | null => {
-    const source = resolve(root, "scripts", file);
-    return existsSync(source) ? readFileSync(source, "utf8") : null;
-  };
-
-  it("runs every script in scripts/ from verify, or exempts it with a reason", () => {
-    const reached = reachableFrom("verify", packageScripts, readScript);
-    const orphaned = readdirSync(resolve(root, "scripts"))
-      .filter((file) => /\.(?:ts|sh|mjs|js)$/.test(file))
-      .filter((file) => !reached.has(file) && !(file in MANUAL));
-    expect(
-      orphaned.sort(),
-      "wire it into verify, or add it to MANUAL in this file with a reason",
-    ).toEqual([]);
-  });
-
-  it("makes every MANUAL exemption carry a reason", () => {
-    const unexplained = Object.entries(MANUAL)
-      .filter(([, reason]) => reason.trim() === "")
-      .map(([file]) => file);
-    expect(unexplained).toEqual([]);
-  });
-
-  it("keeps MANUAL free of scripts that no longer exist", () => {
-    const missing = Object.keys(MANUAL).filter(
-      (file) => !existsSync(resolve(root, "scripts", file)),
-    );
-    expect(missing).toEqual([]);
-  });
-});
+import { importedScripts, invokedPackageScripts, invokedScripts } from "../scripts/reachability.ts";
 
 describe("invokedScripts", () => {
   it("reads a script the command actually runs", () => {
@@ -76,6 +29,18 @@ describe("invokedScripts", () => {
     expect(invokedScripts(";# node scripts/orphan.ts")).toEqual([]);
     expect(invokedScripts("// node scripts/orphan.ts")).toEqual([]);
     expect(invokedScripts('echo "a; node scripts/orphan.ts"')).toEqual([]);
+  });
+
+  it("strips an inline comment before splitting on separators", () => {
+    // The tail of an inline comment is not a command, but splitting first makes
+    // it look like one with a real interpreter at its head.
+    expect(invokedScripts("echo ok # node scripts/orphan.ts; node scripts/orphan.ts")).toEqual([]);
+    expect(invokedScripts("echo ok // node scripts/orphan.ts | node scripts/orphan.ts")).toEqual(
+      [],
+    );
+    expect(invokedScripts("node scripts/build.ts # then the rest")).toEqual(["build.ts"]);
+    // A URL is not a comment: `//` and `#` only open one at a token boundary.
+    expect(invokedScripts("node scripts/smoke-mcp.ts https://x.dev/a#b")).toEqual(["smoke-mcp.ts"]);
   });
 
   it("does not read a command out of a comment or string that spans lines", () => {
@@ -108,5 +73,21 @@ describe("invokedPackageScripts", () => {
     expect(invokedPackageScripts("# pnpm run smoke")).toEqual([]);
     expect(invokedPackageScripts(";# pnpm run smoke")).toEqual([]);
     expect(invokedPackageScripts("echo pnpm run smoke")).toEqual([]);
+  });
+});
+
+describe("importedScripts", () => {
+  it("follows a helper into the file that imports it", () => {
+    expect(importedScripts('import { reachableFrom } from "./reachability.ts";')).toEqual([
+      "reachability.ts",
+    ]);
+    expect(importedScripts('const m = await import("./reachability.ts");')).toEqual([
+      "reachability.ts",
+    ]);
+  });
+
+  it("does not treat a package import as a sibling script", () => {
+    expect(importedScripts('import fs from "node:fs";')).toEqual([]);
+    expect(importedScripts('import { parse } from "yaml";')).toEqual([]);
   });
 });

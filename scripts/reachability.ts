@@ -17,13 +17,6 @@ const INTERPRETERS = new Set(["node", "bash", "sh", "zsh", "tsx"]);
 const SCRIPT = /^(?:\.\/)?scripts\/([\w.-]+\.(?:ts|sh|mjs|js))$/;
 
 /**
- * Split on the operators that end one command and begin another. Over-splitting
- * is safe here and under-splitting is not: an extra fragment only produces one
- * more head to reject, while a missed separator can hide a real invocation.
- * A quoted `echo "a; node scripts/x.ts"` splits too, but the trailing quote
- * makes the argument fail SCRIPT's anchors, so it still does not count.
- */
-/**
  * Block comments and template literals span lines, so `\/*` + a newline +
  * `node scripts/x.ts` tokenizes as a command with a real interpreter at its
  * head. Line comments need no special case: `#` or `//` becomes the head, and
@@ -34,8 +27,29 @@ const SCRIPT = /^(?:\.\/)?scripts\/([\w.-]+\.(?:ts|sh|mjs|js))$/;
 const withoutSpans = (source: string): string =>
   source.replace(/\/\*[\s\S]*?\*\//g, " ").replace(/`[^`]*`/g, " ");
 
+/**
+ * Line comments have to go before the split, not after. `echo ok # x; node
+ * scripts/orphan.ts` is one command and a comment, but splitting on `;` first
+ * turns the commented tail into a command with a real interpreter at its head.
+ *
+ * A comment marker only starts one at a token boundary, which is what keeps
+ * `http://host` and a `#fragment` inside a URL intact.
+ */
+const withoutLineComments = (source: string): string =>
+  source
+    .split("\n")
+    .map((line) => line.replace(/(^|\s)(#|\/\/).*$/, "$1"))
+    .join("\n");
+
+/**
+ * Split on the operators that end one command and begin another. Over-splitting
+ * is safe here and under-splitting is not: an extra fragment only produces one
+ * more head to reject, while a missed separator can hide a real invocation.
+ * A quoted `echo "a; node scripts/x.ts"` splits too, but the trailing quote
+ * makes the argument fail SCRIPT's anchors, so it still does not count.
+ */
 const commands = (source: string): string[][] =>
-  withoutSpans(source)
+  withoutLineComments(withoutSpans(source))
     .split(/[\n;&|()]+/)
     .map((command) => command.trim().split(/\s+/).filter(Boolean))
     .filter((words) => words.length > 0)
@@ -59,6 +73,26 @@ export const invokedScripts = (source: string): string[] =>
     const run = argument === undefined ? null : SCRIPT.exec(argument);
     return run ? [run[1]] : [];
   });
+
+/**
+ * Sibling modules this source imports, by basename. A helper is read by
+ * whatever imports it, so `check.ts` importing this file is what keeps this
+ * file from reading as an orphan — and a helper nothing imports still does.
+ */
+export const importedScripts = (source: string): string[] =>
+  [
+    ...source.matchAll(
+      // `(?!\s*\()` keeps this off `await import("./x.ts")`, which the dynamic
+      // form below already reads — otherwise one import counts twice.
+      /(?:^|[\s;])(?:import|export)\b(?!\s*\()[^;\n]*?["']\.\/([\w.-]+\.(?:ts|mjs|js))["']/gm,
+    ),
+  ]
+    .map((match) => match[1])
+    .concat(
+      [...source.matchAll(/(?:^|[\s;=(])import\(\s*["']\.\/([\w.-]+\.(?:ts|mjs|js))["']/g)].map(
+        (match) => match[1],
+      ),
+    );
 
 /** Package scripts this source runs through `pnpm run`. */
 export const invokedPackageScripts = (source: string): string[] =>
@@ -90,6 +124,7 @@ export const reachableFrom = (
       const source = read(file);
       if (source !== null) {
         for (const nested of invokedScripts(source)) follow(nested);
+        for (const nested of importedScripts(source)) follow(nested);
         for (const nested of invokedPackageScripts(source)) walk(nested, seen);
       }
     };
