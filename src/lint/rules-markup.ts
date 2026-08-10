@@ -60,7 +60,7 @@ const UTILITY_TOKEN = /^u-[a-z0-9-]+$/;
  * like `u-0--0--0--`. This rule ships in the tarball and reads class names out
  * of a consumer's markup, so that input is not ours to trust.
  */
-const modifierBase = (token: string): string | undefined => {
+export const modifierBase = (token: string): string | undefined => {
   if (!UTILITY_TOKEN.test(token)) return undefined;
   for (let index = token.length - 3; index >= 3; index -= 1) {
     if (token[index] !== "-" || token[index + 1] !== "-") continue;

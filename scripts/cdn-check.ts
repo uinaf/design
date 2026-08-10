@@ -6,14 +6,9 @@
  * Outside `verify` on purpose: it needs the network, and CI must not go red
  * because the CDN blinked.
  */
-import { CDN } from "../src/cdn.ts";
+import { cdnUrls } from "../src/cdn.ts";
 
-const urls = (value: unknown): string[] =>
-  typeof value === "string"
-    ? [value]
-    : Object.values(value as Record<string, unknown>).flatMap(urls);
-
-const targets = urls(CDN).filter((url) => url !== CDN.origin);
+const targets = cdnUrls();
 
 const results = await Promise.all(
   targets.map(async (url) => {

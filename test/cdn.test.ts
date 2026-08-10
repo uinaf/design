@@ -1,28 +1,30 @@
 import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vite-plus/test";
-import { CDN } from "../src/cdn";
+import { CDN, cdnUrls } from "../src/cdn";
 
 const root = path.resolve(import.meta.dirname, "..");
 
-const declared = (value: unknown): string[] =>
-  typeof value === "string"
-    ? [value]
-    : Object.values(value as Record<string, unknown>).flatMap(declared);
-
-const authored = (): { file: string; url: string }[] => {
-  const found: { file: string; url: string }[] = [];
+// `guide/index.html` is hand-authored, not synced, so it is the one published
+// surface that can name a url no build step ever sees.
+const authoredFiles = (): string[] => {
+  const files = ["guide/index.html"];
   for (const dir of ["preview", "pages", "templates"]) {
     for (const file of fs.readdirSync(path.join(root, dir)).sort()) {
-      if (!file.endsWith(".html")) continue;
-      const html = fs.readFileSync(path.join(root, dir, file), "utf8");
-      for (const m of html.matchAll(/https:\/\/cdn\.uinaf\.dev[^"')\s]*/g)) {
-        found.push({ file: `${dir}/${file}`, url: m[0] });
-      }
+      if (file.endsWith(".html")) files.push(`${dir}/${file}`);
     }
   }
-  return found;
+  return files;
 };
+
+const authored = (): { file: string; url: string }[] =>
+  authoredFiles().flatMap((file) =>
+    [
+      ...fs
+        .readFileSync(path.join(root, file), "utf8")
+        .matchAll(/https:\/\/cdn\.uinaf\.dev[^"')\s]*/g),
+    ].map((m) => ({ file, url: m[0] })),
+  );
 
 describe("CDN", () => {
   it("points fonts at cdn.uinaf.dev", () => {
@@ -30,8 +32,8 @@ describe("CDN", () => {
   });
 
   it("keeps every declared url on the cdn origin", () => {
-    for (const url of declared(CDN)) {
-      if (url === CDN.origin) continue;
+    expect(cdnUrls().length).toBeGreaterThan(0);
+    for (const url of cdnUrls()) {
       expect(url.startsWith(`${CDN.origin}/`)).toBe(true);
     }
   });
@@ -40,7 +42,7 @@ describe("CDN", () => {
   // 404 nobody can grep for. Declaring it here is what makes `cdn:check` able
   // to prove the asset exists before the guide deploys.
   it("declares every cdn url the authored surfaces use", () => {
-    const known = new Set(declared(CDN));
+    const known = new Set(cdnUrls());
     const undeclared = authored().filter(({ url }) => !known.has(url));
     expect(undeclared).toEqual([]);
   });

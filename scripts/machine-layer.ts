@@ -41,6 +41,31 @@ const write = (relative: string, body: string): void => {
 const bullets = (heading: string, items?: string[]): string =>
   items?.length ? `\n**${heading}**\n${items.map((r) => `- ${r}`).join("\n")}\n` : "";
 
+// The "Classes used" line of every twin. Single-quoted values are equally valid
+// HTML, so a double-quote-only read would print an empty list for a file the
+// browser styles fine — and the twin is the only form an agent fetches.
+const uClasses = (html: string): string[] =>
+  [
+    ...new Set(
+      [...html.matchAll(/class\s*=\s*(?:"([^"]*)"|'([^']*)')/g)]
+        .flatMap((m) => (m[1] ?? m[2] ?? "").split(/\s+/))
+        .filter((c) => c.startsWith("u-")),
+    ),
+  ].sort();
+
+const classList = (classes: string[]): string =>
+  classes.length ? classes.map((c) => `.${c}`).join(", ") : "none";
+
+const relatedPatterns = (classes: string[]): Pattern[] =>
+  components.patterns.filter((p) => p.classes.some((c) => classes.includes(c.replace(/^\./, ""))));
+
+const patternLinks = (heading: string, classes: string[]): string => {
+  const related = relatedPatterns(classes);
+  if (related.length === 0) return "";
+  const items = related.map((p) => `- [${p.name}](/patterns/${p.slug}.md) — ${p.use}`).join("\n");
+  return `\n**${heading}**\n${items}\n`;
+};
+
 // Generated output is gitignored, so a renamed or deleted pattern would leave
 // an orphan twin that Wrangler keeps deploying. Clear before writing.
 for (const name of fs.readdirSync(path.join(guide, "patterns"))) {
@@ -75,16 +100,7 @@ Import \`@uinaf/design/css\`, then copy the markup. Full contract: /components.j
 // form of a visual demo is what it demonstrates, not a prose retelling of it.
 for (const card of previews) {
   const html = fs.readFileSync(path.join(guide, "preview", `${card.slug}.html`), "utf8");
-  const classes = [
-    ...new Set(
-      [...html.matchAll(/class="([^"]*)"/g)]
-        .flatMap((m) => m[1].split(/\s+/))
-        .filter((c) => c.startsWith("u-")),
-    ),
-  ].sort();
-  const related = components.patterns.filter((p) =>
-    p.classes.some((c) => classes.includes(c.replace(/^\./, ""))),
-  );
+  const classes = uClasses(html);
   write(
     `preview/${card.slug}.md`,
     `# ${card.name}
@@ -93,8 +109,8 @@ ${card.group}${card.subtitle ? ` — ${card.subtitle}` : ""}
 
 Rendered card: /preview/${card.slug}.html
 
-**Classes demonstrated** — ${classes.length ? classes.map((c) => `.${c}`).join(", ") : "none"}
-${related.length ? `\n**Related patterns**\n${related.map((p) => `- [${p.name}](/patterns/${p.slug}.md) — ${p.use}`).join("\n")}\n` : ""}`,
+**Classes demonstrated** — ${classList(classes)}
+${patternLinks("Related patterns", classes)}`,
   );
 }
 
@@ -113,16 +129,7 @@ for (const name of fs.readdirSync(path.join(guide, "pages"))) {
 
 for (const page of pages) {
   const html = fs.readFileSync(path.join(guide, "pages", `${page.slug}.html`), "utf8");
-  const classes = [
-    ...new Set(
-      [...html.matchAll(/class="([^"]*)"/g)]
-        .flatMap((m) => m[1].split(/\s+/))
-        .filter((c) => c.startsWith("u-")),
-    ),
-  ].sort();
-  const related = components.patterns.filter((p) =>
-    p.classes.some((c) => classes.includes(c.replace(/^\./, ""))),
-  );
+  const classes = uClasses(html);
   write(
     `pages/${page.slug}.md`,
     `# ${page.name}
@@ -131,8 +138,8 @@ ${page.description}
 
 Rendered page: /pages/${page.slug}.html
 
-**Classes used** — ${classes.length ? classes.map((c) => `.${c}`).join(", ") : "none"}
-${related.length ? `\n**Patterns on this page**\n${related.map((p) => `- [${p.name}](/patterns/${p.slug}.md) — ${p.use}`).join("\n")}\n` : ""}
+**Classes used** — ${classList(classes)}
+${patternLinks("Patterns on this page", classes)}
 \`\`\`html
 ${html.trim()}
 \`\`\`
@@ -159,13 +166,7 @@ for (const name of fs.readdirSync(path.join(guide, "templates"))) {
 
 for (const template of templates) {
   const html = fs.readFileSync(path.join(guide, "templates", `${template.slug}.html`), "utf8");
-  const classes = [
-    ...new Set(
-      [...html.matchAll(/class="([^"]*)"/g)]
-        .flatMap((m) => m[1].split(/\s+/))
-        .filter((c) => c.startsWith("u-")),
-    ),
-  ].sort();
+  const classes = uClasses(html);
   write(
     `templates/${template.slug}.md`,
     `# ${template.name}
@@ -178,7 +179,7 @@ ${
 }
 Rendered template: /templates/${template.slug}.html
 
-**Classes used** — ${classes.length ? classes.map((c) => `.${c}`).join(", ") : "none"}
+**Classes used** — ${classList(classes)}
 
 \`\`\`html
 ${html.trim()}

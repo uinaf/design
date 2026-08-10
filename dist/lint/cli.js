@@ -647,9 +647,7 @@ var check = (options = {}) => {
   if (missing.length > 0) {
     throw new Error(`no such path: ${missing.join(", ")}`);
   }
-  return collectFiles(roots, options.ignore ?? [], options.relativeTo).flatMap(
-    (file) => checkFile(file)
-  );
+  return collectFiles(roots, options.ignore ?? [], options.relativeTo).flatMap(checkFile);
 };
 var countByRule = (violations2) => {
   const counts2 = {};

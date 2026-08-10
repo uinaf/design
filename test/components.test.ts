@@ -91,12 +91,6 @@ describe("every class is demonstrated", () => {
   );
   const htmlCorpus = htmlFiles.map((f) => f.html);
 
-  // Standalone utilities with no markup of their own: `.u-h1`…`.u-p` and
-  // `.u-hr` are the escape hatches for consumers who cannot put `.uinaf` on an
-  // ancestor (the CSS pairs each with its element selector), and `.u-frame` /
-  // `.u-code-bleed` are opt-in modifiers applied to a host element. Every other
-  // class has to appear somewhere a consumer can copy it.
-
   it("shows every u-* class the CSS defines somewhere copyable", () => {
     const shown = new Set([...htmlCorpus, ...markupCorpus].flatMap(classTokens));
     const orphans = [...definedClasses].filter((c) => !shown.has(c));
