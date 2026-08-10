@@ -17,15 +17,25 @@ const INTERPRETERS = new Set(["node", "bash", "sh", "zsh", "tsx"]);
 const SCRIPT = /^(?:\.\/)?scripts\/([\w.-]+\.(?:ts|sh|mjs|js))$/;
 
 /**
- * Block comments and template literals span lines, so `\/*` + a newline +
- * `node scripts/x.ts` tokenizes as a command with a real interpreter at its
- * head. Line comments need no special case: `#` or `//` becomes the head, and
- * neither is an interpreter. Shell backticks are command substitution rather
- * than a string, so dropping them can only hide an invocation, never invent
- * one — the safe direction for this guard.
+ * Block comments span lines, so `\/*` + a newline + `node scripts/x.ts`
+ * tokenizes as a command with a real interpreter at its head.
  */
-const withoutSpans = (source: string): string =>
-  source.replace(/\/\*[\s\S]*?\*\//g, " ").replace(/`[^`]*`/g, " ");
+const withoutSpans = (source: string): string => source.replace(/\/\*[\s\S]*?\*\//g, " ");
+
+/**
+ * Quoted text is data, not commands, and it can span lines:
+ *
+ *     printf "
+ *     node scripts/orphan.ts
+ *     "
+ *
+ * Split first and that middle line is a command with a real interpreter at its
+ * head. Stripping the span instead can only hide an invocation — `bash
+ * "scripts/x.sh"` stops counting — which is the safe direction for this guard.
+ * Runs after the comment passes, so an apostrophe in a comment cannot swallow
+ * the code that follows it.
+ */
+const withoutQuoted = (source: string): string => source.replace(/`[^`]*`|"[^"]*"|'[^']*'/g, " ");
 
 /**
  * Line comments have to go before the split, not after. `echo ok # x; node
@@ -49,7 +59,7 @@ const withoutLineComments = (source: string): string =>
  * makes the argument fail SCRIPT's anchors, so it still does not count.
  */
 const commands = (source: string): string[][] =>
-  withoutLineComments(withoutSpans(source))
+  withoutQuoted(withoutLineComments(withoutSpans(source)))
     .split(/[\n;&|()]+/)
     .map((command) => command.trim().split(/\s+/).filter(Boolean))
     .filter((words) => words.length > 0)

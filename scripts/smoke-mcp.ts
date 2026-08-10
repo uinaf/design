@@ -21,8 +21,15 @@ const PROPOSED_VERSION = "2026-07-28";
 // carry the version the server actually negotiated, not the one we proposed.
 let negotiatedVersion: string | undefined;
 
+// Every request needs its own bound. smoke.sh times out the boot and then waits
+// on this process, and main.yml runs it against production with only the job
+// timeout behind it — so a fetch that never settles hangs both, and no
+// SMOKE_TIMEOUT covers it.
+const REQUEST_TIMEOUT_MS = Number(process.env.SMOKE_REQUEST_TIMEOUT_MS ?? 15_000);
+
 const post = (body: unknown): Promise<Response> =>
   fetch(endpoint, {
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
     method: "POST",
     headers: {
       "content-type": "application/json",

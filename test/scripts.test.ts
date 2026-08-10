@@ -52,6 +52,14 @@ describe("invokedScripts", () => {
     expect(invokedScripts("/* a */ node scripts/build.ts")).toEqual(["build.ts"]);
   });
 
+  it("does not read a command out of quoted text that spans lines", () => {
+    // Splitting on newlines before tracking quotes puts the middle line at a
+    // command head with a real interpreter in front of it.
+    expect(invokedScripts('printf "\nnode scripts/orphan.ts\n"')).toEqual([]);
+    expect(invokedScripts("echo '\nnode scripts/orphan.ts\n'")).toEqual([]);
+    expect(invokedScripts('node scripts/build.ts && echo "done"')).toEqual(["build.ts"]);
+  });
+
   it("does not match a path that merely ends in a script name", () => {
     expect(invokedScripts("node vendor/scripts/build.ts")).toEqual([]);
     expect(invokedScripts("node scripts/build.ts.bak")).toEqual([]);

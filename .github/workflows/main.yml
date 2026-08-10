@@ -70,7 +70,9 @@ jobs:
       - name: Smoke the deployed contract
         run: |
           for attempt in 1 2 3; do
-            if node scripts/smoke-mcp.ts https://design.uinaf.dev; then
+            # The script bounds each request; `timeout` bounds the process, so a
+            # hang for any other reason costs 2 minutes rather than the job.
+            if timeout 120 node scripts/smoke-mcp.ts https://design.uinaf.dev; then
               exit 0
             fi
             echo "attempt $attempt failed — the deploy may still be propagating"
