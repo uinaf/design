@@ -176,6 +176,22 @@ if (orphaned.length > 0) {
   );
 }
 
+// AGENTS.md is the first thing an agent reads and the last thing any gate
+// checks. A command named there that no longer exists sends every agent down a
+// dead path, and renaming a script is a one-line edit no test can see. Only the
+// repo-facing docs — README.md describes the consumer's project, not this one.
+const stale = ["AGENTS.md", "CONTRIBUTING.md", "docs/releasing.md"].flatMap((doc) =>
+  [...fs.readFileSync(path.join(root, doc), "utf8").matchAll(/pnpm run ([\w:-]+)/g)]
+    .map((m) => m[1])
+    .filter((name) => scripts[name] === undefined)
+    .map((name) => `${doc} → pnpm run ${name}`),
+);
+if (stale.length > 0) {
+  fail(
+    `${[...new Set(stale)].join("\n")}\nNamed in the docs, missing from package.json scripts. Rename in both places, or drop it from the doc.`,
+  );
+}
+
 // The skill ships inside the npm tarball, so a malformed one is publishable.
 // Structural, not a network call: this must hold in CI where tessl is absent.
 // `pnpm run skill:lint` remains the richer, optional gate.
