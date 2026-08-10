@@ -37,12 +37,14 @@ Prefer `vp` for lint/format/test: `pnpm exec vp check`, `pnpm exec vp test run`.
 
 ## Pipelines
 
-| Workflow                             | Trigger                  | Jobs                                                                     |
-| ------------------------------------ | ------------------------ | ------------------------------------------------------------------------ |
-| `.github/workflows/verify.yml`       | PR, merge queue, `_call` | `verify` — the one definition, called by the others                      |
-| `.github/workflows/release.yml`      | push to `main`           | verify → secrets → guide deploy (`production`) ∥ npm publish (`release`) |
-| `.github/workflows/secrets.yml`      | PR, `_call`, weekly      | gitleaks, trufflehog                                                     |
-| `.github/workflows/actions-lint.yml` | `.github/workflows/**`   | actionlint, zizmor — both third-party, run in Docker                     |
+| Workflow                             | Trigger                          | Jobs                                                                       |
+| ------------------------------------ | -------------------------------- | -------------------------------------------------------------------------- |
+| `.github/workflows/verify.yml`       | PR, merge queue, `workflow_call` | `verify` — the one definition, called by the others                        |
+| `.github/workflows/release.yml`      | push to `main`                   | (verify + secrets) → guide deploy (`production`) ∥ npm publish (`release`) |
+| `.github/workflows/secrets.yml`      | PR, `workflow_call`, weekly      | gitleaks, trufflehog                                                       |
+| `.github/workflows/actions-lint.yml` | `.github/workflows/**`           | actionlint, zizmor — both third-party, digest-pinned, run in Docker        |
+
+`+` is parallel and `∥` is parallel: the two gates run at once, then the two terminal jobs run at once. Nothing in that row is a chain.
 
 Two rules the file names do not tell you:
 
