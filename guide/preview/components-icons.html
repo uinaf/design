@@ -5,8 +5,8 @@
 <style>html,body{margin:0}body.uinaf{padding:32px;display:flex;flex-direction:column;gap:24px}
 .icon{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:1.5}
 .u-tag .icon{width:12px;height:12px;stroke-width:1.75;margin-right:-2px}
-.u-btn-icon{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;padding:0;background:none;border:1px solid var(--border);color:var(--fg-subtle);cursor:pointer;transition:color .12s,border-color .12s}
-.u-btn-icon:hover{color:var(--fg);border-color:var(--border-hover)}
+.btn-icon{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;padding:0;background:none;border:1px solid var(--border);color:var(--fg-subtle);cursor:pointer;transition:color .12s,border-color .12s}
+.btn-icon:hover{color:var(--fg);border-color:var(--border-hover)}
 .tree{display:flex;flex-direction:column;font-size:13px}
 .tree a{display:flex;align-items:center;gap:8px;padding:var(--sp-1) 8px;color:var(--fg-muted);text-decoration:none}
 .tree a:hover{color:var(--fg);background:var(--neutral-925)}
@@ -72,13 +72,13 @@
 <div class="u-label">icon buttons — where a word won't fit; tooltip carries the word instead</div>
 <div class="u-toolbar" style="max-width:480px">
 <input class="u-input" type="search" placeholder="filter runs…" style="flex:1">
-<button type="button" class="u-btn-icon u-tip" data-tip="copy run id" aria-label="copy run id"><svg class="icon" viewBox="0 0 16 16"><rect x="5.5" y="5.5" width="8" height="8"/><path d="M10.5 5.5V2.5H2.5v8h3"/></svg></button>
-<button type="button" class="u-btn-icon u-tip" data-tip="download artifacts" aria-label="download artifacts"><svg class="icon" viewBox="0 0 16 16"><path d="M8 2v8M4.5 6.5L8 10l3.5-3.5M2.5 13.5h11"/></svg></button>
-<button type="button" class="u-btn-icon u-tip" data-tip="re-run" aria-label="re-run"><svg class="icon" viewBox="0 0 16 16"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2.5v3h-3"/></svg></button>
+<button type="button" class="btn-icon u-tip" data-tip="copy run id" aria-label="copy run id"><svg class="icon" viewBox="0 0 16 16"><rect x="5.5" y="5.5" width="8" height="8"/><path d="M10.5 5.5V2.5H2.5v8h3"/></svg></button>
+<button type="button" class="btn-icon u-tip" data-tip="download artifacts" aria-label="download artifacts"><svg class="icon" viewBox="0 0 16 16"><path d="M8 2v8M4.5 6.5L8 10l3.5-3.5M2.5 13.5h11"/></svg></button>
+<button type="button" class="btn-icon u-tip" data-tip="re-run" aria-label="re-run"><svg class="icon" viewBox="0 0 16 16"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2.5v3h-3"/></svg></button>
 </div>
 <div style="display:flex;gap:12px;align-items:center">
 <button type="button" class="u-btn u-btn--primary u-btn--lg">download artifacts</button>
-<button type="button" class="u-btn u-btn--lg u-btn-icon u-tip" data-tip="re-run" aria-label="re-run" style="width:40px;height:40px"><svg class="icon" style="width:20px;height:20px;stroke-width:1.25" viewBox="0 0 16 16"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2.5v3h-3"/></svg></button>
+<button type="button" class="u-btn u-btn--lg btn-icon u-tip" data-tip="re-run" aria-label="re-run" style="width:40px;height:40px"><svg class="icon" style="width:20px;height:20px;stroke-width:1.25" viewBox="0 0 16 16"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2.5v3h-3"/></svg></button>
 <span class="u-meta">40px button → 20px icon, stroke 1.25</span>
 </div>
 <div class="u-label">tree — file/folder icons disambiguate rows where words can't</div>

@@ -84,11 +84,12 @@ describe("every class is demonstrated", () => {
     attributeValues(html, "class").flatMap((v) => v.split(/\s+/).filter(Boolean));
 
   const markupCorpus = components.patterns.map((p) => p.markup);
-  const htmlCorpus = ["preview", "pages", "templates"].flatMap((dir) =>
+  const htmlFiles = ["preview", "pages", "templates"].flatMap((dir) =>
     readdirSync(resolve(root, dir))
       .filter((f) => f.endsWith(".html"))
-      .map((f) => readFileSync(resolve(root, dir, f), "utf8")),
+      .map((f) => ({ file: `${dir}/${f}`, html: readFileSync(resolve(root, dir, f), "utf8") })),
   );
+  const htmlCorpus = htmlFiles.map((f) => f.html);
 
   // Standalone utilities with no markup of their own: `.u-h1`…`.u-p` and
   // `.u-hr` are the escape hatches for consumers who cannot put `.uinaf` on an
@@ -100,6 +101,20 @@ describe("every class is demonstrated", () => {
     const shown = new Set([...htmlCorpus, ...markupCorpus].flatMap(classTokens));
     const orphans = [...definedClasses].filter((c) => !shown.has(c));
     expect(orphans.sort()).toEqual([]);
+  });
+
+  it("uses no u-* class the CSS leaves undefined", () => {
+    // The other direction, and the one that bites silently: a page that reaches
+    // for `.u-btn-sm` when the CSS ships `.u-btn--sm` renders as the unstyled
+    // base and nothing complains. `pages/dashboard.html` carried exactly that
+    // for two handoffs. The build guards `components.json`; these are the other
+    // surfaces agents copy from, and they were unguarded.
+    const dangling = htmlFiles.flatMap(({ file, html }) =>
+      [...new Set(classTokens(html))]
+        .filter((c) => c.startsWith("u-") && !definedClasses.has(c))
+        .map((c) => `${file} → .${c}`),
+    );
+    expect(dangling.sort()).toEqual([]);
   });
 
   it("demonstrates every contract class in the pattern that declares it", () => {

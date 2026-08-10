@@ -2,7 +2,7 @@
   {
     "slug": "dashboard",
     "name": "dashboard",
-    "description": "app shell on the wide shell: one-row topbar with current-page marker, stat strip, ruled data table"
+    "description": "App shell on the wide shell: one-row topbar with current-page marker, stat strip, ruled data table."
   },
   {
     "slug": "device-auth",
