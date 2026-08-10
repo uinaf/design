@@ -72,6 +72,12 @@
     "subtitle": "modal · toast · inline notice · progress ticks — live demos"
   },
   {
+    "slug": "components-icons",
+    "group": "Components",
+    "name": "icons in use",
+    "subtitle": "the committed set · icon buttons · tree — 16px, currentColor, never beside their own word"
+  },
+  {
     "slug": "components-inputs",
     "group": "Components",
     "name": "Inputs",
@@ -120,6 +126,30 @@
     "subtitle": "Snappy ease, 160/220ms, staggered fade-up"
   },
   {
+    "slug": "pages-404",
+    "group": "Pages",
+    "name": "404",
+    "subtitle": "the melting CRT and one dry sentence"
+  },
+  {
+    "slug": "pages-dashboard",
+    "group": "Pages",
+    "name": "dashboard",
+    "subtitle": "topbar · stat strip · data table"
+  },
+  {
+    "slug": "pages-login",
+    "group": "Pages",
+    "name": "login",
+    "subtitle": "OAuth sign-in · corner-tick panel"
+  },
+  {
+    "slug": "pages-product-landing",
+    "group": "Pages",
+    "name": "product landing",
+    "subtitle": "one-row topbar · hero · stats · features"
+  },
+  {
     "slug": "spacing-tokens",
     "group": "Spacing",
     "name": "Structure — spacing, borders, ticks",
@@ -130,6 +160,54 @@
     "group": "Type",
     "name": "Type — roles",
     "subtitle": "10→40 scale, hierarchy from the 11↔24 spread + air"
+  },
+  {
+    "slug": "uinafdev-blog-index",
+    "group": "Project — uinaf.dev",
+    "name": "blog index",
+    "subtitle": "date-descending list"
+  },
+  {
+    "slug": "uinafdev-blog-post",
+    "group": "Project — uinaf.dev",
+    "name": "blog post",
+    "subtitle": "prose at narrow measure"
+  },
+  {
+    "slug": "uinafdev-changelog",
+    "group": "Project — uinaf.dev",
+    "name": "changelog",
+    "subtitle": "dated ruled entries"
+  },
+  {
+    "slug": "uinafdev-homepage",
+    "group": "Project — uinaf.dev",
+    "name": "homepage",
+    "subtitle": "the studio homepage — poster hero + portfolio"
+  },
+  {
+    "slug": "uinafdev-project-page",
+    "group": "Project — uinaf.dev",
+    "name": "project page",
+    "subtitle": "project detail"
+  },
+  {
+    "slug": "uinafdev-projects",
+    "group": "Project — uinaf.dev",
+    "name": "projects",
+    "subtitle": "project index"
+  },
+  {
+    "slug": "uinafdev-roadmap",
+    "group": "Project — uinaf.dev",
+    "name": "roadmap",
+    "subtitle": "three ruled columns"
+  },
+  {
+    "slug": "uinafdev-status",
+    "group": "Project — uinaf.dev",
+    "name": "status",
+    "subtitle": "uptime strip + service table"
   },
   {
     "slug": "voice-samples",

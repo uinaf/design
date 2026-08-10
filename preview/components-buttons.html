@@ -4,19 +4,19 @@
 <meta charset="utf-8">
 <title>uinaf — buttons</title>
 <link rel="stylesheet" href="../dist/css/tokens.css">
-<style>html,body{margin:0;padding:0}body.uinaf{padding:32px 36px;display:flex;flex-direction:column;gap:18px}.row{display:flex;gap:12px;align-items:center}.lbl{color:var(--fg-subtle);font-size:11px;min-width:110px}.note{font-size:11px;color:var(--fg-faint)}</style>
+<style>html,body{margin:0;padding:0}body.uinaf{padding:32px 36px;display:flex;flex-direction:column;gap:var(--sp-4)}.row{display:flex;gap:12px;align-items:center}.lbl{color:var(--fg-subtle);font-size:11px;min-width:110px}.note{font-size:11px;color:var(--fg-faint)}</style>
 </head><body class="uinaf">
 <div class="u-label">buttons — hierarchy via fill weight, lowercase labels</div>
-<div class="row"><span class="lbl">primary</span><button type="button" class="u-btn u-btn-primary">deploy</button><button type="button" class="u-btn u-btn-primary">contact us ↗</button><span class="note">default primary — white fill</span></div>
-<div class="row"><span class="lbl">accent</span><button type="button" class="u-btn u-btn-accent">start building</button><span class="note">the one loud action. max one per surface, usually zero</span></div>
+<div class="row"><span class="lbl">primary</span><button type="button" class="u-btn u-btn--primary">deploy</button><button type="button" class="u-btn u-btn--primary">contact us ↗</button><span class="note">default primary — white fill</span></div>
+<div class="row"><span class="lbl">accent</span><button type="button" class="u-btn u-btn--accent">start building</button><span class="note">the one loud action. max one per surface, usually zero</span></div>
 <div class="row"><span class="lbl">secondary</span><button type="button" class="u-btn">view source</button><button type="button" class="u-btn">read docs</button></div>
-<div class="row"><span class="lbl">ghost</span><button type="button" class="u-btn u-btn-ghost">cancel</button><button type="button" class="u-btn u-btn-ghost">later</button></div>
+<div class="row"><span class="lbl">ghost</span><button type="button" class="u-btn u-btn--ghost">cancel</button><button type="button" class="u-btn u-btn--ghost">later</button></div>
 <hr>
 <div class="u-label">sizes — 26 / 32 / 38</div>
-<div class="row"><span class="lbl">sm · md · lg</span><button type="button" class="u-btn u-btn-sm">sm</button><button type="button" class="u-btn">default</button><button type="button" class="u-btn u-btn-lg">large</button></div>
-<div class="row"><span class="lbl">disabled</span><button type="button" class="u-btn u-btn-primary" disabled>deploy</button><button type="button" class="u-btn" disabled>view source</button></div>
+<div class="row"><span class="lbl">sm · md · lg</span><button type="button" class="u-btn u-btn--sm">sm</button><button type="button" class="u-btn">default</button><button type="button" class="u-btn u-btn--lg">large</button></div>
+<div class="row"><span class="lbl">disabled</span><button type="button" class="u-btn u-btn--primary" disabled>deploy</button><button type="button" class="u-btn" disabled>view source</button></div>
 <hr>
 <div class="u-label">composition</div>
-<div class="row"><span class="lbl">action pair</span><button type="button" class="u-btn u-btn-primary">ship it</button><button type="button" class="u-btn u-btn-ghost">read the docs first</button></div>
+<div class="row"><span class="lbl">action pair</span><button type="button" class="u-btn u-btn--primary">ship it</button><button type="button" class="u-btn u-btn--ghost">read the docs first</button></div>
 <p class="u-meta">primary + ghost is the default pairing. two filled buttons never sit together. press = scale(.97), no ripple, no shadow.</p>
 </body></html>

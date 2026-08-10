@@ -1,6 +1,9 @@
+import fs from "node:fs";
+import path from "node:path";
 import { describe, expect, it } from "vite-plus/test";
 import { checkCss, checkMarkup, compareRatchet, countByRule } from "../src/lint/index";
 
+const root = path.resolve(import.meta.dirname, "..");
 const rules = (violations: Array<{ rule: string }>): string[] => violations.map((v) => v.rule);
 const css = (source: string) => checkCss(source, "test.css");
 const markup = (source: string) => checkMarkup(source, "test.html");
@@ -120,13 +123,13 @@ describe("spacing-grid", () => {
 
 describe("one-accent-per-view", () => {
   it("passes with one", () => {
-    expect(rules(markup('<a class="u-btn u-btn-accent">go</a>'))).not.toContain(
+    expect(rules(markup('<a class="u-btn u-btn--accent">go</a>'))).not.toContain(
       "one-accent-per-view",
     );
   });
   it("fails with two", () => {
     expect(
-      rules(markup('<a class="u-btn u-btn-accent">go</a><a class="u-btn u-btn-accent">also</a>')),
+      rules(markup('<a class="u-btn u-btn--accent">go</a><a class="u-btn u-btn--accent">also</a>')),
     ).toContain("one-accent-per-view");
   });
 });
@@ -157,6 +160,56 @@ describe("shared-gutter", () => {
   it("ignores a fragment, which has no content to share a gutter with", () => {
     const chunk = `<header class="u-topbar"><div class="u-shell-base u-topbar-row"></div></header>`;
     expect(rules(markup(chunk))).not.toContain("shared-gutter");
+  });
+});
+
+describe("design-check-disable-next-line precision", () => {
+  // A suppression is a bypass, so it earns more tests than the rule it mutes.
+  // "suppresses the named rule, and nothing else in the file" is covered above.
+  const check = async (body: string): Promise<string[]> => {
+    const { checkFile } = await import("../src/lint/index");
+    const { tmpdir } = await import("node:os");
+    const file = path.join(fs.mkdtempSync(path.join(tmpdir(), "design-suppress-")), "page.html");
+    fs.writeFileSync(file, body);
+    return checkFile(file).map((v) => v.rule);
+  };
+
+  it("rejects the blanket form, which muted every rule on the line", async () => {
+    expect(await check("<!-- design-check-disable-next-line -->\n<p>ship it 🚀</p>\n")).toContain(
+      "no-emoji",
+    );
+  });
+  it("does not suppress a rule it does not name", async () => {
+    expect(
+      await check("<!-- design-check-disable-next-line button-type -->\n<p>ship it 🚀</p>\n"),
+    ).toContain("no-emoji");
+  });
+  it("reaches only the next line", async () => {
+    expect(
+      await check(
+        "<!-- design-check-disable-next-line no-emoji -->\n<p>a</p>\n<p>ship it 🚀</p>\n",
+      ),
+    ).toContain("no-emoji");
+  });
+});
+
+describe("rules watch classes that actually ship", () => {
+  // one-accent-per-view watched `.u-btn-accent` for one commit after the handoff
+  // renamed it to `.u-btn--accent`. An error-level rule guarding the single most
+  // distinctive brand constraint could not fire, and its own test passed because
+  // the test had drifted with it. A rule keyed to a class the CSS never defines is
+  // silent, not strict.
+  it("references no class the CSS does not define", () => {
+    const css = ["src/tokens.css", "src/components.css"]
+      .map((f) => fs.readFileSync(path.join(root, f), "utf8"))
+      .join("\n");
+    const defined = new Set([...css.matchAll(/\.(u-[a-zA-Z0-9_-]+)/g)].map((m) => m[1]));
+    const ruleSource = ["src/lint/rules-markup.ts", "src/lint/rules-css.ts"]
+      .map((f) => fs.readFileSync(path.join(root, f), "utf8"))
+      .join("\n");
+    const referenced = new Set([...ruleSource.matchAll(/"(u-[a-zA-Z0-9-]+)"/g)].map((m) => m[1]));
+    expect(referenced.size).toBeGreaterThan(0);
+    expect([...referenced].filter((c) => !defined.has(c)).sort()).toEqual([]);
   });
 });
 
@@ -493,7 +546,7 @@ describe("colour detection ignores content", () => {
 describe("class matching is attribute-anchored", () => {
   it("does not treat data-class or subclass as a class attribute", () => {
     const markupSource =
-      '<div data-class="u-btn-accent"></div><div data-class="u-btn-accent"></div>';
+      '<div data-class="u-btn--accent"></div><div data-class="u-btn--accent"></div>';
     expect(rules(markup(markupSource))).not.toContain("one-accent-per-view");
   });
 });

@@ -97,10 +97,15 @@ export const collectFiles = (
  * `<!-- design-check-disable-next-line rule -->` or the CSS comment form.
  * Documentation that demonstrates an anti-pattern has to be able to say so;
  * without an escape hatch the only option is excluding whole files, which
- * silently drops every other rule too. Omit the rule name to suppress all.
+ * silently drops every other rule too. The voice card's "don't" column carries
+ * an emoji on purpose, and `no-emoji` is an error.
+ *
+ * The rule name is required. A blanket form muted every rule on the line, which
+ * turns one declared exception into an undeclared hole — and the next violation
+ * on that line would pass silently.
  */
 const DISABLE_NEXT_LINE =
-  /(?:<!--|\/\*)\s{0,8}design-check-disable-next-line\s{0,8}([a-z-]*)\s{0,8}(?:-->|\*\/)/g;
+  /(?:<!--|\/\*)\s{0,8}design-check-disable-next-line\s{1,8}([a-z][a-z-]*)\s{0,8}(?:-->|\*\/)/g;
 
 const suppressions = (source: string): Array<{ line: number; rule: string }> =>
   [...source.matchAll(DISABLE_NEXT_LINE)].map((match) => ({
@@ -112,8 +117,7 @@ const applySuppressions = (source: string, violations: Violation[]): Violation[]
   const rules = suppressions(source);
   if (rules.length === 0) return violations;
   return violations.filter(
-    (violation) =>
-      !rules.some((s) => s.line === violation.line && (s.rule === "" || s.rule === violation.rule)),
+    (violation) => !rules.some((s) => s.line === violation.line && s.rule === violation.rule),
   );
 };
 
@@ -211,7 +215,7 @@ export const gitRoot = (): string | undefined => {
   }
 };
 
-export const checkFile = (file: string, options: CheckOptions = {}): Violation[] => {
+export const checkFile = (file: string): Violation[] => {
   const source = fs.readFileSync(file, "utf8");
   const ext = path.extname(file).toLowerCase();
   if (CSS_EXTENSIONS.has(ext)) return applySuppressions(source, checkCss(source, file));
@@ -255,7 +259,7 @@ export const check = (options: CheckOptions = {}): Violation[] => {
     throw new Error(`no such path: ${missing.join(", ")}`);
   }
   return collectFiles(roots, options.ignore ?? [], options.relativeTo).flatMap((file) =>
-    checkFile(file, options),
+    checkFile(file),
   );
 };
 

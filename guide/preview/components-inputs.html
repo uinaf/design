@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <title>uinaf — inputs</title>
 <link rel="stylesheet" href="/tokens.css">
-<style>html,body{margin:0;padding:0}body.uinaf{padding:32px 36px;display:flex;flex-direction:column;gap:20px}.cols{display:grid;grid-template-columns:1fr 1fr;gap:20px}.search{position:relative;display:flex;align-items:center}.search .u-input{width:100%;padding-right:44px}.search .u-kbd{position:absolute;right:6px}</style>
+<style>html,body{margin:0;padding:0}body.uinaf{padding:32px 36px;display:flex;flex-direction:column;gap:20px}.cols{display:grid;grid-template-columns:1fr 1fr;gap:20px}.search{position:relative;display:flex;align-items:center}.search .u-input{width:100%;padding-right:var(--sp-10)}.search .u-kbd{position:absolute;right:6px}</style>
 <!-- guide-chrome -->
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="icon" href="https://cdn.uinaf.dev/images/uinaf-computer.png" type="image/png" />
@@ -48,7 +48,7 @@
 <div class="u-label">fields — label above, 32px control, quiet focus</div>
 <div class="cols">
 <label class="u-field"><span class="u-label">email</span><input class="u-input" type="email" placeholder="dev@uinaf.dev"><span class="u-help">we reply within a day. usually faster.</span></label>
-<label class="u-field"><span class="u-label">api key</span><input class="u-input" aria-invalid="true" value="uinaf_sk_…9f2"><span class="u-help u-help--error">key expired 2026-07-30. rotate it.</span></label>
+<label class="u-field"><span class="u-label">API key</span><input class="u-input" aria-invalid="true" value="uinaf_sk_…9f2"><span class="u-help u-help--error">key expired 2026-07-30. rotate it.</span></label>
 </div>
 <div class="cols">
 <label class="u-field"><span class="u-label">region</span><select class="u-select"><option>eu-central</option><option>us-east</option><option>ap-south</option></select></label>

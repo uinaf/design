@@ -14,7 +14,7 @@ export type RatchetResult = {
   improved: Array<{ rule: string; was: number; now: number }>;
 };
 export declare const check: (options?: CheckOptions) => Violation[];
-export declare const checkFile: (file: string, options?: CheckOptions) => Violation[];
+export declare const checkFile: (file: string) => Violation[];
 export declare const checkCss: (css: string, file: string) => Violation[];
 export declare const checkMarkup: (source: string, file: string) => Violation[];
 export declare const collectFiles: (roots: string[], ignore?: string[]) => string[];

@@ -73,7 +73,7 @@ export const checkMarkup = (source: string, file: string): Violation[] => {
     violations.push({ rule, severity, file, line: lineOf(source, index), message, fix });
   };
 
-  const accents = classOccurrences(source, "u-btn-accent");
+  const accents = classOccurrences(source, "u-btn--accent");
   if (accents.length > 1) {
     for (const index of accents.slice(1)) {
       add(
@@ -81,7 +81,7 @@ export const checkMarkup = (source: string, file: string): Violation[] => {
         "one-accent-per-view",
         "error",
         `${accents.length} accent buttons in one view`,
-        "the accent is a laser pointer: keep one .u-btn-accent per view and make the rest .u-btn-primary or .u-btn-ghost",
+        "the accent is a laser pointer: keep one .u-btn--accent per view and make the rest .u-btn--primary or .u-btn--ghost",
       );
     }
   }

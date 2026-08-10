@@ -291,7 +291,7 @@ var checkMarkup = (source, file) => {
   const add = (index, rule, severity, message, fix) => {
     violations.push({ rule, severity, file, line: lineOf(source, index), message, fix });
   };
-  const accents = classOccurrences(source, "u-btn-accent");
+  const accents = classOccurrences(source, "u-btn--accent");
   if (accents.length > 1) {
     for (const index of accents.slice(1)) {
       add(
@@ -299,7 +299,7 @@ var checkMarkup = (source, file) => {
         "one-accent-per-view",
         "error",
         `${accents.length} accent buttons in one view`,
-        "the accent is a laser pointer: keep one .u-btn-accent per view and make the rest .u-btn-primary or .u-btn-ghost"
+        "the accent is a laser pointer: keep one .u-btn--accent per view and make the rest .u-btn--primary or .u-btn--ghost"
       );
     }
   }
@@ -461,7 +461,7 @@ var collectFiles = (roots, ignore = [], relativeTo = process.cwd()) => {
   for (const root of roots) walk(root);
   return found.sort();
 };
-var DISABLE_NEXT_LINE = /(?:<!--|\/\*)\s{0,8}design-check-disable-next-line\s{0,8}([a-z-]*)\s{0,8}(?:-->|\*\/)/g;
+var DISABLE_NEXT_LINE = /(?:<!--|\/\*)\s{0,8}design-check-disable-next-line\s{1,8}([a-z][a-z-]*)\s{0,8}(?:-->|\*\/)/g;
 var suppressions = (source) => [...source.matchAll(DISABLE_NEXT_LINE)].map((match) => ({
   line: source.slice(0, match.index ?? 0).split("\n").length + 1,
   rule: match[1] ?? ""
@@ -470,7 +470,7 @@ var applySuppressions = (source, violations) => {
   const rules = suppressions(source);
   if (rules.length === 0) return violations;
   return violations.filter(
-    (violation) => !rules.some((s) => s.line === violation.line && (s.rule === "" || s.rule === violation.rule))
+    (violation) => !rules.some((s) => s.line === violation.line && s.rule === violation.rule)
   );
 };
 var changedFiles = (base = "origin/main") => {
@@ -533,7 +533,7 @@ var gitRoot = () => {
     return void 0;
   }
 };
-var checkFile = (file, options = {}) => {
+var checkFile = (file) => {
   const source = fs.readFileSync(file, "utf8");
   const ext = path.extname(file).toLowerCase();
   if (CSS_EXTENSIONS.has(ext)) return applySuppressions(source, checkCss(source, file));
@@ -563,7 +563,7 @@ var check = (options = {}) => {
     throw new Error(`no such path: ${missing.join(", ")}`);
   }
   return collectFiles(roots, options.ignore ?? [], options.relativeTo).flatMap(
-    (file) => checkFile(file, options)
+    (file) => checkFile(file)
   );
 };
 var countByRule = (violations) => {
