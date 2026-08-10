@@ -249,6 +249,12 @@ write(
   )}\n`,
 );
 
+// Deploy identity. wrangler ships the Worker and its assets as one version, so
+// an asset that changes with every build is proof the new Worker is live —
+// components.json is not, because a Worker-only change leaves it byte-identical
+// and the post-deploy smoke would then pass against the deployment it replaced.
+write(".well-known/build", `${process.env.GITHUB_SHA ?? "dev"}\n`);
+
 const twins = fs.readdirSync(path.join(guide, "patterns")).filter((f) => f.endsWith(".md")).length;
 const cards = fs.readdirSync(path.join(guide, "preview")).filter((f) => f.endsWith(".md")).length;
 const pageTwins = fs.readdirSync(path.join(guide, "pages")).filter((f) => f.endsWith(".md")).length;

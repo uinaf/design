@@ -33,20 +33,10 @@ if probe "$(budget)" 2>/dev/null; then
   exit 1
 fi
 
-# guide/design.md is gitignored and written by machine-layer.ts, so on a clean
-# checkout search_guidelines has nothing to read.
-if [ ! -f guide/design.md ]; then
-  echo "smoke: guide assets are missing; building them first"
-  if ! pnpm run guide:sync >"$artifacts/guide-sync.log" 2>&1; then
-    echo "smoke: guide:sync failed. Last lines of $artifacts/guide-sync.log:" >&2
-    tail -20 "$artifacts/guide-sync.log" >&2
-    exit 1
-  fi
-fi
-
 server_pid=""
 client_pid=""
 interrupted=""
+guide_lock=""
 
 # wrangler dev spawns workerd children; the negative pid signals the group.
 # TERM then KILL, because a wrapper that ignores TERM would otherwise leave this
@@ -54,6 +44,7 @@ interrupted=""
 # which is not the same as the listener going.
 cleanup() {
   local status=$?
+  [ -n "$guide_lock" ] && rmdir "$guide_lock" 2>/dev/null
   [ -n "$server_pid" ] || return "$status"
   kill -- "-$server_pid" 2>/dev/null || kill "$server_pid" 2>/dev/null || true
   for _ in 1 2 3 4 5; do
@@ -82,8 +73,39 @@ on_signal() {
 trap cleanup EXIT
 trap on_signal INT TERM
 
+# guide/design.md is gitignored and written by machine-layer.ts, so a clean
+# checkout has nothing for search_guidelines to read. SMOKE_PORT isolates the
+# listener but not this: concurrent runs in one checkout would both rewrite
+# dist/ and guide/, and one would read a half-written file. First past the mkdir
+# builds; the other waits and finds the result.
+if [ ! -f guide/design.md ]; then
+  lock=".smoke-guide.lock"
+  waited=0
+  # Wait for the lock, not for design.md: the builder writes that file partway
+  # through, so waiting on it releases the other run into a half-written guide.
+  while ! mkdir "$lock" 2>/dev/null; do
+    sleep 1
+    waited=$((waited + 1))
+    [ "$waited" -lt 180 ] || {
+      echo "smoke: waited 180s for another run to build the guide; remove $lock if it is stale." >&2
+      exit 1
+    }
+  done
+  guide_lock="$lock"
+  if [ ! -f guide/design.md ]; then
+    echo "smoke: guide assets are missing; building them first"
+    if ! pnpm run guide:sync >"$artifacts/guide-sync.log" 2>&1; then
+      echo "smoke: guide:sync failed. Last lines of $artifacts/guide-sync.log:" >&2
+      tail -20 "$artifacts/guide-sync.log" >&2
+      exit 1
+    fi
+  fi
+  rmdir "$guide_lock" 2>/dev/null || true
+  guide_lock=""
+fi
+
 set -m
-pnpm exec wrangler dev --port "$port" >"$server_log" 2>&1 &
+pnpm exec wrangler dev --port "$port" --persist-to "$artifacts/wrangler-state" >"$server_log" 2>&1 &
 server_pid=$!
 set +m
 

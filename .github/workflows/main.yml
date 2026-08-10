@@ -68,15 +68,17 @@ jobs:
       # against what design.uinaf.dev actually serves — the custom domain, the
       # real asset binding, and the build that just shipped.
       - name: Smoke the deployed contract
+        env:
+          GITHUB_SHA: ${{ github.sha }}
         run: |
           # The contract alone would pass against the deployment this job
           # replaced, so during propagation a green result would prove nothing.
-          # Wait until the domain serves this build's own artifact first; when
-          # the bytes are identical there is nothing to wait for.
-          expected="$(shasum -a 256 guide/components.json | cut -d' ' -f1)"
+          # machine-layer.ts stamps this commit into /.well-known/build, and
+          # wrangler ships the Worker and its assets as one version — so seeing
+          # this SHA is proof the new Worker is the one answering.
           for attempt in 1 2 3 4 5 6; do
-            served="$(curl -sf --max-time 20 https://design.uinaf.dev/components.json | shasum -a 256 | cut -d' ' -f1 || true)"
-            if [ "$served" = "$expected" ]; then
+            served="$(curl -sf --max-time 20 https://design.uinaf.dev/.well-known/build || true)"
+            if [ "$served" = "$GITHUB_SHA" ]; then
               # The script bounds each request; `timeout` bounds the process, so
               # a hang for any other reason costs 2 minutes, not the job.
               if timeout 120 node scripts/smoke-mcp.ts https://design.uinaf.dev; then
@@ -84,7 +86,7 @@ jobs:
               fi
               echo "attempt $attempt: this build is live but the contract failed"
             else
-              echo "attempt $attempt: design.uinaf.dev is still serving another build"
+              echo "attempt $attempt: design.uinaf.dev is still serving build ${served:-<none>}"
             fi
             sleep 10
           done
