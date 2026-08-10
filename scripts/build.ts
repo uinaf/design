@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import * as esbuild from "esbuild";
+import postcss from "postcss";
 import { CDN } from "../src/cdn.ts";
 
 const root = path.resolve(import.meta.dirname, "..");
@@ -10,9 +11,14 @@ fs.mkdirSync(path.join(root, "dist/css"), { recursive: true });
 fs.writeFileSync(path.join(root, "dist/css/tokens.css"), css);
 fs.copyFileSync(path.join(root, "src/components.css"), path.join(root, "dist/css/components.css"));
 
-const vars = [...css.matchAll(/--([a-z0-9-]+):\s*([^;]+);/gi)].map(
-  (m) => [m[1], m[2].trim()] as const,
-);
+// Over the AST, not the text. A regex for `--name:` also matches the pseudo-class
+// on a BEM modifier — `.u-btn--primary:hover` reads as a token named `--primary`
+// with `hover { … }` for a value, and the ungrouped-token guard then fails the
+// build on a property that does not exist.
+const vars: Array<readonly [string, string]> = [];
+postcss.parse(css, { from: "src/tokens.css" }).walkDecls((decl) => {
+  if (decl.prop.startsWith("--")) vars.push([decl.prop.slice(2), decl.value.trim()] as const);
+});
 const obj = Object.fromEntries(vars);
 
 /** Ordered prefix rules; first match wins. Every token must land in exactly one group. */
@@ -78,7 +84,7 @@ type Pattern = {
   name: string;
   classes: string[];
   use: string;
-  markup: string;
+  markup?: string;
   rules?: string[];
   never?: string[];
 };
@@ -112,8 +118,20 @@ const declared = components.patterns.flatMap((p) =>
 // All three HTML attribute forms — double-quoted, single-quoted, and bare —
 // or markup could dodge the guard just by changing its quoting.
 const classAttr = /class\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/g;
+// A pattern that names classes must show how to use them — that is what an agent
+// copies. Policy entries carry no classes (`icons` bans icon libraries and
+// declares none), so requiring markup of them would be requiring a component
+// where there is none. Enforced here rather than only in tests: the build is what
+// produces the artifacts an agent reads.
+const contractless = components.patterns.filter((p) => p.classes.length > 0 && !p.markup);
+if (contractless.length > 0) {
+  throw new Error(
+    `components.json: ${contractless.map((p) => p.name).join(", ")} name classes but publish no markup — add markup, or drop the classes if the entry is policy only`,
+  );
+}
 const inMarkup = components.patterns.flatMap((p) =>
-  [...p.markup.matchAll(classAttr)]
+  // Safe by the guard above: anything still markup-less has no classes to check.
+  [...(p.markup ?? "").matchAll(classAttr)]
     .flatMap((m) => (m[1] ?? m[2] ?? m[3] ?? "").split(/\s+/))
     .filter((c) => c && !definedClasses.has(c))
     .map((c) => `${p.name} markup → .${c}`),
@@ -150,6 +168,7 @@ fs.rmSync(patternsDir, { recursive: true, force: true });
 fs.mkdirSync(patternsDir, { recursive: true });
 let chunks = 0;
 for (const p of components.patterns) {
+  if (!p.markup) continue; // policy entries have no page to write
   fs.writeFileSync(path.join(patternsDir, `${slug(p.name)}.html`), patternPage(p));
   chunks += 1;
 }

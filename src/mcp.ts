@@ -16,10 +16,10 @@ type Pattern = {
   slug: string;
   classes: string[];
   use: string;
-  // Required, not optional: components.json is parsed at runtime, so the
-  // guarantee is test/components.test.ts, which fails on a markup-less pattern.
-  // Optional here would reintroduce the branches #17 closed.
-  markup: string;
+  // Optional only for policy entries, which declare no classes. scripts/build.ts
+  // fails the build on any pattern that names classes without markup, so a
+  // pattern an agent could copy always has it.
+  markup?: string;
   rules?: string[];
   never?: string[];
 };
@@ -139,6 +139,13 @@ export const createServer = (env: Env): McpServer => {
       if (!pattern) {
         return text(
           `No pattern named "${name}". Valid names:\n${patterns.map((p) => p.name).join(", ")}`,
+        );
+      }
+      if (!pattern.markup) {
+        // A policy entry: rules with nothing to copy. Say so, rather than
+        // returning a contract that looks truncated.
+        return text(
+          `${describe(pattern)}\n\nThis entry is policy, not a component — it ships no markup.`,
         );
       }
       return text(

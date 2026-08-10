@@ -16,7 +16,7 @@ type Pattern = {
   slug: string;
   classes: string[];
   use: string;
-  markup: string;
+  markup?: string;
   rules?: string[];
   never?: string[];
 };
@@ -54,7 +54,9 @@ for (const name of fs.readdirSync(path.join(guide, "preview"))) {
 // One markdown twin per pattern. This is the token-cheap form of a chunk: an
 // agent gets the contract and the markup without parsing a full HTML document.
 for (const p of components.patterns) {
-  const markup = `\n\`\`\`html\n${p.markup}\n\`\`\`\n`;
+  // A policy entry declares no classes and ships no markup; its twin is the
+  // rules alone, which is the whole point of the entry.
+  const markup = p.markup ? `\n\`\`\`html\n${p.markup}\n\`\`\`\n` : "";
   write(
     `patterns/${p.slug}.md`,
     `# ${p.name}

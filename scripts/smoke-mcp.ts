@@ -115,9 +115,11 @@ check("list_patterns includes topbar", list.includes("topbar"));
 // entry that loses its use text or class list costs it the contract for that
 // pattern. Shape-check every line; asserting on one name would pass a listing
 // that degraded everywhere else.
+// `\[.*\]` not `\[.+\]`: a policy entry declares no classes, so its bracket list
+// is legitimately empty.
 const malformed = list
   .split("\n")
-  .filter((line) => line.trim().length > 0 && !/^.+ — .+ \[.+\]$/.test(line));
+  .filter((line) => line.trim().length > 0 && !/^.+ — .+ \[.*\]$/.test(line));
 check(
   "every list_patterns entry carries use and classes",
   malformed.length === 0,

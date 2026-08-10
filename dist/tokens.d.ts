@@ -74,16 +74,24 @@ export declare const tokens: {
   "error": string
   "info": string
   "sp-0": string
+  "sp-0-5": string
   "sp-1": string
+  "sp-1-5": string
   "sp-2": string
+  "sp-2-5": string
   "sp-3": string
+  "sp-3-5": string
   "sp-4": string
   "sp-5": string
   "sp-6": string
+  "sp-7": string
   "sp-8": string
+  "sp-9": string
   "sp-10": string
   "sp-12": string
+  "sp-14": string
   "sp-16": string
+  "sp-18": string
   "sp-20": string
   "sp-24": string
   "radius-none": string

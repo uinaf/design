@@ -33,10 +33,17 @@ describe("components.json", () => {
     expect(undefined_).toEqual([]);
   });
 
-  it("gives every pattern a use and at least one class", () => {
+  it("gives every pattern a use, and splits cleanly into components and policy", () => {
+    // The contract carries two kinds of entry: a component names classes and
+    // shows markup, a policy entry (`icons`) does neither and is rules only.
+    // A half-entry — classes with nothing to copy, or markup for classes it
+    // never declares — is the drift worth failing on.
     for (const p of components.patterns) {
       expect(p.use, `${p.name} missing use`).toBeTruthy();
-      expect(p.classes.length, `${p.name} has no classes`).toBeGreaterThan(0);
+      expect(
+        p.classes.length > 0,
+        `${p.name} declares ${p.classes.length} classes but ${p.markup ? "has" : "has no"} markup`,
+      ).toBe(Boolean(p.markup));
     }
   });
 
@@ -47,14 +54,19 @@ describe("components.json", () => {
     expect(broken).toEqual([]);
   });
 
-  it("gives every pattern copyable markup", () => {
-    // The gap is closed (#17). A pattern without markup is now a regression,
-    // not a known hole, so this asserts the invariant rather than a list.
-    const missing = components.patterns.filter((p) => !p.markup).map((p) => p.name);
+  it("gives copyable markup to every pattern that names classes", () => {
+    // The gap is closed (#17), so this asserts the invariant rather than a list.
+    // Scoped to patterns with classes: the contract now also carries policy
+    // entries, which declare none and have nothing to copy by design.
+    const missing = components.patterns
+      .filter((p) => p.classes.length > 0 && !p.markup)
+      .map((p) => p.name);
     expect(missing).toEqual([]);
   });
 
   it("gives every pattern markup that uses at least one of its own classes", () => {
+    // Policy entries declare no classes and ship no markup, so there is nothing
+    // to demonstrate; the split is asserted above.
     // Markup copied from the wrong card would still be non-empty. It has to
     // actually demonstrate the pattern it is filed under.
     //
@@ -65,6 +77,7 @@ describe("components.json", () => {
       new Set(attributeValues(markup, "class").flatMap((v) => v.split(/\s+/).filter(Boolean)));
     const mismatched = components.patterns
       .filter((p) => {
+        if (p.classes.length === 0) return false; // policy entry — nothing to demonstrate
         const used = classTokens(p.markup ?? "");
         return !p.classes.some((c) => used.has(c.replace(/^\./, "")));
       })
@@ -94,19 +107,11 @@ describe("every class is demonstrated", () => {
   // ancestor (the CSS pairs each with its element selector), and `.u-frame` /
   // `.u-code-bleed` are opt-in modifiers applied to a host element. Every other
   // class has to appear somewhere a consumer can copy it.
-  const STANDALONE = new Set(["u-h1", "u-h2", "u-h3", "u-p", "u-hr", "u-frame", "u-code-bleed"]);
 
   it("shows every u-* class the CSS defines somewhere copyable", () => {
     const shown = new Set([...htmlCorpus, ...markupCorpus].flatMap(classTokens));
-    const orphans = [...definedClasses].filter((c) => !shown.has(c) && !STANDALONE.has(c));
+    const orphans = [...definedClasses].filter((c) => !shown.has(c));
     expect(orphans.sort()).toEqual([]);
-  });
-
-  it("keeps the standalone allowlist free of entries that are now demonstrated", () => {
-    // Otherwise the allowlist only ever grows, and it stops meaning anything.
-    const shown = new Set([...htmlCorpus, ...markupCorpus].flatMap(classTokens));
-    const stale = [...STANDALONE].filter((c) => shown.has(c) || !definedClasses.has(c));
-    expect(stale.sort()).toEqual([]);
   });
 
   it("demonstrates every contract class in the pattern that declares it", () => {
