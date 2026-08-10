@@ -53,7 +53,8 @@ interrupted=""
 # waiting forever on every exit path — and `wait` returns when the wrapper goes,
 # which is not the same as the listener going.
 cleanup() {
-  [ -n "$server_pid" ] || return 0
+  local status=$?
+  [ -n "$server_pid" ] || return "$status"
   kill -- "-$server_pid" 2>/dev/null || kill "$server_pid" 2>/dev/null || true
   for _ in 1 2 3 4 5; do
     kill -0 -- "-$server_pid" 2>/dev/null || break
@@ -61,9 +62,14 @@ cleanup() {
   done
   kill -9 -- "-$server_pid" 2>/dev/null || kill -9 "$server_pid" 2>/dev/null || true
   wait "$server_pid" 2>/dev/null || true
+  # A warning here would be swallowed: an EXIT trap keeps the pre-trap status, so
+  # a passing contract run would still exit 0 with a listener left behind — the
+  # next run then finds the port busy and blames the wrong thing.
   if probe 2 2>/dev/null; then
-    echo "smoke: port $port is still serving after teardown." >&2
+    echo "smoke: port $port is still serving after teardown; the worker escaped its process group." >&2
+    exit 1
   fi
+  return "$status"
 }
 # Bash defers a trap until the foreground command returns, so the client runs in
 # the background and the handler kills it. In the foreground, a stalled client
