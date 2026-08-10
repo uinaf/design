@@ -76,19 +76,30 @@ jobs:
           # machine-layer.ts stamps this commit into /.well-known/build, and
           # wrangler ships the Worker and its assets as one version — so seeing
           # this SHA is proof the new Worker is the one answering.
-          for attempt in 1 2 3 4 5; do
+          # Two waits, budgeted separately. Counting attempts across both put a
+          # good deploy in the red: the probe returns in milliseconds while
+          # propagation is pending, so a budget written as 400s spent 50.
+          deadline=$(($(date +%s) + 300))
+          while true; do
             served="$(curl -sf --max-time 10 https://design.uinaf.dev/.well-known/build || true)"
             if [ "$served" = "$GITHUB_SHA" ]; then
-              # 5 attempts x (10s probe + 60s smoke + 10s sleep) = 400s, which
-              # fits the job budget alongside checkout, install and deploy.
-              if timeout 60 node scripts/smoke-mcp.ts https://design.uinaf.dev; then
-                exit 0
-              fi
-              echo "attempt $attempt: this build is live but the contract failed"
-            else
-              echo "attempt $attempt: design.uinaf.dev is still serving build ${served:-<none>}"
+              break
             fi
+            if [ "$(date +%s)" -ge "$deadline" ]; then
+              echo "design.uinaf.dev did not serve $GITHUB_SHA within 5m — still on ${served:-<none>}"
+              exit 1
+            fi
+            echo "waiting for propagation: design.uinaf.dev is on ${served:-<none>}"
             sleep 10
           done
-          echo "design.uinaf.dev did not serve this build's contract after the deploy"
+
+          # This build is the one answering, so a failure here is the contract's.
+          for attempt in 1 2 3; do
+            if timeout 60 node scripts/smoke-mcp.ts https://design.uinaf.dev; then
+              exit 0
+            fi
+            echo "attempt $attempt: this build is live but the contract failed"
+            sleep 10
+          done
+          echo "design.uinaf.dev serves this build, but its contract does not hold"
           exit 1
