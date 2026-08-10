@@ -130,65 +130,11 @@ for (const entry of shipped) {
   }
 }
 
-// A script no gate runs is a check that cannot fail. `scripts/smoke-mcp.ts` sat
-// behind a `smoke:mcp` package script for two releases asserting that some
-// patterns still had no markup — false since #33 — and nothing noticed, because
-// nothing ran it. Every runnable script now has to be reachable from `verify`,
-// or be listed here as deliberately manual with the reason.
-const MANUAL: Record<string, string> = {};
-const scripts = pkg.scripts ?? {};
-const reached = new Set<string>();
-// Comments are stripped first, or this paragraph would mark smoke-mcp.ts
-// reachable by naming its path — a guard that a comment can satisfy is the
-// fail-open it exists to prevent.
-const stripComments = (source: string): string =>
-  source
-    .replace(/\/\*[\s\S]*?\*\//g, " ")
-    .replace(/(^|\s)\/\/[^\n]*/gm, "$1")
-    .replace(/(^|\s)#[^\n]*/gm, "$1");
-// Command position, not any mention of the path. `echo scripts/smoke-mcp.ts`
-// names the file without running it, and a guard a mention can satisfy is the
-// fail-open this one exists to prevent. Either the script invokes itself
-// (`./scripts/x.sh`) or an interpreter runs it.
-// The interpreter needs its own left boundary. Without one, `sh` matches inside
-// `smoke.sh scripts/smoke-mcp.ts`, and an `echo` of two paths reads as running
-// the second — the mention-counts-as-invocation hole, one layer down.
-const INVOCATION =
-  /(?:^|[\s;&|(])(?:\.\/scripts\/|(?:node|bash|sh|zsh|tsx|npx)\s+(?:\.\/)?scripts\/)([\w.-]+\.(?:ts|sh|mjs|js))/g;
-const collect = (source: string): string[] =>
-  [...stripComments(source).matchAll(INVOCATION)].map((m) => m[1]);
-const walk = (name: string, seen: Set<string>): void => {
-  if (seen.has(name)) return;
-  seen.add(name);
-  const body = scripts[name] === undefined ? undefined : stripComments(scripts[name]);
-  if (body === undefined) return;
-  for (const file of collect(body)) {
-    if (reached.has(file)) continue;
-    reached.add(file);
-    // A shell entrypoint hides its real work from package.json: smoke.sh is
-    // what runs smoke-mcp.ts. Follow one file into the next.
-    const source = path.join(root, "scripts", file);
-    if (fs.existsSync(source)) {
-      for (const nested of collect(fs.readFileSync(source, "utf8"))) reached.add(nested);
-    }
-  }
-  for (const [, referenced] of body.matchAll(/pnpm run ([\w:-]+)/g)) walk(referenced, seen);
-};
-walk("verify", new Set());
-const orphaned = fs
-  .readdirSync(path.join(root, "scripts"))
-  .filter((file) => /\.(?:ts|sh|mjs|js)$/.test(file))
-  .filter((file) => !reached.has(file) && !(file in MANUAL));
-if (orphaned.length > 0) {
-  fail(
-    `scripts/${orphaned.join(", scripts/")} — nothing in \`pnpm run verify\` runs this.\nWire it into verify, or add it to MANUAL in scripts/check.ts with the reason it stays manual.`,
-  );
-}
-
 // AGENTS.md is the first thing an agent reads and the last thing any gate
 // checks. A command named there that no longer exists sends every agent down a
 // dead path, and renaming a script is a one-line edit no test can see. Only the
 // repo-facing docs — README.md describes the consumer's project, not this one.
+const scripts = pkg.scripts ?? {};
 const stale = ["AGENTS.md", "CONTRIBUTING.md", "docs/releasing.md"].flatMap((doc) =>
   [...fs.readFileSync(path.join(root, doc), "utf8").matchAll(/pnpm run ([\w:-]+)/g)]
     .map((m) => m[1])

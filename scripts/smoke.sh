@@ -20,7 +20,7 @@ mkdir -p "$artifacts"
 server_log="$artifacts/wrangler-$port.log"
 client_log="$artifacts/smoke-mcp-$port.log"
 
-if curl -sf -o /dev/null "http://127.0.0.1:$port/" 2>/dev/null; then
+if curl -sf --connect-timeout 2 --max-time 5 -o /dev/null "http://127.0.0.1:$port/" 2>/dev/null; then
   echo "smoke: something already serves port $port." >&2
   echo "       Stop it, or set SMOKE_PORT to a free port." >&2
   exit 1
@@ -79,7 +79,10 @@ ready=""
 for _ in $(seq 1 "$timeout_seconds"); do
   [ -n "$interrupted" ] && { echo "smoke: interrupted during boot" >&2; exit 130; }
   kill -0 "$server_pid" 2>/dev/null || fail_with_log "wrangler dev exited during boot."
-  if curl -sf -o /dev/null "http://127.0.0.1:$port/"; then
+  # --max-time, or a worker that accepts the connection and never answers hangs
+  # this curl forever: the loop stops advancing, SMOKE_TIMEOUT bounds nothing,
+  # and a foreground command that never returns also defers the signal traps.
+  if curl -sf --connect-timeout 2 --max-time 5 -o /dev/null "http://127.0.0.1:$port/"; then
     ready=1
     break
   fi
