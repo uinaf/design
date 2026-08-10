@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Boots the Worker, runs the MCP contract against it, and always tears it down.
+# Boots the Worker, runs the read contract against it (MCP plus the machine-layer
+# routes those tools wrap), and always tears it down.
 #
 #   SMOKE_PORT       port to bind (default 8788; set it per worktree)
 #   SMOKE_TIMEOUT    seconds to wait for the worker to answer (default 90)

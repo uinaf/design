@@ -122,8 +122,14 @@ export default {
     }
 
     if (isDirectory) {
-      const index = await fetchAsset(env, request, url, `${pathname}index.html`);
-      return ok(index) ? varyOnAccept(index) : env.ASSETS.fetch(request);
+      // A discovery document has no HTML form: /.well-known/skills/ is an
+      // index.json and nothing else, so html-only resolution 404s the one route
+      // agents are told to probe.
+      for (const name of ["index.html", "index.json"]) {
+        const index = await fetchAsset(env, request, url, `${pathname}${name}`);
+        if (ok(index)) return varyOnAccept(index);
+      }
+      return env.ASSETS.fetch(request);
     }
 
     const direct = await fetchAsset(env, request, url, pathname);
