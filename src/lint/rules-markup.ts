@@ -50,8 +50,24 @@ const ICON_FONT_CLASS =
  * *unsets* link styling and `.u-code-bleed` is a margin-only utility on
  * `.u-pre`, so neither wants a base and neither wears the spelling.
  */
-/** Longest base that leaves a modifier suffix: `u-btn--sm` → `u-btn`. */
-const MODIFIER = /^(u-[a-z0-9-]*[a-z0-9])--[a-z0-9-]+$/;
+const UTILITY_TOKEN = /^u-[a-z0-9-]+$/;
+
+/**
+ * Longest base that leaves a modifier suffix: `u-btn--sm` → `u-btn`.
+ *
+ * A scan rather than one regex: `^(u-[a-z0-9-]*[a-z0-9])--[a-z0-9-]+$` has to
+ * try every `--` split before it can reject, which is polynomial on a token
+ * like `u-0--0--0--`. This rule ships in the tarball and reads class names out
+ * of a consumer's markup, so that input is not ours to trust.
+ */
+const modifierBase = (token: string): string | undefined => {
+  if (!UTILITY_TOKEN.test(token)) return undefined;
+  for (let index = token.length - 3; index >= 3; index -= 1) {
+    if (token[index] !== "-" || token[index + 1] !== "-") continue;
+    if (token[index - 1] !== "-") return token.slice(0, index);
+  }
+  return undefined;
+};
 
 /**
  * The icon ramp: stroke thickens as the glyph shrinks, so a 12px icon reads at
@@ -198,7 +214,7 @@ export const checkMarkup = (source: string, file: string): Violation[] => {
         );
         continue;
       }
-      const base = MODIFIER.exec(token)?.[1];
+      const base = modifierBase(token);
       if (!base || tokens.includes(base)) continue;
       // Warn, not error: this rule ships in the tarball, and a new error would
       // turn every consumer's build red the moment they upgrade. The ratchet

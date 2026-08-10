@@ -271,7 +271,15 @@ var classOccurrences = (source, wanted) => {
 };
 var EMOJI = new RegExp("\\p{Emoji_Presentation}|\\p{Emoji}\\uFE0F", "gu");
 var ICON_FONT_CLASS = /^(?:(?:fa|fas|far|fab|fa-solid|fa-regular|glyphicon|mdi)-[a-z0-9-]+|material-icons(?:-[a-z]+)?|glyphicon)$/;
-var MODIFIER = /^(u-[a-z0-9-]*[a-z0-9])--[a-z0-9-]+$/;
+var UTILITY_TOKEN = /^u-[a-z0-9-]+$/;
+var modifierBase = (token) => {
+  if (!UTILITY_TOKEN.test(token)) return void 0;
+  for (let index = token.length - 3; index >= 3; index -= 1) {
+    if (token[index] !== "-" || token[index + 1] !== "-") continue;
+    if (token[index - 1] !== "-") return token.slice(0, index);
+  }
+  return void 0;
+};
 var ICON_RAMP = /* @__PURE__ */ new Map([
   [12, 1.75],
   [16, 1.5],
@@ -375,7 +383,7 @@ var checkMarkup = (source, file) => {
         );
         continue;
       }
-      const base = MODIFIER.exec(token)?.[1];
+      const base = modifierBase(token);
       if (!base || tokens.includes(base)) continue;
       add(
         match.index ?? 0,

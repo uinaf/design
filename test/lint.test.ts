@@ -298,6 +298,23 @@ describe("modifier-base", () => {
     expect(rules(markup('<a class="u-link-plain" href="#">x</a>'))).not.toContain("modifier-base");
     expect(rules(markup('<pre class="u-pre u-code-bleed">x</pre>'))).not.toContain("modifier-base");
   });
+  it("splits on the last separator a real base can precede", () => {
+    // `u-btn---b` is `u-btn` plus the modifier `-b`: the middle hyphen cannot
+    // end a base, so the separator is the pair before it.
+    const found = markup('<div class="u-btn---b"></div>');
+    expect(found.find((v) => v.rule === "modifier-base")?.message).toContain("u-btn");
+  });
+  it("stays linear on a token built to make a split search backtrack", () => {
+    // Regression: the rule reads class names out of a consumer's markup, so a
+    // polynomial split search here is theirs to trigger, not ours.
+    // The trailing `!` is what makes a split search exhaustive: every `--` gets
+    // tried before the token can be rejected.
+    const token = `u-${"0--".repeat(20000)}!`;
+    const started = process.hrtime.bigint();
+    rules(markup(`<div class="${token}"></div>`));
+    const ms = Number(process.hrtime.bigint() - started) / 1e6;
+    expect(ms).toBeLessThan(250);
+  });
 
   // This rule shipped with a two-entry exemption list, because two standalone
   // utilities were named `u-link--plain` and `u-code--bleed` — the spelling
