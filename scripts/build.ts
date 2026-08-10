@@ -78,7 +78,7 @@ type Pattern = {
   name: string;
   classes: string[];
   use: string;
-  markup?: string;
+  markup: string;
   rules?: string[];
   never?: string[];
 };
@@ -113,7 +113,7 @@ const declared = components.patterns.flatMap((p) =>
 // or markup could dodge the guard just by changing its quoting.
 const classAttr = /class\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/g;
 const inMarkup = components.patterns.flatMap((p) =>
-  [...(p.markup ?? "").matchAll(classAttr)]
+  [...p.markup.matchAll(classAttr)]
     .flatMap((m) => (m[1] ?? m[2] ?? m[3] ?? "").split(/\s+/))
     .filter((c) => c && !definedClasses.has(c))
     .map((c) => `${p.name} markup → .${c}`),
@@ -150,7 +150,6 @@ fs.rmSync(patternsDir, { recursive: true, force: true });
 fs.mkdirSync(patternsDir, { recursive: true });
 let chunks = 0;
 for (const p of components.patterns) {
-  if (!p.markup) continue;
   fs.writeFileSync(path.join(patternsDir, `${slug(p.name)}.html`), patternPage(p));
   chunks += 1;
 }

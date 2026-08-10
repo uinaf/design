@@ -16,7 +16,10 @@ type Pattern = {
   slug: string;
   classes: string[];
   use: string;
-  markup?: string;
+  // Required, not optional: components.json is parsed at runtime, so the
+  // guarantee is test/components.test.ts, which fails on a markup-less pattern.
+  // Optional here would reintroduce the branches #17 closed.
+  markup: string;
   rules?: string[];
   never?: string[];
 };
@@ -116,14 +119,7 @@ export const createServer = (env: Env): McpServer => {
     },
     async () => {
       const { patterns } = await json<Components>(env, "/components.json");
-      return text(
-        patterns
-          .map(
-            (p) =>
-              `${p.name}${p.markup ? "" : " (no markup yet)"} — ${p.use} [${p.classes.join(", ")}]`,
-          )
-          .join("\n"),
-      );
+      return text(patterns.map((p) => `${p.name} — ${p.use} [${p.classes.join(", ")}]`).join("\n"));
     },
   );
 
@@ -143,11 +139,6 @@ export const createServer = (env: Env): McpServer => {
       if (!pattern) {
         return text(
           `No pattern named "${name}". Valid names:\n${patterns.map((p) => p.name).join(", ")}`,
-        );
-      }
-      if (!pattern.markup) {
-        return text(
-          `${describe(pattern)}\n\nNo markup is published for this pattern yet. Build it from the classes and rules above, and match the nearest pattern that does have markup.`,
         );
       }
       return text(
