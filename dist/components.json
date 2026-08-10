@@ -43,14 +43,16 @@
         ".u-btn--accent",
         ".u-btn--ghost",
         ".u-btn--sm",
-        ".u-btn--lg"
+        ".u-btn--lg",
+        ".u-btn--icon"
       ],
       "use": "32px rhythm (26/38 sm/lg), 13px lowercase labels",
-      "markup": "<button type=\"button\" class=\"u-btn u-btn--primary\">save</button>\n<button type=\"button\" class=\"u-btn u-btn--accent\">review</button>\n<button type=\"button\" class=\"u-btn u-btn--ghost\">cancel</button>\n<button type=\"button\" class=\"u-btn u-btn--sm\">retry</button>\n<button type=\"button\" class=\"u-btn u-btn--lg u-btn--primary\">get started</button>",
+      "markup": "<button type=\"button\" class=\"u-btn u-btn--primary\">save</button>\n<button type=\"button\" class=\"u-btn u-btn--accent\">review</button>\n<button type=\"button\" class=\"u-btn u-btn--ghost\">cancel</button>\n<button type=\"button\" class=\"u-btn u-btn--sm\">retry</button>\n<button type=\"button\" class=\"u-btn u-btn--lg u-btn--primary\">get started</button>\n<button type=\"button\" class=\"u-btn u-btn--icon u-tip\" data-tip=\"re-run\" aria-label=\"re-run\"><svg viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\"><path d=\"M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2.5v3h-3\"/></svg></button>",
       "rules": [
         "hierarchy via fill weight: primary=white fill, secondary=outline, ghost=borderless",
         "default pairing = primary + ghost",
-        "natural width — never stretch full-width, even in auth cards"
+        "natural width — never stretch full-width, even in auth cards",
+        "icon-only: .u-btn--icon squares the button; data-tip + aria-label carry the word"
       ],
       "never": [
         "two fills side by side",
@@ -66,7 +68,7 @@
         ".u-card"
       ],
       "use": "the indexable link primitive — the WHOLE card is one link",
-      "markup": "<a class=\"u-card u-link--plain\" href=\"#\">\n  <span class=\"u-label\">healthd</span>\n  <p class=\"u-meta\">small daemon for machine health checks and reporting.</p>\n</a>",
+      "markup": "<a class=\"u-card u-link-plain\" href=\"#\">\n  <span class=\"u-label\">healthd</span>\n  <p class=\"u-meta\">small daemon for machine health checks and reporting.</p>\n</a>",
       "rules": [
         "hover: border brightens + 2px lift; press compresses"
       ],
@@ -128,14 +130,14 @@
         ".u-code",
         ".u-pre",
         ".u-kbd",
-        ".u-code--bleed"
+        ".u-code-bleed"
       ],
-      "use": "inline chips on raised fill; blocks darker, 13px; .u-code--bleed lets a block run wider than narrow prose",
+      "use": "inline chips on raised fill; blocks darker, 13px; .u-code-bleed lets a block run wider than narrow prose",
       "rules": [
         "never wrap code — scroll it",
         "abbreviations in code stay as written (--pr flags, url vars)"
       ],
-      "markup": "<p class=\"u-prose\">run <code class=\"u-code\">attach put ./shot.png</code>, or press <kbd class=\"u-kbd\">⌘k</kbd>.</p>\n<pre class=\"u-pre\">attach login\nattach put ./shot.png --repo owner/repo --pr 12</pre>\n<pre class=\"u-pre u-code--bleed\">slopzapper review --repo owner/repo --pr 12 --verdict block --reason \"no test for the new branch\"</pre>",
+      "markup": "<p class=\"u-prose\">run <code class=\"u-code\">attach put ./shot.png</code>, or press <kbd class=\"u-kbd\">⌘k</kbd>.</p>\n<pre class=\"u-pre\">attach login\nattach put ./shot.png --repo owner/repo --pr 12</pre>\n<!-- wide block escaping narrow prose -->\n<pre class=\"u-pre u-code-bleed\">slopomatic runs list --repo uinaf/slopzapper --format table --since 2026-08-01</pre>",
       "slug": "code",
       "chunk": "https://design.uinaf.dev/patterns/code.html",
       "chunkFile": "./patterns/code.html"
@@ -265,7 +267,7 @@
       "rules": [
         "the set is original work, licensed with the repo — no third-party attribution needed",
         "never import an icon library and never paste from third-party sets (lucide/feather/heroicons/geist) — extend the committed set instead, in its idiom",
-        "sizes, stroke scaling inversely: 16/1.5 default · 12/1.75 in tags+meta rows · 20/1.25 in large (40px) buttons and empty states",
+        "sizes, stroke scaling inversely: 16/1.5 default · 12/1.75 in tags+meta rows · 20/1.25 in large buttons and empty states",
         "no icon beside a word that already says it",
         "a new icon lands as a PR to assets/icons/ — agents pick from the set, never invent inline"
       ],
@@ -289,9 +291,9 @@
       ],
       "use": "index rows: title left, meta right, one-line desc; ruled when long",
       "rules": [
-        "row is one .u-link--plain when it links"
+        "row is one .u-link-plain when it links"
       ],
-      "markup": "<ul class=\"u-list u-list--ruled\">\n  <li class=\"u-list-row\">\n    <a class=\"u-link--plain\" href=\"#\">\n      <span class=\"u-list-title\">sandbox review</span>\n      <span class=\"u-list-meta\">2026-08-09</span>\n    </a>\n    <p class=\"u-list-desc\">a sandbox clones the PR, builds it, and runs it.</p>\n  </li>\n  <li class=\"u-list-row\">\n    <a class=\"u-link--plain\" href=\"#\">\n      <span class=\"u-list-title\">device auth</span>\n      <span class=\"u-list-meta\">2026-07-22</span>\n    </a>\n    <p class=\"u-list-desc\">one code, one confirm, no password field.</p>\n  </li>\n</ul>",
+      "markup": "<ul class=\"u-list u-list--ruled\">\n  <li class=\"u-list-row\">\n    <a class=\"u-link-plain\" href=\"#\">\n      <span class=\"u-list-title\">sandbox review</span>\n      <span class=\"u-list-meta\">2026-08-09</span>\n    </a>\n    <p class=\"u-list-desc\">a sandbox clones the PR, builds it, and runs it.</p>\n  </li>\n  <li class=\"u-list-row\">\n    <a class=\"u-link-plain\" href=\"#\">\n      <span class=\"u-list-title\">device auth</span>\n      <span class=\"u-list-meta\">2026-07-22</span>\n    </a>\n    <p class=\"u-list-desc\">one code, one confirm, no password field.</p>\n  </li>\n</ul>",
       "slug": "list",
       "chunk": "https://design.uinaf.dev/patterns/list.html",
       "chunkFile": "./patterns/list.html"
@@ -469,13 +471,13 @@
       "classes": [
         ".u-prose",
         ".u-link",
-        ".u-link--plain"
+        ".u-link-plain"
       ],
       "use": "long-form at narrow measure",
       "rules": [
         "three link families, never mixed on one surface: prose (dim underline, phosphor hover) · plain chrome (opacity fade) · whole-card"
       ],
-      "markup": "<p class=\"u-prose\" style=\"max-width:52ch\">underline is the affordance; hover goes phosphor. write to <a class=\"u-link\" href=\"#\">dev@uinaf.dev</a> or read the <a class=\"u-link\" href=\"#\">source ↗</a>. the underline never disappears. a <a class=\"u-link--plain\" href=\"#\">plain link</a> drops it for chrome that already reads as a target.</p>",
+      "markup": "<p class=\"u-prose\" style=\"max-width:52ch\">underline is the affordance; hover goes phosphor. write to <a class=\"u-link\" href=\"#\">dev@uinaf.dev</a> or read the <a class=\"u-link\" href=\"#\">source ↗</a>. the underline never disappears. a <a class=\"u-link-plain\" href=\"#\">plain link</a> drops it for chrome that already reads as a target.</p>",
       "slug": "prose",
       "chunk": "https://design.uinaf.dev/patterns/prose.html",
       "chunkFile": "./patterns/prose.html"
@@ -511,7 +513,7 @@
         "never widen a shell to fit one element",
         "one product = one width: every page keeps the same shell; a data-dense view may step UP to base, but a detail page never shrinks below its index/home"
       ],
-      "markup": "<header class=\"u-topbar\"><div class=\"u-shell-base u-topbar-row\"><a class=\"u-topbar-mark\" href=\"#\"><img src=\"https://cdn.uinaf.dev/images/webp/uinaf-computer-240w.webp\" alt=\"\">slopzapper</a><nav class=\"u-topbar-nav\"><a aria-current=\"page\" href=\"#\">overview</a></nav></div></header>\n<main class=\"u-shell-base\"><h1>overview</h1></main>\n\n<!-- one product picks one width and keeps it -->\n<main class=\"u-shell-narrow\"><h1>changelog</h1></main>\n<main class=\"u-shell-wide\"><h1>run detail</h1></main>",
+      "markup": "<header class=\"u-topbar\"><div class=\"u-shell-base u-topbar-row\"><a class=\"u-topbar-mark\" href=\"#\"><img src=\"https://cdn.uinaf.dev/images/webp/uinaf-computer-240w.webp\" alt=\"\">slopzapper</a><nav class=\"u-topbar-nav\"><a aria-current=\"page\" href=\"#\">overview</a></nav></div></header>\n<main class=\"u-shell-base\"><h1>overview</h1></main>\n\n<!-- prose/home/detail default -->\n<main class=\"u-shell-narrow\"><h1>about</h1></main>\n<!-- rare: dashboards -->\n<main class=\"u-shell-wide\"><h1>fleet</h1></main>",
       "slug": "shell",
       "chunk": "https://design.uinaf.dev/patterns/shell.html",
       "chunkFile": "./patterns/shell.html"
@@ -532,7 +534,7 @@
       "never": [
         "on product pages — that's what the topbar is for"
       ],
-      "markup": "<div class=\"u-header\" style=\"margin-bottom:0\">\n<span class=\"u-header-mark\"><img src=\"https://cdn.uinaf.dev/images/uinaf-computer.png\" alt=\"\"><span class=\"u-header-name\">uinaf</span></span>\n<p class=\"u-header-tagline\">we bet you've seen us before</p>\n<nav class=\"u-nav\"><a class=\"u-link--plain\" href=\"#\">blog</a><span class=\"u-sep\">·</span><a class=\"u-link--plain\" href=\"#\">projects</a><span class=\"u-sep\">·</span><a class=\"u-link--plain\" href=\"#\">status</a></nav>\n</div>",
+      "markup": "<div class=\"u-header\" style=\"margin-bottom:0\">\n<span class=\"u-header-mark\"><img src=\"https://cdn.uinaf.dev/images/uinaf-computer.png\" alt=\"\"><span class=\"u-header-name\">uinaf</span></span>\n<p class=\"u-header-tagline\">we bet you've seen us before</p>\n<nav class=\"u-nav\"><a class=\"u-link-plain\" href=\"#\">blog</a><span class=\"u-sep\">·</span><a class=\"u-link-plain\" href=\"#\">projects</a><span class=\"u-sep\">·</span><a class=\"u-link-plain\" href=\"#\">status</a></nav>\n</div>",
       "slug": "site-header",
       "chunk": "https://design.uinaf.dev/patterns/site-header.html",
       "chunkFile": "./patterns/site-header.html"

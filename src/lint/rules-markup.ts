@@ -45,17 +45,11 @@ const ICON_FONT_CLASS =
  * it. `.u-btn--primary` alone is a background colour on inline text — no
  * padding, no border, no font, because `.u-btn` owns those.
  *
- * Two classes wear the spelling without the dependency, and both are
- * deliberate. `.u-link--plain` *unsets* link styling, so pairing it with
- * `.u-link` would restore the underline it exists to remove. `.u-code--bleed`
- * is a margin-only utility whose host is `.u-pre`, not `.u-code`. Exported so
- * a test can hold the list to the CSS instead of letting it rot.
+ * The rule needs no exemptions, because the system reserves `--` for exactly
+ * this dependency. A standalone utility gets a single hyphen — `.u-link-plain`
+ * *unsets* link styling and `.u-code-bleed` is a margin-only utility on
+ * `.u-pre`, so neither wants a base and neither wears the spelling.
  */
-export const STANDALONE_MODIFIERS: ReadonlySet<string> = new Set([
-  "u-link--plain",
-  "u-code--bleed",
-]);
-
 /** Longest base that leaves a modifier suffix: `u-btn--sm` → `u-btn`. */
 const MODIFIER = /^(u-[a-z0-9-]*[a-z0-9])--[a-z0-9-]+$/;
 
@@ -205,7 +199,7 @@ export const checkMarkup = (source: string, file: string): Violation[] => {
         continue;
       }
       const base = MODIFIER.exec(token)?.[1];
-      if (!base || STANDALONE_MODIFIERS.has(token) || tokens.includes(base)) continue;
+      if (!base || tokens.includes(base)) continue;
       // Warn, not error: this rule ships in the tarball, and a new error would
       // turn every consumer's build red the moment they upgrade. The ratchet
       // makes it blocking here, where the baseline is zero.

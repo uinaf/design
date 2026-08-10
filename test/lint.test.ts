@@ -2,7 +2,6 @@ import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vite-plus/test";
 import { checkCss, checkMarkup, compareRatchet, countByRule } from "../src/lint/index";
-import { STANDALONE_MODIFIERS } from "../src/lint/rules-markup.ts";
 
 const root = path.resolve(import.meta.dirname, "..");
 const rules = (violations: Array<{ rule: string }>): string[] => violations.map((v) => v.rule);
@@ -295,45 +294,26 @@ describe("modifier-base", () => {
     const found = markup('<div class="u-skeleton--stat"></div>');
     expect(found.find((v) => v.rule === "modifier-base")?.message).toContain("u-skeleton");
   });
-  it("leaves the two self-sufficient classes alone", () => {
-    expect(rules(markup('<a class="u-link--plain" href="#">x</a>'))).not.toContain("modifier-base");
-    expect(rules(markup('<pre class="u-pre u-code--bleed">x</pre>'))).not.toContain(
-      "modifier-base",
-    );
+  it("says nothing about a standalone utility, which gets one hyphen", () => {
+    expect(rules(markup('<a class="u-link-plain" href="#">x</a>'))).not.toContain("modifier-base");
+    expect(rules(markup('<pre class="u-pre u-code-bleed">x</pre>'))).not.toContain("modifier-base");
   });
 
-  // The exception list is the one part of this rule taste cannot verify, so
-  // pin it to the CSS and to real usage. An entry the CSS dropped is a stale
-  // exception; an entry always paired with its base is an unneeded one, and
-  // both would quietly widen the rule's blind spot.
+  // This rule shipped with a two-entry exemption list, because two standalone
+  // utilities were named `u-link--plain` and `u-code--bleed` — the spelling
+  // claimed a dependency neither had. The names went back to one hyphen and the
+  // list went away. What keeps it away is the naming convention itself, so hold
+  // the CSS to it: every `--` class owes a base, or the exemptions come back.
   const source =
     fs.readFileSync(path.join(root, "src/tokens.css"), "utf8") +
     fs.readFileSync(path.join(root, "src/components.css"), "utf8");
-  const corpus = ["preview", "pages", "templates"]
-    .flatMap((dir) =>
-      fs
-        .readdirSync(path.join(root, dir))
-        .filter((f) => f.endsWith(".html"))
-        .map((f) => fs.readFileSync(path.join(root, dir, f), "utf8")),
-    )
-    .concat(fs.readFileSync(path.join(root, "src/components.json"), "utf8"));
 
-  it("lists only classes the CSS still defines", () => {
+  it("has a base in the CSS for every -- class the CSS defines", () => {
     const defined = new Set([...source.matchAll(/\.(u-[a-zA-Z0-9_-]+)/g)].map((m) => m[1]));
-    expect([...STANDALONE_MODIFIERS].filter((c) => !defined.has(c))).toEqual([]);
-  });
-
-  it("lists only classes something actually uses without a base", () => {
-    const unneeded = [...STANDALONE_MODIFIERS].filter((modifier) => {
-      const base = modifier.split("--")[0];
-      return !corpus.some((html) =>
-        [...html.matchAll(/(?:class|className)\\?"?\s*[:=]\s*\\?"([^"\\]*)/g)].some((m) => {
-          const tokens = m[1].split(/\s+/).filter(Boolean);
-          return tokens.includes(modifier) && !tokens.includes(base);
-        }),
-      );
-    });
-    expect(unneeded).toEqual([]);
+    const baseless = [...defined]
+      .filter((c) => c.includes("--"))
+      .filter((c) => !defined.has(c.slice(0, c.lastIndexOf("--"))));
+    expect(baseless.sort()).toEqual([]);
   });
 });
 
