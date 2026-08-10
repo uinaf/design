@@ -146,12 +146,21 @@ const stripComments = (source: string): string =>
     .replace(/\/\*[\s\S]*?\*\//g, " ")
     .replace(/(^|\s)\/\/[^\n]*/gm, "$1")
     .replace(/(^|\s)#[^\n]*/gm, "$1");
+// Command position, not any mention of the path. `echo scripts/smoke-mcp.ts`
+// names the file without running it, and a guard a mention can satisfy is the
+// fail-open this one exists to prevent. Either the script invokes itself
+// (`./scripts/x.sh`) or an interpreter runs it.
+// The interpreter needs its own left boundary. Without one, `sh` matches inside
+// `smoke.sh scripts/smoke-mcp.ts`, and an `echo` of two paths reads as running
+// the second — the mention-counts-as-invocation hole, one layer down.
+const INVOCATION =
+  /(?:^|[\s;&|(])(?:\.\/scripts\/|(?:node|bash|sh|zsh|tsx|npx)\s+(?:\.\/)?scripts\/)([\w.-]+\.(?:ts|sh|mjs|js))/g;
 const collect = (source: string): string[] =>
-  [...stripComments(source).matchAll(/scripts\/([\w.-]+\.(?:ts|sh|mjs|js))/g)].map((m) => m[1]);
+  [...stripComments(source).matchAll(INVOCATION)].map((m) => m[1]);
 const walk = (name: string, seen: Set<string>): void => {
   if (seen.has(name)) return;
   seen.add(name);
-  const body = scripts[name];
+  const body = scripts[name] === undefined ? undefined : stripComments(scripts[name]);
   if (body === undefined) return;
   for (const file of collect(body)) {
     if (reached.has(file)) continue;
