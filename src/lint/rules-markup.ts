@@ -40,6 +40,45 @@ const EMOJI = /\p{Emoji_Presentation}|\p{Emoji}\uFE0F/gu;
 const ICON_FONT_CLASS =
   /^(?:(?:fa|fas|far|fab|fa-solid|fa-regular|glyphicon|mdi)-[a-z0-9-]+|material-icons(?:-[a-z]+)?|glyphicon)$/;
 
+/**
+ * `u-X--y` is a BEM modifier: it overrides part of `.u-X` and is wrong without
+ * it. `.u-btn--primary` alone is a background colour on inline text — no
+ * padding, no border, no font, because `.u-btn` owns those.
+ *
+ * The rule needs no exemptions, because the system reserves `--` for exactly
+ * this dependency. A standalone utility gets a single hyphen — `.u-link-plain`
+ * *unsets* link styling and `.u-code-bleed` is a margin-only utility on
+ * `.u-pre`, so neither wants a base and neither wears the spelling.
+ */
+const UTILITY_TOKEN = /^u-[a-z0-9-]+$/;
+
+/**
+ * Longest base that leaves a modifier suffix: `u-btn--sm` → `u-btn`.
+ *
+ * A scan rather than one regex: `^(u-[a-z0-9-]*[a-z0-9])--[a-z0-9-]+$` has to
+ * try every `--` split before it can reject, which is polynomial on a token
+ * like `u-0--0--0--`. This rule ships in the tarball and reads class names out
+ * of a consumer's markup, so that input is not ours to trust.
+ */
+const modifierBase = (token: string): string | undefined => {
+  if (!UTILITY_TOKEN.test(token)) return undefined;
+  for (let index = token.length - 3; index >= 3; index -= 1) {
+    if (token[index] !== "-" || token[index + 1] !== "-") continue;
+    if (token[index - 1] !== "-") return token.slice(0, index);
+  }
+  return undefined;
+};
+
+/**
+ * The icon ramp: stroke thickens as the glyph shrinks, so a 12px icon reads at
+ * the same weight as a 16px one. Three pairs, and nothing between them.
+ */
+const ICON_RAMP = new Map([
+  [12, 1.75],
+  [16, 1.5],
+  [20, 1.25],
+]);
+
 /** React leaves these unitless; everything else gets px appended to a number. */
 const UNITLESS_PROPERTIES = new Set([
   "line-height",
@@ -73,7 +112,7 @@ export const checkMarkup = (source: string, file: string): Violation[] => {
     violations.push({ rule, severity, file, line: lineOf(source, index), message, fix });
   };
 
-  const accents = classOccurrences(source, "u-btn-accent");
+  const accents = classOccurrences(source, "u-btn--accent");
   if (accents.length > 1) {
     for (const index of accents.slice(1)) {
       add(
@@ -81,7 +120,7 @@ export const checkMarkup = (source: string, file: string): Violation[] => {
         "one-accent-per-view",
         "error",
         `${accents.length} accent buttons in one view`,
-        "the accent is a laser pointer: keep one .u-btn-accent per view and make the rest .u-btn-primary or .u-btn-ghost",
+        "the accent is a laser pointer: keep one .u-btn--accent per view and make the rest .u-btn--primary or .u-btn--ghost",
       );
     }
   }
@@ -163,14 +202,93 @@ export const checkMarkup = (source: string, file: string): Violation[] => {
 
   for (const match of source.matchAll(CLASS_ATTR)) {
     const value = match[1] ?? match[2] ?? match[3] ?? match[4] ?? "";
-    for (const token of value.split(/\s+/)) {
-      if (!ICON_FONT_CLASS.test(token)) continue;
+    const tokens = value.split(/\s+/).filter(Boolean);
+    for (const token of tokens) {
+      if (ICON_FONT_CLASS.test(token)) {
+        add(
+          match.index ?? 0,
+          "no-icon-fonts",
+          "error",
+          `icon font class ${token}`,
+          "no icon fonts; pick from the committed assets/icons/ set, or use ↗ → · and hairlines",
+        );
+        continue;
+      }
+      const base = modifierBase(token);
+      if (!base || tokens.includes(base)) continue;
+      // Warn, not error: this rule ships in the tarball, and a new error would
+      // turn every consumer's build red the moment they upgrade. The ratchet
+      // makes it blocking here, where the baseline is zero.
       add(
         match.index ?? 0,
-        "no-icon-fonts",
-        "error",
-        `icon font class ${token}`,
-        "no icon fonts; use ↗ → · or an inline SVG hairline",
+        "modifier-base",
+        "warn",
+        `${token} without its base class ${base}`,
+        `add ${base} alongside it — a modifier overrides part of its base, so on its own it renders as unstyled content with one property changed`,
+      );
+    }
+  }
+
+  // Sized icons only. An <svg> that carries neither a render size nor a stroke
+  // width is a sparkline, a chart, or an icon sized by a class — none of them
+  // have anything for this rule to judge, and guessing from viewBox would read
+  // the 16-grid as a 16px render.
+  for (const match of source.matchAll(/<svg\b([^>]{0,2000})>/gi)) {
+    const attributes = match[1] ?? "";
+    // Inline style wins over the presentation attribute, exactly as CSS does.
+    const property = (name: string): number | undefined => {
+      const styled = new RegExp(
+        `(?:^|[;"'{\\s])${name}\\s{0,8}:\\s{0,8}(-?[\\d.]{1,12})`,
+        "i",
+      ).exec(attributes);
+      const attribute = new RegExp(
+        `(?:^|\\s)${name}\\s{0,8}=\\s{0,8}["']?(-?[\\d.]{1,12})`,
+        "i",
+      ).exec(attributes);
+      const raw = styled?.[1] ?? attribute?.[1];
+      return raw === undefined ? undefined : Number.parseFloat(raw);
+    };
+    const width = property("width");
+    const height = property("height");
+    const stroke = property("stroke-width");
+    if (width === undefined && stroke === undefined) continue;
+    const expected = width === undefined ? undefined : ICON_RAMP.get(width);
+    // Warn for the same reason as modifier-base: the rule ships in the tarball.
+    if (width !== undefined && expected === undefined) {
+      add(
+        match.index ?? 0,
+        "icon-size-ramp",
+        "warn",
+        `icon rendered at ${width}px`,
+        "icons render at 16px, 12px in tags and meta rows, or 20px in large buttons and empty states — nothing between",
+      );
+    } else if (width !== undefined && height !== undefined && height !== width) {
+      add(
+        match.index ?? 0,
+        "icon-size-ramp",
+        "warn",
+        `icon is ${width}×${height}, not square`,
+        "the set is drawn on a 16-grid: render it square, so the stroke stays even",
+      );
+    } else if (expected !== undefined && stroke !== undefined && stroke !== expected) {
+      add(
+        match.index ?? 0,
+        "icon-size-ramp",
+        "warn",
+        `${width}px icon with stroke-width ${stroke}`,
+        `use stroke-width ${expected} at ${width}px — the ramp thickens the stroke as the glyph shrinks so the weight reads the same`,
+      );
+    } else if (
+      width === undefined &&
+      stroke !== undefined &&
+      ![...ICON_RAMP.values()].includes(stroke)
+    ) {
+      add(
+        match.index ?? 0,
+        "icon-size-ramp",
+        "warn",
+        `stroke-width ${stroke} is off the ramp`,
+        "the only stroke widths are 1.5 at 16px, 1.75 at 12px, and 1.25 at 20px",
       );
     }
   }

@@ -2,7 +2,7 @@ import { McpServer } from "@modelcontextprotocol/server";
 import { z } from "zod";
 
 /**
- * The five read tools over build output. Kept deliberately small — large tool
+ * The six read tools over build output. Kept deliberately small — large tool
  * counts burn an agent's context before it has done any work.
  *
  * Every response is assembled from artifacts the build produced, so the tools
@@ -16,9 +16,8 @@ type Pattern = {
   slug: string;
   classes: string[];
   use: string;
-  // Required, not optional: components.json is parsed at runtime, so the
-  // guarantee is test/components.test.ts, which fails on a markup-less pattern.
-  // Optional here would reintroduce the branches #17 closed.
+  // Required by the build: every pattern owes something copyable, including the
+  // class-less policy entries, which owe the idiom they permit.
   markup: string;
   rules?: string[];
   never?: string[];
@@ -27,6 +26,7 @@ type Pattern = {
 type Components = { patterns: Pattern[] };
 type Tokens = { groups: Record<string, Record<string, string>> };
 type Page = { slug: string; name: string; description: string };
+type Template = Page & { canvas?: { width: number; height: number } };
 
 const text = (body: string) => ({ content: [{ type: "text" as const, text: body }] });
 
@@ -100,7 +100,9 @@ const describe = (p: Pattern): string =>
     "",
     p.use,
     "",
-    `**Classes** — ${p.classes.join(", ")}`,
+    // `icons` names no class — it restricts an idiom instead of shipping one.
+    // An empty "Classes —" line reads to an agent as a truncated contract.
+    `**Classes** — ${p.classes.length > 0 ? p.classes.join(", ") : "none — this entry is policy"}`,
     p.rules?.length ? `\n**Rules**\n${p.rules.map((r) => `- ${r}`).join("\n")}` : "",
     p.never?.length ? `\n**Never**\n${p.never.map((r) => `- ${r}`).join("\n")}` : "",
   ]
@@ -212,6 +214,42 @@ export const createServer = (env: Env): McpServer => {
       const html = await (await asset(env, `/pages/${page.slug}.html`)).text();
       return text(
         `# ${page.name}\n\n${page.description}\n\nRendered: https://design.uinaf.dev/pages/${page.slug}.html\n\n\`\`\`html\n${html.trim()}\n\`\`\`\n\nImport \`@uinaf/design/css\`, copy the markup, and replace the content. Keep the structure — the layout is the design.`,
+      );
+    },
+  );
+
+  server.registerTool(
+    "get_template",
+    {
+      description:
+        "Get a uinaf.dev site template or export artboard with its full markup — homepage, blog index, blog post, changelog, projects, project page, roadmap, status, 404, and the four fixed-size export canvases. Use for a uinaf-owned surface; use get_page for a product screen.",
+      inputSchema: {
+        name: z.string().optional().describe("Template slug, e.g. 'homepage'; omit to list them"),
+      },
+    },
+    async ({ name }) => {
+      const templates = await json<Template[]>(env, "/templates.json");
+      const list = templates.map((t) => `${t.slug} — ${t.description}`).join("\n");
+      if (name === undefined || name.trim() === "") {
+        return text(`Templates:\n${list}`);
+      }
+      const wanted = name.trim().toLowerCase();
+      const template =
+        templates.find((t) => t.slug.toLowerCase() === wanted) ??
+        templates.find((t) => t.name.toLowerCase() === wanted);
+      if (!template) {
+        return text(
+          `No template named "${name}". Valid templates:\n${list}\n\nFor a product screen use get_page instead.`,
+        );
+      }
+      const html = await (await asset(env, `/templates/${template.slug}.html`)).text();
+      // An artboard is a file to render at a fixed size, not a page to adapt.
+      // Without the size an agent pastes a 2560px canvas into a layout.
+      const canvas = template.canvas
+        ? `\nFixed export canvas — ${template.canvas.width}×${template.canvas.height}. Render it at that size; do not adapt it into a page.\n`
+        : "";
+      return text(
+        `# ${template.name}\n\n${template.description}\n${canvas}\nRendered: https://design.uinaf.dev/templates/${template.slug}.html\n\n\`\`\`html\n${html.trim()}\n\`\`\`\n\nImport \`@uinaf/design/css\`, copy the markup, and replace the content. Keep the structure — the layout is the design.`,
       );
     },
   );

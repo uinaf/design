@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import * as esbuild from "esbuild";
+import postcss from "postcss";
 import { CDN } from "../src/cdn.ts";
 
 const root = path.resolve(import.meta.dirname, "..");
@@ -10,9 +11,14 @@ fs.mkdirSync(path.join(root, "dist/css"), { recursive: true });
 fs.writeFileSync(path.join(root, "dist/css/tokens.css"), css);
 fs.copyFileSync(path.join(root, "src/components.css"), path.join(root, "dist/css/components.css"));
 
-const vars = [...css.matchAll(/--([a-z0-9-]+):\s*([^;]+);/gi)].map(
-  (m) => [m[1], m[2].trim()] as const,
-);
+// Over the AST, not the text. A regex for `--name:` also matches the pseudo-class
+// on a BEM modifier — `.u-btn--primary:hover` reads as a token named `--primary`
+// with `hover { … }` for a value, and the ungrouped-token guard then fails the
+// build on a property that does not exist.
+const vars: Array<readonly [string, string]> = [];
+postcss.parse(css, { from: "src/tokens.css" }).walkDecls((decl) => {
+  if (decl.prop.startsWith("--")) vars.push([decl.prop.slice(2), decl.value.trim()] as const);
+});
 const obj = Object.fromEntries(vars);
 
 /** Ordered prefix rules; first match wins. Every token must land in exactly one group. */
@@ -112,6 +118,17 @@ const declared = components.patterns.flatMap((p) =>
 // All three HTML attribute forms — double-quoted, single-quoted, and bare —
 // or markup could dodge the guard just by changing its quoting.
 const classAttr = /class\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/g;
+// Markup is what an agent copies, so every pattern owes one — including the
+// class-less policy entries, which owe the idiom they permit (`icons` shows the
+// inline-SVG shape it restricts agents to). The contract claims full coverage in
+// `$markupCoverage`; this is what makes the claim fail loudly instead of quietly.
+// Enforced in the build, not only in tests: the build produces what agents read.
+const contractless = components.patterns.filter((p) => !p.markup);
+if (contractless.length > 0) {
+  throw new Error(
+    `components.json: ${contractless.map((p) => p.name).join(", ")} publish no markup — every pattern needs something copyable, a policy entry included`,
+  );
+}
 const inMarkup = components.patterns.flatMap((p) =>
   [...p.markup.matchAll(classAttr)]
     .flatMap((m) => (m[1] ?? m[2] ?? m[3] ?? "").split(/\s+/))
@@ -162,12 +179,8 @@ fs.writeFileSync(
       patterns: components.patterns.map((p) => ({
         ...p,
         slug: slug(p.name),
-        ...(p.markup
-          ? {
-              chunk: `https://design.uinaf.dev/patterns/${slug(p.name)}.html`,
-              chunkFile: `./patterns/${slug(p.name)}.html`,
-            }
-          : {}),
+        chunk: `https://design.uinaf.dev/patterns/${slug(p.name)}.html`,
+        chunkFile: `./patterns/${slug(p.name)}.html`,
       })),
     },
     null,
@@ -212,7 +225,7 @@ export type RatchetResult = {
   improved: Array<{ rule: string; was: number; now: number }>;
 };
 export declare const check: (options?: CheckOptions) => Violation[];
-export declare const checkFile: (file: string, options?: CheckOptions) => Violation[];
+export declare const checkFile: (file: string) => Violation[];
 export declare const checkCss: (css: string, file: string) => Violation[];
 export declare const checkMarkup: (source: string, file: string) => Violation[];
 export declare const collectFiles: (roots: string[], ignore?: string[]) => string[];

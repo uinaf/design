@@ -27,20 +27,22 @@
       "name": "button",
       "classes": [
         ".u-btn",
-        ".u-btn-primary",
-        ".u-btn-accent",
-        ".u-btn-ghost",
-        ".u-btn-sm",
-        ".u-btn-lg"
+        ".u-btn--primary",
+        ".u-btn--accent",
+        ".u-btn--ghost",
+        ".u-btn--sm",
+        ".u-btn--lg",
+        ".u-btn--icon"
       ],
       "use": "32px rhythm (26/38 sm/lg), 13px lowercase labels",
-      "markup": "<button type=\"button\" class=\"u-btn u-btn-primary\">save</button>\n<button type=\"button\" class=\"u-btn u-btn-accent\">review</button>\n<button type=\"button\" class=\"u-btn u-btn-ghost\">cancel</button>\n<button type=\"button\" class=\"u-btn u-btn-sm\">retry</button>\n<button type=\"button\" class=\"u-btn u-btn-lg u-btn-primary\">get started</button>",
+      "markup": "<button type=\"button\" class=\"u-btn u-btn--primary\">save</button>\n<button type=\"button\" class=\"u-btn u-btn--accent\">review</button>\n<button type=\"button\" class=\"u-btn u-btn--ghost\">cancel</button>\n<button type=\"button\" class=\"u-btn u-btn--sm\">retry</button>\n<button type=\"button\" class=\"u-btn u-btn--lg u-btn--primary\">get started</button>\n<button type=\"button\" class=\"u-btn u-btn--icon u-tip\" data-tip=\"re-run\" aria-label=\"re-run\"><svg viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\"><path d=\"M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2.5v3h-3\"/></svg></button>",
       "rules": [
         "hierarchy via fill weight: primary=white fill, secondary=outline, ghost=borderless",
         "default pairing = primary + ghost",
-        "natural width — never stretch full-width, even in auth cards"
+        "natural width — never stretch full-width, even in auth cards",
+        "icon-only: .u-btn--icon squares the button; data-tip + aria-label carry the word"
       ],
-      "never": ["two fills side by side", "more than one .u-btn-accent per surface (usually zero)"]
+      "never": ["two fills side by side", "more than one .u-btn--accent per surface (usually zero)"]
     },
     {
       "name": "card",
@@ -48,8 +50,7 @@
       "use": "the indexable link primitive — the WHOLE card is one link",
       "markup": "<a class=\"u-card u-link-plain\" href=\"#\">\n  <span class=\"u-label\">healthd</span>\n  <p class=\"u-meta\">small daemon for machine health checks and reporting.</p>\n</a>",
       "rules": ["hover: border brightens + 2px lift; press compresses"],
-      "never": ["links inside a card-link"],
-      "$markupSource": "stub filled from preview/components-card.html using u-* primitives only"
+      "never": ["links inside a card-link"]
     },
     {
       "name": "charts",
@@ -88,13 +89,13 @@
     },
     {
       "name": "code",
-      "classes": [".u-code", ".u-pre", ".u-kbd"],
-      "use": "inline chips on raised fill; blocks darker, 13px",
+      "classes": [".u-code", ".u-pre", ".u-kbd", ".u-code-bleed"],
+      "use": "inline chips on raised fill; blocks darker, 13px; .u-code-bleed lets a block run wider than narrow prose",
       "rules": [
         "never wrap code — scroll it",
         "abbreviations in code stay as written (--pr flags, url vars)"
       ],
-      "markup": "<p class=\"u-prose\">run <code class=\"u-code\">attach put ./shot.png</code>, or press <kbd class=\"u-kbd\">⌘k</kbd>.</p>\n<pre class=\"u-pre\">attach login\nattach put ./shot.png --repo owner/repo --pr 12</pre>"
+      "markup": "<p class=\"u-prose\">run <code class=\"u-code\">attach put ./shot.png</code>, or press <kbd class=\"u-kbd\">⌘k</kbd>.</p>\n<pre class=\"u-pre\">attach login\nattach put ./shot.png --repo owner/repo --pr 12</pre>\n<!-- wide block escaping narrow prose -->\n<pre class=\"u-pre u-code-bleed\">slopomatic runs list --repo uinaf/slopzapper --format table --since 2026-08-01</pre>"
     },
     {
       "name": "def-rows",
@@ -120,7 +121,7 @@
       "use": "dashed region, one dry line, one action",
       "rules": ["a code snippet may stand in as the action for CLI products"],
       "never": ["illustrations", "multi-paragraph explanations"],
-      "markup": "<div class=\"u-empty\" style=\"max-width:560px\">\n<p>no runs for this repo yet. install the github app or trigger one from the CLI.</p>\n<pre class=\"u-pre\">slopomatic init --run demo</pre>\n<a class=\"u-btn u-btn-primary\" href=\"#\">install app ↗</a>\n</div>"
+      "markup": "<div class=\"u-empty\" style=\"max-width:560px\">\n<p>no runs for this repo yet. install the github app or trigger one from the CLI.</p>\n<pre class=\"u-pre\">slopomatic init --run demo</pre>\n<a class=\"u-btn u-btn--primary\" href=\"#\">install app ↗</a>\n</div>"
     },
     {
       "name": "field",
@@ -152,7 +153,24 @@
       "never": [
         "a kicker that repeats the product name, studio name, or anything in the nav — `UINAF · REVIEW BOT` under a slopzapper nav is the canonical failure; no kicker beats a redundant one"
       ],
-      "markup": "<div class=\"u-hero\">\n<span class=\"u-label\">AI code review · runs the code</span>\n<h1 class=\"u-hero-title\">PR review that actually runs the PR.</h1>\n<p class=\"u-hero-sub\">every PR gets cloned into a cloudflare sandbox, built, exercised, and reviewed. findings only, no vibes.</p>\n<div class=\"u-hero-actions\">\n<a class=\"u-btn u-btn-primary\" href=\"#\">add to github ↗</a>\n<a class=\"u-btn u-btn-ghost\" href=\"#\">read the docs</a>\n</div>\n</div>"
+      "markup": "<div class=\"u-hero\">\n<span class=\"u-label\">AI code review · runs the code</span>\n<h1 class=\"u-hero-title\">PR review that actually runs the PR.</h1>\n<p class=\"u-hero-sub\">every PR gets cloned into a cloudflare sandbox, built, exercised, and reviewed. findings only, no vibes.</p>\n<div class=\"u-hero-actions\">\n<a class=\"u-btn u-btn--primary\" href=\"#\">add to github ↗</a>\n<a class=\"u-btn u-btn--ghost\" href=\"#\">read the docs</a>\n</div>\n</div>"
+    },
+    {
+      "name": "icons",
+      "classes": [],
+      "use": "glyphs first: ↗ · ··· ← → and .u-dot cover most needs. when a pattern genuinely requires icons, pick from the committed set (assets/icons/ — search, copy, download, refresh, file, folder, branch, warning); extend it in the set's idiom: 16-grid stroke SVG, stroke 1.5, square caps, integer/half-px coordinates, currentColor, no fills",
+      "markup": "<svg viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\"><circle cx=\"7\" cy=\"7\" r=\"4.5\"/><path d=\"M10.5 10.5L14 14\"/></svg>",
+      "rules": [
+        "the set is original work, licensed with the repo — no third-party attribution needed",
+        "never import an icon library and never paste from third-party sets (lucide/feather/heroicons/geist) — extend the committed set instead, in its idiom",
+        "sizes, stroke scaling inversely: 16/1.5 default · 12/1.75 in tags+meta rows · 20/1.25 in large buttons and empty states",
+        "no icon beside a word that already says it",
+        "a new icon lands as a PR to assets/icons/ — agents pick from the set, never invent inline"
+      ],
+      "never": [
+        "decorative icons on buttons/nav that words already cover",
+        "two icon idioms on one surface"
+      ]
     },
     {
       "name": "list",
@@ -184,7 +202,7 @@
         "one danger item max, ruled off with <hr>",
         "toggle via hidden attribute (css ships [hidden]{display:none})"
       ],
-      "markup": "<div class=\"u-menu\"><button class=\"u-btn u-btn-sm\" id=\"menu-btn\" type=\"button\" aria-haspopup=\"menu\">···</button>\n<div class=\"u-menu-list\" id=\"menu-list\" hidden>\n<button type=\"button\">re-review</button>\n<button type=\"button\">copy link</button>\n<a href=\"#\">open PR ↗</a>\n<hr>\n<button type=\"button\" class=\"danger\">delete run</button>\n</div></div>"
+      "markup": "<div class=\"u-menu\"><button class=\"u-btn u-btn--sm\" id=\"menu-btn\" type=\"button\" aria-haspopup=\"menu\">···</button>\n<div class=\"u-menu-list\" id=\"menu-list\" hidden>\n<button type=\"button\">re-review</button>\n<button type=\"button\">copy link</button>\n<a href=\"#\">open PR ↗</a>\n<hr>\n<button type=\"button\" class=\"danger\">delete run</button>\n</div></div>"
     },
     {
       "name": "micro-label",
@@ -206,7 +224,7 @@
         "overlay click + esc close; toggle via hidden attribute",
         "the overlay carries `hidden`; the app toggles it — a copied modal must not cover the page on load"
       ],
-      "markup": "<div class=\"u-overlay\" hidden>\n<div class=\"u-modal u-ticks\">\n<h2 class=\"u-modal-title\">uninstall slopzapper?</h2>\n<p class=\"u-modal-body\">removes the app from all 12 repos. runs are kept 30 days, then deleted. reinstalling restores nothing.</p>\n<div class=\"u-modal-actions\"><button class=\"u-btn u-btn-ghost\" id=\"cancel\" type=\"button\">cancel</button><button class=\"u-btn u-btn-primary\" type=\"button\">uninstall</button></div>\n</div>\n</div>"
+      "markup": "<div class=\"u-overlay\" hidden>\n<div class=\"u-modal u-ticks\">\n<h2 class=\"u-modal-title\">uninstall slopzapper?</h2>\n<p class=\"u-modal-body\">removes the app from all 12 repos. runs are kept 30 days, then deleted. reinstalling restores nothing.</p>\n<div class=\"u-modal-actions\"><button class=\"u-btn u-btn--ghost\" id=\"cancel\" type=\"button\">cancel</button><button class=\"u-btn u-btn--primary\" type=\"button\">uninstall</button></div>\n</div>\n</div>"
     },
     {
       "name": "notice",
@@ -225,7 +243,7 @@
       "name": "panel",
       "classes": [".u-panel", ".u-ticks"],
       "use": "bordered region for grouping DATA (whitespace groups prose)",
-      "markup": "<div class=\"u-panel u-ticks\">…</div>",
+      "markup": "<div class=\"u-panel u-ticks\">\n<span class=\"u-label\">webhook</span>\n<p class=\"u-meta\" style=\"margin-top:var(--sp-2)\">delivering to slopzapper.uinaf.dev/hooks/gh · secret rotated 2026-07-30</p>\n</div>",
       "rules": [
         "20px air inside",
         "corner ticks (.u-ticks) for technical-drawing framing on panels, figures, hero bands"
@@ -236,8 +254,15 @@
       "name": "panel-grid",
       "classes": [".u-panel-grid"],
       "use": "panels sharing single hairlines — stat strips, feature grids, kanban",
-      "markup": "<div class=\"u-panel-grid\" style=\"grid-template-columns:repeat(3,1fr)\"><div class=\"u-stat\">…</div>…</div>",
+      "markup": "<div class=\"u-panel-grid\" style=\"grid-template-columns:repeat(3,1fr)\">\n<div class=\"u-stat\"><span class=\"u-label\">reviews today</span><span class=\"u-stat-value\">128</span></div>\n<div class=\"u-stat\"><span class=\"u-label\">median turnaround</span><span class=\"u-stat-value\">3m 12s</span></div>\n<div class=\"u-stat\"><span class=\"u-label\">queue</span><span class=\"u-stat-value\">7</span><span class=\"u-stat-note\">PRs waiting</span></div>\n</div>",
       "rules": ["1px gap over border color = shared hairlines, no double borders"]
+    },
+    {
+      "name": "primitives",
+      "classes": [".u-display", ".u-h1", ".u-h2", ".u-h3", ".u-p", ".u-hr", ".u-sep", ".u-frame"],
+      "use": "element-level primitives, not components: type roles (u-display/h1/h2/h3/p) for when semantic tags can't carry the style, u-hr rule, u-sep · divider, u-frame full-width hairline band",
+      "markup": "<span class=\"u-display\">40px display</span>\n<h1 class=\"u-h1\">page title</h1>\n<h2 class=\"u-h2\">section</h2>\n<h3 class=\"u-h3\">subsection</h3>\n<p class=\"u-p\">body copy at 14px.</p>\n<hr class=\"u-hr\">\n<span>docs <span class=\"u-sep\">·</span> status</span>\n<div class=\"u-frame\">full-width hairline band</div>",
+      "rules": ["type roles only where semantic elements can't carry the style"]
     },
     {
       "name": "progress",
@@ -268,8 +293,12 @@
       "name": "shell",
       "classes": [".u-shell-narrow", ".u-shell-base", ".u-shell-wide"],
       "use": "narrow 40rem (default — prose, home, detail) · base 48rem (data-dense: tables, dashboards) · wide 72rem (rare) · one product = one width",
-      "rules": ["if unsure, narrow", "never widen a shell to fit one element"],
-      "markup": "<header class=\"u-topbar\"><div class=\"u-shell-base u-topbar-row\">…</div></header>\n<main class=\"u-shell-base\">…</main>\n\n<!-- one product picks one width and keeps it -->\n<main class=\"u-shell-narrow\">…</main>\n<main class=\"u-shell-wide\">…</main>"
+      "rules": [
+        "if unsure, narrow",
+        "never widen a shell to fit one element",
+        "one product = one width: every page keeps the same shell; a data-dense view may step UP to base, but a detail page never shrinks below its index/home"
+      ],
+      "markup": "<header class=\"u-topbar\"><div class=\"u-shell-base u-topbar-row\"><a class=\"u-topbar-mark\" href=\"#\"><img src=\"https://cdn.uinaf.dev/images/webp/uinaf-computer-240w.webp\" alt=\"\">slopzapper</a><nav class=\"u-topbar-nav\"><a aria-current=\"page\" href=\"#\">overview</a></nav></div></header>\n<main class=\"u-shell-base\"><h1>overview</h1></main>\n\n<!-- prose/home/detail default -->\n<main class=\"u-shell-narrow\"><h1>about</h1></main>\n<!-- rare: dashboards -->\n<main class=\"u-shell-wide\"><h1>fleet</h1></main>"
     },
     {
       "name": "site-header",
@@ -311,8 +340,7 @@
       "use": "micro-label headers, hairline rules, numerics right (data-num)",
       "rules": ["first column brightest", "row hover = subtle bg; selected = accent-soft tint"],
       "never": ["zebra stripes", "heavy grid lines"],
-      "markup": "<table class=\"u-table\">\n  <thead><tr><th>service</th><th>status</th><th data-num>p99</th></tr></thead>\n  <tbody>\n    <tr><td>gateway</td><td><i class=\"u-dot u-dot--live\"></i>live</td><td data-num>41ms</td></tr>\n    <tr data-selected=\"\"><td>healthd</td><td><i class=\"u-dot u-dot--ok\"></i>ok</td><td data-num>8ms</td></tr>\n    <tr><td>relay</td><td><i class=\"u-dot\"></i>idle</td><td data-num>—</td></tr>\n  </tbody>\n</table>",
-      "$markupSource": "derived from preview/components-table.html; [data-num] and u-* classes only"
+      "markup": "<table class=\"u-table\">\n  <thead><tr><th>service</th><th>status</th><th data-num>p99</th></tr></thead>\n  <tbody>\n    <tr><td>gateway</td><td><i class=\"u-dot u-dot--live\"></i>live</td><td data-num>41ms</td></tr>\n    <tr data-selected=\"\"><td>healthd</td><td><i class=\"u-dot u-dot--ok\"></i>ok</td><td data-num>8ms</td></tr>\n    <tr><td>relay</td><td><i class=\"u-dot\"></i>idle</td><td data-num>—</td></tr>\n  </tbody>\n</table>"
     },
     {
       "name": "tabs",
@@ -375,7 +403,7 @@
       "name": "tooltip",
       "classes": [".u-tip"],
       "use": "a short clarification on hover or focus, from a data-tip attribute",
-      "markup": "<button type=\"button\" class=\"u-btn u-btn-sm u-tip\" data-tip=\"re-runs against the latest commit\">retry</button>",
+      "markup": "<button type=\"button\" class=\"u-btn u-btn--sm u-tip\" data-tip=\"re-runs against the latest commit\">retry</button>",
       "rules": [
         "CSS-only: put the text in data-tip, keep it to a few words",
         "appears on focus-visible too, so it is reachable by keyboard"
@@ -392,7 +420,7 @@
         ".u-topbar-actions"
       ],
       "use": "EVERY product page, dashboard, logged-in view",
-      "markup": "<header class=\"u-topbar\"><div class=\"u-shell-base u-topbar-row\"><a class=\"u-topbar-mark\" href=\"/\"><img src=\"https://cdn.uinaf.dev/images/webp/uinaf-computer-240w.webp\" alt=\"\">slopzapper</a><nav class=\"u-topbar-nav\"><a aria-current=\"page\" href=\"#\">overview</a>…</nav><div class=\"u-topbar-actions\"><a class=\"u-btn u-btn-sm u-btn-primary\" href=\"#\">new review</a></div></div></header>",
+      "markup": "<header class=\"u-topbar\"><div class=\"u-shell-base u-topbar-row\"><a class=\"u-topbar-mark\" href=\"#\"><img src=\"https://cdn.uinaf.dev/images/webp/uinaf-computer-240w.webp\" alt=\"\">slopzapper</a><nav class=\"u-topbar-nav\"><a aria-current=\"page\" href=\"#\">overview</a><a href=\"#\">reviews</a><a href=\"#\">repos</a><a href=\"#\">settings</a></nav><div class=\"u-topbar-actions\"><a class=\"u-btn u-btn--sm u-btn--primary\" href=\"#\">new review</a></div></div></header>",
       "rules": [
         "ONE 56px row: 20px framed mark + name left, plain links right (current brightest), max one small button",
         "the row and the content below share the same shell class — one gutter"
@@ -408,5 +436,5 @@
       "never": ["using it as a status pill, or coloring it"]
     }
   ],
-  "$markupCoverage": "12 of 31 patterns carry markup and have a generated chunk. 11 came from upstream (card arrived as a placeholder stub and was filled from its preview card); table was added from its preview card. The other 19 serve classes and rules only."
+  "$markupCoverage": "42 patterns; every pattern that names classes carries canonical markup with no placeholders and type=\"button\" on every button. icons declares no classes — its markup shows the inline-SVG idiom."
 }

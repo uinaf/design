@@ -55,13 +55,16 @@ for (const name of fs.readdirSync(path.join(guide, "preview"))) {
 // agent gets the contract and the markup without parsing a full HTML document.
 for (const p of components.patterns) {
   const markup = `\n\`\`\`html\n${p.markup}\n\`\`\`\n`;
+  // A policy entry names no classes — `icons` restricts an idiom rather than
+  // shipping one. An empty "Classes —" line reads as a build bug, so say it.
+  const classes = p.classes.length > 0 ? p.classes.join(", ") : "none — this entry is policy";
   write(
     `patterns/${p.slug}.md`,
     `# ${p.name}
 
 ${p.use}
 
-**Classes** — ${p.classes.join(", ")}
+**Classes** — ${classes}
 ${bullets("Rules", p.rules)}${bullets("Never", p.never)}${markup}
 Import \`@uinaf/design/css\`, then copy the markup. Full contract: /components.json
 `,
@@ -140,6 +143,53 @@ classes above; take any custom value from /tokens.json.
   );
 }
 
+// Templates: whole uinaf.dev surfaces and the export artboards. Same twin shape
+// as a page, plus the canvas size — an artboard is a file to render, not a page
+// to adapt, and an agent that cannot see that will paste 2560px into a layout.
+const templates = JSON.parse(fs.readFileSync(path.join(guide, "templates.json"), "utf8")) as Array<{
+  slug: string;
+  name: string;
+  description: string;
+  canvas?: { width: number; height: number };
+}>;
+
+for (const name of fs.readdirSync(path.join(guide, "templates"))) {
+  if (name.endsWith(".md")) fs.rmSync(path.join(guide, "templates", name));
+}
+
+for (const template of templates) {
+  const html = fs.readFileSync(path.join(guide, "templates", `${template.slug}.html`), "utf8");
+  const classes = [
+    ...new Set(
+      [...html.matchAll(/class="([^"]*)"/g)]
+        .flatMap((m) => m[1].split(/\s+/))
+        .filter((c) => c.startsWith("u-")),
+    ),
+  ].sort();
+  write(
+    `templates/${template.slug}.md`,
+    `# ${template.name}
+
+${template.description}
+${
+  template.canvas
+    ? `\nFixed export canvas — ${template.canvas.width}×${template.canvas.height}. Render it at that size; do not adapt it into a page.\n`
+    : ""
+}
+Rendered template: /templates/${template.slug}.html
+
+**Classes used** — ${classes.length ? classes.map((c) => `.${c}`).join(", ") : "none"}
+
+\`\`\`html
+${html.trim()}
+\`\`\`
+
+Copy the markup and replace the content. Import \`@uinaf/design/css\` for the
+classes above; take any custom value from /tokens.json.
+`,
+  );
+}
+
 // Reference docs served as-is; they are already markdown.
 for (const [source, name] of [
   ["DESIGN.md", "design"],
@@ -166,6 +216,12 @@ Machine-readable by design: fetch a pattern instead of writing UI from memory.
 Whole screens. Start here when building a page rather than a component.
 
 ${pages.map((p) => `- [${p.name}](/pages/${p.slug}.md) — ${p.description}`).join("\n")}
+
+## Templates (${templates.length})
+
+uinaf.dev's own surfaces, and the fixed-size export artboards.
+
+${templates.map((t) => `- [${t.name}](/templates/${t.slug}.md) — ${t.description}`).join("\n")}
 
 ## Patterns (${components.patterns.length})
 
@@ -201,6 +257,12 @@ write(
 Whole screens, markup included. Prefer these over assembling a page from patterns.
 
 ${pages.map((p) => `- [${p.name}](https://design.uinaf.dev/pages/${p.slug}.md): ${p.description}`).join("\n")}
+
+## Templates
+
+uinaf.dev's own surfaces plus the fixed-size export artboards.
+
+${templates.map((t) => `- [${t.name}](https://design.uinaf.dev/templates/${t.slug}.md): ${t.description}`).join("\n")}
 
 ## Patterns
 
@@ -247,6 +309,9 @@ write(".well-known/build", `${process.env.GITHUB_SHA ?? "dev"}\n`);
 const twins = fs.readdirSync(path.join(guide, "patterns")).filter((f) => f.endsWith(".md")).length;
 const cards = fs.readdirSync(path.join(guide, "preview")).filter((f) => f.endsWith(".md")).length;
 const pageTwins = fs.readdirSync(path.join(guide, "pages")).filter((f) => f.endsWith(".md")).length;
+const templateTwins = fs
+  .readdirSync(path.join(guide, "templates"))
+  .filter((f) => f.endsWith(".md")).length;
 console.log(
-  `machine layer: ${twins} pattern twins, ${cards} preview twins, ${pageTwins} page twins, llms.txt, index.md, skill discovery`,
+  `machine layer: ${twins} pattern twins, ${cards} preview twins, ${pageTwins} page twins, ${templateTwins} template twins, llms.txt, index.md, skill discovery`,
 );

@@ -1,5 +1,5 @@
 /* uinaf — components.css · patterns beyond the primitives.
-   Auto-imported by tokens.css — consumers still import one file. */
+   Auto-imported by colors_and_type.css — consumers still import one file. */
 
 /* ---------- viz — charts. series 1 = the accent, 2+ = slime. ---------- */
 .u-spark {
@@ -782,4 +782,12 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-xs);
   white-space: nowrap;
+}
+
+/* ---------- icon button — squares .u-btn; tooltip + aria-label carry the word ---------- */
+.u-btn.u-btn--icon {
+  aspect-ratio: 1;
+  width: auto;
+  padding: 0;
+  justify-content: center;
 }

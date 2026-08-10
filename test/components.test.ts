@@ -9,7 +9,7 @@ type Pattern = {
   name: string;
   classes: string[];
   use: string;
-  markup?: string;
+  markup: string;
 };
 
 const components = JSON.parse(readFileSync(resolve(root, "src/components.json"), "utf8")) as {
@@ -33,10 +33,9 @@ describe("components.json", () => {
     expect(undefined_).toEqual([]);
   });
 
-  it("gives every pattern a use and at least one class", () => {
+  it("gives every pattern a use", () => {
     for (const p of components.patterns) {
       expect(p.use, `${p.name} missing use`).toBeTruthy();
-      expect(p.classes.length, `${p.name} has no classes`).toBeGreaterThan(0);
     }
   });
 
@@ -47,9 +46,10 @@ describe("components.json", () => {
     expect(broken).toEqual([]);
   });
 
-  it("gives every pattern copyable markup", () => {
-    // The gap is closed (#17). A pattern without markup is now a regression,
-    // not a known hole, so this asserts the invariant rather than a list.
+  it("gives copyable markup to every pattern, policy entries included", () => {
+    // Full coverage, not "coverage where classes exist". A policy entry owes the
+    // idiom it permits — `icons` names no class but still has to show the
+    // inline-SVG shape it restricts agents to, or the ban has no referent.
     const missing = components.patterns.filter((p) => !p.markup).map((p) => p.name);
     expect(missing).toEqual([]);
   });
@@ -65,7 +65,8 @@ describe("components.json", () => {
       new Set(attributeValues(markup, "class").flatMap((v) => v.split(/\s+/).filter(Boolean)));
     const mismatched = components.patterns
       .filter((p) => {
-        const used = classTokens(p.markup ?? "");
+        if (p.classes.length === 0) return false; // policy entry — nothing to demonstrate
+        const used = classTokens(p.markup);
         return !p.classes.some((c) => used.has(c.replace(/^\./, "")));
       })
       .map((p) => p.name);
@@ -82,31 +83,38 @@ describe("every class is demonstrated", () => {
   const classTokens = (html: string): string[] =>
     attributeValues(html, "class").flatMap((v) => v.split(/\s+/).filter(Boolean));
 
-  const markupCorpus = components.patterns.map((p) => p.markup ?? "");
-  const htmlCorpus = ["preview", "pages", "templates"].flatMap((dir) =>
+  const markupCorpus = components.patterns.map((p) => p.markup);
+  const htmlFiles = ["preview", "pages", "templates"].flatMap((dir) =>
     readdirSync(resolve(root, dir))
       .filter((f) => f.endsWith(".html"))
-      .map((f) => readFileSync(resolve(root, dir, f), "utf8")),
+      .map((f) => ({ file: `${dir}/${f}`, html: readFileSync(resolve(root, dir, f), "utf8") })),
   );
+  const htmlCorpus = htmlFiles.map((f) => f.html);
 
   // Standalone utilities with no markup of their own: `.u-h1`…`.u-p` and
   // `.u-hr` are the escape hatches for consumers who cannot put `.uinaf` on an
   // ancestor (the CSS pairs each with its element selector), and `.u-frame` /
   // `.u-code-bleed` are opt-in modifiers applied to a host element. Every other
   // class has to appear somewhere a consumer can copy it.
-  const STANDALONE = new Set(["u-h1", "u-h2", "u-h3", "u-p", "u-hr", "u-frame", "u-code-bleed"]);
 
   it("shows every u-* class the CSS defines somewhere copyable", () => {
     const shown = new Set([...htmlCorpus, ...markupCorpus].flatMap(classTokens));
-    const orphans = [...definedClasses].filter((c) => !shown.has(c) && !STANDALONE.has(c));
+    const orphans = [...definedClasses].filter((c) => !shown.has(c));
     expect(orphans.sort()).toEqual([]);
   });
 
-  it("keeps the standalone allowlist free of entries that are now demonstrated", () => {
-    // Otherwise the allowlist only ever grows, and it stops meaning anything.
-    const shown = new Set([...htmlCorpus, ...markupCorpus].flatMap(classTokens));
-    const stale = [...STANDALONE].filter((c) => shown.has(c) || !definedClasses.has(c));
-    expect(stale.sort()).toEqual([]);
+  it("uses no u-* class the CSS leaves undefined", () => {
+    // The other direction, and the one that bites silently: a page that reaches
+    // for `.u-btn-sm` when the CSS ships `.u-btn--sm` renders as the unstyled
+    // base and nothing complains. `pages/dashboard.html` carried exactly that
+    // for two handoffs. The build guards `components.json`; these are the other
+    // surfaces agents copy from, and they were unguarded.
+    const dangling = htmlFiles.flatMap(({ file, html }) =>
+      [...new Set(classTokens(html))]
+        .filter((c) => c.startsWith("u-") && !definedClasses.has(c))
+        .map((c) => `${file} → .${c}`),
+    );
+    expect(dangling.sort()).toEqual([]);
   });
 
   it("demonstrates every contract class in the pattern that declares it", () => {
@@ -115,7 +123,7 @@ describe("every class is demonstrated", () => {
     // while `prose` declared `.u-link-plain` and showed `.u-link` — the class
     // was demonstrated, just not anywhere `get_pattern prose` would return it.
     const undemonstrated = components.patterns.flatMap((p) => {
-      const own = new Set(classTokens(p.markup ?? ""));
+      const own = new Set(classTokens(p.markup));
       return referenced(p)
         .filter((c) => !own.has(c))
         .map((c) => `${p.name} → .${c}`);

@@ -1,6 +1,9 @@
+import fs from "node:fs";
+import path from "node:path";
 import { describe, expect, it } from "vite-plus/test";
 import { checkCss, checkMarkup, compareRatchet, countByRule } from "../src/lint/index";
 
+const root = path.resolve(import.meta.dirname, "..");
 const rules = (violations: Array<{ rule: string }>): string[] => violations.map((v) => v.rule);
 const css = (source: string) => checkCss(source, "test.css");
 const markup = (source: string) => checkMarkup(source, "test.html");
@@ -82,17 +85,51 @@ describe("spacing-grid", () => {
   it("allows hairlines and optical nudges", () => {
     expect(rules(css("a{padding:1px;gap:2px}"))).not.toContain("spacing-grid");
   });
+
+  // The two regimes. A flat `% 4` test flagged every one of the micro half-steps,
+  // which is how 38 of 76 reported violations turned out to be the design system
+  // being deliberate and the rule being too crude.
+  it("accepts the micro half-steps under 16px", () => {
+    for (const size of [2, 6, 10, 14]) {
+      expect(rules(css(`a{gap:${size}px}`)), `${size}px`).not.toContain("spacing-grid");
+    }
+  });
+  it("accepts the layout steps the scale added", () => {
+    for (const size of [28, 36, 56, 72]) {
+      expect(rules(css(`a{padding:${size}px}`)), `${size}px`).not.toContain("spacing-grid");
+    }
+  });
+  it("rejects a value off the micro resolution", () => {
+    for (const size of [3, 5, 7, 15]) {
+      expect(rules(css(`a{gap:${size}px}`)), `${size}px`).toContain("spacing-grid");
+    }
+  });
+  it("rounds an exact layout tie down, because denser is on-brand", () => {
+    expect(css("a{padding:18px}")[0].fix).toContain("var(--sp-4) — 16px");
+    expect(css("a{padding:22px}")[0].fix).toContain("var(--sp-5) — 20px");
+  });
+  it("names a real token, fraction and all", () => {
+    // The name is derived from the value, so a new step cannot arrive unnamed.
+    expect(css("a{gap:7px}")[0].fix).toContain("var(--sp-1-5)");
+  });
+  it("never judges width, height, or control geometry", () => {
+    // An 18px switch and a 26px button are geometry, not spacing.
+    expect(rules(css("a{width:18px;height:26px;max-width:40ch}"))).not.toContain("spacing-grid");
+  });
+  it("accepts a spacing token outright", () => {
+    expect(rules(css("a{gap:var(--sp-1-5);padding:var(--sp-7)}"))).not.toContain("spacing-grid");
+  });
 });
 
 describe("one-accent-per-view", () => {
   it("passes with one", () => {
-    expect(rules(markup('<a class="u-btn u-btn-accent">go</a>'))).not.toContain(
+    expect(rules(markup('<a class="u-btn u-btn--accent">go</a>'))).not.toContain(
       "one-accent-per-view",
     );
   });
   it("fails with two", () => {
     expect(
-      rules(markup('<a class="u-btn u-btn-accent">go</a><a class="u-btn u-btn-accent">also</a>')),
+      rules(markup('<a class="u-btn u-btn--accent">go</a><a class="u-btn u-btn--accent">also</a>')),
     ).toContain("one-accent-per-view");
   });
 });
@@ -123,6 +160,56 @@ describe("shared-gutter", () => {
   it("ignores a fragment, which has no content to share a gutter with", () => {
     const chunk = `<header class="u-topbar"><div class="u-shell-base u-topbar-row"></div></header>`;
     expect(rules(markup(chunk))).not.toContain("shared-gutter");
+  });
+});
+
+describe("design-check-disable-next-line precision", () => {
+  // A suppression is a bypass, so it earns more tests than the rule it mutes.
+  // "suppresses the named rule, and nothing else in the file" is covered above.
+  const check = async (body: string): Promise<string[]> => {
+    const { checkFile } = await import("../src/lint/index");
+    const { tmpdir } = await import("node:os");
+    const file = path.join(fs.mkdtempSync(path.join(tmpdir(), "design-suppress-")), "page.html");
+    fs.writeFileSync(file, body);
+    return checkFile(file).map((v) => v.rule);
+  };
+
+  it("rejects the blanket form, which muted every rule on the line", async () => {
+    expect(await check("<!-- design-check-disable-next-line -->\n<p>ship it 🚀</p>\n")).toContain(
+      "no-emoji",
+    );
+  });
+  it("does not suppress a rule it does not name", async () => {
+    expect(
+      await check("<!-- design-check-disable-next-line button-type -->\n<p>ship it 🚀</p>\n"),
+    ).toContain("no-emoji");
+  });
+  it("reaches only the next line", async () => {
+    expect(
+      await check(
+        "<!-- design-check-disable-next-line no-emoji -->\n<p>a</p>\n<p>ship it 🚀</p>\n",
+      ),
+    ).toContain("no-emoji");
+  });
+});
+
+describe("rules watch classes that actually ship", () => {
+  // one-accent-per-view watched `.u-btn-accent` for one commit after the handoff
+  // renamed it to `.u-btn--accent`. An error-level rule guarding the single most
+  // distinctive brand constraint could not fire, and its own test passed because
+  // the test had drifted with it. A rule keyed to a class the CSS never defines is
+  // silent, not strict.
+  it("references no class the CSS does not define", () => {
+    const css = ["src/tokens.css", "src/components.css"]
+      .map((f) => fs.readFileSync(path.join(root, f), "utf8"))
+      .join("\n");
+    const defined = new Set([...css.matchAll(/\.(u-[a-zA-Z0-9_-]+)/g)].map((m) => m[1]));
+    const ruleSource = ["src/lint/rules-markup.ts", "src/lint/rules-css.ts"]
+      .map((f) => fs.readFileSync(path.join(root, f), "utf8"))
+      .join("\n");
+    const referenced = new Set([...ruleSource.matchAll(/"(u-[a-zA-Z0-9-]+)"/g)].map((m) => m[1]));
+    expect(referenced.size).toBeGreaterThan(0);
+    expect([...referenced].filter((c) => !defined.has(c)).sort()).toEqual([]);
   });
 });
 
@@ -186,6 +273,114 @@ describe("button-type", () => {
   it("reports each offender, so the ratchet counts them", () => {
     const found = markup('<button class="u-btn">a</button><button class="u-btn">b</button>');
     expect(found.filter((v) => v.rule === "button-type")).toHaveLength(2);
+  });
+});
+
+describe("modifier-base", () => {
+  it("passes when the base rides along", () => {
+    expect(
+      rules(markup('<button type="button" class="u-btn u-btn--primary">go</button>')),
+    ).not.toContain("modifier-base");
+    expect(rules(markup('<span class="u-dot u-dot--ok"></span>'))).not.toContain("modifier-base");
+  });
+  it("warns on a modifier alone, which renders as one property on nothing", () => {
+    const found = markup('<button type="button" class="u-btn--primary">go</button>');
+    expect(rules(found)).toContain("modifier-base");
+    expect(found.find((v) => v.rule === "modifier-base")?.message).toContain("u-btn");
+    // A new rule must not turn every consumer's build red on upgrade.
+    expect(found.find((v) => v.rule === "modifier-base")?.severity).toBe("warn");
+  });
+  it("takes the longest base, so a compound name is not truncated", () => {
+    const found = markup('<div class="u-skeleton--stat"></div>');
+    expect(found.find((v) => v.rule === "modifier-base")?.message).toContain("u-skeleton");
+  });
+  it("says nothing about a standalone utility, which gets one hyphen", () => {
+    expect(rules(markup('<a class="u-link-plain" href="#">x</a>'))).not.toContain("modifier-base");
+    expect(rules(markup('<pre class="u-pre u-code-bleed">x</pre>'))).not.toContain("modifier-base");
+  });
+  it("splits on the last separator a real base can precede", () => {
+    // `u-btn---b` is `u-btn` plus the modifier `-b`: the middle hyphen cannot
+    // end a base, so the separator is the pair before it.
+    const found = markup('<div class="u-btn---b"></div>');
+    expect(found.find((v) => v.rule === "modifier-base")?.message).toContain("u-btn");
+  });
+  it("stays linear on a token built to make a split search backtrack", () => {
+    // Regression: the rule reads class names out of a consumer's markup, so a
+    // polynomial split search here is theirs to trigger, not ours.
+    // The trailing `!` is what makes a split search exhaustive: every `--` gets
+    // tried before the token can be rejected.
+    const token = `u-${"0--".repeat(20000)}!`;
+    const started = process.hrtime.bigint();
+    rules(markup(`<div class="${token}"></div>`));
+    const ms = Number(process.hrtime.bigint() - started) / 1e6;
+    expect(ms).toBeLessThan(250);
+  });
+
+  // This rule shipped with a two-entry exemption list, because two standalone
+  // utilities were named `u-link--plain` and `u-code--bleed` — the spelling
+  // claimed a dependency neither had. The names went back to one hyphen and the
+  // list went away. What keeps it away is the naming convention itself, so hold
+  // the CSS to it: every `--` class owes a base, or the exemptions come back.
+  const source =
+    fs.readFileSync(path.join(root, "src/tokens.css"), "utf8") +
+    fs.readFileSync(path.join(root, "src/components.css"), "utf8");
+
+  it("has a base in the CSS for every -- class the CSS defines", () => {
+    const defined = new Set([...source.matchAll(/\.(u-[a-zA-Z0-9_-]+)/g)].map((m) => m[1]));
+    const baseless = [...defined]
+      .filter((c) => c.includes("--"))
+      .filter((c) => !defined.has(c.slice(0, c.lastIndexOf("--"))));
+    expect(baseless.sort()).toEqual([]);
+  });
+});
+
+describe("icon-size-ramp", () => {
+  const ramp = (source: string) => markup(source).filter((v) => v.rule === "icon-size-ramp");
+
+  it("passes on each of the three pairs, in either spelling", () => {
+    expect(ramp('<svg width="16" height="16" stroke-width="1.5"></svg>')).toEqual([]);
+    expect(ramp('<svg style="width:12px;height:12px;stroke-width:1.75"></svg>')).toEqual([]);
+    expect(ramp('<svg style="width:20px;height:20px;stroke-width:1.25"></svg>')).toEqual([]);
+  });
+
+  it("says nothing about an svg carrying neither a size nor a stroke", () => {
+    // Sparklines, charts, and icons sized by a class. Reading the 16-grid
+    // viewBox as a 16px render would flag every one of them.
+    expect(ramp('<svg class="u-spark" viewBox="0 0 100 28"></svg>')).toEqual([]);
+    expect(ramp('<svg class="icon" viewBox="0 0 16 16"></svg>')).toEqual([]);
+  });
+
+  it("warns on a stroke that does not match the size", () => {
+    const [violation] = ramp('<svg width="20" height="20" stroke-width="1.5"></svg>');
+    expect(violation.message).toContain("1.5");
+    expect(violation.fix).toContain("1.25");
+    // Same reason as modifier-base: the rule ships in the tarball.
+    expect(violation.severity).toBe("warn");
+  });
+
+  it("warns on a size off the ramp, before judging its stroke", () => {
+    const found = ramp('<svg width="18" height="18" stroke-width="1.5"></svg>');
+    expect(found).toHaveLength(1);
+    expect(found[0].message).toContain("18px");
+  });
+
+  it("warns on a non-square icon", () => {
+    expect(ramp('<svg width="16" height="20" stroke-width="1.5"></svg>')[0].message).toContain(
+      "16×20",
+    );
+  });
+
+  it("warns on an off-ramp stroke even when the size comes from a class", () => {
+    expect(
+      ramp('<svg class="icon" stroke-width="2" viewBox="0 0 16 16"></svg>')[0].message,
+    ).toContain("2");
+    expect(ramp('<svg class="icon" stroke-width="1.75" viewBox="0 0 16 16"></svg>')).toEqual([]);
+  });
+
+  it("lets inline style win over the presentation attribute, as CSS does", () => {
+    expect(ramp('<svg width="16" style="width:20px;height:20px;stroke-width:1.25"></svg>')).toEqual(
+      [],
+    );
   });
 });
 
@@ -459,7 +654,7 @@ describe("colour detection ignores content", () => {
 describe("class matching is attribute-anchored", () => {
   it("does not treat data-class or subclass as a class attribute", () => {
     const markupSource =
-      '<div data-class="u-btn-accent"></div><div data-class="u-btn-accent"></div>';
+      '<div data-class="u-btn--accent"></div><div data-class="u-btn--accent"></div>';
     expect(rules(markup(markupSource))).not.toContain("one-accent-per-view");
   });
 });

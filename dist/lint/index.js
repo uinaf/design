@@ -52,6 +52,11 @@ var GRANDFATHERED_SIZE = "12px";
 var MAX_RADIUS_PX = 6;
 var SPACING_PROPERTIES = /^(margin|padding)(-(top|right|bottom|left|inline|block)(-(start|end))?)?$|^gap$|^(row|column)-gap$/;
 var SPACED_PROPERTY_SPLIT = /\s+/;
+var LAYOUT_STEPS = [4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 48, 56, 64, 72, 80, 96];
+var MICRO_STEPS = [2, 4, 6, 8, 10, 12, 14];
+var MICRO_CEILING = 16;
+var nearestStep = (size, steps) => steps.reduce((best, step) => Math.abs(step - size) < Math.abs(best - size) ? step : best);
+var spacingToken = (px) => `--sp-${String(px / 4).replace(".", "-")}`;
 var isToken = (value) => /var\(\s*--/.test(value);
 var withoutTokenReferences = (value) => {
   let out = "";
@@ -235,15 +240,18 @@ var checkCss = (css, file) => {
         const px = /^(-?\d+(?:\.\d+)?)px$/.exec(part);
         if (!px) continue;
         const size = Math.abs(Number.parseFloat(px[1]));
-        if (size > 2 && size % 4 !== 0) {
-          add(
-            decl,
-            "spacing-grid",
-            "warn",
-            `${prop}: ${part} is off the 4px grid`,
-            "round to a multiple of 4, or use var(--sp-*)"
-          );
-        }
+        if (size <= 1) continue;
+        const micro = size < MICRO_CEILING;
+        const steps = micro ? MICRO_STEPS : LAYOUT_STEPS;
+        if (steps.includes(size)) continue;
+        const nearest = nearestStep(size, steps);
+        add(
+          decl,
+          "spacing-grid",
+          "warn",
+          `${prop}: ${part} is not a ${micro ? "micro" : "layout"} step`,
+          `use var(${spacingToken(nearest)}) \u2014 ${nearest}px${micro ? ". Micro spacing (under 16px, inside one row or control) has a 2px resolution" : ". Layout spacing sits on the published scale"}`
+        );
       }
     }
   });
@@ -263,6 +271,20 @@ var classOccurrences = (source, wanted) => {
 };
 var EMOJI = new RegExp("\\p{Emoji_Presentation}|\\p{Emoji}\\uFE0F", "gu");
 var ICON_FONT_CLASS = /^(?:(?:fa|fas|far|fab|fa-solid|fa-regular|glyphicon|mdi)-[a-z0-9-]+|material-icons(?:-[a-z]+)?|glyphicon)$/;
+var UTILITY_TOKEN = /^u-[a-z0-9-]+$/;
+var modifierBase = (token) => {
+  if (!UTILITY_TOKEN.test(token)) return void 0;
+  for (let index = token.length - 3; index >= 3; index -= 1) {
+    if (token[index] !== "-" || token[index + 1] !== "-") continue;
+    if (token[index - 1] !== "-") return token.slice(0, index);
+  }
+  return void 0;
+};
+var ICON_RAMP = /* @__PURE__ */ new Map([
+  [12, 1.75],
+  [16, 1.5],
+  [20, 1.25]
+]);
 var UNITLESS_PROPERTIES = /* @__PURE__ */ new Set([
   "line-height",
   "font-weight",
@@ -283,7 +305,7 @@ var checkMarkup = (source, file) => {
   const add = (index, rule, severity, message, fix) => {
     violations.push({ rule, severity, file, line: lineOf(source, index), message, fix });
   };
-  const accents = classOccurrences(source, "u-btn-accent");
+  const accents = classOccurrences(source, "u-btn--accent");
   if (accents.length > 1) {
     for (const index of accents.slice(1)) {
       add(
@@ -291,7 +313,7 @@ var checkMarkup = (source, file) => {
         "one-accent-per-view",
         "error",
         `${accents.length} accent buttons in one view`,
-        "the accent is a laser pointer: keep one .u-btn-accent per view and make the rest .u-btn-primary or .u-btn-ghost"
+        "the accent is a laser pointer: keep one .u-btn--accent per view and make the rest .u-btn--primary or .u-btn--ghost"
       );
     }
   }
@@ -349,14 +371,79 @@ var checkMarkup = (source, file) => {
   }
   for (const match of source.matchAll(CLASS_ATTR)) {
     const value = match[1] ?? match[2] ?? match[3] ?? match[4] ?? "";
-    for (const token of value.split(/\s+/)) {
-      if (!ICON_FONT_CLASS.test(token)) continue;
+    const tokens = value.split(/\s+/).filter(Boolean);
+    for (const token of tokens) {
+      if (ICON_FONT_CLASS.test(token)) {
+        add(
+          match.index ?? 0,
+          "no-icon-fonts",
+          "error",
+          `icon font class ${token}`,
+          "no icon fonts; pick from the committed assets/icons/ set, or use \u2197 \u2192 \xB7 and hairlines"
+        );
+        continue;
+      }
+      const base = modifierBase(token);
+      if (!base || tokens.includes(base)) continue;
       add(
         match.index ?? 0,
-        "no-icon-fonts",
-        "error",
-        `icon font class ${token}`,
-        "no icon fonts; use \u2197 \u2192 \xB7 or an inline SVG hairline"
+        "modifier-base",
+        "warn",
+        `${token} without its base class ${base}`,
+        `add ${base} alongside it \u2014 a modifier overrides part of its base, so on its own it renders as unstyled content with one property changed`
+      );
+    }
+  }
+  for (const match of source.matchAll(/<svg\b([^>]{0,2000})>/gi)) {
+    const attributes = match[1] ?? "";
+    const property = (name) => {
+      const styled = new RegExp(
+        `(?:^|[;"'{\\s])${name}\\s{0,8}:\\s{0,8}(-?[\\d.]{1,12})`,
+        "i"
+      ).exec(attributes);
+      const attribute = new RegExp(
+        `(?:^|\\s)${name}\\s{0,8}=\\s{0,8}["']?(-?[\\d.]{1,12})`,
+        "i"
+      ).exec(attributes);
+      const raw = styled?.[1] ?? attribute?.[1];
+      return raw === void 0 ? void 0 : Number.parseFloat(raw);
+    };
+    const width = property("width");
+    const height = property("height");
+    const stroke = property("stroke-width");
+    if (width === void 0 && stroke === void 0) continue;
+    const expected = width === void 0 ? void 0 : ICON_RAMP.get(width);
+    if (width !== void 0 && expected === void 0) {
+      add(
+        match.index ?? 0,
+        "icon-size-ramp",
+        "warn",
+        `icon rendered at ${width}px`,
+        "icons render at 16px, 12px in tags and meta rows, or 20px in large buttons and empty states \u2014 nothing between"
+      );
+    } else if (width !== void 0 && height !== void 0 && height !== width) {
+      add(
+        match.index ?? 0,
+        "icon-size-ramp",
+        "warn",
+        `icon is ${width}\xD7${height}, not square`,
+        "the set is drawn on a 16-grid: render it square, so the stroke stays even"
+      );
+    } else if (expected !== void 0 && stroke !== void 0 && stroke !== expected) {
+      add(
+        match.index ?? 0,
+        "icon-size-ramp",
+        "warn",
+        `${width}px icon with stroke-width ${stroke}`,
+        `use stroke-width ${expected} at ${width}px \u2014 the ramp thickens the stroke as the glyph shrinks so the weight reads the same`
+      );
+    } else if (width === void 0 && stroke !== void 0 && ![...ICON_RAMP.values()].includes(stroke)) {
+      add(
+        match.index ?? 0,
+        "icon-size-ramp",
+        "warn",
+        `stroke-width ${stroke} is off the ramp`,
+        "the only stroke widths are 1.5 at 16px, 1.75 at 12px, and 1.25 at 20px"
       );
     }
   }
@@ -453,7 +540,7 @@ var collectFiles = (roots, ignore = [], relativeTo = process.cwd()) => {
   for (const root of roots) walk(root);
   return found.sort();
 };
-var DISABLE_NEXT_LINE = /(?:<!--|\/\*)\s{0,8}design-check-disable-next-line\s{0,8}([a-z-]*)\s{0,8}(?:-->|\*\/)/g;
+var DISABLE_NEXT_LINE = /(?:<!--|\/\*)\s{0,8}design-check-disable-next-line\s{1,8}([a-z][a-z-]*)\s{0,8}(?:-->|\*\/)/g;
 var suppressions = (source) => [...source.matchAll(DISABLE_NEXT_LINE)].map((match) => ({
   line: source.slice(0, match.index ?? 0).split("\n").length + 1,
   rule: match[1] ?? ""
@@ -462,7 +549,7 @@ var applySuppressions = (source, violations) => {
   const rules = suppressions(source);
   if (rules.length === 0) return violations;
   return violations.filter(
-    (violation) => !rules.some((s) => s.line === violation.line && (s.rule === "" || s.rule === violation.rule))
+    (violation) => !rules.some((s) => s.line === violation.line && s.rule === violation.rule)
   );
 };
 var changedFiles = (base = "origin/main") => {
@@ -525,7 +612,7 @@ var gitRoot = () => {
     return void 0;
   }
 };
-var checkFile = (file, options = {}) => {
+var checkFile = (file) => {
   const source = fs.readFileSync(file, "utf8");
   const ext = path.extname(file).toLowerCase();
   if (CSS_EXTENSIONS.has(ext)) return applySuppressions(source, checkCss(source, file));
@@ -555,7 +642,7 @@ var check = (options = {}) => {
     throw new Error(`no such path: ${missing.join(", ")}`);
   }
   return collectFiles(roots, options.ignore ?? [], options.relativeTo).flatMap(
-    (file) => checkFile(file, options)
+    (file) => checkFile(file)
   );
 };
 var countByRule = (violations) => {

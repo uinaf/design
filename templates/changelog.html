@@ -8,31 +8,31 @@
 <style>body{margin:0;background:var(--bg)}@keyframes ue{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}@media (prefers-reduced-motion:reduce){[style*="animation"]{animation:none !important}}</style>
 </head>
 <body class="uinaf">
-<div class="uinaf" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:64px 24px 48px">
+<div class="uinaf" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:var(--sp-16) var(--sp-6) var(--sp-12)">
 <div style="width:100%;max-width:40rem;display:flex;flex-direction:column">
-<header style="margin-bottom:48px;animation:ue 220ms cubic-bezier(0.22,1,0.36,1) both">
-<a href="#" class="u-link-plain" style="display:inline-flex;align-items:center;gap:8px"><img src="https://cdn.uinaf.dev/images/uinaf-computer.png" width="24" height="24" alt="" style="border:1px solid var(--border);display:block"><span style="font-size:14px;color:var(--fg)">uinaf</span></a>
+<header style="margin-bottom:var(--sp-12);animation:ue 220ms cubic-bezier(0.22,1,0.36,1) both">
+<a href="#" class="u-link-plain" style="display:inline-flex;align-items:center;gap:var(--sp-2)"><img src="https://cdn.uinaf.dev/images/uinaf-computer.png" width="24" height="24" alt="" style="border:1px solid var(--border);display:block"><span style="font-size:14px;color:var(--fg)">uinaf</span></a>
 </header>
 <div style="animation:ue 220ms cubic-bezier(0.22,1,0.36,1) 45ms both">
 <h1>changelog</h1>
-<p style="margin-top:8px">what changed, when. no adjectives.</p>
+<p style="margin-top:var(--sp-2)">what changed, when. no adjectives.</p>
 </div>
-<div style="display:flex;flex-direction:column;margin-top:24px;animation:ue 220ms cubic-bezier(0.22,1,0.36,1) 90ms both">
-<div style="display:grid;grid-template-columns:96px 1fr;gap:20px;padding:20px 0;border-top:1px solid var(--border)">
-<span style="font-size:11px;color:var(--fg-subtle);padding-top:2px">2026-08-01</span>
-<div><h3 style="font-size:14px">healthd 0.9<span class="u-tag" style="margin-left:10px;vertical-align:2px">minor</span></h3><ul style="margin:8px 0 0;padding-left:16px;font-size:13px;color:var(--fg-muted)"><li style="margin:3px 0">added disk smart checks on macOS.</li><li style="margin:3px 0">report interval configurable per probe.</li><li style="margin:3px 0">fixed a leak in the tcp prober. sorry.</li></ul></div>
+<div style="display:flex;flex-direction:column;margin-top:var(--sp-6);animation:ue 220ms cubic-bezier(0.22,1,0.36,1) 90ms both">
+<div style="display:grid;grid-template-columns:96px 1fr;gap:var(--sp-5);padding:var(--sp-5) 0;border-top:1px solid var(--border)">
+<span style="font-size:11px;color:var(--fg-subtle);padding-top:var(--sp-0-5)">2026-08-01</span>
+<div><h3 style="font-size:14px">healthd 0.9<span class="u-tag" style="margin-left:var(--sp-2-5);vertical-align:2px">minor</span></h3><ul style="margin:var(--sp-2) 0 0;padding-left:var(--sp-4);font-size:13px;color:var(--fg-muted)"><li style="margin:var(--sp-1) 0">added disk smart checks on macOS.</li><li style="margin:var(--sp-1) 0">report interval configurable per probe.</li><li style="margin:var(--sp-1) 0">fixed a leak in the tcp prober. sorry.</li></ul></div>
 </div>
-<div style="display:grid;grid-template-columns:96px 1fr;gap:20px;padding:20px 0;border-top:1px solid var(--border)">
-<span style="font-size:11px;color:var(--fg-subtle);padding-top:2px">2026-07-18</span>
-<div><h3 style="font-size:14px">tccutil-rs 2.1<span class="u-tag" style="margin-left:10px;vertical-align:2px">patch</span></h3><ul style="margin:8px 0 0;padding-left:16px;font-size:13px;color:var(--fg-muted)"><li style="margin:3px 0">handles the sequoia permission db path.</li><li style="margin:3px 0"><code>--dry-run</code> prints what it would do. nothing else.</li></ul></div>
+<div style="display:grid;grid-template-columns:96px 1fr;gap:var(--sp-5);padding:var(--sp-5) 0;border-top:1px solid var(--border)">
+<span style="font-size:11px;color:var(--fg-subtle);padding-top:var(--sp-0-5)">2026-07-18</span>
+<div><h3 style="font-size:14px">tccutil-rs 2.1<span class="u-tag" style="margin-left:var(--sp-2-5);vertical-align:2px">patch</span></h3><ul style="margin:var(--sp-2) 0 0;padding-left:var(--sp-4);font-size:13px;color:var(--fg-muted)"><li style="margin:var(--sp-1) 0">handles the sequoia permission db path.</li><li style="margin:var(--sp-1) 0"><code>--dry-run</code> prints what it would do. nothing else.</li></ul></div>
 </div>
-<div style="display:grid;grid-template-columns:96px 1fr;gap:20px;padding:20px 0;border-top:1px solid var(--border)">
-<span style="font-size:11px;color:var(--fg-subtle);padding-top:2px">2026-07-02</span>
-<div><h3 style="font-size:14px">autoreview 1.0<span class="u-tag" style="margin-left:10px;vertical-align:2px">major</span></h3><p style="font-size:13px;margin-top:8px">first stable release. it reviews code and stays out of the way.</p></div>
+<div style="display:grid;grid-template-columns:96px 1fr;gap:var(--sp-5);padding:var(--sp-5) 0;border-top:1px solid var(--border)">
+<span style="font-size:11px;color:var(--fg-subtle);padding-top:var(--sp-0-5)">2026-07-02</span>
+<div><h3 style="font-size:14px">autoreview 1.0<span class="u-tag" style="margin-left:var(--sp-2-5);vertical-align:2px">major</span></h3><p style="font-size:13px;margin-top:var(--sp-2)">first stable release. it reviews code and stays out of the way.</p></div>
 </div>
 </div>
-<hr style="margin-top:64px">
-<div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px 24px;padding-top:16px;font-size:13px;animation:ue 220ms cubic-bezier(0.22,1,0.36,1) 135ms both">
+<hr style="margin-top:var(--sp-16)">
+<div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:var(--sp-2) var(--sp-6);padding-top:var(--sp-4);font-size:13px;animation:ue 220ms cubic-bezier(0.22,1,0.36,1) 135ms both">
 <span><a class="u-link-plain" href="#" style="color:var(--fg-subtle)">projects</a></span>
 <span><a class="u-link-plain" href="mailto:dev@uinaf.dev" style="color:var(--fg-subtle)">dev@uinaf.dev</a> <span class="u-sep">·</span> <a class="u-link-plain" href="https://github.com/uinaf" style="color:var(--fg-subtle)">gh&nbsp;↗</a> <span class="u-sep">·</span> <a class="u-link-plain" href="https://x.com/uinafdev" style="color:var(--fg-subtle)">x&nbsp;↗</a></span>
 </div>

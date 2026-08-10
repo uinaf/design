@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- @page name="product landing" description="marketing page: one-row topbar, hero with a non-redundant kicker, stat strip, feature grid, steps, footer" -->
+<!-- @page name="product landing" description="Marketing page for a uinaf product: one-row topbar, hero with a non-redundant kicker, stat strip, feature grid, steps, footer." -->
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -29,7 +29,7 @@
     </style>
   </head>
   <body class="uinaf">
-    <div style="min-height: 100vh; display: flex; flex-direction: column">
+    <div class="uinaf" style="min-height: 100vh; display: flex; flex-direction: column">
       <header class="u-topbar">
         <div class="u-shell-base u-topbar-row">
           <a href="#" class="u-topbar-mark"
@@ -38,9 +38,9 @@
               alt="slopzapper mark"
             />slopzapper</a
           >
-          <nav class="u-topbar-nav"><a href="/docs">docs</a><a href="/login">log in</a></nav>
+          <nav class="u-topbar-nav"><a href="#">docs</a><a href="#">log in</a></nav>
           <div class="u-topbar-actions">
-            <a class="u-btn u-btn-sm u-btn-primary" href="/dashboard">open dashboard</a>
+            <a class="u-btn u-btn--sm u-btn--primary" href="#">open dashboard</a>
           </div>
         </div>
       </header>
@@ -53,33 +53,39 @@
             only, no vibes.
           </p>
           <div class="u-hero-actions">
-            <a class="u-btn u-btn-primary" href="#">add to github ↗</a
-            ><a class="u-btn u-btn-ghost" href="/docs">read the docs</a>
+            <a class="u-btn u-btn--primary" href="#">add to github ↗</a
+            ><a class="u-btn u-btn--ghost" href="#">read the docs</a>
           </div>
         </div>
 
         <div
-          style="margin-top: 64px; animation: ue 220ms cubic-bezier(0.22, 1, 0.36, 1) 135ms both"
+          style="
+            margin-top: var(--sp-16);
+            animation: ue 220ms cubic-bezier(0.22, 1, 0.36, 1) 135ms both;
+          "
         >
           <span class="u-label">what it does</span>
-          <div class="u-panel-grid" style="grid-template-columns: repeat(3, 1fr); margin-top: 12px">
+          <div
+            class="u-panel-grid"
+            style="grid-template-columns: repeat(3, 1fr); margin-top: var(--sp-3)"
+          >
             <div>
               <h3>real execution</h3>
-              <p style="font-size: 13px; margin-top: 8px">
+              <p style="font-size: 13px; margin-top: var(--sp-2)">
                 comments come from running your change, not pattern-matching the diff. if it doesn't
                 build, you hear that first.
               </p>
             </div>
             <div>
               <h3>dry by design</h3>
-              <p style="font-size: 13px; margin-top: 8px">
+              <p style="font-size: 13px; margin-top: var(--sp-2)">
                 one review per PR. specific findings with file + line, zero praise sandwich, zero
                 checklist theater.
               </p>
             </div>
             <div>
               <h3>nothing touches prod</h3>
-              <p style="font-size: 13px; margin-top: 8px">
+              <p style="font-size: 13px; margin-top: var(--sp-2)">
                 sandboxes are disposable and network-isolated. your secrets never leave github.
               </p>
             </div>
@@ -87,23 +93,26 @@
         </div>
 
         <div
-          style="margin-top: 64px; animation: ue 220ms cubic-bezier(0.22, 1, 0.36, 1) 180ms both"
+          style="
+            margin-top: var(--sp-16);
+            animation: ue 220ms cubic-bezier(0.22, 1, 0.36, 1) 180ms both;
+          "
         >
           <span class="u-label">how it works</span>
-          <ul class="u-list u-list--ruled" style="margin-top: 8px">
-            <li class="u-list-row" style="display: flex; gap: 16px; align-items: baseline">
+          <ul class="u-list u-list--ruled" style="margin-top: var(--sp-2)">
+            <li class="u-list-row" style="display: flex; gap: var(--sp-4); align-items: baseline">
               <span class="u-meta">01</span
               ><span style="font-size: 14px; color: var(--fg-muted)"
                 >install the github app on the repos you care about.</span
               >
             </li>
-            <li class="u-list-row" style="display: flex; gap: 16px; align-items: baseline">
+            <li class="u-list-row" style="display: flex; gap: var(--sp-4); align-items: baseline">
               <span class="u-meta">02</span
               ><span style="font-size: 14px; color: var(--fg-muted)"
                 >open a PR. a sandbox clones it, builds it, runs it.</span
               >
             </li>
-            <li class="u-list-row" style="display: flex; gap: 16px; align-items: baseline">
+            <li class="u-list-row" style="display: flex; gap: var(--sp-4); align-items: baseline">
               <span class="u-meta">03</span
               ><span style="font-size: 14px; color: var(--fg-muted)"
                 >one review lands. push fixes — it re-checks, quietly.</span
@@ -112,15 +121,15 @@
           </ul>
         </div>
 
-        <hr style="margin-top: 64px" />
+        <hr style="margin-top: var(--sp-16)" />
         <div
           style="
             display: flex;
             justify-content: space-between;
             align-items: baseline;
             flex-wrap: wrap;
-            gap: 8px 24px;
-            padding-block: 16px 48px;
+            gap: var(--sp-2) var(--sp-6);
+            padding-block: var(--sp-4) var(--sp-12);
             font-size: 13px;
           "
         >
@@ -130,7 +139,7 @@
               >github ↗</a
             >
             <span class="u-sep">·</span>
-            <a class="u-link-plain" href="/status" style="color: var(--fg-subtle)">status</a></span
+            <a class="u-link-plain" href="#" style="color: var(--fg-subtle)">status</a></span
           >
         </div>
       </main>

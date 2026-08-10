@@ -9,10 +9,11 @@ one typeface, near-black, hairline borders, one accent, visible structure.
 | file                     | what                                                                                           |
 | ------------------------ | ---------------------------------------------------------------------------------------------- |
 | `@uinaf/design/css`      | tokens + ready styles implementing everything below. the only css you import                   |
-| `templates/`             | starting points: uinaf.dev homepage, blog index, blog post                                     |
+| `templates/`             | uinaf.dev's own surfaces, plus fixed-size `export-*` artboards for OG and README images        |
 | Berkeley Mono (CDN only) | `https://cdn.uinaf.dev/fonts/berkeley-mono/variable/font.css` — never vendored in this package |
 | brand images (CDN only)  | `https://cdn.uinaf.dev/images/…` — see the `CDN` export; never vendored in this package        |
 | `preview/`               | one card per pattern — the canonical reference for each                                        |
+| `assets/icons/`          | the closed icon set — eight 16-grid stroke svgs, `currentColor`                                |
 
 ## voice
 
@@ -54,7 +55,7 @@ no 18px. pick the nearest step.
 
 ## structure
 
-- spacing on a 4/8px grid. panels breathe 20 inside, rows 16, groups 32, sections 64–96.
+- spacing has two regimes. **layout** — 16px and up, plus section and block margins — sits on the scale: 4 · 8 · 12 · 16 · 20 · 24 · 28 · 32 · 36 · 40 · 48 · 56 · 64 · 72 · 80 · 96. **micro** — under 16px, between elements inside one row or control: dot to text, icon to label, chip padding — has a 2px resolution, and 2 · 6 · 10 · 14 are deliberate optical half-steps, not drift. panels breathe 20 inside, rows 16, groups 32, sections 64–96. off the scale, round to the nearest step; an exact tie rounds down, because denser is on-brand.
 - borders: 1px, one rest shade + one hover shade. dashed marks a bounded long-form region. never thicker.
 - corners square by default, 2px on controls, 6px ceiling. shadows: none (the live dot's glow is the one exception).
 - the vocabulary: **panel** (bordered region) · **corner ticks** (technical-drawing + marks on panel corners) · **panel grid** (panels sharing single hairlines — stat strips, kanban) · **stat** (label / value / note) · **frame** (full-width hairline band) · **table** (micro-label headers, hairline rules, numerics right).
@@ -82,7 +83,8 @@ snappy decel, no bounce. 160ms hover/press, 220ms entry. entry = fade-up 10px wi
 ## imagery & logo
 
 - two illustrations, total: `uinaf-team.png` (primary mark, 220–240px framed) and `uinaf-computer.png` (favicon, 24–64px). pure black behind, 1px frame, square crop. never rotate, recolor, or generate look-alikes.
-- no photos, no icon fonts, no svg icons. `↗` `→` `·` and hairlines carry the iconography.
+- no photos, no icon fonts. `↗` `→` `·` and hairlines carry the iconography.
+- **icons are a last resort, and the set is closed.** eight 16-grid stroke svgs live in `assets/icons/` — search, copy, download, refresh, file, folder, branch, warning. original work, licensed with the repo. pick from the set; extend it in its idiom (stroke 1.5, square caps, `currentColor`, no fills) as a pull request, never inline. sizes scale the stroke inversely: 16/1.5 default, 12/1.75 in tags and meta rows, 20/1.25 in large buttons and empty states. never import an icon library, never paste from a third-party set, and never put an icon beside a word that already says it.
 
 ## guardrails
 

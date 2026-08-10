@@ -167,8 +167,10 @@
       <div id="catalog"></div>
     </main>
     <script type="module">
-      const [previews, pages] = await Promise.all(
-        ["/previews.json", "/pages.json"].map((u) => fetch(u).then((r) => r.json())),
+      const [previews, pages, templates] = await Promise.all(
+        ["/previews.json", "/pages.json", "/templates.json"].map((u) =>
+          fetch(u).then((r) => r.json()),
+        ),
       )
       const items = [
         // Whole screens first: an agent or a human building a page should land
@@ -179,9 +181,26 @@
           subtitle: p.description,
           href: `/pages/${p.slug}`,
         })),
+        ...templates.map((t) => ({
+          group: "Templates",
+          name: t.name,
+          subtitle: t.description,
+          href: `/templates/${t.slug}`,
+        })),
         ...previews.map((p) => ({ ...p, href: `/preview/${p.slug}` })),
       ]
-      const order = ["Pages", "Brand", "Colors", "Type", "Spacing", "Components", "Motion"]
+      const order = [
+        "Pages",
+        "Templates",
+        "Project — uinaf.dev",
+        "Exports",
+        "Brand",
+        "Colors",
+        "Type",
+        "Spacing",
+        "Components",
+        "Motion",
+      ]
       const groups = new Map()
       for (const item of items) {
         const list = groups.get(item.group) ?? []
