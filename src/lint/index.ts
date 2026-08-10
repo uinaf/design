@@ -27,9 +27,19 @@ export type CheckOptions = {
   /** Files or directories to scan; defaults to the working directory. */
   paths?: string[];
   ignore?: string[];
+  /**
+   * Named rules that do not apply to a class of file. Unlike `ignore`, the file
+   * is still linted by every other rule — an export artboard obeys no viewport
+   * rule, but it still may not carry an emoji or a raw hex.
+   */
+  except?: RuleException[];
   /** Root that skip-directory names are judged against. */
   relativeTo?: string;
 };
+
+/** Rules waived for paths containing `path`. A rule name that matches nothing
+ *  waives nothing, so a typo fails closed: the rule stays live and reports. */
+export type RuleException = { path: string; rules: string[] };
 
 // JSX object styles are judged by the same CSS rules as everything else.
 setJsxStyleChecker((property, value, classes) => {
@@ -258,7 +268,14 @@ export const check = (options: CheckOptions = {}): Violation[] => {
   if (missing.length > 0) {
     throw new Error(`no such path: ${missing.join(", ")}`);
   }
-  return collectFiles(roots, options.ignore ?? [], options.relativeTo).flatMap(checkFile);
+  const except = options.except ?? [];
+  const waived = (violation: Violation): boolean =>
+    except.some(
+      (entry) => violation.file.includes(entry.path) && entry.rules.includes(violation.rule),
+    );
+  return collectFiles(roots, options.ignore ?? [], options.relativeTo)
+    .flatMap(checkFile)
+    .filter((violation) => !waived(violation));
 };
 
 export const countByRule = (violations: Violation[]): Record<string, number> => {

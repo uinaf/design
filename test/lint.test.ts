@@ -981,3 +981,49 @@ describe("skip names are judged inside the project only", () => {
     expect(collectFiles([own, dep], [], repo)).toEqual([own]);
   });
 });
+
+describe("--except waives named rules without excluding the file", () => {
+  const artboard = async (except?: Array<{ path: string; rules: string[] }>): Promise<string[]> => {
+    const { check } = await import("../src/lint/index");
+    const { tmpdir } = await import("node:os");
+    const dir = path.join(fs.mkdtempSync(path.join(tmpdir(), "design-except-")), "templates");
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(
+      path.join(dir, "export-probe.html"),
+      [
+        '<div class="uinaf" style="width:1200px;height:630px">',
+        '<span style="font-size:64px">off the type scale</span>',
+        '<span style="padding:13px">off the spacing grid</span>',
+        '<span style="color:#ff0000">raw hex</span>',
+        "</div>",
+      ].join("\n"),
+    );
+    return check({ paths: [dir], ...(except ? { except } : {}) }).map((v) => v.rule);
+  };
+
+  const CANVAS = [{ path: "templates/export-", rules: ["type-scale-only", "spacing-grid"] }];
+
+  it("drops only the rules it names", async () => {
+    const rules = await artboard(CANVAS);
+    expect(rules).not.toContain("type-scale-only");
+    expect(rules).not.toContain("spacing-grid");
+  });
+
+  it("leaves every other rule in force — the whole point over --ignore", async () => {
+    expect(await artboard(CANVAS)).toContain("no-raw-color");
+  });
+
+  it("waives nothing without it", async () => {
+    expect(await artboard()).toContain("type-scale-only");
+  });
+
+  it("waives nothing on a path it does not match", async () => {
+    const rules = await artboard([{ path: "pages/", rules: ["type-scale-only"] }]);
+    expect(rules).toContain("type-scale-only");
+  });
+
+  it("fails closed on a misspelled rule name, keeping the rule live", async () => {
+    const rules = await artboard([{ path: "templates/export-", rules: ["type-scale-onlyy"] }]);
+    expect(rules).toContain("type-scale-only");
+  });
+});

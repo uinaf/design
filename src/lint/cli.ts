@@ -11,6 +11,7 @@ import {
   hasErrors,
   summarise,
 } from "./index.ts";
+import type { RuleException } from "./index.ts";
 
 /**
  * `design-check` — the deterministic half of the uinaf design system.
@@ -38,6 +39,9 @@ if (flag("help")) {
   design-check --changed         only files this branch touched (vs origin/main)
   design-check --base <ref>      base for --changed (default origin/main)
   design-check --ignore <part>   skip paths containing this substring (repeatable)
+  design-check --except <part>:<rule>[,<rule>]
+                                waive named rules for paths containing <part>,
+                                leaving every other rule in force (repeatable)
 
 Exit code is 0 when clean, 1 when there are errors (or, with --ratchet, when a
 count rises). Warnings alone do not fail.`);
@@ -52,6 +56,7 @@ const KNOWN_FLAGS = new Set([
   "--update-ratchet",
   "--json",
   "--ignore",
+  "--except",
   "--changed",
   "--base",
 ]);
@@ -68,10 +73,35 @@ const ignore = argv.reduce<string[]>((acc, arg, index) => {
   return acc;
 }, []);
 
+// `<part>:<rule>,<rule>`. A missing rule list is a usage mistake, not a blanket
+// waiver: silently dropping every rule on the path is exactly what --except
+// exists to avoid.
+const except = argv.reduce<RuleException[]>((acc, arg, index) => {
+  const spec = arg === "--except" ? argv[index + 1] : undefined;
+  if (!spec) return acc;
+  const split = spec.lastIndexOf(":");
+  const rules =
+    split === -1
+      ? []
+      : spec
+          .slice(split + 1)
+          .split(",")
+          .map((rule) => rule.trim())
+          .filter(Boolean);
+  if (split < 1 || rules.length === 0) {
+    console.error(
+      `design:check — --except needs <path>:<rule>[,<rule>], got \`${spec}\`.\nA path with no rule list would waive every rule, which is what --ignore already does.`,
+    );
+    process.exit(1);
+  }
+  acc.push({ path: spec.slice(0, split), rules });
+  return acc;
+}, []);
+
 const paths = argv.filter((arg, index) => {
   if (arg.startsWith("--")) return false;
   const previous = argv[index - 1];
-  return previous !== "--ignore" && previous !== "--base";
+  return previous !== "--ignore" && previous !== "--except" && previous !== "--base";
 });
 
 let changedRoot: string | undefined;
@@ -99,6 +129,7 @@ try {
   violations = check({
     paths,
     ignore,
+    except,
     relativeTo: changedRoot,
   });
 } catch (error) {
