@@ -75,17 +75,27 @@ fail_with_log() {
   exit 1
 }
 
+# A wall clock, not an iteration count. Each probe can spend seconds waiting on
+# a worker that accepts the connection and never answers, so counting attempts
+# made SMOKE_TIMEOUT=90 mean anything up to nine minutes. Every probe is capped
+# by the time actually left, which is also what keeps the loop from parking in a
+# foreground command long enough to defer the signal traps.
 ready=""
-for _ in $(seq 1 "$timeout_seconds"); do
-  [ -n "$interrupted" ] && { echo "smoke: interrupted during boot" >&2; exit 130; }
+deadline=$(($(date +%s) + timeout_seconds))
+while :; do
+  [ -n "$interrupted" ] && {
+    echo "smoke: interrupted during boot" >&2
+    exit 130
+  }
   kill -0 "$server_pid" 2>/dev/null || fail_with_log "wrangler dev exited during boot."
-  # --max-time, or a worker that accepts the connection and never answers hangs
-  # this curl forever: the loop stops advancing, SMOKE_TIMEOUT bounds nothing,
-  # and a foreground command that never returns also defers the signal traps.
-  if curl -sf --connect-timeout 2 --max-time 5 -o /dev/null "http://127.0.0.1:$port/"; then
+  remaining=$((deadline - $(date +%s)))
+  [ "$remaining" -gt 0 ] || break
+  probe=$((remaining < 5 ? remaining : 5))
+  if curl -sf --connect-timeout "$probe" --max-time "$probe" -o /dev/null "http://127.0.0.1:$port/"; then
     ready=1
     break
   fi
+  [ $((deadline - $(date +%s))) -gt 0 ] || break
   sleep 1
 done
 [ -n "$ready" ] || fail_with_log "no answer on http://127.0.0.1:$port after ${timeout_seconds}s."

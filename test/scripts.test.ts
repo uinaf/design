@@ -78,6 +78,15 @@ describe("invokedScripts", () => {
     expect(invokedScripts('echo "a; node scripts/orphan.ts"')).toEqual([]);
   });
 
+  it("does not read a command out of a comment or string that spans lines", () => {
+    // A line comment is already handled by the head check. These are not: the
+    // interpreter lands at the start of its own line, so without stripping the
+    // span first, a paragraph of prose marks a script reachable.
+    expect(invokedScripts("/*\nnode scripts/orphan.ts\n*/")).toEqual([]);
+    expect(invokedScripts("const usage = `\nnode scripts/orphan.ts\n`;")).toEqual([]);
+    expect(invokedScripts("/* a */ node scripts/build.ts")).toEqual(["build.ts"]);
+  });
+
   it("does not match a path that merely ends in a script name", () => {
     expect(invokedScripts("node vendor/scripts/build.ts")).toEqual([]);
     expect(invokedScripts("node scripts/build.ts.bak")).toEqual([]);

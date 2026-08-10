@@ -23,8 +23,19 @@ const SCRIPT = /^(?:\.\/)?scripts\/([\w.-]+\.(?:ts|sh|mjs|js))$/;
  * A quoted `echo "a; node scripts/x.ts"` splits too, but the trailing quote
  * makes the argument fail SCRIPT's anchors, so it still does not count.
  */
+/**
+ * Block comments and template literals span lines, so `\/*` + a newline +
+ * `node scripts/x.ts` tokenizes as a command with a real interpreter at its
+ * head. Line comments need no special case: `#` or `//` becomes the head, and
+ * neither is an interpreter. Shell backticks are command substitution rather
+ * than a string, so dropping them can only hide an invocation, never invent
+ * one — the safe direction for this guard.
+ */
+const withoutSpans = (source: string): string =>
+  source.replace(/\/\*[\s\S]*?\*\//g, " ").replace(/`[^`]*`/g, " ");
+
 const commands = (source: string): string[][] =>
-  source
+  withoutSpans(source)
     .split(/[\n;&|()]+/)
     .map((command) => command.trim().split(/\s+/).filter(Boolean))
     .filter((words) => words.length > 0)
