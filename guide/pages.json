@@ -17,12 +17,12 @@
   {
     "slug": "login",
     "name": "login",
-    "description": "auth page: centered corner-tick panel, OAuth-only sign-in, no marketing, no kicker"
+    "description": "Auth page: centered corner-tick panel, OAuth-only sign-in (github, optional google), dry copy. No marketing, no kicker."
   },
   {
     "slug": "product-landing",
     "name": "product landing",
-    "description": "marketing page: one-row topbar, hero with a non-redundant kicker, stat strip, feature grid, steps, footer"
+    "description": "Marketing page for a uinaf product: one-row topbar, hero with a non-redundant kicker, stat strip, feature grid, steps, footer."
   },
   {
     "slug": "settings",

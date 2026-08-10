@@ -5,19 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>uinaf — blog post</title>
 <link rel="stylesheet" href="../dist/css/tokens.css">
-<style>body{margin:0;background:var(--bg)}@keyframes ue{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}@media (prefers-reduced-motion:reduce){[style*="animation"]{animation:none !important}}</style>
+<style>body{margin:0;background:var(--bg, #0a0a0a)}@keyframes ue{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}@media (prefers-reduced-motion:reduce){[style*="animation"]{animation:none !important}}</style>
 </head>
 <body class="uinaf">
-<div class="uinaf" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:64px 24px 48px">
+<div class="uinaf" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:var(--sp-16) var(--sp-6) var(--sp-12)">
 <article style="width:100%;max-width:40rem;display:flex;flex-direction:column">
-<header style="display:flex;flex-direction:column;gap:4px;animation:ue 220ms cubic-bezier(0.22,1,0.36,1) both;margin-bottom:40px">
-<a href="#" class="u-link-plain" style="display:inline-flex;align-items:center;gap:8px"><img src="https://cdn.uinaf.dev/images/uinaf-computer.png" width="24" height="24" alt="" style="border:1px solid var(--border);display:block"><span style="font-size:14px;color:var(--fg)">uinaf</span></a>
+<header style="display:flex;flex-direction:column;gap:var(--sp-1);animation:ue 220ms cubic-bezier(0.22,1,0.36,1) both;margin-bottom:var(--sp-10)">
+<a href="#" class="u-link--plain" style="display:inline-flex;align-items:center;gap:var(--sp-2)"><img src="https://cdn.uinaf.dev/images/uinaf-computer.png" width="24" height="24" alt="" style="border:1px solid var(--border);display:block"><span style="font-size:14px;color:var(--fg)">uinaf</span></a>
 </header>
 <div style="animation:ue 220ms cubic-bezier(0.22,1,0.36,1) 45ms both">
 <h1 style="font-size:16px;line-height:1.3">shipping a daemon nobody notices</h1>
-<p style="font-size:11px;color:var(--fg-subtle);margin-top:6px">jul 28, 2026 · 4 mins read</p>
+<p style="font-size:11px;color:var(--fg-subtle);margin-top:var(--sp-1-5)">jul 28, 2026 · 4 mins read</p>
 </div>
-<div class="u-prose" style="margin-top:16px;animation:ue 220ms cubic-bezier(0.22,1,0.36,1) 90ms both">
+<div class="u-prose" style="margin-top:var(--sp-4);animation:ue 220ms cubic-bezier(0.22,1,0.36,1) 90ms both">
 <p>the best infra software is invisible until it isn't. healthd's job is to be boring for months and then, one tuesday at 3am, be the most important process on the box.</p>
 <p>that shapes every decision: <a href="#">one binary</a>, no runtime deps, config that survives being hand-edited over ssh at 3am.</p>
 <h2 style="font-size:16px">the 3am test</h2>
@@ -28,18 +28,18 @@ queue     warn   220ms  ← this line pays the rent</code></pre>
 <p>we don't guarantee perfection. software has edge cases.</p>
 </div>
 
-<div style="margin-top:32px;padding-top:16px;border-top:1px solid var(--border);animation:ue 220ms cubic-bezier(0.22,1,0.36,1) 135ms both">
+<div style="margin-top:var(--sp-8);padding-top:var(--sp-4);border-top:1px solid var(--border);animation:ue 220ms cubic-bezier(0.22,1,0.36,1) 135ms both">
 <span class="u-label">linked from</span>
-<div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+<div style="display:flex;flex-direction:column;gap:var(--sp-2);margin-top:var(--sp-2)">
 <a class="u-link" href="#" style="font-size:13px;align-self:flex-start">why everything we ship is one binary</a>
 <a class="u-link" href="#" style="font-size:13px;align-self:flex-start">dotfiles as infrastructure</a>
 </div>
 </div>
 
-<hr style="margin-top:64px">
-<div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px 24px;padding-top:16px;font-size:13px">
-<span><a class="u-link-plain" href="#" style="color:var(--fg-subtle)">projects</a></span>
-<span><a class="u-link-plain" href="mailto:dev@uinaf.dev" style="color:var(--fg-subtle)">dev@uinaf.dev</a> <span class="u-sep">·</span> <a class="u-link-plain" href="https://github.com/uinaf" style="color:var(--fg-subtle)">gh&nbsp;↗</a> <span class="u-sep">·</span> <a class="u-link-plain" href="https://x.com/uinafdev" style="color:var(--fg-subtle)">x&nbsp;↗</a></span>
+<hr style="margin-top:var(--sp-16)">
+<div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:var(--sp-2) var(--sp-6);padding-top:var(--sp-4);font-size:13px">
+<span><a class="u-link--plain" href="#" style="color:var(--fg-subtle)">projects</a></span>
+<span><a class="u-link--plain" href="mailto:dev@uinaf.dev" style="color:var(--fg-subtle)">dev@uinaf.dev</a> <span class="u-sep">·</span> <a class="u-link--plain" href="https://github.com/uinaf" style="color:var(--fg-subtle)">gh&nbsp;↗</a> <span class="u-sep">·</span> <a class="u-link--plain" href="https://x.com/uinafdev" style="color:var(--fg-subtle)">x&nbsp;↗</a></span>
 </div>
 </article>
 </div>

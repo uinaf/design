@@ -5,81 +5,81 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>uinaf — uinaf.dev homepage</title>
 <link rel="stylesheet" href="../dist/css/tokens.css">
-<style>body{margin:0;background:var(--bg)}@keyframes ue{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}@media (prefers-reduced-motion:reduce){[style*="animation"]{animation:none !important}}</style>
+<style>body{margin:0;background:var(--bg, #0a0a0a)}@keyframes ue{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}@media (prefers-reduced-motion:reduce){[style*="animation"]{animation:none !important}}</style>
 </head>
 <body class="uinaf">
 <div class="uinaf" style="min-height:100vh;display:flex;flex-direction:column">
 <div style="border-bottom:1px solid var(--border)">
-<div style="max-width:48rem;margin:0 auto;display:flex;align-items:center;gap:10px;height:60px;padding:0 32px">
+<div style="max-width:48rem;margin:0 auto;display:flex;align-items:center;gap:var(--sp-2-5);height:60px;padding:0 var(--sp-8)">
 <img src="https://cdn.uinaf.dev/images/uinaf-computer.png" alt="" width="22" height="22" style="border:1px solid var(--border);display:block">
 <span style="font-size:14px;color:var(--fg-strong)">uinaf</span>
-<nav style="margin-left:auto;display:flex;gap:24px;font-size:13px"><a class="u-link-plain" href="#" style="color:var(--fg-muted)">projects</a><a class="u-link-plain" href="https://github.com/uinaf" style="color:var(--fg-muted)">gh ↗</a></nav>
+<nav style="margin-left:auto;display:flex;gap:var(--sp-6);font-size:13px"><a class="u-link--plain" href="#" style="color:var(--fg-muted)">projects</a><a class="u-link--plain" href="https://github.com/uinaf" style="color:var(--fg-muted)">gh ↗</a></nav>
 </div>
 </div>
 <div style="border-bottom:1px solid var(--border)">
-<div style="max-width:48rem;margin:0 auto;display:flex;flex-direction:column;align-items:center;text-align:center;padding:72px 32px;animation:ue 220ms cubic-bezier(0.22,1,0.36,1) both">
-<img src="https://cdn.uinaf.dev/images/uinaf-team.png" alt="two robed skeletons at a melting crt" class="u-ticks" style="width:200px;height:200px;border:1px solid var(--bg-raised)">
-<span class="u-label u-label--accent" style="margin-top:36px">we bet you've seen us before</span>
-<h1 class="u-display" style="margin-top:16px;max-width:24ch">software for anything with a screen.</h1>
-<p style="margin-top:16px;max-width:52ch;font-size:16px;color:var(--fg-muted)">terminals, browsers, phones, TVs, set-top boxes. lately, the tooling that keeps AI-written code honest. nearly all of it open source.</p>
-<div style="display:flex;gap:12px;margin-top:32px"><a class="u-btn u-btn-primary u-btn-lg" href="mailto:dev@uinaf.dev">work with us</a></div>
-<p class="u-meta" style="margin-top:24px">you may know us from <a class="u-link-plain" href="https://put.io/about" style="color:var(--neutral-500)">put.io</a> and <a class="u-link-plain" href="https://www.openclaw.org/people" style="color:var(--neutral-500)">openclaw</a></p>
+<div style="max-width:48rem;margin:0 auto;display:flex;flex-direction:column;align-items:center;text-align:center;padding:var(--sp-18) var(--sp-8);animation:ue 220ms cubic-bezier(0.22,1,0.36,1) both">
+<img src="https://cdn.uinaf.dev/images/uinaf-team.png" alt="two robed skeletons at a melting crt" class="u-ticks" style="width:200px;height:200px;border:1px solid var(--neutral-900)">
+<span class="u-label u-label--accent" style="margin-top:var(--sp-9)">we bet you've seen us before</span>
+<h1 class="u-display" style="margin-top:var(--sp-4);max-width:24ch">software for anything with a screen.</h1>
+<p style="margin-top:var(--sp-4);max-width:52ch;font-size:16px;color:var(--fg-muted)">terminals, browsers, phones, TVs, set-top boxes. lately, the tooling that keeps AI-written code honest. nearly all of it open source.</p>
+<div style="display:flex;gap:var(--sp-3);margin-top:var(--sp-8)"><a class="u-btn u-btn--primary u-btn--lg" href="mailto:dev@uinaf.dev">work with us</a></div>
+<p class="u-meta" style="margin-top:var(--sp-6)">you may know us from <a class="u-link--plain" href="https://put.io/about" style="color:var(--neutral-500)">put.io</a> and <a class="u-link--plain" href="https://www.openclaw.org/people" style="color:var(--neutral-500)">openclaw</a></p>
 </div>
 </div>
-<div style="max-width:48rem;margin:0 auto;width:100%;box-sizing:border-box;padding:56px 32px">
+<div style="max-width:48rem;margin:0 auto;width:100%;box-sizing:border-box;padding:var(--sp-14) var(--sp-8)">
 <div style="animation:ue 220ms cubic-bezier(0.22,1,0.36,1) 90ms both">
 <span class="u-label">the bot</span>
-<a href="https://slopzapper.uinaf.dev" class="u-link-plain u-panel u-ticks" style="display:block;margin-top:16px;padding:28px 32px"><span style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px"><span style="font-size:20px;color:var(--fg-strong)">slopzapper</span><span class="u-meta">slopzapper.uinaf.dev ↗</span></span><span style="display:block;font-size:14px;color:var(--fg-muted);margin-top:10px;max-width:64ch">just another AI code-review bot. reviews non-draft PRs on open and push: durable progress comment, then a summary plus inline findings.</span></a>
+<a href="https://slopzapper.uinaf.dev" class="u-link--plain u-panel u-ticks" style="display:block;margin-top:var(--sp-4);padding:var(--sp-7) var(--sp-8)"><span style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:var(--sp-2)"><span style="font-size:20px;color:var(--fg-strong)">slopzapper</span><span class="u-meta">slopzapper.uinaf.dev ↗</span></span><span style="display:block;font-size:14px;color:var(--fg-muted);margin-top:var(--sp-2-5);max-width:64ch">just another AI code-review bot. reviews non-draft PRs on open and push: durable progress comment, then a summary plus inline findings.</span></a>
 </div>
 <div style="animation:ue 220ms cubic-bezier(0.22,1,0.36,1) 135ms both">
-<div style="margin-top:48px"><span class="u-label">the toolchain around it</span></div>
-<div class="u-panel-grid" style="grid-template-columns:1fr 1fr;margin-top:16px">
-<a href="https://github.com/uinaf/autoreview" class="u-link-plain" style="padding:24px 28px"><span style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font-size:var(--text-md);color:var(--fg-strong)">autoreview</span><span class="u-meta">v0.7.1 ↗</span></span><span style="display:block;font-size:13px;color:var(--fg-muted);margin-top:8px">structured independent code review.</span></a>
-<a href="https://github.com/uinaf/slopomatic" class="u-link-plain" style="padding:24px 28px"><span style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font-size:var(--text-md);color:var(--fg-strong)">slopomatic</span><span class="u-meta">v1.3.0 ↗</span></span><span style="display:block;font-size:13px;color:var(--fg-muted);margin-top:8px">deterministic, structured slop cannoning.</span></a>
-<a href="https://github.com/uinaf/attach" class="u-link-plain" style="padding:24px 28px"><span style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font-size:var(--text-md);color:var(--fg-strong)">attach</span><span class="u-meta">cli-v0.5.1 ↗</span></span><span style="display:block;font-size:13px;color:var(--fg-muted);margin-top:8px">self-hosted public URLs for PR and validation media.</span></a>
-<a href="https://github.com/uinaf/skills" class="u-link-plain" style="padding:24px 28px"><span style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font-size:var(--text-md);color:var(--fg-strong)">skills</span><span class="u-meta">registry ↗</span></span><span style="display:block;font-size:13px;color:var(--fg-muted);margin-top:8px">reusable agent skills with deterministic review + publishing gates.</span></a>
+<div style="margin-top:var(--sp-12)"><span class="u-label">the toolchain around it</span></div>
+<div class="u-panel-grid" style="grid-template-columns:1fr 1fr;margin-top:var(--sp-4)">
+<a href="https://github.com/uinaf/autoreview" class="u-link--plain" style="padding:var(--sp-6) var(--sp-7)"><span style="display:flex;justify-content:space-between;align-items:baseline;gap:var(--sp-2)"><span style="font-size:16px;color:var(--fg-strong)">autoreview</span><span class="u-meta">v0.7.1 ↗</span></span><span style="display:block;font-size:13px;color:var(--fg-muted);margin-top:var(--sp-2)">structured independent code review.</span></a>
+<a href="https://github.com/uinaf/slopomatic" class="u-link--plain" style="padding:var(--sp-6) var(--sp-7)"><span style="display:flex;justify-content:space-between;align-items:baseline;gap:var(--sp-2)"><span style="font-size:16px;color:var(--fg-strong)">slopomatic</span><span class="u-meta">v1.3.0 ↗</span></span><span style="display:block;font-size:13px;color:var(--fg-muted);margin-top:var(--sp-2)">deterministic, structured slop cannoning.</span></a>
+<a href="https://github.com/uinaf/attach" class="u-link--plain" style="padding:var(--sp-6) var(--sp-7)"><span style="display:flex;justify-content:space-between;align-items:baseline;gap:var(--sp-2)"><span style="font-size:16px;color:var(--fg-strong)">attach</span><span class="u-meta">cli-v0.5.1 ↗</span></span><span style="display:block;font-size:13px;color:var(--fg-muted);margin-top:var(--sp-2)">self-hosted public URLs for PR and validation media.</span></a>
+<a href="https://github.com/uinaf/skills" class="u-link--plain" style="padding:var(--sp-6) var(--sp-7)"><span style="display:flex;justify-content:space-between;align-items:baseline;gap:var(--sp-2)"><span style="font-size:16px;color:var(--fg-strong)">skills</span><span class="u-meta">registry ↗</span></span><span style="display:block;font-size:13px;color:var(--fg-muted);margin-top:var(--sp-2)">reusable agent skills with deterministic review + publishing gates.</span></a>
 </div>
 </div>
 
 <div style="animation:ue 220ms cubic-bezier(0.22,1,0.36,1) 180ms both">
-<div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:56px"><span class="u-label">also public</span><a class="u-link-plain u-meta" href="https://github.com/uinaf">everything → github.com/uinaf ↗</a></div>
-<div style="display:flex;flex-direction:column;margin-top:8px">
-<a href="https://github.com/uinaf/intake" class="u-link-plain" style="display:grid;grid-template-columns:150px 1fr auto;gap:16px;align-items:baseline;padding:15px 0;border-bottom:1px solid var(--border-soft)"><span style="font-size:14px;color:var(--fg)">intake</span><span style="font-size:13px;color:var(--fg-muted)">a public knowledge base of things worth keeping</span><span style="color:var(--fg-subtle);font-size:13px">↗</span></a>
-<a href="https://github.com/uinaf/workspace-kit" class="u-link-plain" style="display:grid;grid-template-columns:150px 1fr auto;gap:16px;align-items:baseline;padding:15px 0;border-bottom:1px solid var(--border-soft)"><span style="font-size:14px;color:var(--fg)">workspace-kit</span><span style="font-size:13px;color:var(--fg-muted)">validates and scaffolds agent workspaces</span><span style="color:var(--fg-subtle);font-size:13px">↗</span></a>
-<a href="https://github.com/uinaf/healthd" class="u-link-plain" style="display:grid;grid-template-columns:150px 1fr auto;gap:16px;align-items:baseline;padding:15px 0;border-bottom:1px solid var(--border-soft)"><span style="font-size:14px;color:var(--fg)">healthd</span><span style="font-size:13px;color:var(--fg-muted)">pluggable host health check daemon in Go</span><span style="color:var(--fg-subtle);font-size:13px">↗</span></a>
-<a href="https://github.com/uinaf/tccutil-rs" class="u-link-plain" style="display:grid;grid-template-columns:150px 1fr auto;gap:16px;align-items:baseline;padding:15px 0;border-bottom:1px solid var(--border-soft)"><span style="font-size:14px;color:var(--fg)">tccutil-rs</span><span style="font-size:13px;color:var(--fg-muted)">macOS TCC.db management utility in Rust</span><span style="color:var(--fg-subtle);font-size:13px">↗</span></a>
-<a href="https://github.com/uinaf/healthmule-ios" class="u-link-plain" style="display:grid;grid-template-columns:150px 1fr auto;gap:16px;align-items:baseline;padding:15px 0;border-bottom:1px solid var(--border-soft)"><span style="font-size:14px;color:var(--fg)">healthmule-ios</span><span style="font-size:13px;color:var(--fg-muted)">privacy-first Apple Health exports to Google Drive</span><span style="color:var(--fg-subtle);font-size:13px">↗</span></a>
-<a href="https://github.com/uinaf/endelito" class="u-link-plain" style="display:grid;grid-template-columns:150px 1fr auto;gap:16px;align-items:baseline;padding:15px 0"><span style="font-size:14px;color:var(--fg)">endelito</span><span style="font-size:13px;color:var(--fg-muted)">endel in the macOS menu bar, without electron</span><span style="color:var(--fg-subtle);font-size:13px">↗</span></a>
+<div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:var(--sp-14)"><span class="u-label">also public</span><a class="u-link--plain u-meta" href="https://github.com/uinaf">everything → github.com/uinaf ↗</a></div>
+<div style="display:flex;flex-direction:column;margin-top:var(--sp-2)">
+<a href="https://github.com/uinaf/intake" class="u-link--plain" style="display:grid;grid-template-columns:150px 1fr auto;gap:var(--sp-4);align-items:baseline;padding:var(--sp-4) 0;border-bottom:1px solid var(--border-soft)"><span style="font-size:14px;color:var(--fg)">intake</span><span style="font-size:13px;color:var(--fg-muted)">a public knowledge base of things worth keeping</span><span style="color:var(--fg-subtle);font-size:13px">↗</span></a>
+<a href="https://github.com/uinaf/workspace-kit" class="u-link--plain" style="display:grid;grid-template-columns:150px 1fr auto;gap:var(--sp-4);align-items:baseline;padding:var(--sp-4) 0;border-bottom:1px solid var(--border-soft)"><span style="font-size:14px;color:var(--fg)">workspace-kit</span><span style="font-size:13px;color:var(--fg-muted)">validates and scaffolds agent workspaces</span><span style="color:var(--fg-subtle);font-size:13px">↗</span></a>
+<a href="https://github.com/uinaf/healthd" class="u-link--plain" style="display:grid;grid-template-columns:150px 1fr auto;gap:var(--sp-4);align-items:baseline;padding:var(--sp-4) 0;border-bottom:1px solid var(--border-soft)"><span style="font-size:14px;color:var(--fg)">healthd</span><span style="font-size:13px;color:var(--fg-muted)">pluggable host health check daemon in Go</span><span style="color:var(--fg-subtle);font-size:13px">↗</span></a>
+<a href="https://github.com/uinaf/tccutil-rs" class="u-link--plain" style="display:grid;grid-template-columns:150px 1fr auto;gap:var(--sp-4);align-items:baseline;padding:var(--sp-4) 0;border-bottom:1px solid var(--border-soft)"><span style="font-size:14px;color:var(--fg)">tccutil-rs</span><span style="font-size:13px;color:var(--fg-muted)">macOS TCC.db management utility in Rust</span><span style="color:var(--fg-subtle);font-size:13px">↗</span></a>
+<a href="https://github.com/uinaf/healthmule-ios" class="u-link--plain" style="display:grid;grid-template-columns:150px 1fr auto;gap:var(--sp-4);align-items:baseline;padding:var(--sp-4) 0;border-bottom:1px solid var(--border-soft)"><span style="font-size:14px;color:var(--fg)">healthmule-ios</span><span style="font-size:13px;color:var(--fg-muted)">privacy-first Apple Health exports to Google Drive</span><span style="color:var(--fg-subtle);font-size:13px">↗</span></a>
+<a href="https://github.com/uinaf/endelito" class="u-link--plain" style="display:grid;grid-template-columns:150px 1fr auto;gap:var(--sp-4);align-items:baseline;padding:var(--sp-4) 0"><span style="font-size:14px;color:var(--fg)">endelito</span><span style="font-size:13px;color:var(--fg-muted)">endel in the macOS menu bar, without electron</span><span style="color:var(--fg-subtle);font-size:13px">↗</span></a>
 </div>
 </div>
 
 </div>
 
 <div id="work" style="border-top:1px solid var(--border)">
-<div style="max-width:48rem;margin:0 auto;box-sizing:border-box;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px 32px;padding:40px 32px">
-<div><span class="u-label">work with us</span><p style="margin-top:8px;font-size:14px;max-width:44ch">we take on contract work. if it has a screen, we can ship for it.</p></div>
-<a class="u-btn u-btn-accent" href="mailto:dev@uinaf.dev">dev@uinaf.dev</a>
+<div style="max-width:48rem;margin:0 auto;box-sizing:border-box;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:var(--sp-4) var(--sp-8);padding:var(--sp-10) var(--sp-8)">
+<div><span class="u-label">work with us</span><p style="margin-top:var(--sp-2);font-size:14px;max-width:44ch">we take on contract work. if it has a screen, we can ship for it.</p></div>
+<a class="u-btn u-btn--accent" href="mailto:dev@uinaf.dev">dev@uinaf.dev</a>
 </div>
 </div>
 
 <div style="border-top:1px solid var(--border);margin-top:auto">
-<div style="max-width:48rem;margin:0 auto;box-sizing:border-box;width:100%;display:grid;grid-template-columns:1fr auto auto;gap:24px 64px;padding:32px 32px 40px">
+<div style="max-width:48rem;margin:0 auto;box-sizing:border-box;width:100%;display:grid;grid-template-columns:1fr auto auto;gap:var(--sp-6) var(--sp-16);padding:var(--sp-8) var(--sp-8) var(--sp-10)">
 
-<div style="display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--fg-subtle);line-height:1.6">
+<div style="display:flex;flex-direction:column;gap:var(--sp-1);font-size:12px;color:var(--fg-subtle);line-height:1.6">
 <span>undefined is not a function LLC</span>
 <span>175 SW 7th Street STE 1517-1115</span>
 <span>Miami, FL 33130</span>
 </div>
 
-<div style="display:flex;flex-direction:column;gap:4px;font-size:12px">
-<a class="u-link-plain" href="#" style="color:var(--fg-subtle)">projects</a>
-<a class="u-link-plain" href="https://slopzapper.uinaf.dev" style="color:var(--fg-subtle)">slopzapper ↗</a>
-<a class="u-link-plain" href="https://intake.uinaf.dev" style="color:var(--fg-subtle)">intake ↗</a>
+<div style="display:flex;flex-direction:column;gap:var(--sp-1);font-size:12px">
+<a class="u-link--plain" href="#" style="color:var(--fg-subtle)">projects</a>
+<a class="u-link--plain" href="https://slopzapper.uinaf.dev" style="color:var(--fg-subtle)">slopzapper ↗</a>
+<a class="u-link--plain" href="https://intake.uinaf.dev" style="color:var(--fg-subtle)">intake ↗</a>
 </div>
-<div style="display:flex;flex-direction:column;gap:4px;font-size:12px">
-<a class="u-link-plain" href="mailto:dev@uinaf.dev" style="color:var(--fg-subtle)">dev@uinaf.dev</a>
-<a class="u-link-plain" href="https://github.com/uinaf" style="color:var(--fg-subtle)">github ↗</a>
-<a class="u-link-plain" href="https://x.com/uinafdev" style="color:var(--fg-subtle)">x ↗</a>
+<div style="display:flex;flex-direction:column;gap:var(--sp-1);font-size:12px">
+<a class="u-link--plain" href="mailto:dev@uinaf.dev" style="color:var(--fg-subtle)">dev@uinaf.dev</a>
+<a class="u-link--plain" href="https://github.com/uinaf" style="color:var(--fg-subtle)">github ↗</a>
+<a class="u-link--plain" href="https://x.com/uinafdev" style="color:var(--fg-subtle)">x ↗</a>
 </div>
 </div>
 </div>
