@@ -258,9 +258,7 @@ export const check = (options: CheckOptions = {}): Violation[] => {
   if (missing.length > 0) {
     throw new Error(`no such path: ${missing.join(", ")}`);
   }
-  return collectFiles(roots, options.ignore ?? [], options.relativeTo).flatMap((file) =>
-    checkFile(file),
-  );
+  return collectFiles(roots, options.ignore ?? [], options.relativeTo).flatMap(checkFile);
 };
 
 export const countByRule = (violations: Violation[]): Record<string, number> => {

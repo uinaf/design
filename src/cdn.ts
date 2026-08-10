@@ -27,3 +27,21 @@ export const CDN = {
     appleTouch: "https://cdn.uinaf.dev/images/exports/favicons/apple-touch-icon.png",
   },
 } as const;
+
+/**
+ * Every asset url in `CDN`, flattened — the origin itself excluded, because it
+ * is the prefix the others are checked against, not an asset.
+ *
+ * Lives next to the declaration so `cdn:check` and the inline-url gate read the
+ * same list. Two copies of this walk would let a nested group be reachable to
+ * one and invisible to the other.
+ *
+ * Repo-internal: `dist/cdn.js` is emitted as a serialized `CDN` literal, so the
+ * published `./cdn` export carries the object and nothing else.
+ */
+export const cdnUrls = (value: unknown = CDN): string[] =>
+  typeof value === "string"
+    ? value === CDN.origin
+      ? []
+      : [value]
+    : Object.values(value as Record<string, unknown>).flatMap((entry) => cdnUrls(entry));

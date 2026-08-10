@@ -2,9 +2,20 @@ import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vite-plus/test";
 import { checkCss, checkMarkup, compareRatchet, countByRule } from "../src/lint/index";
+import { modifierBase } from "../src/lint/rules-markup";
 
 const root = path.resolve(import.meta.dirname, "..");
 const rules = (violations: Array<{ rule: string }>): string[] => violations.map((v) => v.rule);
+
+const definedUtilityClasses = (...files: string[]): Set<string> =>
+  new Set(
+    [
+      ...files
+        .map((f) => fs.readFileSync(path.join(root, f), "utf8"))
+        .join("\n")
+        .matchAll(/\.(u-[a-zA-Z0-9_-]+)/g),
+    ].map((m) => m[1] ?? ""),
+  );
 const css = (source: string) => checkCss(source, "test.css");
 const markup = (source: string) => checkMarkup(source, "test.html");
 
@@ -200,10 +211,7 @@ describe("rules watch classes that actually ship", () => {
   // the test had drifted with it. A rule keyed to a class the CSS never defines is
   // silent, not strict.
   it("references no class the CSS does not define", () => {
-    const css = ["src/tokens.css", "src/components.css"]
-      .map((f) => fs.readFileSync(path.join(root, f), "utf8"))
-      .join("\n");
-    const defined = new Set([...css.matchAll(/\.(u-[a-zA-Z0-9_-]+)/g)].map((m) => m[1]));
+    const defined = definedUtilityClasses("src/tokens.css", "src/components.css");
     const ruleSource = ["src/lint/rules-markup.ts", "src/lint/rules-css.ts"]
       .map((f) => fs.readFileSync(path.join(root, f), "utf8"))
       .join("\n");
@@ -321,15 +329,17 @@ describe("modifier-base", () => {
   // claimed a dependency neither had. The names went back to one hyphen and the
   // list went away. What keeps it away is the naming convention itself, so hold
   // the CSS to it: every `--` class owes a base, or the exemptions come back.
-  const source =
-    fs.readFileSync(path.join(root, "src/tokens.css"), "utf8") +
-    fs.readFileSync(path.join(root, "src/components.css"), "utf8");
-
+  //
+  // Split with the rule's own function, not a second `lastIndexOf("--")` one.
+  // They disagree on `u-btn---b` — the rule reads `u-btn`, `lastIndexOf` reads
+  // `u-btn-` — so a hand-rolled split here would hold the CSS to a convention
+  // the shipped rule does not enforce.
   it("has a base in the CSS for every -- class the CSS defines", () => {
-    const defined = new Set([...source.matchAll(/\.(u-[a-zA-Z0-9_-]+)/g)].map((m) => m[1]));
-    const baseless = [...defined]
-      .filter((c) => c.includes("--"))
-      .filter((c) => !defined.has(c.slice(0, c.lastIndexOf("--"))));
+    const defined = definedUtilityClasses("src/tokens.css", "src/components.css");
+    const baseless = [...defined].filter((c) => {
+      const base = modifierBase(c);
+      return base !== undefined && !defined.has(base);
+    });
     expect(baseless.sort()).toEqual([]);
   });
 });

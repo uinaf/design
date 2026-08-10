@@ -27,13 +27,9 @@
 // the wide one it replaces.
 const OPENING_TAG = /<[a-zA-Z][^"'>]*(?:(?:"[^"]*"|'[^']*')[^"'>]*)*>/g;
 
-// Callers pass literals today. The helper is exported and generic, so a name
-// carrying regex metacharacters would silently change what the gates match.
-const escapeForRegExp = (source: string): string =>
-  source.replace(
-    /[.*+?^${}()|[\]\\]/g,
-    "\\export const attributeValues = (markup: string, name: string): string[] => {",
-  );
+// Callers pass literals today. `attributeValues` is exported and generic, so a
+// name carrying regex metacharacters would silently change what the gates match.
+const escapeForRegExp = (source: string): string => source.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 export const attributeValues = (markup: string, name: string): string[] => {
   // Commented-out markup is not a demonstration. This is the realistic case,
