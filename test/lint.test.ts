@@ -84,15 +84,6 @@ describe("spacing-grid", () => {
   });
 });
 
-describe("no-uppercase", () => {
-  it("passes in label context", () => {
-    expect(rules(css(".u-label{text-transform:uppercase}"))).not.toContain("no-uppercase");
-  });
-  it("warns elsewhere", () => {
-    expect(rules(css(".hero h1{text-transform:uppercase}"))).toContain("no-uppercase");
-  });
-});
-
 describe("one-accent-per-view", () => {
   it("passes with one", () => {
     expect(rules(markup('<a class="u-btn u-btn-accent">go</a>'))).not.toContain(
@@ -208,27 +199,6 @@ describe("status-shape", () => {
     expect(
       rules(markup('<div style="background:#222;border-left:3px solid red">alert</div>')),
     ).toContain("status-shape");
-  });
-});
-
-describe("lowercase-copy", () => {
-  it("passes on lowercase copy", () => {
-    expect(rules(markup('<button class="u-btn">save changes</button>'))).not.toContain(
-      "lowercase-copy",
-    );
-  });
-  it("passes on abbreviations", () => {
-    expect(rules(markup('<button class="u-btn">PR checks</button>'))).not.toContain(
-      "lowercase-copy",
-    );
-    expect(rules(markup('<span class="u-label">macOS build</span>'))).not.toContain(
-      "lowercase-copy",
-    );
-  });
-  it("warns on sentence-initial caps", () => {
-    expect(rules(markup('<button class="u-btn">Save Changes</button>'))).toContain(
-      "lowercase-copy",
-    );
   });
 });
 

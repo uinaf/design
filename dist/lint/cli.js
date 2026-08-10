@@ -124,7 +124,6 @@ var disallowedColors = (rawValue, property) => {
 };
 var ONE_DIMENSIONAL_SEGMENT = /(^|[-_])(dot|pill|bar|spark|tick|avatar)s?([-_]|$)/i;
 var looksOneDimensional = (selector) => [...selector.matchAll(/\.([a-zA-Z0-9_-]+)/g)].some((m) => ONE_DIMENSIONAL_SEGMENT.test(m[1]));
-var LABEL_CONTEXT = /label|tag|kicker|caps|micro|crumb|th\b/i;
 var checkCss = (css, file) => {
   const violations2 = [];
   let root;
@@ -253,49 +252,11 @@ var checkCss = (css, file) => {
         }
       }
     }
-    if (prop === "text-transform" && lower === "uppercase") {
-      if (!LABEL_CONTEXT.test(selector)) {
-        add(
-          decl,
-          "no-uppercase",
-          "warn",
-          `uppercase on \`${selector || prop}\``,
-          "uppercase belongs to 11px micro-labels and tags only; everything else is lowercase"
-        );
-      }
-    }
   });
   return violations2;
 };
 
 // src/lint/rules-markup.ts
-var DEFAULT_ABBREVIATIONS = [
-  "PR",
-  "PRs",
-  "AI",
-  "API",
-  "CLI",
-  "URL",
-  "URLs",
-  "OG",
-  "KV",
-  "R2",
-  "D1",
-  "SHA",
-  "HDR",
-  "HLS",
-  "TCC",
-  "macOS",
-  "iOS",
-  "MCP",
-  "CSS",
-  "HTML",
-  "JSON",
-  "UI",
-  "CI",
-  "npm",
-  "uinaf"
-];
 var lineOf = (source, index) => source.slice(0, index).split("\n").length;
 var CLASS_ATTR = /(?<![\w-])(?:class|className)\s{0,8}=\s{0,8}(?:"([^"]*)"|'([^']*)'|\{\s{0,8}"([^"]*)"\s{0,8}\}|\{\s{0,8}'([^']*)'\s{0,8}\})/g;
 var classOccurrences = (source, wanted) => {
@@ -323,7 +284,7 @@ var jsxStyleRules = () => [];
 var setJsxStyleChecker = (checker) => {
   jsxStyleRules = checker;
 };
-var checkMarkup = (source, file, options = {}) => {
+var checkMarkup = (source, file) => {
   const violations2 = [];
   const add = (index, rule, severity, message, fix) => {
     violations2.push({ rule, severity, file, line: lineOf(source, index), message, fix });
@@ -450,23 +411,6 @@ var checkMarkup = (source, file, options = {}) => {
       'add type="button" \u2014 a bare <button> defaults to type="submit" and will submit any form it sits in'
     );
   }
-  const abbreviations = /* @__PURE__ */ new Set([...DEFAULT_ABBREVIATIONS, ...options.abbreviations ?? []]);
-  for (const match of source.matchAll(
-    /<(button|h1|h2|h3|a|span|label|th)\b[^>]{0,2000}(?:class|className)\s{0,8}=\s{0,8}["'{][^"'}]{0,300}\bu-[^"'}]{0,300}["'}][^>]{0,2000}>([^<>{]{2,80})</g
-  )) {
-    const copy = match[2].trim();
-    const firstWord = copy.split(/\s+/)[0]?.replace(/[^\w-]/g, "") ?? "";
-    if (!/^[A-Z]/.test(firstWord)) continue;
-    if (abbreviations.has(firstWord)) continue;
-    if (/^[A-Z0-9]+$/.test(firstWord)) continue;
-    add(
-      match.index ?? 0,
-      "lowercase-copy",
-      "warn",
-      `"${copy.slice(0, 40)}" starts with a capital`,
-      `uinaf copy is lowercase except abbreviations (${[...abbreviations].slice(0, 6).join(", ")}, \u2026)`
-    );
-  }
   return violations2;
 };
 
@@ -591,7 +535,7 @@ var checkFile = (file, options = {}) => {
   const source = fs.readFileSync(file, "utf8");
   const ext = path.extname(file).toLowerCase();
   if (CSS_EXTENSIONS.has(ext)) return applySuppressions(source, checkCss(source, file));
-  const violations2 = checkMarkup(source, file, options);
+  const violations2 = checkMarkup(source, file);
   for (const block of source.matchAll(/<style[^>]{0,500}>([\s\S]{0,100000}?)<\/style\s{0,8}>/g)) {
     const offset = source.slice(0, block.index ?? 0).split("\n").length - 1;
     for (const violation of checkCss(block[1], file)) {
@@ -668,7 +612,6 @@ if (flag("help")) {
   design-check --changed         only files this branch touched (vs origin/main)
   design-check --base <ref>      base for --changed (default origin/main)
   design-check --ignore <part>   skip paths containing this substring (repeatable)
-  design-check --abbreviations A,B  extra abbreviations allowed to keep their caps
 
 Exit code is 0 when clean, 1 when there are errors (or, with --ratchet, when a
 count rises). Warnings alone do not fail.`);
@@ -680,7 +623,6 @@ var KNOWN_FLAGS = /* @__PURE__ */ new Set([
   "--update-ratchet",
   "--json",
   "--ignore",
-  "--abbreviations",
   "--changed",
   "--base"
 ]);
@@ -696,11 +638,10 @@ var ignore = argv.reduce((acc, arg, index) => {
   if (arg === "--ignore" && argv[index + 1]) acc.push(argv[index + 1]);
   return acc;
 }, []);
-var abbreviationsArg = value("abbreviations");
 var paths = argv.filter((arg, index) => {
   if (arg.startsWith("--")) return false;
   const previous = argv[index - 1];
-  return previous !== "--ignore" && previous !== "--abbreviations" && previous !== "--base";
+  return previous !== "--ignore" && previous !== "--base";
 });
 var changedRoot;
 if (flag("changed")) {
@@ -724,8 +665,7 @@ try {
   violations = check({
     paths,
     ignore,
-    relativeTo: changedRoot,
-    abbreviations: abbreviationsArg ? abbreviationsArg.split(",") : void 0
+    relativeTo: changedRoot
   });
 } catch (error) {
   console.error(`design:check \u2014 ${error.message}`);

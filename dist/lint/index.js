@@ -118,7 +118,6 @@ var disallowedColors = (rawValue, property) => {
 };
 var ONE_DIMENSIONAL_SEGMENT = /(^|[-_])(dot|pill|bar|spark|tick|avatar)s?([-_]|$)/i;
 var looksOneDimensional = (selector) => [...selector.matchAll(/\.([a-zA-Z0-9_-]+)/g)].some((m) => ONE_DIMENSIONAL_SEGMENT.test(m[1]));
-var LABEL_CONTEXT = /label|tag|kicker|caps|micro|crumb|th\b/i;
 var checkCss = (css, file) => {
   const violations = [];
   let root;
@@ -247,49 +246,11 @@ var checkCss = (css, file) => {
         }
       }
     }
-    if (prop === "text-transform" && lower === "uppercase") {
-      if (!LABEL_CONTEXT.test(selector)) {
-        add(
-          decl,
-          "no-uppercase",
-          "warn",
-          `uppercase on \`${selector || prop}\``,
-          "uppercase belongs to 11px micro-labels and tags only; everything else is lowercase"
-        );
-      }
-    }
   });
   return violations;
 };
 
 // src/lint/rules-markup.ts
-var DEFAULT_ABBREVIATIONS = [
-  "PR",
-  "PRs",
-  "AI",
-  "API",
-  "CLI",
-  "URL",
-  "URLs",
-  "OG",
-  "KV",
-  "R2",
-  "D1",
-  "SHA",
-  "HDR",
-  "HLS",
-  "TCC",
-  "macOS",
-  "iOS",
-  "MCP",
-  "CSS",
-  "HTML",
-  "JSON",
-  "UI",
-  "CI",
-  "npm",
-  "uinaf"
-];
 var lineOf = (source, index) => source.slice(0, index).split("\n").length;
 var CLASS_ATTR = /(?<![\w-])(?:class|className)\s{0,8}=\s{0,8}(?:"([^"]*)"|'([^']*)'|\{\s{0,8}"([^"]*)"\s{0,8}\}|\{\s{0,8}'([^']*)'\s{0,8}\})/g;
 var classOccurrences = (source, wanted) => {
@@ -317,7 +278,7 @@ var jsxStyleRules = () => [];
 var setJsxStyleChecker = (checker) => {
   jsxStyleRules = checker;
 };
-var checkMarkup = (source, file, options = {}) => {
+var checkMarkup = (source, file) => {
   const violations = [];
   const add = (index, rule, severity, message, fix) => {
     violations.push({ rule, severity, file, line: lineOf(source, index), message, fix });
@@ -444,23 +405,6 @@ var checkMarkup = (source, file, options = {}) => {
       'add type="button" \u2014 a bare <button> defaults to type="submit" and will submit any form it sits in'
     );
   }
-  const abbreviations = /* @__PURE__ */ new Set([...DEFAULT_ABBREVIATIONS, ...options.abbreviations ?? []]);
-  for (const match of source.matchAll(
-    /<(button|h1|h2|h3|a|span|label|th)\b[^>]{0,2000}(?:class|className)\s{0,8}=\s{0,8}["'{][^"'}]{0,300}\bu-[^"'}]{0,300}["'}][^>]{0,2000}>([^<>{]{2,80})</g
-  )) {
-    const copy = match[2].trim();
-    const firstWord = copy.split(/\s+/)[0]?.replace(/[^\w-]/g, "") ?? "";
-    if (!/^[A-Z]/.test(firstWord)) continue;
-    if (abbreviations.has(firstWord)) continue;
-    if (/^[A-Z0-9]+$/.test(firstWord)) continue;
-    add(
-      match.index ?? 0,
-      "lowercase-copy",
-      "warn",
-      `"${copy.slice(0, 40)}" starts with a capital`,
-      `uinaf copy is lowercase except abbreviations (${[...abbreviations].slice(0, 6).join(", ")}, \u2026)`
-    );
-  }
   return violations;
 };
 
@@ -585,7 +529,7 @@ var checkFile = (file, options = {}) => {
   const source = fs.readFileSync(file, "utf8");
   const ext = path.extname(file).toLowerCase();
   if (CSS_EXTENSIONS.has(ext)) return applySuppressions(source, checkCss(source, file));
-  const violations = checkMarkup(source, file, options);
+  const violations = checkMarkup(source, file);
   for (const block of source.matchAll(/<style[^>]{0,500}>([\s\S]{0,100000}?)<\/style\s{0,8}>/g)) {
     const offset = source.slice(0, block.index ?? 0).split("\n").length - 1;
     for (const violation of checkCss(block[1], file)) {
