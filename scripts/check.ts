@@ -140,7 +140,7 @@ const stale = ["AGENTS.md", "CONTRIBUTING.md", "docs/releasing.md"].flatMap((doc
   // `[\w:-]+` stopped at the first period, so a doc naming `pnpm run test.unit`
   // captured `test` and passed on a script that does not exist.
   [...fs.readFileSync(path.join(root, doc), "utf8").matchAll(/pnpm run (\S+)/g)]
-    .map((m) => m[1].replace(/^[`'"]+/, "").replace(/[`'".,;)\]]+$/, ""))
+    .map((m) => m[1].replace(/^[`'"*]+/, "").replace(/[`'"*.,;)\]]+$/, ""))
     .filter((name) => scripts[name] === undefined)
     .map((name) => `${doc} → pnpm run ${name}`),
 );

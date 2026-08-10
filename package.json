@@ -54,7 +54,7 @@
     "guide:sync": "node scripts/build.ts && node scripts/sync-guide.ts && node scripts/machine-layer.ts",
     "check": "wrangler types && vp check && node scripts/check.ts",
     "test": "wrangler types && vp test run",
-    "verify": "wrangler types && vp check && node scripts/check.ts && vp test run && node scripts/build.ts && node scripts/sync-guide.ts && node scripts/machine-layer.ts && pnpm run design:check && pnpm run smoke",
+    "verify": "wrangler types && vp check && node scripts/check.ts && vp test run && pnpm run guide:sync && pnpm run design:check && ./scripts/smoke.sh",
     "deploy": "pnpm run guide:sync && wrangler deploy",
     "prepare": "vp config --no-agent",
     "prepublishOnly": "pnpm run verify",

@@ -24,4 +24,3 @@ guide/patterns/
 worker-configuration.d.ts
 guide/preview/*.md
 guide/pages/*.md
-.smoke-guide.lock/
