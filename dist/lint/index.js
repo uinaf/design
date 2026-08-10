@@ -271,6 +271,11 @@ var classOccurrences = (source, wanted) => {
 };
 var EMOJI = new RegExp("\\p{Emoji_Presentation}|\\p{Emoji}\\uFE0F", "gu");
 var ICON_FONT_CLASS = /^(?:(?:fa|fas|far|fab|fa-solid|fa-regular|glyphicon|mdi)-[a-z0-9-]+|material-icons(?:-[a-z]+)?|glyphicon)$/;
+var STANDALONE_MODIFIERS = /* @__PURE__ */ new Set([
+  "u-link--plain",
+  "u-code--bleed"
+]);
+var MODIFIER = /^(u-[a-z0-9-]*[a-z0-9])--[a-z0-9-]+$/;
 var UNITLESS_PROPERTIES = /* @__PURE__ */ new Set([
   "line-height",
   "font-weight",
@@ -357,14 +362,26 @@ var checkMarkup = (source, file) => {
   }
   for (const match of source.matchAll(CLASS_ATTR)) {
     const value = match[1] ?? match[2] ?? match[3] ?? match[4] ?? "";
-    for (const token of value.split(/\s+/)) {
-      if (!ICON_FONT_CLASS.test(token)) continue;
+    const tokens = value.split(/\s+/).filter(Boolean);
+    for (const token of tokens) {
+      if (ICON_FONT_CLASS.test(token)) {
+        add(
+          match.index ?? 0,
+          "no-icon-fonts",
+          "error",
+          `icon font class ${token}`,
+          "no icon fonts; pick from the committed assets/icons/ set, or use \u2197 \u2192 \xB7 and hairlines"
+        );
+        continue;
+      }
+      const base = MODIFIER.exec(token)?.[1];
+      if (!base || STANDALONE_MODIFIERS.has(token) || tokens.includes(base)) continue;
       add(
         match.index ?? 0,
-        "no-icon-fonts",
-        "error",
-        `icon font class ${token}`,
-        "no icon fonts; use \u2197 \u2192 \xB7 or an inline SVG hairline"
+        "modifier-base",
+        "warn",
+        `${token} without its base class ${base}`,
+        `add ${base} alongside it \u2014 a modifier overrides part of its base, so on its own it renders as unstyled content with one property changed`
       );
     }
   }

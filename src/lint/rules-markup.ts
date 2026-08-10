@@ -40,6 +40,25 @@ const EMOJI = /\p{Emoji_Presentation}|\p{Emoji}\uFE0F/gu;
 const ICON_FONT_CLASS =
   /^(?:(?:fa|fas|far|fab|fa-solid|fa-regular|glyphicon|mdi)-[a-z0-9-]+|material-icons(?:-[a-z]+)?|glyphicon)$/;
 
+/**
+ * `u-X--y` is a BEM modifier: it overrides part of `.u-X` and is wrong without
+ * it. `.u-btn--primary` alone is a background colour on inline text — no
+ * padding, no border, no font, because `.u-btn` owns those.
+ *
+ * Two classes wear the spelling without the dependency, and both are
+ * deliberate. `.u-link--plain` *unsets* link styling, so pairing it with
+ * `.u-link` would restore the underline it exists to remove. `.u-code--bleed`
+ * is a margin-only utility whose host is `.u-pre`, not `.u-code`. Exported so
+ * a test can hold the list to the CSS instead of letting it rot.
+ */
+export const STANDALONE_MODIFIERS: ReadonlySet<string> = new Set([
+  "u-link--plain",
+  "u-code--bleed",
+]);
+
+/** Longest base that leaves a modifier suffix: `u-btn--sm` → `u-btn`. */
+const MODIFIER = /^(u-[a-z0-9-]*[a-z0-9])--[a-z0-9-]+$/;
+
 /** React leaves these unitless; everything else gets px appended to a number. */
 const UNITLESS_PROPERTIES = new Set([
   "line-height",
@@ -163,14 +182,29 @@ export const checkMarkup = (source: string, file: string): Violation[] => {
 
   for (const match of source.matchAll(CLASS_ATTR)) {
     const value = match[1] ?? match[2] ?? match[3] ?? match[4] ?? "";
-    for (const token of value.split(/\s+/)) {
-      if (!ICON_FONT_CLASS.test(token)) continue;
+    const tokens = value.split(/\s+/).filter(Boolean);
+    for (const token of tokens) {
+      if (ICON_FONT_CLASS.test(token)) {
+        add(
+          match.index ?? 0,
+          "no-icon-fonts",
+          "error",
+          `icon font class ${token}`,
+          "no icon fonts; pick from the committed assets/icons/ set, or use ↗ → · and hairlines",
+        );
+        continue;
+      }
+      const base = MODIFIER.exec(token)?.[1];
+      if (!base || STANDALONE_MODIFIERS.has(token) || tokens.includes(base)) continue;
+      // Warn, not error: this rule ships in the tarball, and a new error would
+      // turn every consumer's build red the moment they upgrade. The ratchet
+      // makes it blocking here, where the baseline is zero.
       add(
         match.index ?? 0,
-        "no-icon-fonts",
-        "error",
-        `icon font class ${token}`,
-        "no icon fonts; use ↗ → · or an inline SVG hairline",
+        "modifier-base",
+        "warn",
+        `${token} without its base class ${base}`,
+        `add ${base} alongside it — a modifier overrides part of its base, so on its own it renders as unstyled content with one property changed`,
       );
     }
   }
