@@ -13,6 +13,7 @@ one typeface, near-black, hairline borders, one accent, visible structure.
 | Berkeley Mono (CDN only) | `https://cdn.uinaf.dev/fonts/berkeley-mono/variable/font.css` — never vendored in this package |
 | brand images (CDN only)  | `https://cdn.uinaf.dev/images/…` — see the `CDN` export; never vendored in this package        |
 | `preview/`               | one card per pattern — the canonical reference for each                                        |
+| `assets/icons/`          | the closed icon set — eight 16-grid stroke svgs, `currentColor`                                |
 
 ## voice
 
@@ -82,7 +83,8 @@ snappy decel, no bounce. 160ms hover/press, 220ms entry. entry = fade-up 10px wi
 ## imagery & logo
 
 - two illustrations, total: `uinaf-team.png` (primary mark, 220–240px framed) and `uinaf-computer.png` (favicon, 24–64px). pure black behind, 1px frame, square crop. never rotate, recolor, or generate look-alikes.
-- no photos, no icon fonts, no svg icons. `↗` `→` `·` and hairlines carry the iconography.
+- no photos, no icon fonts. `↗` `→` `·` and hairlines carry the iconography.
+- **icons are a last resort, and the set is closed.** eight 16-grid stroke svgs live in `assets/icons/` — search, copy, download, refresh, file, folder, branch, warning. original work, licensed with the repo. pick from the set; extend it in its idiom (stroke 1.5, square caps, `currentColor`, no fills) as a pull request, never inline. sizes scale the stroke inversely: 16/1.5 default, 12/1.75 in tags and meta rows, 20/1.25 in large buttons and empty states. never import an icon library, never paste from a third-party set, and never put an icon beside a word that already says it.
 
 ## guardrails
 

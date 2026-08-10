@@ -113,6 +113,7 @@ if ((pkg.files ?? []).some((f) => f === "fonts" || f.includes("font"))) {
 const SHIPPED = {
   dist: "the build output — css, tokens, patterns, the lint cli",
   "DESIGN.md": "the visual and voice spec consumers are pointed at",
+  assets: "the closed icon set — the policy says pick from it, so consumers need it",
   preview: "one card per pattern, the canonical reference for each",
   templates: "standalone starting-point screens",
   "skills/uinaf-design": "the agent skill (#11)",

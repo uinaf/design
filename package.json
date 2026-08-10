@@ -17,6 +17,7 @@
   "files": [
     "dist",
     "DESIGN.md",
+    "assets",
     "preview",
     "templates",
     "skills/uinaf-design"

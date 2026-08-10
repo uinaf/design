@@ -15,6 +15,7 @@ coverage/
 .smoke/
 
 # machine-layer build outputs
+guide/assets/
 guide/*.md
 guide/llms.txt
 guide/.well-known/
