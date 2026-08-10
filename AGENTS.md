@@ -33,16 +33,23 @@ Prefer `vp` for lint/format/test: `pnpm exec vp check`, `pnpm exec vp test run`.
 
 `pnpm run smoke` syncs the guide, binds port 8788, and always kills the server it started. Set `SMOKE_PORT` to run it from a second worktree; logs land in `.smoke/` (gitignored). Two runs in the _same_ checkout will fight over `guide/` — use a separate worktree, or call `./scripts/smoke.sh` directly once the guide is built.
 
-`pnpm run deploy` publishes the working tree to **production** `design.uinaf.dev`. It is outside `verify` on purpose and must not run unattended — CI deploys from `main` (`.github/workflows/main.yml`). To see your change, run `pnpm run smoke` or `pnpm exec wrangler dev`.
+`pnpm run deploy` publishes the working tree to **production** `design.uinaf.dev`. It is outside `verify` on purpose and must not run unattended — CI deploys from `main` (`.github/workflows/release.yml`). To see your change, run `pnpm run smoke` or `pnpm exec wrangler dev`.
 
 ## Pipelines
 
-| Workflow                        | On push to `main`                              |
-| ------------------------------- | ---------------------------------------------- |
-| `.github/workflows/main.yml`    | verify → secrets → guide deploy (`production`) |
-| `.github/workflows/release.yml` | verify → secrets → npm publish (`release`)     |
+| Workflow                             | Trigger                  | Jobs                                                                     |
+| ------------------------------------ | ------------------------ | ------------------------------------------------------------------------ |
+| `.github/workflows/verify.yml`       | PR, merge queue, `_call` | `verify` — the one definition, called by the others                      |
+| `.github/workflows/release.yml`      | push to `main`           | verify → secrets → guide deploy (`production`) ∥ npm publish (`release`) |
+| `.github/workflows/secrets.yml`      | PR, `_call`, weekly      | gitleaks, trufflehog                                                     |
+| `.github/workflows/actions-lint.yml` | `.github/workflows/**`   | actionlint, zizmor — both third-party, run in Docker                     |
 
-Do not gate guide deploy on the release job. Credentials for each path are listed in `docs/releasing.md` (vars vs secrets).
+Two rules the file names do not tell you:
+
+- `release.yml` is the **only** push-to-`main` workflow, and its file name is pinned by npm Trusted Publishing. Renaming it breaks `npm publish` until someone edits the trusted publisher on npmjs.com. That is why the guide deploy lives in a file called `release`.
+- `deploy` and `release` are siblings on `needs: [verify, secrets]`. Never gate guide deploy on the release job — `design.uinaf.dev` must keep shipping when a publish fails.
+
+Credentials for each path are listed in `docs/releasing.md` (vars vs secrets).
 
 ## Docs map
 
