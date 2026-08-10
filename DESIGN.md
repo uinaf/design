@@ -54,7 +54,7 @@ no 18px. pick the nearest step.
 
 ## structure
 
-- spacing on a 4/8px grid. panels breathe 20 inside, rows 16, groups 32, sections 64–96.
+- spacing has two regimes. **layout** — 16px and up, plus section and block margins — sits on the scale: 4 · 8 · 12 · 16 · 20 · 24 · 28 · 32 · 36 · 40 · 48 · 56 · 64 · 72 · 80 · 96. **micro** — under 16px, between elements inside one row or control: dot to text, icon to label, chip padding — has a 2px resolution, and 2 · 6 · 10 · 14 are deliberate optical half-steps, not drift. panels breathe 20 inside, rows 16, groups 32, sections 64–96. off the scale, round to the nearest step; an exact tie rounds down, because denser is on-brand.
 - borders: 1px, one rest shade + one hover shade. dashed marks a bounded long-form region. never thicker.
 - corners square by default, 2px on controls, 6px ceiling. shadows: none (the live dot's glow is the one exception).
 - the vocabulary: **panel** (bordered region) · **corner ticks** (technical-drawing + marks on panel corners) · **panel grid** (panels sharing single hairlines — stat strips, kanban) · **stat** (label / value / note) · **frame** (full-width hairline band) · **table** (micro-label headers, hairline rules, numerics right).

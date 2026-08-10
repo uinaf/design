@@ -82,6 +82,40 @@ describe("spacing-grid", () => {
   it("allows hairlines and optical nudges", () => {
     expect(rules(css("a{padding:1px;gap:2px}"))).not.toContain("spacing-grid");
   });
+
+  // The two regimes. A flat `% 4` test flagged every one of the micro half-steps,
+  // which is how 38 of 76 reported violations turned out to be the design system
+  // being deliberate and the rule being too crude.
+  it("accepts the micro half-steps under 16px", () => {
+    for (const size of [2, 6, 10, 14]) {
+      expect(rules(css(`a{gap:${size}px}`)), `${size}px`).not.toContain("spacing-grid");
+    }
+  });
+  it("accepts the layout steps the scale added", () => {
+    for (const size of [28, 36, 56, 72]) {
+      expect(rules(css(`a{padding:${size}px}`)), `${size}px`).not.toContain("spacing-grid");
+    }
+  });
+  it("rejects a value off the micro resolution", () => {
+    for (const size of [3, 5, 7, 15]) {
+      expect(rules(css(`a{gap:${size}px}`)), `${size}px`).toContain("spacing-grid");
+    }
+  });
+  it("rounds an exact layout tie down, because denser is on-brand", () => {
+    expect(css("a{padding:18px}")[0].fix).toContain("var(--sp-4) — 16px");
+    expect(css("a{padding:22px}")[0].fix).toContain("var(--sp-5) — 20px");
+  });
+  it("names a real token, fraction and all", () => {
+    // The name is derived from the value, so a new step cannot arrive unnamed.
+    expect(css("a{gap:7px}")[0].fix).toContain("var(--sp-1-5)");
+  });
+  it("never judges width, height, or control geometry", () => {
+    // An 18px switch and a 26px button are geometry, not spacing.
+    expect(rules(css("a{width:18px;height:26px;max-width:40ch}"))).not.toContain("spacing-grid");
+  });
+  it("accepts a spacing token outright", () => {
+    expect(rules(css("a{gap:var(--sp-1-5);padding:var(--sp-7)}"))).not.toContain("spacing-grid");
+  });
 });
 
 describe("one-accent-per-view", () => {

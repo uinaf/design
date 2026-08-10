@@ -52,6 +52,11 @@ var GRANDFATHERED_SIZE = "12px";
 var MAX_RADIUS_PX = 6;
 var SPACING_PROPERTIES = /^(margin|padding)(-(top|right|bottom|left|inline|block)(-(start|end))?)?$|^gap$|^(row|column)-gap$/;
 var SPACED_PROPERTY_SPLIT = /\s+/;
+var LAYOUT_STEPS = [4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 48, 56, 64, 72, 80, 96];
+var MICRO_STEPS = [2, 4, 6, 8, 10, 12, 14];
+var MICRO_CEILING = 16;
+var nearestStep = (size, steps) => steps.reduce((best, step) => Math.abs(step - size) < Math.abs(best - size) ? step : best);
+var spacingToken = (px) => `--sp-${String(px / 4).replace(".", "-")}`;
 var isToken = (value) => /var\(\s*--/.test(value);
 var withoutTokenReferences = (value) => {
   let out = "";
@@ -235,15 +240,18 @@ var checkCss = (css, file) => {
         const px = /^(-?\d+(?:\.\d+)?)px$/.exec(part);
         if (!px) continue;
         const size = Math.abs(Number.parseFloat(px[1]));
-        if (size > 2 && size % 4 !== 0) {
-          add(
-            decl,
-            "spacing-grid",
-            "warn",
-            `${prop}: ${part} is off the 4px grid`,
-            "round to a multiple of 4, or use var(--sp-*)"
-          );
-        }
+        if (size <= 1) continue;
+        const micro = size < MICRO_CEILING;
+        const steps = micro ? MICRO_STEPS : LAYOUT_STEPS;
+        if (steps.includes(size)) continue;
+        const nearest = nearestStep(size, steps);
+        add(
+          decl,
+          "spacing-grid",
+          "warn",
+          `${prop}: ${part} is not a ${micro ? "micro" : "layout"} step`,
+          `use var(${spacingToken(nearest)}) \u2014 ${nearest}px${micro ? ". Micro spacing (under 16px, inside one row or control) has a 2px resolution" : ". Layout spacing sits on the published scale"}`
+        );
       }
     }
   });
