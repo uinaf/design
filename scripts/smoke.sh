@@ -95,6 +95,10 @@ if [ ! -f guide/design.md ]; then
   # Wait for the lock, not for design.md: the builder writes that file partway
   # through, so waiting on it releases the other run into a half-written guide.
   while ! mkdir "$lock" 2>/dev/null; do
+    [ -n "$interrupted" ] && {
+      echo "smoke: interrupted while waiting for another run to build the guide" >&2
+      exit 130
+    }
     sleep 1
     waited=$((waited + 1))
     [ "$waited" -lt 180 ] || {
