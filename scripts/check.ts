@@ -98,6 +98,7 @@ if (fs.existsSync(path.join(root, "fonts"))) {
 
 type PackageJson = {
   files?: string[];
+  scripts?: Record<string, string>;
 };
 
 const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8")) as PackageJson;
@@ -127,6 +128,26 @@ for (const entry of shipped) {
   if (!fs.existsSync(path.join(root, entry))) {
     fail(`package.json files lists ${entry}, which does not exist`);
   }
+}
+
+// AGENTS.md is the first thing an agent reads and the last thing any gate
+// checks. A command named there that no longer exists sends every agent down a
+// dead path, and renaming a script is a one-line edit no test can see. Only the
+// repo-facing docs — README.md describes the consumer's project, not this one.
+const scripts = pkg.scripts ?? {};
+const stale = ["AGENTS.md", "CONTRIBUTING.md", "docs/releasing.md"].flatMap((doc) =>
+  // The whole token, then trim the markdown and sentence punctuation around it.
+  // `[\w:-]+` stopped at the first period, so a doc naming `pnpm run test.unit`
+  // captured `test` and passed on a script that does not exist.
+  [...fs.readFileSync(path.join(root, doc), "utf8").matchAll(/pnpm run (\S+)/g)]
+    .map((m) => m[1].replace(/^[`'"*]+/, "").replace(/[`'"*.,;)\]]+$/, ""))
+    .filter((name) => scripts[name] === undefined)
+    .map((name) => `${doc} → pnpm run ${name}`),
+);
+if (stale.length > 0) {
+  fail(
+    `${[...new Set(stale)].join("\n")}\nNamed in the docs, missing from package.json scripts. Rename in both places, or drop it from the doc.`,
+  );
 }
 
 // The skill ships inside the npm tarball, so a malformed one is publishable.

@@ -21,8 +21,15 @@ const PROPOSED_VERSION = "2026-07-28";
 // carry the version the server actually negotiated, not the one we proposed.
 let negotiatedVersion: string | undefined;
 
+// Every request needs its own bound. smoke.sh times out the boot and then waits
+// on this process, and main.yml runs it against production with only the job
+// timeout behind it — so a fetch that never settles hangs both, and no
+// SMOKE_TIMEOUT covers it.
+const REQUEST_TIMEOUT_MS = Number(process.env.SMOKE_REQUEST_TIMEOUT_MS ?? 15_000);
+
 const post = (body: unknown): Promise<Response> =>
   fetch(endpoint, {
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
     method: "POST",
     headers: {
       "content-type": "application/json",
@@ -104,16 +111,20 @@ check(
 
 const list = await call("list_patterns");
 check("list_patterns includes topbar", list.includes("topbar"));
-check("list_patterns flags patterns without markup", list.includes("(no markup yet)"));
+// Every pattern has carried markup since #33, and a unit test holds that
+// invariant. The served listing has to agree: a pattern the server reports as
+// empty is one an agent will not copy, whatever the JSON on disk says.
+check("list_patterns reports no pattern without markup", !list.includes("(no markup yet)"), list);
 
 const topbar = await call("get_pattern", { name: "topbar" });
 check("get_pattern returns markup", topbar.includes("u-topbar-row") && topbar.includes("```html"));
 check("get_pattern returns rules", topbar.toLowerCase().includes("56px"));
 
-const gap = await call("get_pattern", { name: "modal" });
+const modal = await call("get_pattern", { name: "modal" });
 check(
-  "get_pattern explains a missing-markup pattern",
-  gap.includes("No markup is published") && gap.includes("u-modal"),
+  "get_pattern returns markup for a non-headline pattern too",
+  modal.includes("u-modal") && modal.includes("```html"),
+  modal.slice(0, 200),
 );
 
 const unknown = await call("get_pattern", { name: "nonsense" });

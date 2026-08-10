@@ -11,6 +11,9 @@ coverage/
 # slopomatic run evidence — scratch, not repo content
 *.evidence.json
 
+# smoke run evidence — server and contract logs, not repo content
+.smoke/
+
 # machine-layer build outputs
 guide/*.md
 guide/llms.txt
