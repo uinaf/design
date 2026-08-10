@@ -9,4 +9,18 @@ export declare const CDN: {
     readonly computerOgWebp: "https://cdn.uinaf.dev/images/webp/uinaf-computer-og-image-1024w.webp"
     readonly team: "https://cdn.uinaf.dev/images/uinaf-team.png"
   }
+  readonly exports: {
+    readonly ogCard: "https://cdn.uinaf.dev/images/exports/og-card.png"
+    readonly ogCardPost: "https://cdn.uinaf.dev/images/exports/og-card-post.png"
+    readonly repoOgSample: "https://cdn.uinaf.dev/images/exports/repo-og-healthd.png"
+    readonly readmeBannerSample: "https://cdn.uinaf.dev/images/exports/readme-banner-healthd.png"
+  }
+  readonly favicons: {
+    readonly png16: "https://cdn.uinaf.dev/images/exports/favicons/favicon-16.png"
+    readonly png32: "https://cdn.uinaf.dev/images/exports/favicons/favicon-32.png"
+    readonly png48: "https://cdn.uinaf.dev/images/exports/favicons/favicon-48.png"
+    readonly png192: "https://cdn.uinaf.dev/images/exports/favicons/favicon-192.png"
+    readonly png512: "https://cdn.uinaf.dev/images/exports/favicons/favicon-512.png"
+    readonly appleTouch: "https://cdn.uinaf.dev/images/exports/favicons/apple-touch-icon.png"
+  }
 }

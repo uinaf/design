@@ -54,6 +54,7 @@
     "build": "node scripts/build.ts",
     "guide:sync": "node scripts/build.ts && node scripts/sync-guide.ts && node scripts/machine-layer.ts",
     "check": "wrangler types && vp check && node scripts/check.ts",
+    "cdn:check": "node scripts/cdn-check.ts",
     "test": "wrangler types && vp test run",
     "verify": "wrangler types && vp check && node scripts/check.ts && pnpm run guide:sync && vp test run && pnpm run design:check && ./scripts/smoke.sh",
     "deploy": "pnpm run guide:sync && wrangler deploy",

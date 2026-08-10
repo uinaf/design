@@ -11,4 +11,19 @@ export const CDN = {
     computerOgWebp: "https://cdn.uinaf.dev/images/webp/uinaf-computer-og-image-1024w.webp",
     team: "https://cdn.uinaf.dev/images/uinaf-team.png",
   },
+  /** Rendered output of the `templates/export-*.html` artboards. */
+  exports: {
+    ogCard: "https://cdn.uinaf.dev/images/exports/og-card.png",
+    ogCardPost: "https://cdn.uinaf.dev/images/exports/og-card-post.png",
+    repoOgSample: "https://cdn.uinaf.dev/images/exports/repo-og-healthd.png",
+    readmeBannerSample: "https://cdn.uinaf.dev/images/exports/readme-banner-healthd.png",
+  },
+  favicons: {
+    png16: "https://cdn.uinaf.dev/images/exports/favicons/favicon-16.png",
+    png32: "https://cdn.uinaf.dev/images/exports/favicons/favicon-32.png",
+    png48: "https://cdn.uinaf.dev/images/exports/favicons/favicon-48.png",
+    png192: "https://cdn.uinaf.dev/images/exports/favicons/favicon-192.png",
+    png512: "https://cdn.uinaf.dev/images/exports/favicons/favicon-512.png",
+    appleTouch: "https://cdn.uinaf.dev/images/exports/favicons/apple-touch-icon.png",
+  },
 } as const;
