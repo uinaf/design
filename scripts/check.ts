@@ -105,6 +105,30 @@ if ((pkg.files ?? []).some((f) => f === "fonts" || f.includes("font"))) {
   fail("package.json files must not include fonts");
 }
 
+// The tarball contents are a decision, not a side effect. `system/` shipped two
+// unreachable PNGs for four releases because adding a directory to `files` is a
+// one-line edit nothing reads. Changing what consumers download now takes a
+// deliberate edit here too, with a reason.
+const SHIPPED = {
+  dist: "the build output — css, tokens, patterns, the lint cli",
+  "DESIGN.md": "the visual and voice spec consumers are pointed at",
+  preview: "one card per pattern, the canonical reference for each",
+  templates: "standalone starting-point screens",
+  "skills/uinaf-design": "the agent skill (#11)",
+} satisfies Record<string, string>;
+const shipped = Object.keys(SHIPPED).sort();
+const declared = [...(pkg.files ?? [])].sort();
+if (declared.join("\n") !== shipped.join("\n")) {
+  fail(
+    `package.json files drifted from scripts/check.ts SHIPPED.\n  declared: ${declared.join(", ")}\n  expected: ${shipped.join(", ")}\nIf the change is intended, add or remove the entry in SHIPPED with a reason.`,
+  );
+}
+for (const entry of shipped) {
+  if (!fs.existsSync(path.join(root, entry))) {
+    fail(`package.json files lists ${entry}, which does not exist`);
+  }
+}
+
 // The skill ships inside the npm tarball, so a malformed one is publishable.
 // Structural, not a network call: this must hold in CI where tessl is absent.
 // `pnpm run skill:lint` remains the richer, optional gate.
@@ -181,11 +205,6 @@ for (const key of ["display_name", "short_description", "default_prompt"] as con
 // The invocation policy is a deliberate decision (#11), not incidental.
 if (openaiConfig.policy?.allow_implicit_invocation !== false) {
   fail("agents/openai.yaml must set policy.allow_implicit_invocation: false");
-}
-
-const packaged = (pkg.files ?? []).some((f) => f === "skills/uinaf-design");
-if (!packaged) {
-  fail("package.json files must include skills/uinaf-design so the skill ships");
 }
 
 console.log("check ok");

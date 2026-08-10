@@ -11,7 +11,7 @@ one typeface, near-black, hairline borders, one accent, visible structure.
 | `@uinaf/design/css`      | tokens + ready styles implementing everything below. the only css you import                   |
 | `templates/`             | starting points: uinaf.dev homepage, blog index, blog post                                     |
 | Berkeley Mono (CDN only) | `https://cdn.uinaf.dev/fonts/berkeley-mono/variable/font.css` — never vendored in this package |
-| `system/assets/`         | package-safe brand illustrations                                                               |
+| brand images (CDN only)  | `https://cdn.uinaf.dev/images/…` — see the `CDN` export; never vendored in this package        |
 | `preview/`               | one card per pattern — the canonical reference for each                                        |
 
 ## voice
