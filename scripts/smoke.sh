@@ -16,8 +16,18 @@ server_log="$artifacts/wrangler-$port.log"
 client_log="$artifacts/smoke-mcp-$port.log"
 
 probe() { curl -sf --connect-timeout "$1" --max-time "$1" -o /dev/null "http://127.0.0.1:$port/"; }
+# One deadline for the whole run, set before the first probe. A fixed preflight
+# would spend its own seconds outside SMOKE_TIMEOUT against a listener that
+# accepts and never answers.
+deadline=$(($(date +%s) + timeout_seconds))
+budget() {
+  local left=$((deadline - $(date +%s)))
+  [ "$left" -lt 1 ] && left=1
+  [ "$left" -gt 5 ] && left=5
+  echo "$left"
+}
 
-if probe 5 2>/dev/null; then
+if probe "$(budget)" 2>/dev/null; then
   echo "smoke: something already serves port $port." >&2
   echo "       Stop it, or set SMOKE_PORT to a free port." >&2
   exit 1
@@ -38,11 +48,22 @@ server_pid=""
 client_pid=""
 interrupted=""
 
+# wrangler dev spawns workerd children; the negative pid signals the group.
+# TERM then KILL, because a wrapper that ignores TERM would otherwise leave this
+# waiting forever on every exit path — and `wait` returns when the wrapper goes,
+# which is not the same as the listener going.
 cleanup() {
   [ -n "$server_pid" ] || return 0
-  # wrangler dev spawns workerd children; the negative pid signals the group.
   kill -- "-$server_pid" 2>/dev/null || kill "$server_pid" 2>/dev/null || true
+  for _ in 1 2 3 4 5; do
+    kill -0 -- "-$server_pid" 2>/dev/null || break
+    sleep 1
+  done
+  kill -9 -- "-$server_pid" 2>/dev/null || kill -9 "$server_pid" 2>/dev/null || true
   wait "$server_pid" 2>/dev/null || true
+  if probe 2 2>/dev/null; then
+    echo "smoke: port $port is still serving after teardown." >&2
+  fi
 }
 # Bash defers a trap until the foreground command returns, so the client runs in
 # the background and the handler kills it. In the foreground, a stalled client
@@ -68,18 +89,16 @@ fail_with_log() {
 }
 
 # A deadline, not an iteration count: each probe can spend seconds on a worker
-# that accepts and never answers.
+# that accepts and never answers. The deadline was set before preflight.
 ready=""
-deadline=$(($(date +%s) + timeout_seconds))
 while :; do
   [ -n "$interrupted" ] && {
     echo "smoke: interrupted during boot" >&2
     exit 130
   }
   kill -0 "$server_pid" 2>/dev/null || fail_with_log "wrangler dev exited during boot."
-  remaining=$((deadline - $(date +%s)))
-  [ "$remaining" -gt 0 ] || break
-  if probe $((remaining < 5 ? remaining : 5)); then
+  [ $((deadline - $(date +%s))) -gt 0 ] || break
+  if probe "$(budget)"; then
     ready=1
     break
   fi
