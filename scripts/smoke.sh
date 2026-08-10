@@ -1,11 +1,6 @@
 #!/usr/bin/env bash
 # Boots the Worker, runs the MCP contract against it, and always tears it down.
 #
-# `scripts/smoke-mcp.ts` assumes a server is already listening, so nothing —
-# not verify, not CI — could run it. It went two releases asserting that some
-# patterns still had no markup, which stopped being true at #33. A check with
-# no runner does not fail; it rots. This script is the runner.
-#
 #   SMOKE_PORT       port to bind (default 8788; set it per worktree)
 #   SMOKE_TIMEOUT    seconds to wait for the worker to answer (default 90)
 #   SMOKE_ARTIFACTS  directory for the server and smoke logs (default .smoke)
@@ -20,16 +15,16 @@ mkdir -p "$artifacts"
 server_log="$artifacts/wrangler-$port.log"
 client_log="$artifacts/smoke-mcp-$port.log"
 
-if curl -sf --connect-timeout 2 --max-time 5 -o /dev/null "http://127.0.0.1:$port/" 2>/dev/null; then
+probe() { curl -sf --connect-timeout "$1" --max-time "$1" -o /dev/null "http://127.0.0.1:$port/"; }
+
+if probe 5 2>/dev/null; then
   echo "smoke: something already serves port $port." >&2
   echo "       Stop it, or set SMOKE_PORT to a free port." >&2
   exit 1
 fi
 
-# search_guidelines reads guide/design.md, which is gitignored and written by
-# machine-layer.ts. On a clean checkout it does not exist, so this script —
-# documented as standalone — failed two assertions unless verify had already
-# run. A gate that only works second is not a gate you can hand to anyone.
+# guide/design.md is gitignored and written by machine-layer.ts, so on a clean
+# checkout search_guidelines has nothing to read.
 if [ ! -f guide/design.md ]; then
   echo "smoke: guide assets are missing; building them first"
   if ! pnpm run guide:sync >"$artifacts/guide-sync.log" 2>&1; then
@@ -45,16 +40,13 @@ interrupted=""
 
 cleanup() {
   [ -n "$server_pid" ] || return 0
-  # wrangler dev spawns workerd children; the negative pid signals the whole
-  # group so a failed run leaves no listener behind for the next one.
+  # wrangler dev spawns workerd children; the negative pid signals the group.
   kill -- "-$server_pid" 2>/dev/null || kill "$server_pid" 2>/dev/null || true
   wait "$server_pid" 2>/dev/null || true
 }
-# Bash defers a trap until the running foreground command returns. With the
-# client in the foreground, a SIGTERM during a stalled fetch was held until the
-# fetch finished — the shell stayed alive, workerd kept listening, and a late
-# success exited 0 as if nothing had happened. The client runs in the
-# background and is killed from here instead.
+# Bash defers a trap until the foreground command returns, so the client runs in
+# the background and the handler kills it. In the foreground, a stalled client
+# held SIGTERM until it finished and left workerd listening.
 on_signal() {
   interrupted=1
   [ -n "$client_pid" ] && kill "$client_pid" 2>/dev/null
@@ -75,11 +67,8 @@ fail_with_log() {
   exit 1
 }
 
-# A wall clock, not an iteration count. Each probe can spend seconds waiting on
-# a worker that accepts the connection and never answers, so counting attempts
-# made SMOKE_TIMEOUT=90 mean anything up to nine minutes. Every probe is capped
-# by the time actually left, which is also what keeps the loop from parking in a
-# foreground command long enough to defer the signal traps.
+# A deadline, not an iteration count: each probe can spend seconds on a worker
+# that accepts and never answers.
 ready=""
 deadline=$(($(date +%s) + timeout_seconds))
 while :; do
@@ -90,8 +79,7 @@ while :; do
   kill -0 "$server_pid" 2>/dev/null || fail_with_log "wrangler dev exited during boot."
   remaining=$((deadline - $(date +%s)))
   [ "$remaining" -gt 0 ] || break
-  probe=$((remaining < 5 ? remaining : 5))
-  if curl -sf --connect-timeout "$probe" --max-time "$probe" -o /dev/null "http://127.0.0.1:$port/"; then
+  if probe $((remaining < 5 ? remaining : 5)); then
     ready=1
     break
   fi

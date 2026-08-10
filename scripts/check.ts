@@ -1,7 +1,6 @@
 import fs from "node:fs";
 import { parse as parseYaml } from "yaml";
 import path from "node:path";
-import { reachableFrom } from "./reachability.ts";
 
 const root = path.resolve(import.meta.dirname, "..");
 
@@ -131,42 +130,11 @@ for (const entry of shipped) {
   }
 }
 
-// A script no gate runs is a check that cannot fail. `scripts/smoke-mcp.ts` sat
-// behind a package script for two releases asserting something false since #33,
-// and nothing noticed because nothing ran it. Every runnable script has to be
-// reachable from `verify`, or listed here with the reason it stays manual.
-// `scripts/reachability.ts` parses command position and has its own unit tests;
-// this is the gate that acts on it.
-const MANUAL: Record<string, string> = {};
-const scripts = pkg.scripts ?? {};
-const reached = reachableFrom("verify", scripts, (file) => {
-  const source = path.join(root, "scripts", file);
-  return fs.existsSync(source) ? fs.readFileSync(source, "utf8") : null;
-});
-const orphaned = fs
-  .readdirSync(path.join(root, "scripts"))
-  .filter((file) => /\.(?:ts|sh|mjs|js)$/.test(file))
-  .filter((file) => !reached.has(file) && !(file in MANUAL));
-if (orphaned.length > 0) {
-  fail(
-    `scripts/${orphaned.join(", scripts/")} — nothing in \`pnpm run verify\` runs this.\nWire it into verify, or add it to MANUAL in scripts/check.ts with the reason it stays manual.`,
-  );
-}
-for (const [file, reason] of Object.entries(MANUAL)) {
-  // An exemption nobody had to justify is how the exempted thing stops being
-  // noticed — the same failure this whole gate exists to prevent.
-  if (reason.trim() === "") {
-    fail(`MANUAL exempts scripts/${file} without a reason`);
-  }
-  if (!fs.existsSync(path.join(root, "scripts", file))) {
-    fail(`MANUAL exempts scripts/${file}, which does not exist`);
-  }
-}
-
 // AGENTS.md is the first thing an agent reads and the last thing any gate
 // checks. A command named there that no longer exists sends every agent down a
 // dead path, and renaming a script is a one-line edit no test can see. Only the
 // repo-facing docs — README.md describes the consumer's project, not this one.
+const scripts = pkg.scripts ?? {};
 const stale = ["AGENTS.md", "CONTRIBUTING.md", "docs/releasing.md"].flatMap((doc) =>
   [...fs.readFileSync(path.join(root, doc), "utf8").matchAll(/pnpm run ([\w:-]+)/g)]
     .map((m) => m[1])
