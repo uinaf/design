@@ -16,10 +16,9 @@ type Pattern = {
   slug: string;
   classes: string[];
   use: string;
-  // Optional only for policy entries, which declare no classes. scripts/build.ts
-  // fails the build on any pattern that names classes without markup, so a
-  // pattern an agent could copy always has it.
-  markup?: string;
+  // Required by the build: every pattern owes something copyable, including the
+  // class-less policy entries, which owe the idiom they permit.
+  markup: string;
   rules?: string[];
   never?: string[];
 };
@@ -100,7 +99,9 @@ const describe = (p: Pattern): string =>
     "",
     p.use,
     "",
-    `**Classes** — ${p.classes.join(", ")}`,
+    // `icons` names no class — it restricts an idiom instead of shipping one.
+    // An empty "Classes —" line reads to an agent as a truncated contract.
+    `**Classes** — ${p.classes.length > 0 ? p.classes.join(", ") : "none — this entry is policy"}`,
     p.rules?.length ? `\n**Rules**\n${p.rules.map((r) => `- ${r}`).join("\n")}` : "",
     p.never?.length ? `\n**Never**\n${p.never.map((r) => `- ${r}`).join("\n")}` : "",
   ]
@@ -139,13 +140,6 @@ export const createServer = (env: Env): McpServer => {
       if (!pattern) {
         return text(
           `No pattern named "${name}". Valid names:\n${patterns.map((p) => p.name).join(", ")}`,
-        );
-      }
-      if (!pattern.markup) {
-        // A policy entry: rules with nothing to copy. Say so, rather than
-        // returning a contract that looks truncated.
-        return text(
-          `${describe(pattern)}\n\nThis entry is policy, not a component — it ships no markup.`,
         );
       }
       return text(

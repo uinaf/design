@@ -84,7 +84,7 @@ type Pattern = {
   name: string;
   classes: string[];
   use: string;
-  markup?: string;
+  markup: string;
   rules?: string[];
   never?: string[];
 };
@@ -118,20 +118,19 @@ const declared = components.patterns.flatMap((p) =>
 // All three HTML attribute forms — double-quoted, single-quoted, and bare —
 // or markup could dodge the guard just by changing its quoting.
 const classAttr = /class\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/g;
-// A pattern that names classes must show how to use them — that is what an agent
-// copies. Policy entries carry no classes (`icons` bans icon libraries and
-// declares none), so requiring markup of them would be requiring a component
-// where there is none. Enforced here rather than only in tests: the build is what
-// produces the artifacts an agent reads.
-const contractless = components.patterns.filter((p) => p.classes.length > 0 && !p.markup);
+// Markup is what an agent copies, so every pattern owes one — including the
+// class-less policy entries, which owe the idiom they permit (`icons` shows the
+// inline-SVG shape it restricts agents to). The contract claims full coverage in
+// `$markupCoverage`; this is what makes the claim fail loudly instead of quietly.
+// Enforced in the build, not only in tests: the build produces what agents read.
+const contractless = components.patterns.filter((p) => !p.markup);
 if (contractless.length > 0) {
   throw new Error(
-    `components.json: ${contractless.map((p) => p.name).join(", ")} name classes but publish no markup — add markup, or drop the classes if the entry is policy only`,
+    `components.json: ${contractless.map((p) => p.name).join(", ")} publish no markup — every pattern needs something copyable, a policy entry included`,
   );
 }
 const inMarkup = components.patterns.flatMap((p) =>
-  // Safe by the guard above: anything still markup-less has no classes to check.
-  [...(p.markup ?? "").matchAll(classAttr)]
+  [...p.markup.matchAll(classAttr)]
     .flatMap((m) => (m[1] ?? m[2] ?? m[3] ?? "").split(/\s+/))
     .filter((c) => c && !definedClasses.has(c))
     .map((c) => `${p.name} markup → .${c}`),
@@ -168,7 +167,6 @@ fs.rmSync(patternsDir, { recursive: true, force: true });
 fs.mkdirSync(patternsDir, { recursive: true });
 let chunks = 0;
 for (const p of components.patterns) {
-  if (!p.markup) continue; // policy entries have no page to write
   fs.writeFileSync(path.join(patternsDir, `${slug(p.name)}.html`), patternPage(p));
   chunks += 1;
 }
@@ -181,12 +179,8 @@ fs.writeFileSync(
       patterns: components.patterns.map((p) => ({
         ...p,
         slug: slug(p.name),
-        ...(p.markup
-          ? {
-              chunk: `https://design.uinaf.dev/patterns/${slug(p.name)}.html`,
-              chunkFile: `./patterns/${slug(p.name)}.html`,
-            }
-          : {}),
+        chunk: `https://design.uinaf.dev/patterns/${slug(p.name)}.html`,
+        chunkFile: `./patterns/${slug(p.name)}.html`,
       })),
     },
     null,

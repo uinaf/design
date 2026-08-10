@@ -9,7 +9,7 @@ type Pattern = {
   name: string;
   classes: string[];
   use: string;
-  markup?: string;
+  markup: string;
 };
 
 const components = JSON.parse(readFileSync(resolve(root, "src/components.json"), "utf8")) as {
@@ -33,17 +33,9 @@ describe("components.json", () => {
     expect(undefined_).toEqual([]);
   });
 
-  it("gives every pattern a use, and splits cleanly into components and policy", () => {
-    // The contract carries two kinds of entry: a component names classes and
-    // shows markup, a policy entry (`icons`) does neither and is rules only.
-    // A half-entry — classes with nothing to copy, or markup for classes it
-    // never declares — is the drift worth failing on.
+  it("gives every pattern a use", () => {
     for (const p of components.patterns) {
       expect(p.use, `${p.name} missing use`).toBeTruthy();
-      expect(
-        p.classes.length > 0,
-        `${p.name} declares ${p.classes.length} classes but ${p.markup ? "has" : "has no"} markup`,
-      ).toBe(Boolean(p.markup));
     }
   });
 
@@ -54,19 +46,15 @@ describe("components.json", () => {
     expect(broken).toEqual([]);
   });
 
-  it("gives copyable markup to every pattern that names classes", () => {
-    // The gap is closed (#17), so this asserts the invariant rather than a list.
-    // Scoped to patterns with classes: the contract now also carries policy
-    // entries, which declare none and have nothing to copy by design.
-    const missing = components.patterns
-      .filter((p) => p.classes.length > 0 && !p.markup)
-      .map((p) => p.name);
+  it("gives copyable markup to every pattern, policy entries included", () => {
+    // Full coverage, not "coverage where classes exist". A policy entry owes the
+    // idiom it permits — `icons` names no class but still has to show the
+    // inline-SVG shape it restricts agents to, or the ban has no referent.
+    const missing = components.patterns.filter((p) => !p.markup).map((p) => p.name);
     expect(missing).toEqual([]);
   });
 
   it("gives every pattern markup that uses at least one of its own classes", () => {
-    // Policy entries declare no classes and ship no markup, so there is nothing
-    // to demonstrate; the split is asserted above.
     // Markup copied from the wrong card would still be non-empty. It has to
     // actually demonstrate the pattern it is filed under.
     //
@@ -78,7 +66,7 @@ describe("components.json", () => {
     const mismatched = components.patterns
       .filter((p) => {
         if (p.classes.length === 0) return false; // policy entry — nothing to demonstrate
-        const used = classTokens(p.markup ?? "");
+        const used = classTokens(p.markup);
         return !p.classes.some((c) => used.has(c.replace(/^\./, "")));
       })
       .map((p) => p.name);
@@ -95,7 +83,7 @@ describe("every class is demonstrated", () => {
   const classTokens = (html: string): string[] =>
     attributeValues(html, "class").flatMap((v) => v.split(/\s+/).filter(Boolean));
 
-  const markupCorpus = components.patterns.map((p) => p.markup ?? "");
+  const markupCorpus = components.patterns.map((p) => p.markup);
   const htmlCorpus = ["preview", "pages", "templates"].flatMap((dir) =>
     readdirSync(resolve(root, dir))
       .filter((f) => f.endsWith(".html"))
@@ -120,7 +108,7 @@ describe("every class is demonstrated", () => {
     // while `prose` declared `.u-link-plain` and showed `.u-link` — the class
     // was demonstrated, just not anywhere `get_pattern prose` would return it.
     const undemonstrated = components.patterns.flatMap((p) => {
-      const own = new Set(classTokens(p.markup ?? ""));
+      const own = new Set(classTokens(p.markup));
       return referenced(p)
         .filter((c) => !own.has(c))
         .map((c) => `${p.name} → .${c}`);
