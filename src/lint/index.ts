@@ -2,7 +2,7 @@ import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { checkCss } from "./rules-css.ts";
-import { checkMarkup, setJsxStyleChecker, type MarkupOptions } from "./rules-markup.ts";
+import { checkMarkup, setJsxStyleChecker } from "./rules-markup.ts";
 import type { Violation } from "./types.ts";
 
 export type { Severity, Violation } from "./types.ts";
@@ -23,7 +23,7 @@ const SKIP_DIRECTORIES = new Set([
   "vendor",
 ]);
 
-export type CheckOptions = MarkupOptions & {
+export type CheckOptions = {
   /** Files or directories to scan; defaults to the working directory. */
   paths?: string[];
   ignore?: string[];
@@ -216,7 +216,7 @@ export const checkFile = (file: string, options: CheckOptions = {}): Violation[]
   const ext = path.extname(file).toLowerCase();
   if (CSS_EXTENSIONS.has(ext)) return applySuppressions(source, checkCss(source, file));
   // Markup files can carry <style> blocks; both rule sets apply.
-  const violations = checkMarkup(source, file, options);
+  const violations = checkMarkup(source, file);
   for (const block of source.matchAll(/<style[^>]{0,500}>([\s\S]{0,100000}?)<\/style\s{0,8}>/g)) {
     const offset = source.slice(0, block.index ?? 0).split("\n").length - 1;
     for (const violation of checkCss(block[1], file)) {

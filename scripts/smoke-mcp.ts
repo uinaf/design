@@ -111,10 +111,18 @@ check(
 
 const list = await call("list_patterns");
 check("list_patterns includes topbar", list.includes("topbar"));
-// Every pattern has carried markup since #33, and a unit test holds that
-// invariant. The served listing has to agree: a pattern the server reports as
-// empty is one an agent will not copy, whatever the JSON on disk says.
-check("list_patterns reports no pattern without markup", !list.includes("(no markup yet)"), list);
+// The listing is the only place an agent sees every pattern at once, so an
+// entry that loses its use text or class list costs it the contract for that
+// pattern. Shape-check every line; asserting on one name would pass a listing
+// that degraded everywhere else.
+const malformed = list
+  .split("\n")
+  .filter((line) => line.trim().length > 0 && !/^.+ — .+ \[.+\]$/.test(line));
+check(
+  "every list_patterns entry carries use and classes",
+  malformed.length === 0,
+  malformed.join("\n"),
+);
 
 const topbar = await call("get_pattern", { name: "topbar" });
 check("get_pattern returns markup", topbar.includes("u-topbar-row") && topbar.includes("```html"));

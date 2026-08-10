@@ -78,7 +78,7 @@ type Pattern = {
   name: string;
   classes: string[];
   use: string;
-  markup?: string;
+  markup: string;
   rules?: string[];
   never?: string[];
 };
@@ -113,7 +113,7 @@ const declared = components.patterns.flatMap((p) =>
 // or markup could dodge the guard just by changing its quoting.
 const classAttr = /class\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/g;
 const inMarkup = components.patterns.flatMap((p) =>
-  [...(p.markup ?? "").matchAll(classAttr)]
+  [...p.markup.matchAll(classAttr)]
     .flatMap((m) => (m[1] ?? m[2] ?? m[3] ?? "").split(/\s+/))
     .filter((c) => c && !definedClasses.has(c))
     .map((c) => `${p.name} markup → .${c}`),
@@ -150,7 +150,6 @@ fs.rmSync(patternsDir, { recursive: true, force: true });
 fs.mkdirSync(patternsDir, { recursive: true });
 let chunks = 0;
 for (const p of components.patterns) {
-  if (!p.markup) continue;
   fs.writeFileSync(path.join(patternsDir, `${slug(p.name)}.html`), patternPage(p));
   chunks += 1;
 }
@@ -190,7 +189,11 @@ await esbuild.build({
   bundle: true,
   packages: "external",
 });
-// esbuild emits no declarations, and the ./lint export is a public API.
+// esbuild emits no declarations, and the ./lint export is a public API. This
+// is hand-maintained and nothing compiles it against src/lint: tsc cannot see
+// inside a string, and a type-level probe misses a dropped optional parameter
+// because the two signatures stay mutually assignable. Change an exported
+// signature in src/lint and you must change it here in the same commit.
 fs.writeFileSync(
   path.join(lintOut, "index.d.ts"),
   `export type Severity = "error" | "warn";
@@ -202,8 +205,7 @@ export type Violation = {
   message: string;
   fix: string;
 };
-export type MarkupOptions = { abbreviations?: string[] };
-export type CheckOptions = MarkupOptions & { paths?: string[]; ignore?: string[] };
+export type CheckOptions = { paths?: string[]; ignore?: string[] };
 export type RatchetResult = {
   passed: boolean;
   risen: Array<{ rule: string; was: number; now: number }>;
@@ -212,11 +214,7 @@ export type RatchetResult = {
 export declare const check: (options?: CheckOptions) => Violation[];
 export declare const checkFile: (file: string, options?: CheckOptions) => Violation[];
 export declare const checkCss: (css: string, file: string) => Violation[];
-export declare const checkMarkup: (
-  source: string,
-  file: string,
-  options?: MarkupOptions,
-) => Violation[];
+export declare const checkMarkup: (source: string, file: string) => Violation[];
 export declare const collectFiles: (roots: string[], ignore?: string[]) => string[];
 export declare const countByRule: (violations: Violation[]) => Record<string, number>;
 export declare const compareRatchet: (

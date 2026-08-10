@@ -7,8 +7,7 @@ export type Violation = {
   message: string;
   fix: string;
 };
-export type MarkupOptions = { abbreviations?: string[] };
-export type CheckOptions = MarkupOptions & { paths?: string[]; ignore?: string[] };
+export type CheckOptions = { paths?: string[]; ignore?: string[] };
 export type RatchetResult = {
   passed: boolean;
   risen: Array<{ rule: string; was: number; now: number }>;
@@ -17,11 +16,7 @@ export type RatchetResult = {
 export declare const check: (options?: CheckOptions) => Violation[];
 export declare const checkFile: (file: string, options?: CheckOptions) => Violation[];
 export declare const checkCss: (css: string, file: string) => Violation[];
-export declare const checkMarkup: (
-  source: string,
-  file: string,
-  options?: MarkupOptions,
-) => Violation[];
+export declare const checkMarkup: (source: string, file: string) => Violation[];
 export declare const collectFiles: (roots: string[], ignore?: string[]) => string[];
 export declare const countByRule: (violations: Violation[]) => Record<string, number>;
 export declare const compareRatchet: (

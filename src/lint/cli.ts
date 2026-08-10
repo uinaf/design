@@ -38,7 +38,6 @@ if (flag("help")) {
   design-check --changed         only files this branch touched (vs origin/main)
   design-check --base <ref>      base for --changed (default origin/main)
   design-check --ignore <part>   skip paths containing this substring (repeatable)
-  design-check --abbreviations A,B  extra abbreviations allowed to keep their caps
 
 Exit code is 0 when clean, 1 when there are errors (or, with --ratchet, when a
 count rises). Warnings alone do not fail.`);
@@ -53,7 +52,6 @@ const KNOWN_FLAGS = new Set([
   "--update-ratchet",
   "--json",
   "--ignore",
-  "--abbreviations",
   "--changed",
   "--base",
 ]);
@@ -70,11 +68,10 @@ const ignore = argv.reduce<string[]>((acc, arg, index) => {
   return acc;
 }, []);
 
-const abbreviationsArg = value("abbreviations");
 const paths = argv.filter((arg, index) => {
   if (arg.startsWith("--")) return false;
   const previous = argv[index - 1];
-  return previous !== "--ignore" && previous !== "--abbreviations" && previous !== "--base";
+  return previous !== "--ignore" && previous !== "--base";
 });
 
 let changedRoot: string | undefined;
@@ -103,7 +100,6 @@ try {
     paths,
     ignore,
     relativeTo: changedRoot,
-    abbreviations: abbreviationsArg ? abbreviationsArg.split(",") : undefined,
   });
 } catch (error) {
   // A usage mistake deserves a message, not a stack trace.

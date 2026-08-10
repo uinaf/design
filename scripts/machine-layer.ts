@@ -16,7 +16,7 @@ type Pattern = {
   slug: string;
   classes: string[];
   use: string;
-  markup?: string;
+  markup: string;
   rules?: string[];
   never?: string[];
 };
@@ -54,9 +54,7 @@ for (const name of fs.readdirSync(path.join(guide, "preview"))) {
 // One markdown twin per pattern. This is the token-cheap form of a chunk: an
 // agent gets the contract and the markup without parsing a full HTML document.
 for (const p of components.patterns) {
-  const markup = p.markup
-    ? `\n\`\`\`html\n${p.markup}\n\`\`\`\n`
-    : "\nNo markup published for this pattern yet — use the classes and rules above.\n";
+  const markup = `\n\`\`\`html\n${p.markup}\n\`\`\`\n`;
   write(
     `patterns/${p.slug}.md`,
     `# ${p.name}
@@ -150,9 +148,6 @@ for (const [source, name] of [
   write(`${name}.md`, fs.readFileSync(path.join(root, source), "utf8"));
 }
 
-const withMarkup = components.patterns.filter((p) => p.markup);
-const withoutMarkup = components.patterns.filter((p) => !p.markup);
-
 write(
   "index.md",
   `# uinaf design system
@@ -172,15 +167,9 @@ Whole screens. Start here when building a page rather than a component.
 
 ${pages.map((p) => `- [${p.name}](/pages/${p.slug}.md) — ${p.description}`).join("\n")}
 
-## Patterns with copyable markup (${withMarkup.length})
+## Patterns (${components.patterns.length})
 
-${withMarkup.map((p) => `- [${p.name}](/patterns/${p.slug}.md) — ${p.use}`).join("\n")}
-
-## Contract-only patterns (${withoutMarkup.length})
-
-Classes and rules, no markup published yet.
-
-${withoutMarkup.map((p) => `- [${p.name}](/patterns/${p.slug}.md) — ${p.use}`).join("\n")}
+${components.patterns.map((p) => `- [${p.name}](/patterns/${p.slug}.md) — ${p.use}`).join("\n")}
 
 ## Preview cards
 
@@ -204,7 +193,7 @@ write(
 
 ## Contract
 
-- [components.json](https://design.uinaf.dev/components.json): every pattern with classes, use, rules, and nevers. ${withMarkup.length} carry copyable markup.
+- [components.json](https://design.uinaf.dev/components.json): every pattern with classes, use, rules, and nevers. Every pattern carries copyable markup.
 - [tokens.json](https://design.uinaf.dev/tokens.json): design tokens grouped by role.
 
 ## Reference pages

@@ -11,34 +11,6 @@ import type { Violation } from "./types.ts";
  * visible, and neither is markup assembled from fragments across files.
  */
 
-const DEFAULT_ABBREVIATIONS = [
-  "PR",
-  "PRs",
-  "AI",
-  "API",
-  "CLI",
-  "URL",
-  "URLs",
-  "OG",
-  "KV",
-  "R2",
-  "D1",
-  "SHA",
-  "HDR",
-  "HLS",
-  "TCC",
-  "macOS",
-  "iOS",
-  "MCP",
-  "CSS",
-  "HTML",
-  "JSON",
-  "UI",
-  "CI",
-  "npm",
-  "uinaf",
-];
-
 const lineOf = (source: string, index: number): number => source.slice(0, index).split("\n").length;
 
 /** Class attribute in either dialect, static values only. */
@@ -81,8 +53,6 @@ const UNITLESS_PROPERTIES = new Set([
   "zoom",
 ]);
 
-export type MarkupOptions = { abbreviations?: string[] };
-
 /** Injected by the runner so JSX object styles reuse the real CSS rules. */
 let jsxStyleRules: (property: string, value: string, classes: string) => Violation[] = () => [];
 export const setJsxStyleChecker = (
@@ -91,11 +61,7 @@ export const setJsxStyleChecker = (
   jsxStyleRules = checker;
 };
 
-export const checkMarkup = (
-  source: string,
-  file: string,
-  options: MarkupOptions = {},
-): Violation[] => {
+export const checkMarkup = (source: string, file: string): Violation[] => {
   const violations: Violation[] = [];
   const add = (
     index: number,
@@ -270,26 +236,6 @@ export const checkMarkup = (
       "warn",
       "<button> without an explicit type",
       'add type="button" — a bare <button> defaults to type="submit" and will submit any form it sits in',
-    );
-  }
-
-  const abbreviations = new Set([...DEFAULT_ABBREVIATIONS, ...(options.abbreviations ?? [])]);
-  // Visible copy inside elements that carry uinaf classes; anything outside the
-  // design system is somebody else's text and not this check's business.
-  for (const match of source.matchAll(
-    /<(button|h1|h2|h3|a|span|label|th)\b[^>]{0,2000}(?:class|className)\s{0,8}=\s{0,8}["'{][^"'}]{0,300}\bu-[^"'}]{0,300}["'}][^>]{0,2000}>([^<>{]{2,80})</g,
-  )) {
-    const copy = match[2].trim();
-    const firstWord = copy.split(/\s+/)[0]?.replace(/[^\w-]/g, "") ?? "";
-    if (!/^[A-Z]/.test(firstWord)) continue;
-    if (abbreviations.has(firstWord)) continue;
-    if (/^[A-Z0-9]+$/.test(firstWord)) continue; // an all-caps token is an abbreviation
-    add(
-      match.index ?? 0,
-      "lowercase-copy",
-      "warn",
-      `"${copy.slice(0, 40)}" starts with a capital`,
-      `uinaf copy is lowercase except abbreviations (${[...abbreviations].slice(0, 6).join(", ")}, …)`,
     );
   }
 

@@ -134,8 +134,6 @@ const ONE_DIMENSIONAL_SEGMENT = /(^|[-_])(dot|pill|bar|spark|tick|avatar)s?([-_]
 const looksOneDimensional = (selector: string): boolean =>
   [...selector.matchAll(/\.([a-zA-Z0-9_-]+)/g)].some((m) => ONE_DIMENSIONAL_SEGMENT.test(m[1]));
 
-const LABEL_CONTEXT = /label|tag|kicker|caps|micro|crumb|th\b/i;
-
 export const checkCss = (css: string, file: string): Violation[] => {
   const violations: Violation[] = [];
   let root: postcss.Root;
@@ -292,18 +290,6 @@ export const checkCss = (css: string, file: string): Violation[] => {
             "round to a multiple of 4, or use var(--sp-*)",
           );
         }
-      }
-    }
-
-    if (prop === "text-transform" && lower === "uppercase") {
-      if (!LABEL_CONTEXT.test(selector)) {
-        add(
-          decl,
-          "no-uppercase",
-          "warn",
-          `uppercase on \`${selector || prop}\``,
-          "uppercase belongs to 11px micro-labels and tags only; everything else is lowercase",
-        );
       }
     }
   });
