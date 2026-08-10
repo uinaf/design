@@ -18,6 +18,10 @@ server_log="$artifacts/wrangler-$port.log"
 client_log="$artifacts/smoke-mcp-$port.log"
 
 probe() { curl -sf --connect-timeout "$1" --max-time "$1" -o /dev/null "http://127.0.0.1:$port/"; }
+# Readiness asks for a 2xx; teardown asks only whether anything still holds the
+# port. An escaped listener that errors, hangs, or hangs up would pass `probe`
+# and be reported as removed.
+port_bound() { (exec 3<>"/dev/tcp/127.0.0.1/$port") 2>/dev/null; }
 # One deadline for the whole run, set before the first probe. A fixed preflight
 # would spend its own seconds outside SMOKE_TIMEOUT against a listener that
 # accepts and never answers.
@@ -67,8 +71,8 @@ cleanup() {
   # A warning here would be swallowed: an EXIT trap keeps the pre-trap status, so
   # a passing contract run would still exit 0 with a listener left behind — the
   # next run then finds the port busy and blames the wrong thing.
-  if probe 2 2>/dev/null; then
-    echo "smoke: port $port is still serving after teardown; the worker escaped its process group." >&2
+  if port_bound; then
+    echo "smoke: port $port is still bound after teardown; the worker escaped its process group." >&2
     exit 1
   fi
   return "$status"
@@ -86,59 +90,60 @@ trap on_signal INT TERM
 
 # guide/design.md is gitignored and written by machine-layer.ts, so a clean
 # checkout has nothing for search_guidelines to read. SMOKE_PORT isolates the
-# listener but not this: concurrent runs in one checkout would both rewrite
-# dist/ and guide/, and one would read a half-written file. First past the mkdir
-# builds; the other waits and finds the result.
+# listener, not this: concurrent runs in one checkout would both rewrite dist/
+# and guide/. The lock is the gate rather than the file, because design.md
+# appears partway through the build — testing it first let a second run skip the
+# lock and boot against a guide still being written. Warm runs take and release.
+lock=".smoke-guide.lock"
+waited=0
+# Outlast the builder's own budget, or every waiter fails while the run holding
+# the lock is still inside its allowance.
+lock_cap=$((build_timeout + 30))
+while ! mkdir "$lock" 2>/dev/null; do
+  [ -n "$interrupted" ] && {
+    echo "smoke: interrupted while waiting for another run to build the guide" >&2
+    exit 130
+  }
+  sleep 1
+  waited=$((waited + 1))
+  [ "$waited" -lt "$lock_cap" ] || {
+    echo "smoke: waited ${lock_cap}s for another run to build the guide; remove $lock if it is stale." >&2
+    exit 1
+  }
+done
+guide_lock="$lock"
+
 if [ ! -f guide/design.md ]; then
-  lock=".smoke-guide.lock"
-  waited=0
-  # Wait for the lock, not for design.md: the builder writes that file partway
-  # through, so waiting on it releases the other run into a half-written guide.
-  while ! mkdir "$lock" 2>/dev/null; do
+  echo "smoke: guide assets are missing; building them first"
+  # Backgrounded and bounded, like everything else here: in the foreground a
+  # hung build blocks the INT/TERM traps and the Worker never even starts.
+  set -m
+  pnpm run guide:sync >"$artifacts/guide-sync.log" 2>&1 &
+  sync_pid=$!
+  set +m
+  sync_deadline=$(($(date +%s) + build_timeout))
+  while kill -0 "$sync_pid" 2>/dev/null; do
     [ -n "$interrupted" ] && {
-      echo "smoke: interrupted while waiting for another run to build the guide" >&2
+      stop_group "$sync_pid" KILL
+      echo "smoke: interrupted while building the guide" >&2
       exit 130
     }
+    [ "$(date +%s)" -lt "$sync_deadline" ] || {
+      stop_group "$sync_pid" KILL
+      echo "smoke: guide:sync did not finish within ${build_timeout}s." >&2
+      exit 1
+    }
     sleep 1
-    waited=$((waited + 1))
-    [ "$waited" -lt 180 ] || {
-      echo "smoke: waited 180s for another run to build the guide; remove $lock if it is stale." >&2
-      exit 1
-    }
   done
-  guide_lock="$lock"
-  if [ ! -f guide/design.md ]; then
-    echo "smoke: guide assets are missing; building them first"
-    # Backgrounded and bounded, like everything else here: in the foreground a
-    # hung build blocks the INT/TERM traps and the Worker never even starts.
-    set -m
-    pnpm run guide:sync >"$artifacts/guide-sync.log" 2>&1 &
-    sync_pid=$!
-    set +m
-    sync_deadline=$(($(date +%s) + build_timeout))
-    while kill -0 "$sync_pid" 2>/dev/null; do
-      [ -n "$interrupted" ] && {
-        stop_group "$sync_pid" KILL
-        echo "smoke: interrupted while building the guide" >&2
-        exit 130
-      }
-      [ "$(date +%s)" -lt "$sync_deadline" ] || {
-        stop_group "$sync_pid" KILL
-        echo "smoke: guide:sync did not finish within ${build_timeout}s." >&2
-        exit 1
-      }
-      sleep 1
-    done
-    wait "$sync_pid" || {
-      echo "smoke: guide:sync failed. Last lines of $artifacts/guide-sync.log:" >&2
-      tail -20 "$artifacts/guide-sync.log" >&2
-      exit 1
-    }
-    sync_pid=""
-  fi
-  rmdir "$guide_lock" 2>/dev/null || true
-  guide_lock=""
+  wait "$sync_pid" || {
+    echo "smoke: guide:sync failed. Last lines of $artifacts/guide-sync.log:" >&2
+    tail -20 "$artifacts/guide-sync.log" >&2
+    exit 1
+  }
+  sync_pid=""
 fi
+rmdir "$guide_lock" 2>/dev/null || true
+guide_lock=""
 
 # The boot deadline is for the boot. Building the guide above must not eat it.
 deadline=$(($(date +%s) + timeout_seconds))
@@ -177,6 +182,10 @@ done
 set +e
 node scripts/smoke-mcp.ts "http://127.0.0.1:$port" >"$client_log" 2>&1 &
 client_pid=$!
+# A signal landing between the launch and this assignment finds an empty
+# client_pid, so the handler cannot stop the client and `wait` would sit through
+# the whole contract before teardown.
+[ -n "$interrupted" ] && kill "$client_pid" 2>/dev/null
 wait "$client_pid"
 status=$?
 set -e
