@@ -75,10 +75,29 @@ describe("pattern markup", () => {
     expect(hasHardcodedOwnedValue('<i style="width:44%;background:var(--viz-1)"></i>')).toBe(false);
   });
 
+  // Through `attributeValues`, like every other markup gate here. The old
+  // `class="…"` regex read one of the three quoting forms, so `class='fa-bug'`
+  // and `class=material-icons` walked past a gate whose whole job is to stop
+  // them.
+  const ICON_FONT = /^(?:fa-|icon-|material-icons$)/i;
+  const usesIconFont = (markup: string): boolean =>
+    attributeValues(markup, "class")
+      .flatMap((value) => value.split(/\s+/).filter(Boolean))
+      .some((token) => ICON_FONT.test(token));
+
   it("uses no icon fonts", () => {
-    const offenders = patterns
-      .filter((p) => /class="[^"]*(?:\bfa-|\bicon-|material-icons)/i.test(p.markup))
-      .map((p) => p.name);
+    const offenders = patterns.filter((p) => usesIconFont(p.markup)).map((p) => p.name);
     expect(offenders).toEqual([]);
+  });
+
+  it("still rejects an icon font in any quoting form", () => {
+    expect(usesIconFont('<i class="fa-bug"></i>')).toBe(true);
+    expect(usesIconFont("<i class='fa-bug'></i>")).toBe(true);
+    expect(usesIconFont("<i class=material-icons></i>")).toBe(true);
+    expect(usesIconFont('<i CLASS="icon-star"></i>')).toBe(true);
+    expect(usesIconFont('<i class="u-btn"></i>')).toBe(false);
+    // Not a prefix match on the whole attribute: a class that merely contains
+    // the letters is a different class.
+    expect(usesIconFont('<i class="u-notification-icon-slot"></i>')).toBe(false);
   });
 });

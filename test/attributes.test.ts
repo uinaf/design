@@ -43,6 +43,20 @@ describe("attributeValues", () => {
     ]);
   });
 
+  it("does not read an attribute that is only prose or sample text", () => {
+    // Pattern markup documents itself. A `<pre>` sample or a data attribute
+    // carrying markup as a string is not something a consumer can copy, and
+    // counting one would satisfy a coverage gate with nothing behind it.
+    expect(attributeValues('<pre>copy class="u-btn"</pre>', "class")).toEqual([]);
+    expect(attributeValues(`<i data-example='class="u-btn"'>`, "class")).toEqual([]);
+  });
+
+  it("does not let a > inside a quoted value truncate the tag", () => {
+    // The reason the tag scanner tracks quotes: a plain <[^>]*> would end the
+    // tag at the first >, drop the class, and fail open on real markup.
+    expect(attributeValues('<i title="a > b" class="u-btn">', "class")).toEqual(["u-btn"]);
+  });
+
   it("reads every occurrence, not only the first", () => {
     expect(attributeValues('<a class="u-btn"><b class="u-tag">', "class")).toEqual([
       "u-btn",

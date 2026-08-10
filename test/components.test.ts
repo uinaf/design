@@ -109,16 +109,17 @@ describe("every class is demonstrated", () => {
     expect(stale.sort()).toEqual([]);
   });
 
-  it("demonstrates every contract class in the contract itself", () => {
-    // components.json is what the MCP tools and the skill serve to agents. A
-    // class named there with its only example in a preview card is a class the
-    // agent cannot use.
-    const shown = new Set(markupCorpus.flatMap(classTokens));
-    const undemonstrated = components.patterns.flatMap((p) =>
-      referenced(p)
-        .filter((c) => !shown.has(c))
-        .map((c) => `${p.name} → .${c}`),
-    );
+  it("demonstrates every contract class in the pattern that declares it", () => {
+    // components.json is what the MCP tools and the skill serve to agents, and
+    // they serve it one pattern at a time. Against the whole corpus this passed
+    // while `prose` declared `.u-link-plain` and showed `.u-link` — the class
+    // was demonstrated, just not anywhere `get_pattern prose` would return it.
+    const undemonstrated = components.patterns.flatMap((p) => {
+      const own = new Set(classTokens(p.markup ?? ""));
+      return referenced(p)
+        .filter((c) => !own.has(c))
+        .map((c) => `${p.name} → .${c}`);
+    });
     expect(undemonstrated.sort()).toEqual([]);
   });
 });
