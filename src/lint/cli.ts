@@ -16,8 +16,8 @@ import type { RuleException } from "./index.ts";
 /**
  * `design-check` — the deterministic half of the uinaf design system.
  *
- * Exit codes: 0 clean, 1 violations. The Stop-hook in a product repo keys off
- * this, so a non-zero exit must always mean "not done".
+ * Exit codes: 0 clean, 1 violations. A product repo's CI and agent finish gate
+ * key off this, so a non-zero exit must always mean "not done".
  */
 
 const RATCHET_FILE = ".design-ratchet.json";

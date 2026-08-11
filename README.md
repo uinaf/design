@@ -40,8 +40,8 @@ from `node_modules/.bin`:
 ```
 
 It fails on raw hex, off-scale type, radius over 6px, stacked nav rows, and the
-rest of the guardrails in the spec. Ratchet mode, the Stop-hook, and the agent
-drop-in block are in [Adopting in a product repo](docs/adoption.md).
+rest of the guardrails in the spec. Ratchet mode, for a repo with an existing
+backlog, is in [Adopting in a product repo](docs/adoption.md).
 
 ## Package contents
 
