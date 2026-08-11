@@ -2,7 +2,7 @@ import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { checkCss } from "./rules-css.ts";
-import { checkMarkup, setJsxStyleChecker } from "./rules-markup.ts";
+import { checkMarkup, setJsxStyleChecker, setShippedClasses } from "./rules-markup.ts";
 import type { Violation } from "./types.ts";
 
 export type { Severity, Violation } from "./types.ts";
@@ -51,6 +51,42 @@ setJsxStyleChecker((property, value, classes) => {
       .join("") || "*";
   return checkCss(`${selector}{${property}:${value}}`, "jsx").map((v) => ({ ...v, line: 1 }));
 });
+
+/**
+ * The `u-` classes the stylesheet actually defines, read from the same CSS the
+ * consumer imports. Derived, never hand-listed: a second copy of the namespace
+ * would drift, and a drifted list reports live classes as undefined.
+ *
+ * Two layouts, because this module runs from both — `src/lint/` beside the CSS
+ * source, and `dist/lint/` beside the built pair.
+ */
+const STYLESHEETS = [
+  ["../tokens.css", "../components.css"],
+  ["../css/tokens.css", "../css/components.css"],
+];
+
+/** `.u-name` selectors, with comments and quoted values removed first:
+ *  `url(cdn.uinaf.dev/…/u-thing.css)` is not a selector anyone ships. */
+const utilityClasses = (css: string): string[] =>
+  [
+    ...css
+      .replace(/\/\*[\s\S]*?\*\//g, " ")
+      .replace(/url\([^)]*\)/g, " ")
+      .replace(/"[^"]*"|'[^']*'/g, " ")
+      .matchAll(/\.(u-[a-zA-Z0-9_-]+)/g),
+  ].map((match) => match[1]);
+
+const packageClasses = ((): string[] => {
+  for (const pair of STYLESHEETS) {
+    const files = pair.map((relative) => path.join(import.meta.dirname, relative));
+    if (!files.every((file) => fs.existsSync(file))) continue;
+    return utilityClasses(files.map((file) => fs.readFileSync(file, "utf8")).join("\n"));
+  }
+  // Silence rather than a throw: `checkMarkup` is a public export, and a
+  // missing stylesheet must not stop the other twenty rules from running.
+  return [];
+})();
+setShippedClasses(packageClasses);
 
 export const collectFiles = (
   roots: string[],
@@ -273,9 +309,28 @@ export const check = (options: CheckOptions = {}): Violation[] => {
     except.some(
       (entry) => violation.file.includes(entry.path) && entry.rules.includes(violation.rule),
     );
-  return collectFiles(roots, options.ignore ?? [], options.relativeTo)
-    .flatMap(checkFile)
-    .filter((violation) => !waived(violation));
+  const files = collectFiles(roots, options.ignore ?? [], options.relativeTo);
+  // A project may extend the namespace — `.u-row` overridden, `.u-hero` added.
+  // `unknown-class` judges against the union, so a class the project defines
+  // itself counts as defined and only a dangling reference is left over.
+  //
+  // Scanned from the project root, not from `files`: under `--changed` the file
+  // list is one branch's edits, and the stylesheet that defines `.u-hero` is
+  // almost never among them.
+  const searched = options.relativeTo
+    ? collectFiles([options.relativeTo], options.ignore ?? [], options.relativeTo)
+    : files;
+  setShippedClasses([
+    ...packageClasses,
+    ...searched
+      .filter((file) => CSS_EXTENSIONS.has(path.extname(file).toLowerCase()))
+      .flatMap((file) => utilityClasses(fs.readFileSync(file, "utf8"))),
+  ]);
+  try {
+    return files.flatMap(checkFile).filter((violation) => !waived(violation));
+  } finally {
+    setShippedClasses(packageClasses);
+  }
 };
 
 export const countByRule = (violations: Violation[]): Record<string, number> => {

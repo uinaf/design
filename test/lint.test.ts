@@ -309,8 +309,11 @@ describe("modifier-base", () => {
   it("splits on the last separator a real base can precede", () => {
     // `u-btn---b` is `u-btn` plus the modifier `-b`: the middle hyphen cannot
     // end a base, so the separator is the pair before it.
-    const found = markup('<div class="u-btn---b"></div>');
-    expect(found.find((v) => v.rule === "modifier-base")?.message).toContain("u-btn");
+    //
+    // Asserted on the split itself, not through the markup pass: `u-btn---b`
+    // is a class nothing defines, so `unknown-class` owns that token and
+    // modifier-base never sees it.
+    expect(modifierBase("u-btn---b")).toBe("u-btn");
   });
   it("stays linear on a token built to make a split search backtrack", () => {
     // Regression: the rule reads class names out of a consumer's markup, so a
@@ -341,6 +344,57 @@ describe("modifier-base", () => {
       return base !== undefined && !defined.has(base);
     });
     expect(baseless.sort()).toEqual([]);
+  });
+});
+
+describe("unknown-class", () => {
+  it("errors on a u- class the package does not define", () => {
+    const found = markup('<a class="u-btn u-btn-primary" href="#">go</a>');
+    const violation = found.find((v) => v.rule === "unknown-class");
+    expect(violation?.severity).toBe("error");
+    expect(violation?.message).toContain("u-btn-primary");
+  });
+
+  // The rename that earned this rule: `.u-btn-primary` became
+  // `.u-btn--primary`, and the old name matched nothing without failing, so a
+  // styled button rendered as bare inline text through two green builds.
+  it("names the class the author meant when a separator moved", () => {
+    const found = markup('<a class="u-btn u-btn-primary" href="#">go</a>');
+    expect(found.find((v) => v.rule === "unknown-class")?.fix).toContain("u-btn--primary");
+  });
+
+  it("says nothing about a class the CSS defines", () => {
+    expect(rules(markup('<a class="u-btn u-btn--primary" href="#">go</a>'))).not.toContain(
+      "unknown-class",
+    );
+    expect(rules(markup('<pre class="u-pre u-code-bleed">x</pre>'))).not.toContain("unknown-class");
+  });
+
+  // Consumers own every other namespace. A Tailwind or app-local class is not
+  // this package's to judge, and judging it would make the check unusable.
+  it("judges only the u- namespace", () => {
+    expect(
+      rules(markup('<div class="mt-10 flex sm:grid-cols-3 card__title"></div>')),
+    ).not.toContain("unknown-class");
+  });
+
+  it("owns the token, so modifier-base does not also fire on it", () => {
+    const found = rules(markup('<div class="u-nope--x"></div>'));
+    expect(found).toContain("unknown-class");
+    expect(found).not.toContain("modifier-base");
+  });
+
+  it("reports each offender, so the ratchet counts them", () => {
+    const found = markup('<a class="u-btn-ghost">a</a><a class="u-btn-accent">b</a>');
+    expect(found.filter((v) => v.rule === "unknown-class")).toHaveLength(2);
+  });
+
+  // The list is derived from the CSS the consumer imports. A hand-kept copy
+  // would drift, and a drifted copy reports live classes as undefined.
+  it("accepts every u- class the stylesheet defines", () => {
+    const defined = [...definedUtilityClasses("src/tokens.css", "src/components.css")];
+    const source = defined.map((c) => `<div class="${c}"></div>`).join("");
+    expect(markup(source).filter((v) => v.rule === "unknown-class")).toEqual([]);
   });
 });
 

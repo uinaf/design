@@ -100,6 +100,26 @@ export const setJsxStyleChecker = (
   jsxStyleRules = checker;
 };
 
+/**
+ * Every `u-` class the shipped stylesheet defines, injected by the runner.
+ *
+ * Empty means the runner could not read the CSS, and the rule stays silent —
+ * a check that invented its own list would report the whole namespace as
+ * undefined the moment the two drifted.
+ */
+let shippedClasses: ReadonlySet<string> = new Set();
+/**
+ * Keyed on the name with `--` collapsed to `-`, so the fix line can name the
+ * class the author meant. Every rename this rule is here to catch moved a
+ * separator rather than a word: `u-btn-primary` → `u-btn--primary`.
+ */
+let byShape: ReadonlyMap<string, string> = new Map();
+const shape = (token: string): string => token.replace(/-{2,}/g, "-");
+export const setShippedClasses = (classes: Iterable<string>): void => {
+  shippedClasses = new Set(classes);
+  byShape = new Map([...shippedClasses].map((name) => [shape(name), name]));
+};
+
 export const checkMarkup = (source: string, file: string): Violation[] => {
   const violations: Violation[] = [];
   const add = (
@@ -211,6 +231,24 @@ export const checkMarkup = (source: string, file: string): Violation[] => {
           "error",
           `icon font class ${token}`,
           "no icon fonts; pick from the committed assets/icons/ set, or use ↗ → · and hairlines",
+        );
+        continue;
+      }
+      // An error, unlike the style rules below: a `u-` class the package does
+      // not define is not an opinion about taste, it is a dangling reference.
+      // The stylesheet matches nothing, so the element renders as bare content
+      // and nothing fails — which is how five renamed button classes survived
+      // two commits and a clean design-check.
+      if (shippedClasses.size > 0 && UTILITY_TOKEN.test(token) && !shippedClasses.has(token)) {
+        const meant = byShape.get(shape(token));
+        add(
+          match.index ?? 0,
+          "unknown-class",
+          "error",
+          `${token} is not defined by @uinaf/design`,
+          meant
+            ? `rename it to ${meant} — it was renamed, and the old name now matches no rule, so this renders unstyled without failing`
+            : "remove it or pick a class the package defines — the stylesheet matches nothing, so this renders unstyled without failing",
         );
         continue;
       }
