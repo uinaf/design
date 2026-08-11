@@ -50,6 +50,8 @@ Prefer `vp` for lint/format/test: `pnpm exec vp check`, `pnpm exec vp test run`.
 
 `+` and `∥` both mean parallel: the two gates run at once, then the two terminal jobs run at once. The `→` is the only chain — nothing after it starts until both gates pass.
 
+A fifth gate has no file. CodeQL runs through GitHub **default setup** (code scanning) over `actions`, `javascript-typescript`, and `typescript`, so `gh run list` shows runs no workflow in this repo declares. It is a repository setting, changed on GitHub, not in a pull request.
+
 Two rules the file names do not tell you:
 
 - `release.yml` is the **only** push-to-`main` workflow, and its file name is pinned by npm Trusted Publishing. Renaming it breaks `npm publish` until someone edits the trusted publisher on npmjs.com. That is why the guide deploy lives in a file called `release`.
