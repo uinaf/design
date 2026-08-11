@@ -178,6 +178,16 @@
 /* =====================================================================
    Base
    ===================================================================== */
+/* Border-box first: every padded primitive here declares a width or height next
+   to its padding, so under content-box `.u-shell-base` is 32px wider than the
+   viewport it centres in and `.u-menu-list a` overruns its own menu. */
+.uinaf,
+.uinaf *,
+.uinaf *::before,
+.uinaf *::after {
+  box-sizing: border-box;
+}
+
 .uinaf {
   background: var(--bg);
   color: var(--fg);
