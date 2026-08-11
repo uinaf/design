@@ -177,8 +177,14 @@ export const checkMarkup = (source: string, file: string): Violation[] => {
   // A pattern chunk is a fragment: it demonstrates the topbar and legitimately
   // has no page content to share a gutter with. Only a full page can violate this.
   const isFullPage = /<(main|article|section)\b/i.test(source) || /<\/header>\s*<\w/i.test(source);
+  // A layout component owns the topbar and hands the content to whoever renders
+  // it, so the shell class is in another file by construction and this file
+  // holds no evidence either way. The rule is single-file, so it has to say so
+  // rather than guess: `<slot />` and `{children}` are that signature.
+  const delegatesContent =
+    /<slot\b/i.test(source) || /\{\s{0,8}(?:props\.)?children\s{0,8}\}/.test(source);
   const shell = shellOnRow?.[1] ?? shellOnRowReversed?.[1];
-  if (shell && isFullPage) {
+  if (shell && isFullPage && !delegatesContent) {
     const shellClass = `u-shell-${shell}`;
     // Must appear on an element that is not a topbar row: two stacked rows both
     // carrying the shell class would otherwise satisfy a naive count.

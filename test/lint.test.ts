@@ -172,6 +172,14 @@ describe("shared-gutter", () => {
     const chunk = `<header class="u-topbar"><div class="u-shell-base u-topbar-row"></div></header>`;
     expect(rules(markup(chunk))).not.toContain("shared-gutter");
   });
+  it("ignores a layout that slots its content in from elsewhere", () => {
+    const layout = `<header class="u-topbar"><div class="u-shell-base u-topbar-row"></div></header><main><slot /></main>`;
+    expect(rules(markup(layout))).not.toContain("shared-gutter");
+  });
+  it("ignores a jsx layout that renders children", () => {
+    const layout = `<header className="u-topbar"><div className="u-shell-base u-topbar-row" /></header><main>{children}</main>`;
+    expect(rules(markup(layout))).not.toContain("shared-gutter");
+  });
 });
 
 describe("design-check-disable-next-line precision", () => {
