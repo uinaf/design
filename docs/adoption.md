@@ -1,6 +1,6 @@
 # Adopting the design system in a product repo
 
-Three pieces, pasted once. After this, an agent working in the repo fetches
+Four pieces, pasted once. After this, an agent working in the repo fetches
 patterns instead of inventing them, and cannot finish a task while design
 adherence is red.
 
@@ -38,18 +38,20 @@ This repo's UI is uinaf-branded.
    screen: `https://design.uinaf.dev/pages/<name>.md` (`product-landing`,
    `dashboard`, `login`, `settings`, `docs`, `device-auth`). For one component,
    `https://design.uinaf.dev/components.json` to find the pattern, then
-   `https://design.uinaf.dev/patterns/<name>.md` for its markup. Every path here
-   is on design.uinaf.dev, not a route in this repo. If the `design-uinaf` MCP
-   server is connected, prefer its tools:
+   `https://design.uinaf.dev/patterns/<name>.md` for its markup. For a repo
+   banner or OG card, `https://design.uinaf.dev/templates/<name>.md` — the
+   `export-*` ones are fixed canvases, so render them at the stated size rather
+   than adapting them. Every path here is on design.uinaf.dev, not a route in
+   this repo. If the `design-uinaf` MCP server is connected, prefer its tools:
    `get_page`, `get_template`, `get_pattern`, `get_tokens`, `search_guidelines`,
    `list_patterns`.
 2. **Styles come from `@uinaf/design`.** `@import "@uinaf/design/css";` gives
    tokens and every `u-*` class. With no bundler, link
    `node_modules/@uinaf/design/dist/css/tokens.css` instead — a browser does not
    resolve a bare specifier. Take exact values from
-   `https://design.uinaf.dev/tokens.json` when
-   writing custom CSS. No raw hex, no radius over 6px, no shadows, one accent per
-   view, type only from the scale (10/11/13/14/16/20/24/32/40).
+   `https://design.uinaf.dev/tokens.json` when writing custom CSS. No raw hex, no
+   radius over 6px, no shadows, one accent per view, type only from the scale
+   (10/11/13/14/16/20/24/32/40).
 3. **Copy is lowercase** except micro-labels and abbreviations — `PR` not `pr`,
    and `CLI`, `URL`, `AI`, `API`.
 4. **Product nav is ONE 56px `.u-topbar` row**, and its shell class repeats on the
@@ -112,7 +114,7 @@ The instructions above persuade. This one guarantees. Add to `.claude/settings.j
 Exit code 2 blocks the turn and feeds stderr back to the agent, so it sees the
 violations and fixes them rather than stopping.
 
-It fails closed. Every one of these blocks:
+It fails closed, so a misconfigured hook cannot quietly pass:
 
 | situation                            | exit |
 | ------------------------------------ | ---- |
@@ -120,8 +122,6 @@ It fails closed. Every one of these blocks:
 | a violation is present               | 2    |
 | the `design:check` script is missing | 2    |
 | `@uinaf/design` is not installed     | 2    |
-
-A misconfigured hook cannot quietly pass.
 
 ## Adopting in a repo that already has violations
 
@@ -163,11 +163,10 @@ npm run design:check -- --update-ratchet
 Warnings count toward the ratchet as well as errors, so this applies even to a
 rule that never fails a plain run.
 
-Be clear about what this does and does not guarantee. It is a non-increasing
-count, not a clean bill of health: removing one `radius-ceiling` and adding
-another leaves the count at one and passes. It stops the codebase getting worse,
-which is the point during a migration — it does not certify that new work is
-clean.
+The ratchet is a non-increasing count, not a clean bill of health: removing one
+`radius-ceiling` and adding another leaves the count at one and passes. It stops
+the codebase getting worse, which is the point during a migration — it does not
+certify that new work is clean.
 
 For that, use `--changed`, which checks only the files this branch touched:
 
