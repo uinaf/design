@@ -54,6 +54,7 @@ drop-in block are in [Adopting in a product repo](docs/adoption.md).
 | `assets/icons/`        | The closed icon set — eight 16-grid stroke svgs    |
 | `DESIGN.md`            | Full design spec                                   |
 | `preview/`             | Canonical pattern cards                            |
+| `pages/`               | Six whole reference screens                        |
 | `templates/`           | uinaf.dev surfaces + export artboards              |
 | `skills/uinaf-design/` | Agent skill                                        |
 

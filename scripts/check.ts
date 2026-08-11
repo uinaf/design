@@ -115,6 +115,8 @@ const SHIPPED = {
   "DESIGN.md": "the visual and voice spec consumers are pointed at",
   assets: "the closed icon set — the policy says pick from it, so consumers need it",
   preview: "one card per pattern, the canonical reference for each",
+  pages:
+    "the six reference screens — three preview cards iframe them, so the tarball would ship a blank card without them",
   templates: "standalone starting-point screens",
   "skills/uinaf-design": "the agent skill (#11)",
 } satisfies Record<string, string>;

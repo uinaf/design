@@ -6,15 +6,15 @@ one typeface, near-black, hairline borders, one accent, visible structure.
 
 ## index
 
-| file                     | what                                                                                                                              |
-| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
-| `@uinaf/design/css`      | tokens + ready styles implementing everything below. the only css you import                                                      |
-| `pages/` (site only)     | six whole reference screens at `design.uinaf.dev/pages/<name>.md` — start from one of these when building a page, not a component |
-| `templates/`             | uinaf.dev's own surfaces, plus fixed-size `export-*` artboards for OG and README images                                           |
-| Berkeley Mono (CDN only) | `https://cdn.uinaf.dev/fonts/berkeley-mono/variable/font.css` — never vendored in this package                                    |
-| brand images (CDN only)  | `https://cdn.uinaf.dev/images/…` — see the `CDN` export; never vendored in this package                                           |
-| `preview/`               | one card per pattern — the canonical reference for each                                                                           |
-| `assets/icons/`          | the closed icon set — eight 16-grid stroke svgs, `currentColor`                                                                   |
+| file                     | what                                                                                                                                    |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `@uinaf/design/css`      | tokens + ready styles implementing everything below. the only css you import                                                            |
+| `pages/`                 | six whole reference screens, also at `design.uinaf.dev/pages/<name>.md` — start from one of these when building a page, not a component |
+| `templates/`             | uinaf.dev's own surfaces, plus fixed-size `export-*` artboards for OG and README images                                                 |
+| Berkeley Mono (CDN only) | `https://cdn.uinaf.dev/fonts/berkeley-mono/variable/font.css` — never vendored in this package                                          |
+| brand images (CDN only)  | `https://cdn.uinaf.dev/images/…` — see the `CDN` export; never vendored in this package                                                 |
+| `preview/`               | one card per pattern — the canonical reference for each                                                                                 |
+| `assets/icons/`          | the closed icon set — eight 16-grid stroke svgs, `currentColor`                                                                         |
 
 ## voice
 
