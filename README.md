@@ -58,11 +58,11 @@ drop-in block are in [Adopting in a product repo](docs/adoption.md).
 Whole example screens are not in the package — they are documents you read, not
 modules you import. Get them from the guide:
 
-| Surface               | Where                                                 |
-| --------------------- | ----------------------------------------------------- |
-| Pattern cards         | [design.uinaf.dev](https://design.uinaf.dev)          |
-| Six reference screens | `design.uinaf.dev/pages/<name>.md`                    |
-| uinaf.dev surfaces    | `design.uinaf.dev/templates/<name>.md`                |
+| Surface               | Where                                        |
+| --------------------- | -------------------------------------------- |
+| Pattern cards         | [design.uinaf.dev](https://design.uinaf.dev) |
+| Six reference screens | `design.uinaf.dev/pages/<name>.md`           |
+| uinaf.dev surfaces    | `design.uinaf.dev/templates/<name>.md`       |
 
 ## Docs
 
