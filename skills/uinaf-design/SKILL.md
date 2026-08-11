@@ -23,7 +23,9 @@ disable-model-invocation: true
      find the nearest pattern, then
      `https://design.uinaf.dev/patterns/<name>.md` for its markup.
 2. **Import the CSS and use what is there.** `@import "@uinaf/design/css";`
-   gives tokens and every pattern class. Take exact values from
+   gives tokens and every pattern class. With no bundler, link
+   `node_modules/@uinaf/design/dist/css/tokens.css` instead — a browser does not
+   resolve a bare specifier. Take exact values from
    `https://design.uinaf.dev/tokens.json` when writing custom CSS.
 3. **Prefer the MCP tools when connected** (`https://design.uinaf.dev/mcp`):
    `get_page`, `get_template`, `list_patterns`, `get_pattern`, `get_tokens`,

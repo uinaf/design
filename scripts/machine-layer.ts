@@ -238,6 +238,8 @@ ${previews.map((c) => `- [${c.name}](/preview/${c.slug}.html) — ${c.group}${c.
 @import "@uinaf/design/css";
 \`\`\`
 
+With no bundler, link \`node_modules/@uinaf/design/dist/css/tokens.css\` instead — a browser does not resolve a bare specifier.
+
 Berkeley Mono is licensed and loads from cdn.uinaf.dev — never bundle it.
 `,
 );
