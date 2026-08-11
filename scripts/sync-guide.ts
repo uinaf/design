@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { CDN } from "../src/cdn.ts";
 
 type CardMeta = {
   group: string;
@@ -44,7 +45,9 @@ const parseCard = (html: string, file: string): CardMeta => {
 
 const guideChrome = `<!-- guide-chrome -->
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="icon" href="https://cdn.uinaf.dev/images/uinaf-computer.png" type="image/png" />
+<link rel="icon" href="${CDN.favicons.png32}" sizes="32x32" type="image/png" />
+<link rel="icon" href="${CDN.favicons.png16}" sizes="16x16" type="image/png" />
+<link rel="apple-touch-icon" href="${CDN.favicons.appleTouch}" />
 <style id="guide-chrome">
   html { background: var(--bg, #0a0a0a); }
   body.uinaf {
@@ -91,12 +94,7 @@ const rewritePreviewHtml = (filePath: string): CardMeta => {
   let html = fs.readFileSync(filePath, "utf8");
   const meta = parseCard(html, path.basename(filePath));
 
-  html = html
-    .replace(/href="[^"]*tokens\.css[^"]*"/g, 'href="/tokens.css"')
-    .replace(
-      /(?:\.\.\/)+assets\/(uinaf-[^"']+\.(?:png|webp|svg|jpg))/g,
-      "https://cdn.uinaf.dev/images/$1",
-    );
+  html = html.replace(/href="[^"]*tokens\.css[^"]*"/g, 'href="/tokens.css"');
 
   if (!html.includes('id="guide-chrome"')) {
     html = html.replace(/<\/head>/i, `${guideChrome}</head>`);
