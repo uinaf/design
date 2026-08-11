@@ -1,3 +1,10 @@
+/**
+ * A group of urls, nested to any depth. Every leaf must be a url string — a
+ * number or a null leaf is a compile error here rather than an entry `cdnUrls`
+ * drops on the floor.
+ */
+type UrlTree = { readonly [key: string]: string | UrlTree };
+
 /** Licensed fonts and shared brand media on cdn.uinaf.dev (not shipped in the npm tarball). */
 export const CDN = {
   origin: "https://cdn.uinaf.dev",
@@ -26,7 +33,7 @@ export const CDN = {
     png512: "https://cdn.uinaf.dev/images/exports/favicons/favicon-512.png",
     appleTouch: "https://cdn.uinaf.dev/images/exports/favicons/apple-touch-icon.png",
   },
-} as const;
+} as const satisfies UrlTree;
 
 /**
  * Every asset url in `CDN`, flattened — the origin itself excluded, because it
@@ -39,9 +46,11 @@ export const CDN = {
  * Repo-internal: `dist/cdn.js` is emitted as a serialized `CDN` literal, so the
  * published `./cdn` export carries the object and nothing else.
  */
-export const cdnUrls = (value: unknown = CDN): string[] =>
+export const cdnUrls = (): string[] => walk(CDN);
+
+const walk = (value: string | UrlTree): string[] =>
   typeof value === "string"
     ? value === CDN.origin
       ? []
       : [value]
-    : Object.values(value as Record<string, unknown>).flatMap((entry) => cdnUrls(entry));
+    : Object.values(value).flatMap(walk);
