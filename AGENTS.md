@@ -25,7 +25,7 @@
 ```sh
 pnpm install --frozen-lockfile   # bootstrap — Node from .node-version, pnpm from packageManager
 pnpm run verify                  # the gate CI runs; ends in the real-surface smoke
-pnpm run smoke                   # that smoke alone: boots the Worker, calls /mcp, tears it down
+pnpm run smoke                   # that smoke alone: boots the Worker, exercises /mcp + every machine-layer route, tears it down
 pnpm run cdn:check               # HEADs every URL in the CDN export; run before a deploy that adds one
 ```
 

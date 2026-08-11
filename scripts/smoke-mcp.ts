@@ -1,8 +1,9 @@
 /**
- * Exercises the deployed MCP contract end to end: handshake, tool discovery,
- * every tool, and every instructive-error path. Config assertions and unit
- * tests cannot catch a handler/API incompatibility or a renamed artifact —
- * only a real initialize/tools-call round trip against the asset binding can.
+ * Exercises the deployed read contract end to end: the MCP handshake, tool
+ * discovery, every tool, every instructive-error path, and the machine-layer
+ * routes those tools wrap. Config assertions and unit tests cannot catch a
+ * handler/API incompatibility, a renamed artifact, or a route that 404s while
+ * its artifact is present — only real round trips against the asset binding can.
  *
  *   node scripts/smoke-mcp.ts [baseUrl]     # default http://localhost:8788
  */
@@ -237,6 +238,66 @@ check("search_guidelines finds the color section", color.toLowerCase().includes(
 
 const noHit = await call("search_guidelines", { query: "kubernetes" });
 check("search_guidelines error lists sections", noHit.includes("Nothing in the spec matched"));
+
+// Every tool above is a wrapper over one of these URLs, and the drop-in block
+// tells an agent it may fetch them directly instead. A tool passing proves the
+// artifact exists, not that the route serving it answers.
+console.log("\nmachine layer");
+
+const get = (path: string, accept?: string): Promise<Response> =>
+  fetch(`${base}${path}`, {
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    headers: accept ? { accept } : {},
+  });
+
+const served = async (path: string, type: string, accept?: string): Promise<void> => {
+  const response = await get(path, accept);
+  const got = response.headers.get("content-type") ?? "";
+  check(
+    `GET ${path}${accept ? ` as ${accept}` : ""} → ${type}`,
+    response.ok && got.includes(type),
+    `HTTP ${response.status}, content-type ${got || "none"}`,
+  );
+};
+
+const json = async <T>(path: string): Promise<T> => {
+  const response = await get(path);
+  if (!response.ok) throw new Error(`${path}: HTTP ${response.status}`);
+  return (await response.json()) as T;
+};
+
+type Slugged = { slug: string };
+
+for (const [path, type] of [
+  ["/components.json", "application/json"],
+  ["/tokens.json", "application/json"],
+  ["/pages.json", "application/json"],
+  ["/templates.json", "application/json"],
+  ["/llms.txt", "text/plain"],
+  // A discovery document, so the directory itself must answer — an agent probing
+  // /.well-known/skills/ has no way to guess the index.json filename.
+  ["/.well-known/skills/", "application/json"],
+  ["/.well-known/skills/uinaf-design/SKILL.md", "text/markdown"],
+] as const) {
+  await served(path, type);
+}
+
+// Slugs come from the served indexes, never a list written here: a renamed page
+// or pattern has to fail this smoke rather than leave a stale literal passing.
+const pages = await json<Slugged[]>("/pages.json");
+check("pages.json lists the six reference screens", pages.length === 6, `${pages.length} page(s)`);
+for (const { slug } of pages) {
+  await served(`/pages/${slug}.html`, "text/html");
+  await served(`/pages/${slug}.md`, "text/markdown");
+  await served(`/pages/${slug}.html`, "text/markdown", "text/markdown");
+}
+
+const { patterns } = await json<{ patterns: Slugged[] }>("/components.json");
+check("components.json lists patterns", patterns.length > 0, `${patterns.length} pattern(s)`);
+for (const { slug } of patterns) {
+  await served(`/patterns/${slug}.html`, "text/html");
+  await served(`/patterns/${slug}.md`, "text/markdown");
+}
 
 if (failures > 0) {
   console.error(`\n${failures} check(s) failed`);
