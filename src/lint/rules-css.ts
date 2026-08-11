@@ -137,17 +137,38 @@ const COLOR_TOKEN =
 const withoutLiterals = (value: string): string =>
   value.replace(/"[^"]*"|'[^']*'/g, " ").replace(/url\([^)]*\)/gi, " ");
 
+/**
+ * `color-mix()` composes colours it is given, so it is exactly as raw as its
+ * arguments — `color-mix(in srgb, var(--neutral-900) 40%, transparent)` is the
+ * supported way to write a translucent token, and flagging it would leave no
+ * compliant spelling at all. Judged by recursion into the body, so a literal
+ * mixed in still fails. `color()` is not here: it names an absolute colour in a
+ * colour space, token or not.
+ */
+const COMPOSED_COLOR = /\bcolor-mix\s*\(((?:[^()]|\([^()]*\))*)\)/gi;
+
 /** Each colour is judged on its own: `border: 1px solid #000` is allowed. */
 const disallowedColors = (rawValue: string, property: string): string[] => {
   const acceptsColor = COLOR_PROPERTY.test(property);
-  return [...withoutLiterals(rawValue).matchAll(COLOR_TOKEN)]
-    .map((m) => m[0].trim())
-    .filter((color) => {
-      const lower = color.toLowerCase();
-      if (ALLOWED_RAW_COLORS.has(lower)) return false;
-      if (/^[a-z]+$/i.test(lower)) return acceptsColor && NAMED_COLORS.has(lower);
-      return true;
-    });
+  const offending: string[] = [];
+  // Lifted out before the token strip, and judged by its arguments: the strip is
+  // what leaves `color-mix(in srgb, var(--x) 40%, transparent)` an empty shell
+  // that then reads as a raw colour of its own.
+  const value = withoutLiterals(rawValue).replace(COMPOSED_COLOR, (_call, body: string) => {
+    offending.push(...disallowedColors(body, property));
+    return " ";
+  });
+  for (const match of withoutTokenReferences(value).matchAll(COLOR_TOKEN)) {
+    const color = match[0].trim();
+    const lower = color.toLowerCase();
+    if (ALLOWED_RAW_COLORS.has(lower)) continue;
+    if (/^[a-z]+$/i.test(lower)) {
+      if (acceptsColor && NAMED_COLORS.has(lower)) offending.push(color);
+      continue;
+    }
+    offending.push(color);
+  }
+  return offending;
 };
 
 /**
@@ -203,9 +224,7 @@ export const checkCss = (css: string, file: string): Violation[] => {
     // Custom properties are where raw values are supposed to live.
     const inTokenDefinition = prop.startsWith("--");
 
-    const offending = inTokenDefinition
-      ? []
-      : disallowedColors(withoutTokenReferences(value), prop);
+    const offending = inTokenDefinition ? [] : disallowedColors(value, prop);
     if (offending.length > 0) {
       add(
         decl,

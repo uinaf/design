@@ -590,6 +590,37 @@ describe("no-raw-color cannot hide behind a token", () => {
   });
 });
 
+describe("no-raw-color judges color-mix by its arguments", () => {
+  it("allows a token mixed toward transparent — the way to write a translucent token", () => {
+    expect(
+      rules(css("a{background:color-mix(in srgb, var(--neutral-900) 40%, transparent)}")),
+    ).not.toContain("no-raw-color");
+  });
+  it("allows two tokens mixed together", () => {
+    expect(rules(css("a{color:color-mix(in oklab, var(--fg) 60%, var(--accent))}"))).not.toContain(
+      "no-raw-color",
+    );
+  });
+  it("catches a literal mixed in", () => {
+    expect(rules(css("a{background:color-mix(in srgb, #ff0000 40%, transparent)}"))).toContain(
+      "no-raw-color",
+    );
+    expect(rules(css("a{background:color-mix(in srgb, var(--fg) 40%, rebeccapurple)}"))).toContain(
+      "no-raw-color",
+    );
+  });
+  it("still catches a raw colour sitting beside the mix", () => {
+    expect(
+      rules(
+        css("a{background:linear-gradient(color-mix(in srgb, var(--fg) 40%, transparent), #f00)}"),
+      ),
+    ).toContain("no-raw-color");
+  });
+  it("does not exempt color(), which names an absolute colour rather than composing tokens", () => {
+    expect(rules(css("a{color:color(display-p3 1 0 0)}"))).toContain("no-raw-color");
+  });
+});
+
 describe("pill radius exemption is segment-scoped", () => {
   it("exempts genuine one-dimension elements", () => {
     expect(rules(css(".u-dot{border-radius:9999px}"))).not.toContain("radius-ceiling");
