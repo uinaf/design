@@ -13,6 +13,14 @@ coverage/
 # smoke run evidence — server and contract logs, not repo content
 .smoke/
 
+# `dist/` is the whole output of `scripts/build.ts` — css, tokens, the 42
+# pattern files, the lint bundle. Tracking it committed the same drift risk
+# guide/ is excluded for, and it masked a real one: `verify` ran `check.ts`
+# before the build, so the gate read the previous build's artifacts and the
+# current source went unchecked. Every path that needs dist/ builds it first,
+# and `prepublishOnly` runs `verify`, so nothing reads a committed copy.
+dist/
+
 # Everything under guide/ is a build output of `guide:sync` and the machine
 # layer — CSS, tokens, patterns, previews, pages, llms.txt, .well-known.
 # `guide/index.html` is the one authored file, so it is the one exception.

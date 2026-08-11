@@ -9,6 +9,16 @@ const fail = (message: string): never => {
   process.exit(1);
 };
 
+// Everything below gates `dist/`, so this script has to run after the build,
+// never before it. `verify` had the two the other way round and only passed
+// because `dist/` was committed — the assertions ran against the previous
+// build's artifacts while the current source went unchecked. Naming the
+// precondition here is what makes that ordering a failure instead of a bare
+// ENOENT stack that reads like a broken checkout.
+if (!fs.existsSync(path.join(root, "dist/css/tokens.css"))) {
+  fail("dist/ is missing — run `pnpm run build` first. check.ts gates the build output.");
+}
+
 for (const name of ["tokens.css", "components.css"]) {
   const sheet = fs.readFileSync(path.join(root, "dist/css", name), "utf8");
   if (sheet.includes("./fonts/") || sheet.includes("berkeley-mono-variable-regular.woff2")) {
