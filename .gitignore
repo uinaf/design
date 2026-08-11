@@ -7,7 +7,7 @@ node_modules/
 coverage/
 *.tgz
 
-# slopomatic run evidence — scratch, not repo content
+# slopshipper run evidence — scratch, not repo content
 *.evidence.json
 
 # smoke run evidence — server and contract logs, not repo content
