@@ -18,9 +18,6 @@
     "dist",
     "DESIGN.md",
     "assets",
-    "pages",
-    "preview",
-    "templates",
     "skills/uinaf-design"
   ],
   "type": "module",

@@ -53,10 +53,16 @@ drop-in block are in [Adopting in a product repo](docs/adoption.md).
 | `dist/lint/`           | The `design-check` binary and its rules            |
 | `assets/icons/`        | The closed icon set — eight 16-grid stroke svgs    |
 | `DESIGN.md`            | Full design spec                                   |
-| `preview/`             | Canonical pattern cards                            |
-| `pages/`               | Six whole reference screens                        |
-| `templates/`           | uinaf.dev surfaces + export artboards              |
 | `skills/uinaf-design/` | Agent skill                                        |
+
+Whole example screens are not in the package — they are documents you read, not
+modules you import. Get them from the guide:
+
+| Surface               | Where                                                 |
+| --------------------- | ----------------------------------------------------- |
+| Pattern cards         | [design.uinaf.dev](https://design.uinaf.dev)          |
+| Six reference screens | `design.uinaf.dev/pages/<name>.md`                    |
+| uinaf.dev surfaces    | `design.uinaf.dev/templates/<name>.md`                |
 
 ## Docs
 

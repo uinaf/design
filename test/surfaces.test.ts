@@ -25,7 +25,7 @@ const localRefs = (): { file: string; ref: string }[] =>
   );
 
 const shipped = new Set<string>(
-  JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8")).files,
+  JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8")).files as string[],
 );
 
 describe("authored surfaces", () => {
@@ -36,26 +36,26 @@ describe("authored surfaces", () => {
   // `guide:sync` used to rewrite `../assets/uinaf-*.png` to the cdn on the way
   // out, so a path that resolved to nothing still published correctly and only
   // broke in the tarball. Resolving against the repo catches the source.
-  it("resolves every local reference to a file that exists", () => {
-    const broken = localRefs().filter(
-      ({ file, ref }) =>
-        !fs.existsSync(path.resolve(root, path.dirname(file), ref.replace(/[?#].*$/, ""))),
-    );
+  //
+  // Containment is the other half: a ref that climbs out of the repo resolves on
+  // the author's machine and 404s once the guide serves the file from its own
+  // root, so existence alone would pass it.
+  it("resolves every local reference to a file inside the repo", () => {
+    const broken = localRefs().filter(({ file, ref }) => {
+      const resolved = path.resolve(root, path.dirname(file), ref.replace(/[?#].*$/, ""));
+      const inside = path.relative(root, resolved);
+      return inside.startsWith("..") || path.isAbsolute(inside) || !fs.existsSync(resolved);
+    });
     expect(broken).toEqual([]);
   });
 
-  // A card that iframes `pages/dashboard.html` is blank for a consumer unless
-  // `pages` is in the tarball. Whatever an authored surface points at has to
-  // travel with it.
-  it("only references directories the tarball ships", () => {
-    const unshipped = localRefs()
-      .map(({ file, ref }) => ({
-        file,
-        ref,
-        top: path.relative(root, path.resolve(root, path.dirname(file), ref)).split(path.sep)[0],
-      }))
-      .filter(({ top }) => top !== undefined && !shipped.has(top));
-
-    expect(unshipped).toEqual([]);
+  // These are whole HTML documents reached by url, and no `exports` entry maps
+  // them, so a shipped copy is 145 kB a consumer cannot import. The pull to
+  // re-add one is real: a card iframes `../pages/dashboard.html`, which reads
+  // like the tarball owes it that file. It does not — the guide serves it. The
+  // parity check in `scripts/check.ts` catches `files` drifting from `SHIPPED`,
+  // but not both being widened together, which is exactly how this arrived.
+  it("keeps the by-url surfaces out of the tarball", () => {
+    expect(surfaceDirs.filter((dir) => shipped.has(dir))).toEqual([]);
   });
 });

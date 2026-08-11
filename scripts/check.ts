@@ -42,10 +42,11 @@ for (const [name, value] of grouped) {
   }
 }
 
-// Templates ship in the tarball, so every local file one names has to be a file
-// the tarball contains. `colors_and_type.css` (#15) and `_ds_bundle.js` (#31)
-// both shipped broken because nothing checked, and nothing in this repo reads
-// templates/, so no other code path would have noticed.
+// Templates are standalone documents the guide serves, so they cannot depend on
+// a runtime. `_ds_bundle.js` (#31) shipped broken because nothing checked, and
+// nothing in this repo reads templates/, so no other code path would notice.
+// Local references are checked for all three surface dirs in
+// `test/surfaces.test.ts`, which owns that rule.
 const templatesDir = path.join(root, "templates");
 const templates = fs.readdirSync(templatesDir).filter((f) => f.endsWith(".html"));
 if (templates.length === 0) {
@@ -57,17 +58,6 @@ for (const file of templates) {
   for (const banned of ["<x-dc", "<helmet", "ds-base.js", "support.js", "_ds_bundle"]) {
     if (source.includes(banned)) {
       fail(`templates/${file} contains ${banned} — templates are standalone HTML (#31)`);
-    }
-  }
-  for (const [, reference] of source.matchAll(/(?:href|src)="([^"]+)"/g)) {
-    if (/^(?:https?:|mailto:|data:|#)/.test(reference)) continue;
-    const resolved = path.resolve(templatesDir, reference.split(/[?#]/)[0]);
-    const outside = path.relative(root, resolved);
-    if (outside.startsWith("..") || path.isAbsolute(outside)) {
-      fail(`templates/${file} references ${reference}, which resolves outside the package.`);
-    }
-    if (!fs.existsSync(resolved)) {
-      fail(`templates/${file} references ${reference}, which the package does not ship.`);
     }
   }
 }
@@ -110,14 +100,18 @@ if ((pkg.files ?? []).some((f) => f === "fonts" || f.includes("font"))) {
 // unreachable PNGs for four releases because adding a directory to `files` is a
 // one-line edit nothing reads. Changing what consumers download now takes a
 // deliberate edit here too, with a reason.
+//
+// `preview/`, `pages/`, and `templates/` are deliberately absent. They are whole
+// HTML documents reached by url — every doc, the skill, and both MCP tools name
+// `design.uinaf.dev/...`, and no `exports` entry maps them, so a consumer
+// subpath import raises ERR_PACKAGE_PATH_NOT_EXPORTED. Shipping them added 145 kB
+// of unreachable copy, `templates/` being uinaf.dev's own site and brand
+// artboards. An entry here is what makes a file downloadable, so the way to serve
+// a surface is to deploy the guide, not to widen this.
 const SHIPPED = {
   dist: "the build output — css, tokens, patterns, the lint cli",
   "DESIGN.md": "the visual and voice spec consumers are pointed at",
   assets: "the closed icon set — the policy says pick from it, so consumers need it",
-  preview: "one card per pattern, the canonical reference for each",
-  pages:
-    "the six reference screens — three preview cards iframe them, so the tarball would ship a blank card without them",
-  templates: "standalone starting-point screens",
   "skills/uinaf-design": "the agent skill (#11)",
 } satisfies Record<string, string>;
 const shipped = Object.keys(SHIPPED).sort();
