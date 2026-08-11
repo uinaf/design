@@ -30,8 +30,14 @@ const css = fs.readFileSync(path.join(root, "dist/css/tokens.css"), "utf8");
 if (!css.includes('@import url("https://cdn.uinaf.dev/fonts/berkeley-mono')) {
   fail("tokens.css must @import CDN Berkeley Mono");
 }
-if (!css.includes('@import url("./components.css")')) {
+if (!css.includes('@import "./components.css"')) {
   fail("tokens.css must @import ./components.css — consumers import one file");
+}
+// url() must stay off this one: vite resolves a url()-wrapped relative import
+// against the consumer's own entry stylesheet, so the sibling sheet 404s in
+// every vite app that imports the package.
+if (css.includes('@import url("./components.css")')) {
+  fail('tokens.css must import the sibling sheet as @import "./components.css", without url()');
 }
 
 const tokens = JSON.parse(fs.readFileSync(path.join(root, "dist/tokens.json"), "utf8")) as {

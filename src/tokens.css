@@ -1,7 +1,11 @@
 /* uinaf — colors & type · v2 "neat pass"
    One typeface (Berkeley Mono), near-black canvas, hairline structure. */
 @import url("https://cdn.uinaf.dev/fonts/berkeley-mono/variable/font.css");
-@import url("./components.css");
+/* Not `url("./components.css")`: vite resolves a url()-wrapped relative import
+   against the consumer's entry stylesheet instead of this file, so every vite
+   app that imports the package fails to build with `Unable to resolve
+   @import "./components.css" from <their>/src`. */
+@import "./components.css";
 /* v2: smaller-but-hierarchical type scale (10→40), uppercase micro-labels
    as the hierarchy device, ONE ui accent (phosphor lime, distilled from
    the slime artwork), corner-tick panels, shared-hairline panel grids,
