@@ -17,6 +17,17 @@ describe("tokens.css", () => {
     expect(css).toContain("--bg:");
     expect(css).toContain("--font-mono:");
   });
+
+  it("keeps element defaults at zero specificity", () => {
+    // `.uinaf h1` is 0,1,1 and outranks every 0,1,0 `u-` class, so it silently
+    // won over the class the markup asked for: `<h1 class="u-display">` rendered
+    // at 24px and `<p class="u-meta">` at 14px. Element defaults must go through
+    // `:where()` or the whole typography scale is unreachable inside `.uinaf`.
+    // A bare element name is the one thing that starts with a letter here —
+    // `:where(…)`, `::selection`, `:focus-visible`, and `.uinaf {` all do not.
+    const bare = [...css.matchAll(/^\.uinaf [a-z][^,{]*/gm)].map((m) => m[0].trim());
+    expect(bare).toEqual([]);
+  });
 });
 
 describe("package boundary", () => {

@@ -198,7 +198,10 @@
   border-radius: 0;
 }
 
-.uinaf h1,
+/* Element defaults go through `:where()` so they carry no specificity of their
+   own. Bare `.uinaf h1` is 0,1,1 and outranks every 0,1,0 `u-` class, which made
+   `<h1 class="u-display">` render at 24px and `<p class="u-meta">` at 14px. */
+.uinaf :where(h1),
 .u-h1 {
   font-family: var(--font-mono);
   font-size: var(--text-xl);
@@ -208,7 +211,7 @@
   letter-spacing: var(--tracking-base);
   margin: 0;
 }
-.uinaf h2,
+.uinaf :where(h2),
 .u-h2 {
   font-family: var(--font-mono);
   font-size: var(--text-lg);
@@ -217,7 +220,7 @@
   color: var(--fg);
   margin: 0;
 }
-.uinaf h3,
+.uinaf :where(h3),
 .u-h3 {
   font-family: var(--font-mono);
   font-size: var(--text-md);
@@ -225,7 +228,7 @@
   color: var(--fg);
   margin: 0;
 }
-.uinaf p,
+.uinaf :where(p),
 .u-p {
   color: var(--fg-muted);
   font-size: var(--text-base);
@@ -258,7 +261,7 @@
 }
 
 .u-code,
-.uinaf code {
+.uinaf :where(code) {
   font-family: var(--font-mono);
   font-size: 0.95em;
   color: var(--fg-strong);
@@ -307,7 +310,7 @@
   opacity: 0.8;
 }
 
-.uinaf hr,
+.uinaf :where(hr),
 .u-hr {
   background: var(--neutral-800);
   height: 1px;
@@ -849,7 +852,7 @@
 }
 
 /* Code blocks */
-.uinaf pre,
+.uinaf :where(pre),
 .u-pre {
   font-family: var(--font-mono);
   font-size: var(--text-sm);
@@ -862,7 +865,7 @@
   overflow-x: auto;
   margin: 0;
 }
-.uinaf pre code,
+.uinaf :where(pre code),
 .u-pre code {
   background: transparent;
   border: 0;
