@@ -13,8 +13,8 @@ secrets ─┘
 
 `verify` and `secrets` are the shared gate, called from `verify.yml` and
 `secrets.yml` so one definition serves pull requests, the merge queue, and this
-push. They were copied into two push-to-`main` workflows before, so every merge
-ran the whole gate twice and the two runs raced the same commit.
+push. Keep it that way: a second copy of the gate on a push-to-`main` workflow
+races this one over the same commit.
 
 `deploy` and `release` are siblings, not a chain. Guide deploy stays independent
 of npm so `design.uinaf.dev` keeps shipping even when a release job fails. Do

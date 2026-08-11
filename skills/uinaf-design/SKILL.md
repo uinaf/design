@@ -79,27 +79,29 @@ The lint enforces these — do not fight it.
 Icons are a last resort and the set is closed. Glyphs come first — `↗` external,
 `·` separator, `···` menu, `←` `→` pagination, `.u-dot` status. When a pattern
 genuinely needs one, pick from the eight 16-grid stroke svgs at
-`https://design.uinaf.dev/assets/icons/`: search, copy, download, refresh, file,
-folder, branch, warning. Stroke scales inversely with size — 16/1.5 default,
-12/1.75 in tags and meta rows, 20/1.25 in large buttons and empty states. Never
-import an icon library, never paste from a third-party set (lucide, feather,
-heroicons, geist), and never put an icon beside a word that already says it. A
-new icon is a pull request to the set, in its idiom — never an inline invention.
+`https://design.uinaf.dev/assets/icons/<name>.svg` — search, copy, download,
+refresh, file, folder, branch, warning. Stroke scales inversely with size —
+16/1.5 default, 12/1.75 in tags and meta rows, 20/1.25 in large buttons and
+empty states. Never import an icon library, never paste from a third-party set
+(lucide, feather, heroicons, geist), and never put an icon beside a word that
+already says it. A new icon is a pull request to the set, in its idiom — never
+an inline invention.
 
 ## Reference
 
 Every path below is on `https://design.uinaf.dev`, never a route in the repo
 you are working in.
 
-| Where                  | What                                                    |
-| ---------------------- | ------------------------------------------------------- |
-| `/pages/<name>.md`     | a whole reference screen, markup included               |
-| `/templates/<name>.md` | a uinaf.dev surface or a fixed-size export artboard     |
-| `/components.json`     | every pattern: classes, use, rules, nevers              |
-| `/patterns/<name>.md`  | one pattern, contract plus copyable markup              |
-| `/tokens.json`         | tokens grouped by role                                  |
-| `/design.md`           | the spec: voice, type, color, structure, layout, motion |
-| `/llms.txt`            | index of the above                                      |
+| Where                      | What                                                    |
+| -------------------------- | ------------------------------------------------------- |
+| `/pages/<name>.md`         | a whole reference screen, markup included               |
+| `/templates/<name>.md`     | a uinaf.dev surface or a fixed-size export artboard     |
+| `/components.json`         | every pattern: classes, use, rules, nevers              |
+| `/patterns/<name>.md`      | one pattern, contract plus copyable markup              |
+| `/tokens.json`             | tokens grouped by role                                  |
+| `/design.md`               | the spec: voice, type, color, structure, layout, motion |
+| `/assets/icons/<name>.svg` | one icon from the closed set                            |
+| `/llms.txt`                | index of the above                                      |
 
 ## When a choice is not covered
 

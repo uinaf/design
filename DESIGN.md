@@ -6,14 +6,15 @@ one typeface, near-black, hairline borders, one accent, visible structure.
 
 ## index
 
-| file                     | what                                                                                           |
-| ------------------------ | ---------------------------------------------------------------------------------------------- |
-| `@uinaf/design/css`      | tokens + ready styles implementing everything below. the only css you import                   |
-| `templates/`             | uinaf.dev's own surfaces, plus fixed-size `export-*` artboards for OG and README images        |
-| Berkeley Mono (CDN only) | `https://cdn.uinaf.dev/fonts/berkeley-mono/variable/font.css` — never vendored in this package |
-| brand images (CDN only)  | `https://cdn.uinaf.dev/images/…` — see the `CDN` export; never vendored in this package        |
-| `preview/`               | one card per pattern — the canonical reference for each                                        |
-| `assets/icons/`          | the closed icon set — eight 16-grid stroke svgs, `currentColor`                                |
+| file                     | what                                                                                                                              |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| `@uinaf/design/css`      | tokens + ready styles implementing everything below. the only css you import                                                      |
+| `pages/` (site only)     | six whole reference screens at `design.uinaf.dev/pages/<name>.md` — start from one of these when building a page, not a component |
+| `templates/`             | uinaf.dev's own surfaces, plus fixed-size `export-*` artboards for OG and README images                                           |
+| Berkeley Mono (CDN only) | `https://cdn.uinaf.dev/fonts/berkeley-mono/variable/font.css` — never vendored in this package                                    |
+| brand images (CDN only)  | `https://cdn.uinaf.dev/images/…` — see the `CDN` export; never vendored in this package                                           |
+| `preview/`               | one card per pattern — the canonical reference for each                                                                           |
+| `assets/icons/`          | the closed icon set — eight 16-grid stroke svgs, `currentColor`                                                                   |
 
 ## voice
 
@@ -82,7 +83,8 @@ snappy decel, no bounce. 160ms hover/press, 220ms entry. entry = fade-up 10px wi
 
 ## imagery & logo
 
-- two illustrations, total: `uinaf-team.png` (primary mark, 220–240px framed) and `uinaf-computer.png` (favicon, 24–64px). pure black behind, 1px frame, square crop. never rotate, recolor, or generate look-alikes.
+- two illustrations, total: `uinaf-team.png` (primary mark, 220–240px framed) and `uinaf-computer.png` (small mark, 24–64px). pure black behind, 1px frame, square crop. never rotate, recolor, or generate look-alikes.
+- the favicon is neither of those — it is its own rendered set on the cdn, under `CDN.favicons`: 16 / 32 / 48 / 192 / 512 plus apple-touch.
 - no photos, no icon fonts. `↗` `→` `·` and hairlines carry the iconography.
 - **icons are a last resort, and the set is closed.** eight 16-grid stroke svgs live in `assets/icons/` — search, copy, download, refresh, file, folder, branch, warning. original work, licensed with the repo. pick from the set; extend it in its idiom (stroke 1.5, square caps, `currentColor`, no fills) as a pull request, never inline. sizes scale the stroke inversely: 16/1.5 default, 12/1.75 in tags and meta rows, 20/1.25 in large buttons and empty states. never import an icon library, never paste from a third-party set, and never put an icon beside a word that already says it.
 
@@ -95,4 +97,4 @@ snappy decel, no bounce. 160ms hover/press, 220ms entry. entry = fade-up 10px wi
 
 ## caveats
 
-- Berkeley Mono is commercial — the files here are the owner's license. substitute: JetBrains Mono.
+- Berkeley Mono is commercial. no binary lives in this repo or the npm tarball — every surface loads it from the cdn under the owner's license. substitute: JetBrains Mono.

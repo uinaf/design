@@ -6,8 +6,10 @@ Node (see `.node-version`) with Corepack enabled:
 
 ```sh
 pnpm install --frozen-lockfile
-pnpm exec vp config --no-agent
 ```
+
+The `prepare` script runs `vp config --no-agent` during that install, so there is
+no second setup step.
 
 ## Validation
 
