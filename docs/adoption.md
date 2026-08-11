@@ -44,7 +44,9 @@ This repo's UI is uinaf-branded.
    `get_page`, `get_template`, `get_pattern`, `get_tokens`, `search_guidelines`,
    `list_patterns`.
 2. **Styles come from `@uinaf/design`.** `@import "@uinaf/design/css";` gives
-   tokens and every `u-*` class. Take exact values from
+   tokens and every `u-*` class. With no bundler, link
+   `node_modules/@uinaf/design/dist/css/tokens.css` instead — a browser does not
+   resolve a bare specifier. Take exact values from
    `https://design.uinaf.dev/tokens.json` when
    writing custom CSS. No raw hex, no radius over 6px, no shadows, one accent per
    view, type only from the scale (10/11/13/14/16/20/24/32/40).
