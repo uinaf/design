@@ -49,6 +49,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
+    "assets:slopwake": "./scripts/export-slopwake-native-assets.sh",
     "build": "node scripts/build.ts",
     "guide:sync": "node scripts/build.ts && node scripts/sync-guide.ts && node scripts/machine-layer.ts",
     "check": "wrangler types && vp check && pnpm run build && node scripts/check.ts",
