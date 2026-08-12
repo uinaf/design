@@ -1,14 +1,32 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" fill="none">
-  <rect width="1024" height="1024" rx="224" fill="#090909"/>
-  <path d="M214 172h596c47 0 86 39 86 86v416c0 47-39 86-86 86H214c-47 0-86-39-86-86V258c0-47 39-86 86-86Z" fill="#F4F0E6"/>
-  <path d="M236 244h552c20 0 36 16 36 36v330c0 20-16 36-36 36H236c-20 0-36-16-36-36V280c0-20 16-36 36-36Z" fill="#090909"/>
-  <path d="M158 735h708l62 104c13 22-3 49-28 49H124c-25 0-41-27-28-49l62-104Z" fill="#F4F0E6"/>
-  <path d="M206 782h612M182 831h660" stroke="#090909" stroke-width="20" stroke-linecap="round"/>
-  <path d="M291 736 260 888M399 736l-15 152M512 736v152M625 736l15 152M733 736l31 152" stroke="#090909" stroke-width="14"/>
-  <circle cx="385" cy="427" r="78" fill="#D4FF3F"/>
-  <circle cx="639" cy="427" r="78" fill="#D4FF3F"/>
-  <circle cx="385" cy="427" r="30" fill="#090909"/>
-  <circle cx="639" cy="427" r="30" fill="#090909"/>
-  <path d="M498 506c0-8 6-14 14-14s14 6 14 14v121c0 40 32 72 72 72h12v41c0 34-28 62-62 62s-62-28-62-62V627c0-8 5-15 12-18V506Z" fill="#D4FF3F"/>
-  <path d="M327 557c48 37 100 55 157 55M697 557c-48 37-100 55-157 55" stroke="#F4F0E6" stroke-width="18" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+<defs>
+<path id="sq" d="M0 512C0 97.5 97.5 0 512 0C926.5 0 1024 97.5 1024 512C1024 926.5 926.5 1024 512 1024C97.5 1024 0 926.5 0 512Z"></path>
+<clipPath id="sqc"><use href="#sq"></use></clipPath>
+<radialGradient id="bg" gradientUnits="userSpaceOnUse" cx="512" cy="400" r="760"><stop offset="0" stop-color="#191b12"></stop><stop offset="0.55" stop-color="#0f1009"></stop><stop offset="1" stop-color="#0a0b08"></stop></radialGradient>
+<linearGradient id="bone" gradientUnits="userSpaceOnUse" x1="0" y1="240" x2="0" y2="780"><stop offset="0" stop-color="#f3efe3"></stop><stop offset="1" stop-color="#e2dcc9"></stop></linearGradient>
+<linearGradient id="edge" gradientUnits="userSpaceOnUse" x1="262" y1="0" x2="762" y2="0"><stop offset="0" stop-color="#fff"></stop><stop offset="0.24" stop-color="#000"></stop><stop offset="0.76" stop-color="#000"></stop><stop offset="1" stop-color="#fff"></stop></linearGradient>
+<mask id="em"><rect x="242" y="248" width="540" height="480" fill="url(#edge)"></rect></mask>
+<pattern id="hatV" width="17" height="17" patternUnits="userSpaceOnUse"><line x1="4" y1="0" x2="4" y2="17" stroke="#12100a" stroke-width="4" stroke-opacity="0.28"></line></pattern>
+<pattern id="hatD" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(-28)"><line x1="0" y1="3" x2="16" y2="3" stroke="#12100a" stroke-width="3.5" stroke-opacity="0.22"></line></pattern>
+<filter id="soft" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="22"></feGaussianBlur></filter>
+<filter id="glow" x="-120%" y="-120%" width="340%" height="340%"><feGaussianBlur stdDeviation="20"></feGaussianBlur></filter>
+<filter id="wob" x="-15%" y="-15%" width="130%" height="130%"><feTurbulence type="fractalNoise" baseFrequency="0.011" numOctaves="2" seed="3" result="n"></feTurbulence><feDisplacementMap in="SourceGraphic" in2="n" scale="11" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap></filter>
+</defs>
+<g clip-path="url(#sqc)">
+<use href="#sq" fill="url(#bg)"></use>
+<g fill="#e9e3d1"><circle cx="168" cy="176" r="4" opacity="0.16"></circle><circle cx="252" cy="120" r="3" opacity="0.12"></circle><circle cx="858" cy="184" r="4.5" opacity="0.18"></circle><circle cx="902" cy="304" r="3" opacity="0.12"></circle><circle cx="128" cy="430" r="4" opacity="0.14"></circle><circle cx="894" cy="556" r="4" opacity="0.15"></circle><circle cx="170" cy="764" r="3" opacity="0.12"></circle><circle cx="826" cy="806" r="4" opacity="0.16"></circle></g>
+<ellipse cx="512" cy="726" rx="264" ry="38" fill="#000" opacity="0.5" filter="url(#soft)"></ellipse>
+<g filter="url(#wob)">
+<rect x="352" y="592" width="100" height="108" rx="32" fill="url(#bone)" stroke="#12100a" stroke-width="9"></rect>
+<rect x="572" y="592" width="100" height="108" rx="32" fill="url(#bone)" stroke="#12100a" stroke-width="9"></rect>
+<rect x="262" y="268" width="500" height="396" rx="98" fill="url(#bone)" stroke="#12100a" stroke-width="10"></rect>
+<rect x="262" y="268" width="500" height="396" rx="98" fill="url(#hatV)" mask="url(#em)"></rect>
+<rect x="322" y="614" width="380" height="50" fill="url(#hatD)"></rect>
+<rect x="322" y="332" width="380" height="268" rx="58" fill="#0c0e08" stroke="#12100a" stroke-width="8"></rect>
+<g><circle cx="447" cy="466" r="52" fill="#12100a"></circle><circle cx="577" cy="466" r="52" fill="#12100a"></circle><circle cx="447" cy="466" r="41" fill="#efeadb"></circle><circle cx="577" cy="466" r="41" fill="#efeadb"></circle></g>
+</g>
+<g fill="#D4FF3F"><g filter="url(#glow)" opacity="0.6"><circle cx="447" cy="466" r="25"></circle><circle cx="577" cy="466" r="25"></circle></g><circle cx="447" cy="466" r="25"></circle><circle cx="577" cy="466" r="25"></circle></g>
+<g filter="url(#wob)"><path d="M630 592h40v40c0 30-9 50-20 50s-20-20-20-50z" fill="#D4FF3F" stroke="#12100a" stroke-width="7"></path><circle cx="650" cy="702" r="9" fill="#D4FF3F" stroke="#12100a" stroke-width="6"></circle></g>
+<use href="#sq" fill="none" stroke="#fff" stroke-opacity="0.06" stroke-width="6"></use>
+</g>
 </svg>
