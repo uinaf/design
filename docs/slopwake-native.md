@@ -12,8 +12,8 @@ The derivative is product artwork, not an extension of the utility icon set.
 - `assets/products/slopwake/slopwake-menu-active.svg` is the monochrome
   template mark for an active automatic or manual hold.
 - `assets/products/slopwake/slopwake-app-icon.svg` is the 1024-point app-icon
-  source. Export it at 16, 32, 128, 256, 512, and 1024 pixels; the 32, 256,
-  512, and 1024 exports fill the macOS 2x slots.
+  source. Export it at 16, 32, 64, 128, 256, 512, and 1024 pixels; the 32, 64,
+  256, 512, and 1024 exports fill the macOS 2x slots.
 
 The SVG files are canonical. Product repositories copy exact revisions and
 record the source commit. Do not redraw, recolor, rotate, add glow, or replace

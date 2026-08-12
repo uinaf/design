@@ -23,7 +23,7 @@ master="${render_root}/slopwake-app-icon.svg.png"
   exit 1
 }
 
-for size in 16 32 128 256 512 1024; do
+for size in 16 32 64 128 256 512 1024; do
   sips -z "${size}" "${size}" "${master}" --out "${output_root}/slopwake-app-icon-${size}.png" >/dev/null
 done
 
