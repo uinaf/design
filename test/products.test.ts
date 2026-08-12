@@ -16,6 +16,7 @@ describe("slopwake product assets", () => {
   test("app icon keeps the canonical native palette and source size", () => {
     const svg = fs.readFileSync(path.join(productRoot, "slopwake-app-icon.svg"), "utf8");
     expect(svg).toContain('viewBox="0 0 1024 1024"');
-    expect(new Set(svg.match(/#[0-9A-F]{6}/g))).toEqual(new Set(["#090909", "#F4F0E6", "#D4FF3F"]));
+    const colors = (svg.match(/#[0-9a-f]{6}/gi) ?? []).map((color) => color.toUpperCase());
+    expect(new Set(colors)).toEqual(new Set(["#090909", "#F4F0E6", "#D4FF3F"]));
   });
 });
