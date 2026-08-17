@@ -1,6 +1,6 @@
 ![design — uinaf design tokens, CSS primitives, and guide.](https://uinaf.dev/og/banner/design.png)
 
-# @uinaf/design
+# uinaf/design
 
 Design tokens, CSS primitives, an adherence lint, and the agent skill for [uinaf](https://uinaf.dev) surfaces.
 

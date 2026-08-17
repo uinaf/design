@@ -33,6 +33,12 @@ Whole screens are read by URL, never imported. The package carries CSS, tokens, 
 - **Product and studio names stay lowercase in both registers**, even at sentence start: `tccutil manages…`, never `Tccutil manages…`. Recast the sentence if it bothers you. This applies to uinaf, tccutil, healthd, intake, attach, lab, and slopshipper.
 - The boundary: read as a document → docs register. Read as the product talking → brand register. When unsure, lowercase.
 
+### Repository identity
+
+- The GitHub repository name and About description use the brand register: lowercase, short, descriptive, and free of marketing copy. Conventional abbreviations keep their caps.
+- The first README heading is exactly `# uinaf/<repo>`; a banner or badges may precede it. This H1 stays lowercase; the remaining README headings and prose use the docs register.
+- Package names stay literal in body copy, install commands, and imports (`@uinaf/design`); they do not replace the repository H1.
+
 ## Type
 
 - Berkeley Mono only. Sized, never weighted. Bold = inline emphasis only.
