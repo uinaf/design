@@ -250,6 +250,15 @@ write(
 
 > Tokens, CSS primitives, and a ${components.patterns.length}-pattern contract for building uinaf-branded interfaces. Fetch a pattern before writing any component.
 
+Use the MCP server at https://design.uinaf.dev/mcp when it is connected.
+Otherwise choose one relevant link below and fetch that Markdown artifact; do
+not load the whole catalog. Start with design.md for voice and general rules.
+
+## Guidelines
+
+- [design.md](https://design.uinaf.dev/design.md): canonical voice, type, color, structure, components, layout, motion, and guardrails.
+- [readme.md](https://design.uinaf.dev/readme.md): package installation and usage.
+
 ## Contract
 
 - [components.json](https://design.uinaf.dev/components.json): every pattern with classes, use, rules, and nevers. Every pattern carries copyable markup.
@@ -271,15 +280,10 @@ ${templates.map((t) => `- [${t.name}](https://design.uinaf.dev/templates/${t.slu
 
 ${components.patterns.map((p) => `- [${p.name}](https://design.uinaf.dev/patterns/${p.slug}.md): ${p.use}`).join("\n")}
 
-## Spec
-
-- [design.md](https://design.uinaf.dev/design.md): voice, type, color, structure, components, layout, motion, guardrails.
-- [readme.md](https://design.uinaf.dev/readme.md): package install and usage.
-- [index.md](https://design.uinaf.dev/index.md): this site as markdown.
-
 ## Optional
 
-- [SKILL.md](https://design.uinaf.dev/.well-known/skills/uinaf-design/SKILL.md): the agent skill.
+- [index.md](https://design.uinaf.dev/index.md): the complete guide as Markdown.
+- [SKILL.md](https://design.uinaf.dev/.well-known/skills/uinaf-design/SKILL.md): the manual workflow router; design rules live in the artifacts above.
 `,
 );
 
@@ -292,8 +296,7 @@ write(
       skills: [
         {
           name: "uinaf-design",
-          description:
-            "Build uinaf-branded UI. Fetch patterns from design.uinaf.dev instead of inventing them.",
+          description: "Route explicitly scoped uinaf work to the live design contract.",
           path: "/.well-known/skills/uinaf-design/SKILL.md",
         },
       ],

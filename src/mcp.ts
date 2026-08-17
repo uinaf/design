@@ -85,11 +85,17 @@ export const rankSections = (
     );
     return { heading, body, score };
   });
+  const exact = sections.find(
+    (section) => section.heading.toLowerCase() === query.trim().toLowerCase(),
+  );
+  if (exact) {
+    return { hits: [exact], sections: sections.map((section) => section.heading) };
+  }
   return {
     hits: sections
       .filter((s) => s.score > 0)
       .sort((a, b) => b.score - a.score)
-      .slice(0, 3),
+      .slice(0, 2),
     sections: sections.map((s) => s.heading),
   };
 };
@@ -258,8 +264,8 @@ export const createServer = (env: Env): McpServer => {
     "search_guidelines",
     {
       description:
-        "Search the uinaf design spec for rules on voice, type, color, structure, layout, motion, or guardrails. Use when a choice is not covered by a pattern.",
-      inputSchema: { query: z.string().describe("Keywords, e.g. 'accent' or 'type scale'") },
+        "Search the canonical uinaf design spec for rules on voice, type, color, structure, layout, motion, or guardrails. Prefer one exact topic such as 'voice'; use a broader query only when the topic is unknown.",
+      inputSchema: { query: z.string().describe("One exact topic or a short query") },
     },
     async ({ query }) => {
       const spec = await (await asset(env, "/design.md")).text();

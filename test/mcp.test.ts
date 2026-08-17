@@ -8,9 +8,12 @@ const spec = readFileSync(resolve(root, "DESIGN.md"), "utf8");
 
 describe("search_guidelines ranking", () => {
   it("puts the section named after the query first", () => {
-    expect(rankSections(spec, "color").hits[0].heading).toBe("Color");
-    expect(rankSections(spec, "voice").hits[0].heading).toBe("Voice");
-    expect(rankSections(spec, "motion").hits[0].heading).toBe("Motion");
+    const color = rankSections(spec, "color");
+    const voice = rankSections(spec, "voice");
+    const motion = rankSections(spec, "motion");
+    expect(color.hits.map((hit) => hit.heading)).toEqual(["Color"]);
+    expect(voice.hits.map((hit) => hit.heading)).toEqual(["Voice"]);
+    expect(motion.hits.map((hit) => hit.heading)).toEqual(["Motion"]);
   });
 
   it("finds sections by body content, not just headings", () => {
@@ -27,7 +30,7 @@ describe("search_guidelines ranking", () => {
   });
 
   it("caps results so a broad query cannot flood the context", () => {
-    expect(rankSections(spec, "the a is").hits.length).toBeLessThanOrEqual(3);
+    expect(rankSections(spec, "the a is").hits.length).toBeLessThanOrEqual(2);
   });
 });
 

@@ -87,12 +87,13 @@ Use whichever matches how strict the repo should be.
 
 ## Agent guidance
 
-Nothing to paste. The rules live in the skill at `skills/uinaf-design/` inside
-the package, and every artifact an agent needs is a document on
-[design.uinaf.dev](https://design.uinaf.dev) — reference screens, pattern markup,
-tokens, the spec. The guide also answers MCP at `https://design.uinaf.dev/mcp`,
-read-only and unauthenticated, which saves an agent from constructing those URLs
-itself.
+Nothing to paste. The skill at `skills/uinaf-design/` inside the package carries
+the fetch-first workflow, not a second copy of the rules. The canonical spec,
+reference screens, pattern markup, and tokens live on
+[design.uinaf.dev](https://design.uinaf.dev). The guide also answers MCP at
+`https://design.uinaf.dev/mcp`, read-only and unauthenticated; without MCP,
+`https://design.uinaf.dev/llms.txt` is the index into the same Markdown
+artifacts.
 
 Registering the skill and the MCP server is harness provisioning, so it belongs
 wherever the machine's agent config lives, not in a product repo.
