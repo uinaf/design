@@ -54,15 +54,34 @@ is held to green without inheriting the backlog.
 Fonts: Berkeley Mono is licensed and loads from
 `https://cdn.uinaf.dev/fonts/berkeley-mono/variable/font.css`. Never bundle it.
 
+## Voice registers
+
+Copy has two registers and one dry voice.
+
+- **Brand register — lowercase.** Use it for the site, product UI, marketing,
+  OG cards, commits, PR titles, code comments, and CLI output. Micro-labels are
+  uppercase. Abbreviations keep their conventional caps — PR, AI, API, CLI,
+  URL, OG, KV, R2, D1, SHA, HDR, HLS, TCC, macOS.
+- **Docs register — conventional caps.** README, CONTRIBUTING, `docs/`,
+  repository changelog files, GitHub release notes, and design-system catalog
+  copy use sentence case, never title case. Keep the same short, dry voice.
+- A changelog or blog rendered on uinaf.dev is a brand surface, not a repo doc,
+  and stays lowercase.
+- Product and studio names stay lowercase in both registers, even at sentence
+  start: `tccutil manages…`, never `Tccutil manages…`.
+
+Read as a document → docs register. Read as the product talking → brand
+register. When unsure, lowercase.
+
 ## The system in one breath
 
-Berkeley Mono only · everything lowercase except micro-labels and abbreviations
-(PR, AI, CLI, URL — never `pr`) · small type, hierarchy from the 11↔24 spread
-plus air · one phosphor-lime accent used like a laser pointer · white-fill
-primary buttons, monochrome everything else · 1px borders, square corners, no
-shadows, no gradients, no emoji, no icon fonts · quiet dot-scale status · narrow
-shell by default · product nav is ONE 56px topbar row, never stacked · dry
-lowercase copy with no SaaS sludge.
+Berkeley Mono only · brand surfaces lowercase, repo docs sentence case ·
+micro-labels and abbreviations keep their caps (PR, AI, CLI, URL — never `pr`) ·
+small type, hierarchy from the 11↔24 spread plus air · one phosphor-lime accent
+used like a laser pointer · white-fill primary buttons, monochrome everything
+else · 1px borders, square corners, no shadows, no gradients, no emoji, no icon
+fonts · quiet dot-scale status · narrow shell by default · product nav is ONE
+56px topbar row, never stacked · dry copy with no SaaS sludge.
 
 ## Hard guardrails
 

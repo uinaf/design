@@ -8,9 +8,9 @@ const spec = readFileSync(resolve(root, "DESIGN.md"), "utf8");
 
 describe("search_guidelines ranking", () => {
   it("puts the section named after the query first", () => {
-    expect(rankSections(spec, "color").hits[0].heading).toBe("color");
-    expect(rankSections(spec, "voice").hits[0].heading).toBe("voice");
-    expect(rankSections(spec, "motion").hits[0].heading).toBe("motion");
+    expect(rankSections(spec, "color").hits[0].heading).toBe("Color");
+    expect(rankSections(spec, "voice").hits[0].heading).toBe("Voice");
+    expect(rankSections(spec, "motion").hits[0].heading).toBe("Motion");
   });
 
   it("finds sections by body content, not just headings", () => {
@@ -23,7 +23,7 @@ describe("search_guidelines ranking", () => {
     const { hits, sections } = rankSections(spec, "kubernetes");
     expect(hits).toEqual([]);
     // The caller lists these back to the model so it can retry usefully.
-    expect(sections).toContain("color");
+    expect(sections).toContain("Color");
   });
 
   it("caps results so a broad query cannot flood the context", () => {
