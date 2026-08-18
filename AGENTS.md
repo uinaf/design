@@ -41,11 +41,11 @@ Prefer `vp` for lint/format/test: `pnpm exec vp check`, `pnpm exec vp test run`.
 
 ## Pipelines
 
-| Workflow                             | Trigger                          | Jobs                                                                       |
-| ------------------------------------ | -------------------------------- | -------------------------------------------------------------------------- |
-| `.github/workflows/verify.yml`       | PR, merge queue, `workflow_call` | `verify`, the one definition, called by the others                         |
-| `.github/workflows/release.yml`      | push to `main`                   | (verify + scan) → guide deploy (`production`) ∥ npm publish (`release`)    |
-| `.github/workflows/scan.yml`         | PR, push to `main`, weekly       | caller for the shared scan in `uinaf/.github`: gitleaks, trufflehog, actionlint, zizmor |
+| Workflow                        | Trigger                          | Jobs                                                                                    |
+| ------------------------------- | -------------------------------- | --------------------------------------------------------------------------------------- |
+| `.github/workflows/verify.yml`  | PR, merge queue, `workflow_call` | `verify`, the one definition, called by the others                                      |
+| `.github/workflows/release.yml` | push to `main`                   | (verify + scan) → guide deploy (`production`) ∥ npm publish (`release`)                 |
+| `.github/workflows/scan.yml`    | PR, push to `main`, weekly       | caller for the shared scan in `uinaf/.github`: gitleaks, trufflehog, actionlint, zizmor |
 
 `+` and `∥` both mean parallel: the two gates run at once, then the two terminal jobs run at once. The `→` is the only chain; nothing after it starts until both gates pass.
 
