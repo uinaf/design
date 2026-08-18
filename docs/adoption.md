@@ -1,7 +1,7 @@
 # Adopting the design system in a product repo
 
 Two things to wire up: the stylesheet, and the adherence lint. Agent guidance is
-not wired up here — it ships with the package.
+not wired up here; it ships with the package.
 
 ## 1. Install
 
@@ -13,7 +13,7 @@ npm i -D @uinaf/design
 @import "@uinaf/design/css";
 ```
 
-With no bundler, link `node_modules/@uinaf/design/dist/css/tokens.css` — a
+With no bundler, link `node_modules/@uinaf/design/dist/css/tokens.css`; a
 browser does not resolve a bare specifier. Berkeley Mono is licensed and loads
 from `cdn.uinaf.dev`; the stylesheet already imports it.
 
@@ -26,7 +26,7 @@ rather than the public registry:
 { "scripts": { "design:check": "design-check src" } }
 ```
 
-Point it at wherever the UI lives — `src`, `app`, `components`. Multiple paths
+Point it at wherever the UI lives: `src`, `app`, `components`. Multiple paths
 are fine: `design-check src app`.
 
 Exit code is 0 clean, 1 with errors. Run it in CI, and make it the finish gate
@@ -38,7 +38,7 @@ it.
 `design:check` will be red before you change anything. Do not fix the whole
 codebase.
 
-Record the baseline **on a clean tree, before making changes** — running it
+Record the baseline **on a clean tree, before making changes**; running it
 afterward bakes your own new violations into the baseline and the ratchet will
 never catch them:
 
@@ -65,7 +65,7 @@ to a rule that never fails a plain run.
 
 The ratchet is a non-increasing count, not a clean bill of health: removing one
 `radius-ceiling` and adding another leaves the count at one and passes. It stops
-the codebase getting worse, which is the point during a migration — it does not
+the codebase getting worse, which is the point during a migration; it does not
 certify that new work is clean.
 
 For that, add `--changed`, which checks only the files the branch touched:
@@ -79,8 +79,8 @@ For that, add `--changed`, which checks only the files the branch touched:
 }
 ```
 
-It covers all three ways a file can be changed — committed against the base
-branch, edited but not committed, and untracked — and enumerates through git, so
+It covers all three ways a file can be changed (committed against the base
+branch, edited but not committed, and untracked) and enumerates through git, so
 a filename containing a space survives. Override the base with `--base <ref>`.
 
 Use whichever matches how strict the repo should be.
@@ -100,8 +100,8 @@ wherever the machine's agent config lives, not in a product repo.
 
 ## Checking it works
 
-1. `npm run design:check` — passes on a clean tree
-2. Add `<div style="border-radius: 20px">` to a page — the check fails with the
+1. `npm run design:check`: passes on a clean tree
+2. Add `<div style="border-radius: 20px">` to a page; the check fails with the
    file, line, and the fix
-3. Ask an agent to build a screen — it should fetch a pattern rather than writing
+3. Ask an agent to build a screen; it should fetch a pattern rather than writing
    markup from memory, and refuse to finish while the check is red

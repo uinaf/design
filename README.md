@@ -6,7 +6,7 @@ Design tokens, CSS primitives, an adherence lint, and the agent skill for [uinaf
 
 Guide: [design.uinaf.dev](https://design.uinaf.dev)
 
-Berkeley Mono is licensed — load it from `cdn.uinaf.dev`, not this package.
+Berkeley Mono is licensed; load it from `cdn.uinaf.dev`, not this package.
 
 ## Install
 
@@ -47,17 +47,17 @@ backlog, is in [Adopting in a product repo](docs/adoption.md).
 
 ## Package contents
 
-| Path                   | Purpose                                            |
-| ---------------------- | -------------------------------------------------- |
-| `dist/css/tokens.css`  | CSS custom properties + component primitives       |
-| `dist/tokens.js`       | Flat token map                                     |
-| `dist/components.json` | The pattern contract — classes, use, rules, markup |
-| `dist/lint/`           | The `design-check` binary and its rules            |
-| `assets/icons/`        | The closed icon set — eight 16-grid stroke svgs    |
-| `DESIGN.md`            | Full design spec                                   |
-| `skills/uinaf-design/` | Agent skill                                        |
+| Path                   | Purpose                                           |
+| ---------------------- | ------------------------------------------------- |
+| `dist/css/tokens.css`  | CSS custom properties + component primitives      |
+| `dist/tokens.js`       | Flat token map                                    |
+| `dist/components.json` | The pattern contract: classes, use, rules, markup |
+| `dist/lint/`           | The `design-check` binary and its rules           |
+| `assets/icons/`        | The closed icon set: eight 16-grid stroke svgs    |
+| `DESIGN.md`            | Full design spec                                  |
+| `skills/uinaf-design/` | Agent skill                                       |
 
-Whole example screens are not in the package — they are documents you read, not
+Whole example screens are not in the package; they are documents you read, not
 modules you import. Get them from the guide:
 
 | Surface               | Where                                        |

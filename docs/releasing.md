@@ -20,7 +20,7 @@ races this one over the same commit.
 of npm so `design.uinaf.dev` keeps shipping even when a release job fails. Do
 not make deploy `needs: [release]`.
 
-The file name `release.yml` is load-bearing — see below.
+The file name `release.yml` is load-bearing; see below.
 
 ## npm
 
@@ -41,7 +41,7 @@ identity mismatch, and nothing earlier in the run reports it.
 
 Deleting the `release` environment deletes both rows above with it, and there is
 no repo-level fallback: `create-github-app-token` then runs with empty inputs and
-the job fails at that step. The private key cannot be read back from GitHub —
+the job fails at that step. The private key cannot be read back from GitHub;
 recreating it means generating a new one in the App settings.
 
 During semantic-release preparation, npm stages the released `package.json`
