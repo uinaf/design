@@ -1,0 +1,21 @@
+name: Scan
+
+# No push trigger: the push-to-main pipeline already runs the same shared
+# scan as a release gate.
+on:
+  pull_request:
+  schedule:
+    - cron: "23 6 * * 1"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: scan-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  scan:
+    permissions:
+      contents: read
+    uses: uinaf/.github/.github/workflows/scan.yml@main
