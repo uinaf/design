@@ -8,7 +8,7 @@ name: Release
 # on npmjs.com. So the publish job stays here, and everything else that runs on
 # a push to main came to it.
 #
-# `deploy` and `release` are siblings, both on `needs: [verify, secrets]`.
+# `deploy` and `release` are siblings, both on `needs: [verify, scan]`.
 # Never make deploy `needs: [release]` — design.uinaf.dev must keep shipping
 # when a publish fails.
 
@@ -32,16 +32,16 @@ jobs:
       contents: read
     uses: ./.github/workflows/verify.yml
 
-  secrets:
+  scan:
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     permissions:
       contents: read
-    uses: ./.github/workflows/secrets.yml
+    uses: uinaf/.github/.github/workflows/scan.yml@main
 
   # A skipped dependency skips its dependents, so `[skip ci]` is declared once
   # above and reaches both of the jobs below through `needs`.
   deploy:
-    needs: [verify, secrets]
+    needs: [verify, scan]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
@@ -109,7 +109,7 @@ jobs:
           exit 1
 
   release:
-    needs: [verify, secrets]
+    needs: [verify, scan]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     environment:

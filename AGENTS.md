@@ -44,9 +44,8 @@ Prefer `vp` for lint/format/test: `pnpm exec vp check`, `pnpm exec vp test run`.
 | Workflow                             | Trigger                          | Jobs                                                                       |
 | ------------------------------------ | -------------------------------- | -------------------------------------------------------------------------- |
 | `.github/workflows/verify.yml`       | PR, merge queue, `workflow_call` | `verify`, the one definition, called by the others                         |
-| `.github/workflows/release.yml`      | push to `main`                   | (verify + secrets) → guide deploy (`production`) ∥ npm publish (`release`) |
-| `.github/workflows/secrets.yml`      | PR, `workflow_call`, weekly      | gitleaks, trufflehog                                                       |
-| `.github/workflows/actions-lint.yml` | `.github/workflows/**`           | actionlint and zizmor, both third-party, digest-pinned, run in Docker      |
+| `.github/workflows/release.yml`      | push to `main`                   | (verify + scan) → guide deploy (`production`) ∥ npm publish (`release`)    |
+| `.github/workflows/scan.yml`         | PR, push to `main`, weekly       | caller for the shared scan in `uinaf/.github`: gitleaks, trufflehog, actionlint, zizmor |
 
 `+` and `∥` both mean parallel: the two gates run at once, then the two terminal jobs run at once. The `→` is the only chain; nothing after it starts until both gates pass.
 
@@ -55,7 +54,7 @@ A fifth gate has no file. CodeQL runs through GitHub **default setup** (code sca
 Two rules the file names do not tell you:
 
 - `release.yml` is the **only** push-to-`main` workflow, and its file name is pinned by npm Trusted Publishing. Renaming it breaks `npm publish` until someone edits the trusted publisher on npmjs.com. That is why the guide deploy lives in a file called `release`.
-- `deploy` and `release` are siblings on `needs: [verify, secrets]`. Never gate guide deploy on the release job; `design.uinaf.dev` must keep shipping when a publish fails.
+- `deploy` and `release` are siblings on `needs: [verify, scan]`. Never gate guide deploy on the release job; `design.uinaf.dev` must keep shipping when a publish fails.
 
 Credentials for each path are listed in `docs/releasing.md` (vars vs secrets).
 
