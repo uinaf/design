@@ -1,9 +1,8 @@
 name: Scan
 
+# No push trigger: the push-to-main pipeline already runs the same shared
+# scan as a release gate.
 on:
-  push:
-    branches:
-      - main
   pull_request:
   schedule:
     - cron: "23 6 * * 1"
