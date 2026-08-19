@@ -39,6 +39,7 @@ Whole screens are read by URL, never imported. The package carries CSS, tokens, 
 - The GitHub repository name and About description use the brand register: lowercase, short, descriptive, and free of marketing copy. Conventional abbreviations keep their caps.
 - The first README heading is exactly `# uinaf/<repo>`; a banner or badges may precede it. This H1 stays lowercase; the remaining README headings and prose use the docs register.
 - Package names stay literal in body copy, install commands, and imports (`@uinaf/design`); they do not replace the repository H1.
+- File names stay lowercase (`docs/usage.md`, `scripts/check.ts`). Files whose caps are the ecosystem convention keep them: `README.md`, `CONTRIBUTING.md`, `AGENTS.md`, `LICENSE`, `SKILL.md`, `DESIGN.md`.
 
 ## Type
 
