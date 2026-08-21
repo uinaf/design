@@ -35,7 +35,7 @@ describe("asset routing config", () => {
   const wrangler = readFileSync(resolve(root, "wrangler.toml"), "utf8");
 
   it("serves assets at their exact path so .html is not a redirect", () => {
-    // The published components.json and the skill both point at /patterns/x.html.
+    // The published components.json points at /patterns/x.html.
     expect(wrangler).toContain('html_handling = "none"');
   });
 

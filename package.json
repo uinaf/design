@@ -17,8 +17,7 @@
   "files": [
     "dist",
     "DESIGN.md",
-    "assets",
-    "skills/uinaf-design"
+    "assets"
   ],
   "type": "module",
   "exports": {
@@ -64,8 +63,7 @@
     "smoke": "pnpm run guide:sync && ./scripts/smoke.sh",
     "smoke:mcp": "node scripts/smoke-mcp.ts",
     "design:check": "node src/lint/cli.ts preview pages templates guide --ratchet --ignore guide/tokens.css --ignore guide/components.css --except templates/export-:type-scale-only,spacing-grid",
-    "design:check:update": "node src/lint/cli.ts preview pages templates guide --update-ratchet --ignore guide/tokens.css --ignore guide/components.css --except templates/export-:type-scale-only,spacing-grid",
-    "skill:lint": "TESSL_AUTO_UPDATE_INTERVAL_MINUTES=0 tessl plugin lint skills/uinaf-design"
+    "design:check:update": "node src/lint/cli.ts preview pages templates guide --update-ratchet --ignore guide/tokens.css --ignore guide/components.css --except templates/export-:type-scale-only,spacing-grid"
   },
   "dependencies": {
     "postcss": "^8.5.26"
@@ -75,7 +73,6 @@
     "@types/node": "^24.0.0",
     "agents": "^0.20.1",
     "esbuild": "^0.28.2",
-    "tessl": "0.94.0",
     "typescript": "^5.9.2",
     "vite": "npm:@voidzero-dev/vite-plus-core@0.2.8",
     "vite-plus": "0.2.8",

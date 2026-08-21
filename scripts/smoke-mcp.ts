@@ -274,10 +274,6 @@ for (const [path, type] of [
   ["/pages.json", "application/json"],
   ["/templates.json", "application/json"],
   ["/llms.txt", "text/plain"],
-  // A discovery document, so the directory itself must answer — an agent probing
-  // /.well-known/skills/ has no way to guess the index.json filename.
-  ["/.well-known/skills/", "application/json"],
-  ["/.well-known/skills/uinaf-design/SKILL.md", "text/markdown"],
 ] as const) {
   await served(path, type);
 }

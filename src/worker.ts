@@ -3,8 +3,8 @@
  *
  * Every artifact is a build output; this Worker only routes. `html_handling` is
  * off so assets serve at their exact path, which keeps `/patterns/x.html` a 200
- * rather than a redirect to `/patterns/x` — the skill and the published
- * components.json both point at the `.html` form. Extensionless paths are
+ * rather than a redirect to `/patterns/x` — the published components.json
+ * points at the `.html` form. Extensionless paths are
  * resolved here so both spellings work.
  */
 
@@ -122,14 +122,8 @@ export default {
     }
 
     if (isDirectory) {
-      // A discovery document has no HTML form: /.well-known/skills/ is an
-      // index.json and nothing else, so html-only resolution 404s the one route
-      // agents are told to probe.
-      for (const name of ["index.html", "index.json"]) {
-        const index = await fetchAsset(env, request, url, `${pathname}${name}`);
-        if (ok(index)) return varyOnAccept(index);
-      }
-      return env.ASSETS.fetch(request);
+      const index = await fetchAsset(env, request, url, `${pathname}index.html`);
+      return ok(index) ? varyOnAccept(index) : env.ASSETS.fetch(request);
     }
 
     const direct = await fetchAsset(env, request, url, pathname);
