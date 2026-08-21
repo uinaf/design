@@ -3,7 +3,7 @@ import path from "node:path";
 
 /**
  * Generates the agent-facing half of design.uinaf.dev: a markdown twin for every
- * page, the llms.txt index, and skill discovery. Everything here is a build
+ * page and the llms.txt index. Everything here is a build
  * output — the Worker serves files and never authors content, so the docs,
  * tokens, and pattern contract cannot drift apart.
  */
@@ -283,27 +283,7 @@ ${components.patterns.map((p) => `- [${p.name}](https://design.uinaf.dev/pattern
 ## Optional
 
 - [index.md](https://design.uinaf.dev/index.md): the complete guide as Markdown.
-- [SKILL.md](https://design.uinaf.dev/.well-known/skills/uinaf-design/SKILL.md): the manual workflow router; design rules live in the artifacts above.
 `,
-);
-
-const skill = fs.readFileSync(path.join(root, "skills/uinaf-design/SKILL.md"), "utf8");
-write(".well-known/skills/uinaf-design/SKILL.md", skill);
-write(
-  ".well-known/skills/index.json",
-  `${JSON.stringify(
-    {
-      skills: [
-        {
-          name: "uinaf-design",
-          description: "Route explicitly scoped uinaf work to the live design contract.",
-          path: "/.well-known/skills/uinaf-design/SKILL.md",
-        },
-      ],
-    },
-    null,
-    2,
-  )}\n`,
 );
 
 // Deploy identity. wrangler ships the Worker and its assets as one version, so
@@ -319,5 +299,5 @@ const templateTwins = fs
   .readdirSync(path.join(guide, "templates"))
   .filter((f) => f.endsWith(".md")).length;
 console.log(
-  `machine layer: ${twins} pattern twins, ${cards} preview twins, ${pageTwins} page twins, ${templateTwins} template twins, llms.txt, index.md, skill discovery`,
+  `machine layer: ${twins} pattern twins, ${cards} preview twins, ${pageTwins} page twins, ${templateTwins} template twins, llms.txt, index.md`,
 );

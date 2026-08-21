@@ -87,15 +87,16 @@ Use whichever matches how strict the repo should be.
 
 ## Agent guidance
 
-Nothing to paste. The skill at `skills/uinaf-design/` inside the package carries
-the fetch-first workflow, not a second copy of the rules. The canonical spec,
-reference screens, pattern markup, and tokens live on
+Nothing to paste. The repository-local source at `skills/uinaf-design/` carries
+the fetch-first workflow, not a second copy of the rules. It is not shipped in
+the npm package or served by the guide. The canonical spec, reference screens,
+pattern markup, and tokens live on
 [design.uinaf.dev](https://design.uinaf.dev). The guide also answers MCP at
 `https://design.uinaf.dev/mcp`, read-only and unauthenticated; without MCP,
 `https://design.uinaf.dev/llms.txt` is the index into the same Markdown
 artifacts.
 
-Registering the skill and the MCP server is harness provisioning, so it belongs
+Installing the local guidance and registering the MCP server is harness provisioning, so it belongs
 wherever the machine's agent config lives, not in a product repo.
 
 ## Checking it works

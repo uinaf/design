@@ -2,7 +2,7 @@
 
 # uinaf/design
 
-Design tokens, CSS primitives, an adherence lint, and the agent skill for [uinaf](https://uinaf.dev) surfaces.
+Design tokens, CSS primitives, adherence linting, and repository-local agent guidance for [uinaf](https://uinaf.dev) surfaces.
 
 Guide: [design.uinaf.dev](https://design.uinaf.dev)
 
@@ -55,7 +55,7 @@ backlog, is in [Adopting in a product repo](docs/adoption.md).
 | `dist/lint/`           | The `design-check` binary and its rules           |
 | `assets/icons/`        | The closed icon set: eight 16-grid stroke svgs    |
 | `DESIGN.md`            | Full design spec                                  |
-| `skills/uinaf-design/` | Agent skill                                       |
+| `skills/uinaf-design/` | Repository-local agent guidance source            |
 
 Whole example screens are not in the package; they are documents you read, not
 modules you import. Get them from the guide:

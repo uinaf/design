@@ -1,7 +1,0 @@
-{
-  "name": "uinaf/uinaf-design",
-  "version": "0.1.0",
-  "description": "Build uinaf-branded interfaces from patterns fetched at design.uinaf.dev.",
-  "private": false,
-  "skills": ["SKILL.md"]
-}

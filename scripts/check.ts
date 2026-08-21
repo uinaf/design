@@ -128,7 +128,6 @@ const SHIPPED = {
   dist: "the build output — css, tokens, patterns, the lint cli",
   "DESIGN.md": "the visual and voice spec consumers are pointed at",
   assets: "the closed icon set — the policy says pick from it, so consumers need it",
-  "skills/uinaf-design": "the agent skill (#11)",
 } satisfies Record<string, string>;
 const shipped = Object.keys(SHIPPED).sort();
 const declared = [...(pkg.files ?? [])].sort();
@@ -163,9 +162,8 @@ if (stale.length > 0) {
   );
 }
 
-// The skill ships inside the npm tarball, so a malformed one is publishable.
-// Structural, not a network call: this must hold in CI where tessl is absent.
-// `pnpm run skill:lint` remains the richer, optional gate.
+// Keep the repository-owned skill source structurally valid even though it is
+// not part of the npm package.
 const skillDir = path.join(root, "skills/uinaf-design");
 const skill = fs.readFileSync(path.join(skillDir, "SKILL.md"), "utf8");
 const frontmatter = /^\uFEFF?---\r?\n([\s\S]*?)\r?\n---/.exec(skill)?.[1];
@@ -197,20 +195,6 @@ if (meta["disable-model-invocation"] !== true) {
   fail("SKILL.md frontmatter must set disable-model-invocation: true");
 }
 
-const plugin = JSON.parse(
-  fs.readFileSync(path.join(skillDir, ".tessl-plugin/plugin.json"), "utf8"),
-) as { name?: string; skills?: string[] };
-if (plugin.name !== "uinaf/uinaf-design") {
-  fail(`plugin.json declares name \`${plugin.name}\`, expected \`uinaf/uinaf-design\``);
-}
-if (!plugin.skills?.includes("SKILL.md")) {
-  fail("plugin.json skills must list SKILL.md");
-}
-for (const entry of plugin.skills ?? []) {
-  if (!fs.existsSync(path.join(skillDir, entry))) {
-    fail(`.tessl-plugin/plugin.json lists ${entry}, which does not exist`);
-  }
-}
 const openai = fs.existsSync(path.join(skillDir, "agents/openai.yaml"))
   ? fs.readFileSync(path.join(skillDir, "agents/openai.yaml"), "utf8")
   : fail("skills/uinaf-design/agents/openai.yaml is missing");
