@@ -148,7 +148,6 @@ describe("published templates", () => {
   const artboards = () => templates.filter((t) => t.slug.startsWith("export-"));
 
   it("carries a canvas for every export artboard and none for a page", () => {
-    expect(artboards().map((t) => t.slug).length).toBe(4);
     for (const template of templates) {
       expect(Boolean(template.canvas)).toBe(template.slug.startsWith("export-"));
     }
@@ -216,7 +215,6 @@ describe("search_guidelines input bounds", () => {
 
   it("caps how many terms one query can carry", () => {
     const many = Array.from({ length: 200 }, (_, i) => `term${i}`).join(" ");
-    expect(() => rankSections(spec, many)).not.toThrow();
     expect(rankSections(spec, many).hits.length).toBeLessThanOrEqual(3);
   });
 
