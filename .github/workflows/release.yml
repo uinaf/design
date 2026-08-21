@@ -42,7 +42,7 @@ jobs:
   # above and reaches both of the jobs below through `needs`.
   deploy:
     needs: [verify, scan]
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-2vcpu-ubuntu-2404
     timeout-minutes: 20
     permissions:
       contents: read
@@ -110,7 +110,7 @@ jobs:
 
   release:
     needs: [verify, scan]
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-2vcpu-ubuntu-2404
     timeout-minutes: 15
     environment:
       name: release
