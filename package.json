@@ -86,11 +86,5 @@
   "engines": {
     "node": ">=24.18.0"
   },
-  "packageManager": "pnpm@10.14.0",
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild",
-      "workerd"
-    ]
-  }
+  "packageManager": "pnpm@11.23.0"
 }
