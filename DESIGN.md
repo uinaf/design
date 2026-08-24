@@ -12,7 +12,7 @@ One typeface, near-black, hairline borders, one accent, visible structure.
 | `design.uinaf.dev/pages/<name>.md`     | Six whole reference screens; start from one of these when building a page, not a component    |
 | `design.uinaf.dev/templates/<name>.md` | uinaf.dev's own surfaces, plus fixed-size `export-*` artboards for OG and README images       |
 | Berkeley Mono (CDN only)               | `https://cdn.uinaf.dev/fonts/berkeley-mono/variable/font.css`; never vendored in this package |
-| Brand images (CDN only)                | `https://cdn.uinaf.dev/images/…`; see the `CDN` export, never vendored in this package        |
+| Brand images (CDN only)                | `https://cdn.uinaf.dev/images/…`; see the `CDN` export; never vendored in this package        |
 | `design.uinaf.dev`                     | One card per pattern; the canonical reference for each                                        |
 | `assets/icons/`                        | The closed icon set: eight 16-grid stroke SVGs, `currentColor`                                |
 
