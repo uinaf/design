@@ -16,7 +16,23 @@ const ignorePatterns = [
   "pnpm-lock.yaml",
 ];
 
+export const verifyPureCommands = [
+  "wrangler types",
+  "vp check",
+  "pnpm run guide:sync",
+  "node scripts/check.ts",
+  "vp test run",
+  "pnpm run design:check",
+];
+
 export default defineConfig({
+  run: {
+    tasks: {
+      verifyPure: {
+        command: verifyPureCommands,
+      },
+    },
+  },
   test: {
     include: ["test/**/*.test.ts"],
   },
