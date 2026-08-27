@@ -4,7 +4,7 @@ import path from "node:path";
 /**
  * Generates the agent-facing half of design.uinaf.dev: a markdown twin for every
  * page and the llms.txt index. Everything here is a build
- * output — the Worker serves files and never authors content, so the docs,
+ * output. The Worker serves files and never authors content, so the docs,
  * tokens, and pattern contract cannot drift apart.
  */
 
@@ -43,7 +43,7 @@ const bullets = (heading: string, items?: string[]): string =>
 
 // The "Classes used" line of every twin. Single-quoted values are equally valid
 // HTML, so a double-quote-only read would print an empty list for a file the
-// browser styles fine — and the twin is the only form an agent fetches.
+// browser styles fine, while the twin is the only form an agent fetches.
 const uClasses = (html: string): string[] =>
   [
     ...new Set(
@@ -80,9 +80,9 @@ for (const name of fs.readdirSync(path.join(guide, "preview"))) {
 // agent gets the contract and the markup without parsing a full HTML document.
 for (const p of components.patterns) {
   const markup = `\n\`\`\`html\n${p.markup}\n\`\`\`\n`;
-  // A policy entry names no classes — `icons` restricts an idiom rather than
+  // A policy entry names no classes. `icons` restricts an idiom rather than
   // shipping one. An empty "Classes —" line reads as a build bug, so say it.
-  const classes = p.classes.length > 0 ? p.classes.join(", ") : "none — this entry is policy";
+  const classes = p.classes.length > 0 ? p.classes.join(", ") : "none. this entry is policy";
   write(
     `patterns/${p.slug}.md`,
     `# ${p.name}
@@ -151,7 +151,7 @@ classes above; take any custom value from /tokens.json.
 }
 
 // Templates: whole uinaf.dev surfaces and the export artboards. Same twin shape
-// as a page, plus the canvas size — an artboard is a file to render, not a page
+// as a page, plus the canvas size. An artboard is a file to render, not a page
 // to adapt, and an agent that cannot see that will paste 2560px into a layout.
 const templates = JSON.parse(fs.readFileSync(path.join(guide, "templates.json"), "utf8")) as Array<{
   slug: string;
@@ -174,7 +174,7 @@ for (const template of templates) {
 ${template.description}
 ${
   template.canvas
-    ? `\nFixed export canvas — ${template.canvas.width}×${template.canvas.height}. Render it at that size; do not adapt it into a page.\n`
+    ? `\nFixed export canvas: ${template.canvas.width}×${template.canvas.height}. Render it at that size; do not adapt it into a page.\n`
     : ""
 }
 Rendered template: /templates/${template.slug}.html
@@ -238,9 +238,9 @@ ${previews.map((c) => `- [${c.name}](/preview/${c.slug}.html) — ${c.group}${c.
 @import "@uinaf/design/css";
 \`\`\`
 
-With no bundler, link \`node_modules/@uinaf/design/dist/css/tokens.css\` instead — a browser does not resolve a bare specifier.
+With no bundler, link \`node_modules/@uinaf/design/dist/css/tokens.css\` instead. A browser does not resolve a bare specifier.
 
-Berkeley Mono is licensed and loads from cdn.uinaf.dev — never bundle it.
+Berkeley Mono is licensed and loads from cdn.uinaf.dev. Never bundle it.
 `,
 );
 
@@ -287,7 +287,7 @@ ${components.patterns.map((p) => `- [${p.name}](https://design.uinaf.dev/pattern
 );
 
 // Deploy identity. wrangler ships the Worker and its assets as one version, so
-// an asset that changes with every build is proof the new Worker is live —
+// an asset that changes with every build proves the new Worker is live.
 // components.json is not, because a Worker-only change leaves it byte-identical
 // and the post-deploy smoke would then pass against the deployment it replaced.
 write(".well-known/build", `${process.env.GITHUB_SHA ?? "dev"}\n`);

@@ -24,7 +24,7 @@ describe("markdown negotiation", () => {
   });
 
   it("treats an equally-weighted pair as the server's choice, and picks html", () => {
-    // Order in Accept is not preference — q is. Equal q and equal specificity
+    // Order in Accept does not express preference. q does. Equal q and equal specificity
     // means either is acceptable, so serve the one that keeps browsers working.
     expect(accepts("text/html,text/markdown")).toBe(false);
     expect(accepts("text/markdown,text/html")).toBe(false);
@@ -54,7 +54,7 @@ describe("Accept quality weights", () => {
   });
 
   it("honours q ranking over textual order", () => {
-    // Listed first but weighted lower — order alone would get this wrong.
+    // Listed first but weighted lower. Order alone would get this wrong.
     expect(accepts("text/html;q=0.1, text/markdown;q=1")).toBe(true);
     expect(accepts("text/markdown;q=0.2, text/html;q=0.9")).toBe(false);
   });

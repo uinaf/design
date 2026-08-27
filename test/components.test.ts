@@ -34,9 +34,8 @@ describe("components.json", () => {
   });
 
   it("gives every pattern a use", () => {
-    for (const p of components.patterns) {
-      expect(p.use, `${p.name} missing use`).toBeTruthy();
-    }
+    const missing = components.patterns.filter((pattern) => pattern.use.trim() === "");
+    expect(missing.map((pattern) => pattern.name)).toEqual([]);
   });
 
   it("keeps markup free of unresolved placeholders in attributes", () => {
@@ -48,7 +47,7 @@ describe("components.json", () => {
 
   it("gives copyable markup to every pattern, policy entries included", () => {
     // Full coverage, not "coverage where classes exist". A policy entry owes the
-    // idiom it permits — `icons` names no class but still has to show the
+    // idiom it permits. `icons` names no class but still has to show the
     // inline-SVG shape it restricts agents to, or the ban has no referent.
     const missing = components.patterns.filter((p) => !p.markup).map((p) => p.name);
     expect(missing).toEqual([]);
@@ -65,7 +64,7 @@ describe("components.json", () => {
       new Set(attributeValues(markup, "class").flatMap((v) => v.split(/\s+/).filter(Boolean)));
     const mismatched = components.patterns
       .filter((p) => {
-        if (p.classes.length === 0) return false; // policy entry — nothing to demonstrate
+        if (p.classes.length === 0) return false;
         const used = classTokens(p.markup);
         return !p.classes.some((c) => used.has(c.replace(/^\./, "")));
       })
@@ -114,7 +113,7 @@ describe("every class is demonstrated", () => {
   it("demonstrates every contract class in the pattern that declares it", () => {
     // components.json is what the MCP tools and the skill serve to agents, and
     // they serve it one pattern at a time. Against the whole corpus this passed
-    // while `prose` declared `.u-link-plain` and showed `.u-link` — the class
+    // while `prose` declared `.u-link-plain` and showed `.u-link`. The class
     // was demonstrated, just not anywhere `get_pattern prose` would return it.
     const undemonstrated = components.patterns.flatMap((p) => {
       const own = new Set(classTokens(p.markup));

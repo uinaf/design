@@ -14,7 +14,7 @@ import {
 import type { RuleException } from "./index.ts";
 
 /**
- * `design-check` — the deterministic half of the uinaf design system.
+ * `design-check` is the deterministic half of the uinaf design system.
  *
  * Exit codes: 0 clean, 1 violations. A product repo's CI and agent finish gate
  * key off this, so a non-zero exit must always mean "not done".
@@ -159,7 +159,7 @@ if (flag("ratchet")) {
   const result = compareRatchet(baseline, counts);
   // An error already in the baseline would otherwise pass forever: the ratchet
   // only fails on a rise. Errors are never an acceptable steady state, so they
-  // fail here too — which is what --help has always promised.
+  // fail here too, as --help promises.
   const errored = hasErrors(violations);
   const passed = result.passed && !errored;
   if (flag("json")) {

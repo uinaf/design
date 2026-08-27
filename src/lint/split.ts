@@ -1,6 +1,6 @@
 /**
  * Split on commas that are not inside parentheses or quotes. A lookahead cannot
- * do this correctly once values nest — `linear-gradient(var(--fg), var(--bg))`
+ * do this correctly once values nest. `linear-gradient(var(--fg), var(--bg))`
  * is one value, not two.
  */
 export const splitTopLevel = (value: string, separator = ","): string[] => {

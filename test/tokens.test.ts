@@ -23,7 +23,7 @@ describe("tokens.css", () => {
     // won over the class the markup asked for: `<h1 class="u-display">` rendered
     // at 24px and `<p class="u-meta">` at 14px. Element defaults must go through
     // `:where()` or the whole typography scale is unreachable inside `.uinaf`.
-    // A bare element name is the one thing that starts with a letter here —
+    // A bare element name is the one thing that starts with a letter here.
     // `:where(…)`, `::selection`, `:focus-visible`, and `.uinaf {` all do not.
     const bare = [...css.matchAll(/^\.uinaf [a-z][^,{]*/gm)].map((m) => m[0].trim());
     expect(bare).toEqual([]);

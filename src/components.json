@@ -1,18 +1,18 @@
 {
-  "$schema": "uinaf component contract v1 — one entry per pattern; markup is canonical, rules carry the WHY (agents ignore whats without whys)",
+  "$schema": "uinaf component contract v1. one entry per pattern. markup is canonical, and rules carry the WHY because agents ignore whats without whys",
   "$css": "tokens.css auto-imports components.css; import one file (@uinaf/design/css)",
   "patterns": [
     {
       "name": "banner",
       "classes": [".u-banner"],
-      "use": "one-line site-wide notice pinned above the topbar — a deprecation, a migration date, a status link",
+      "use": "one-line site-wide notice pinned above the topbar for a deprecation, migration date, or status link",
       "markup": "<div class=\"u-banner\">scheduled maintenance 02:00–03:00 UTC <a href=\"#\">status ↗</a></div>",
       "rules": [
         "a single centred line, hairline rule underneath, muted at 11px",
         "sits above the topbar and scrolls away with the page"
       ],
       "never": [
-        "a filled color band, an icon, or a dismiss ✕ — that is a notice, not a banner",
+        "a filled color band, an icon, or a dismiss ✕. that is a notice, not a banner",
         "stacking two of them"
       ]
     },
@@ -39,7 +39,7 @@
       "rules": [
         "hierarchy via fill weight: primary=white fill, secondary=outline, ghost=borderless",
         "default pairing = primary + ghost",
-        "natural width — never stretch full-width, even in auth cards",
+        "natural width. never stretch full-width, even in auth cards",
         "icon-only: .u-btn--icon squares the button; data-tip + aria-label carry the word"
       ],
       "never": ["two fills side by side", "more than one .u-btn--accent per surface (usually zero)"]
@@ -47,7 +47,7 @@
     {
       "name": "card",
       "classes": [".u-card"],
-      "use": "the indexable link primitive — the WHOLE card is one link",
+      "use": "the indexable link primitive. the WHOLE card is one link",
       "markup": "<a class=\"u-card u-link-plain\" href=\"#\">\n  <span class=\"u-label\">healthd</span>\n  <p class=\"u-meta\">small daemon for machine health checks and reporting.</p>\n</a>",
       "rules": ["hover: border brightens + 2px lift; press compresses"],
       "never": ["links inside a card-link"]
@@ -75,16 +75,16 @@
     {
       "name": "choice",
       "classes": [".u-check"],
-      "use": "checkbox and radio — the only styled boolean inputs",
+      "use": "checkbox and radio, the only styled boolean inputs",
       "markup": "<label class=\"u-check\"><input type=\"checkbox\" checked> review draft PRs</label>\n<label class=\"u-check\"><input type=\"radio\" name=\"trigger\" checked> on open + push</label>",
       "rules": [
         "the box carries the accent when checked; the text stays muted",
-        "radio is the same box with a pill radius — no custom glyphs",
+        "radio uses the same box with a pill radius. no custom glyphs",
         "always wrap in the label so the text is a hit target"
       ],
       "never": [
-        "a bare input without .u-check — the native control is not on-brand",
-        "a switch for anything behind a save button — see the switch pattern"
+        "a bare input without .u-check. the native control is not on-brand",
+        "a switch for anything behind a save button. see the switch pattern"
       ]
     },
     {
@@ -92,7 +92,7 @@
       "classes": [".u-code", ".u-pre", ".u-kbd", ".u-code-bleed"],
       "use": "inline chips on raised fill; blocks darker, 13px; .u-code-bleed lets a block run wider than narrow prose",
       "rules": [
-        "never wrap code — scroll it",
+        "never wrap code. scroll it",
         "abbreviations in code stay as written (--pr flags, url vars)"
       ],
       "markup": "<p class=\"u-prose\">run <code class=\"u-code\">attach put ./shot.png</code>, or press <kbd class=\"u-kbd\">⌘k</kbd>.</p>\n<pre class=\"u-pre\">attach login\nattach put ./shot.png --repo owner/repo --pr 12</pre>\n<!-- wide block escaping narrow prose -->\n<pre class=\"u-pre u-code-bleed\">slopshipper runs list --repo uinaf/slopzapper --format table --since 2026-08-01</pre>"
@@ -103,7 +103,7 @@
       "use": "term/description rows for metadata, specs, and settings summaries",
       "markup": "<dl>\n<div class=\"u-def\"><dt class=\"u-def-term\">trigger</dt><dd class=\"u-def-desc\">on open + push</dd></div>\n<div class=\"u-def\"><dt class=\"u-def-term\">max findings</dt><dd class=\"u-def-desc\">10 inline, rest folded</dd></div>\n</dl>",
       "rules": [
-        "hairline rules between rows carry the structure — the term column is fixed at 120px",
+        "hairline rules between rows carry the structure. the term column is fixed at 120px",
         "the term is a micro-label; the description is body text"
       ],
       "never": ["boxing the list or banding alternate rows"]
@@ -113,7 +113,7 @@
       "classes": [".u-diff", ".u-finding"],
       "use": "tinted add/del lines; findings pin to their line as hairline inset panels",
       "rules": ["finding = dot + bold-lead dry sentence with file/line specificity"],
-      "markup": "<div class=\"u-diff\" style=\"max-width:680px\">\n<div class=\"ln\"><span class=\"no\">41</span><span>  const key = await deriveKey(secret);</span></div>\n<div class=\"ln del\"><span class=\"no\">42</span><span>- cache.set(url, key);</span></div>\n<div class=\"ln add\"><span class=\"no\">42</span><span>+ cache.set(url, key, { ttl: 300 });</span></div>\n<div class=\"u-finding\"><span class=\"u-dot u-dot--warn\" style=\"flex:none\"></span><span><strong>unbounded cache before this change.</strong> ttl fixes growth, but eviction on key rotation is still missing — see <code>deriveKey</code>.</span></div>\n<div class=\"ln\"><span class=\"no\">43</span><span>  return key;</span></div>\n</div>"
+      "markup": "<div class=\"u-diff\" style=\"max-width:680px\">\n<div class=\"ln\"><span class=\"no\">41</span><span>  const key = await deriveKey(secret);</span></div>\n<div class=\"ln del\"><span class=\"no\">42</span><span>- cache.set(url, key);</span></div>\n<div class=\"ln add\"><span class=\"no\">42</span><span>+ cache.set(url, key, { ttl: 300 });</span></div>\n<div class=\"u-finding\"><span class=\"u-dot u-dot--warn\" style=\"flex:none\"></span><span><strong>unbounded cache before this change.</strong> ttl fixes growth, but <code>deriveKey</code> still lacks eviction on key rotation.</span></div>\n<div class=\"ln\"><span class=\"no\">43</span><span>  return key;</span></div>\n</div>"
     },
     {
       "name": "empty-state",
@@ -129,7 +129,7 @@
       "use": "micro-label above a 32px control on a slightly raised fill",
       "markup": "<label class=\"u-field\"><span class=\"u-label\">email</span><input class=\"u-input\" type=\"email\"><span class=\"u-help\">we reply within a day.</span></label>\n<label class=\"u-field\"><span class=\"u-label\">region</span><select class=\"u-select\"><option>eu-central</option><option>us-east</option></select></label>\n<label class=\"u-field\"><span class=\"u-label\">message</span><textarea class=\"u-textarea\" placeholder=\"what are you building?\"></textarea></label>\n<label class=\"u-field\"><span class=\"u-label\">api key</span><input class=\"u-input\" aria-invalid=\"true\" value=\"uinaf_sk_…9f2\"><span class=\"u-help u-help--error\">key expired 2026-07-30. rotate it.</span></label>",
       "rules": [
-        "focus brightens the border — no rings, no glow; caret is accent",
+        "focus brightens the border. no rings or glow. the caret is accent",
         "errors: muted red border + one dry sentence"
       ],
       "never": ["error banners", "floating labels"]
@@ -151,21 +151,21 @@
       "use": "optional kicker → 32px title ≤22ch → one 14px sub ≤46ch → primary+ghost → optional stat strip",
       "rules": ["the kicker must ADD information (category, status, live stat)"],
       "never": [
-        "a kicker that repeats the product name, studio name, or anything in the nav — `UINAF · REVIEW BOT` under a slopzapper nav is the canonical failure; no kicker beats a redundant one"
+        "a kicker that repeats the product name, studio name, or anything in the nav. `UINAF · REVIEW BOT` under a slopzapper nav is the canonical failure. no kicker beats a redundant one"
       ],
       "markup": "<div class=\"u-hero\">\n<span class=\"u-label\">AI code review · runs the code</span>\n<h1 class=\"u-hero-title\">PR review that actually runs the PR.</h1>\n<p class=\"u-hero-sub\">every PR gets cloned into a cloudflare sandbox, built, exercised, and reviewed. findings only, no vibes.</p>\n<div class=\"u-hero-actions\">\n<a class=\"u-btn u-btn--primary\" href=\"#\">add to github ↗</a>\n<a class=\"u-btn u-btn--ghost\" href=\"#\">read the docs</a>\n</div>\n</div>"
     },
     {
       "name": "icons",
       "classes": [],
-      "use": "glyphs first: ↗ · ··· ← → and .u-dot cover most needs. when a pattern genuinely requires icons, pick from the committed set (assets/icons/ — search, copy, download, refresh, file, folder, branch, warning); extend it in the set's idiom: 16-grid stroke SVG, stroke 1.5, square caps, integer/half-px coordinates, currentColor, no fills",
+      "use": "glyphs first. ↗ · ··· ← → and .u-dot cover most needs. when a pattern requires icons, pick from the committed set in assets/icons/: search, copy, download, refresh, file, folder, branch, warning. extend it in the set's idiom with 16-grid stroke SVG, stroke 1.5, square caps, integer/half-px coordinates, currentColor, and no fills",
       "markup": "<svg viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\"><circle cx=\"7\" cy=\"7\" r=\"4.5\"/><path d=\"M10.5 10.5L14 14\"/></svg>",
       "rules": [
-        "the set is original work, licensed with the repo — no third-party attribution needed",
-        "never import an icon library and never paste from third-party sets (lucide/feather/heroicons/geist) — extend the committed set instead, in its idiom",
+        "the set is original work licensed with the repo. no third-party attribution needed",
+        "never import an icon library or paste from third-party sets (lucide/feather/heroicons/geist). extend the committed set in its idiom",
         "sizes, stroke scaling inversely: 16/1.5 default · 12/1.75 in tags+meta rows · 20/1.25 in large buttons and empty states",
         "no icon beside a word that already says it",
-        "a new icon lands as a PR to assets/icons/ — agents pick from the set, never invent inline"
+        "a new icon lands as a PR to assets/icons/. agents pick from the set and never invent inline"
       ],
       "never": [
         "decorative icons on buttons/nav that words already cover",
@@ -190,15 +190,15 @@
       "name": "log",
       "classes": [".u-log"],
       "use": "faint timestamps, leveled rows",
-      "rules": ["the level word takes the color — never the message"],
-      "markup": "<pre class=\"u-log\" style=\"max-width:680px\"><span class=\"row\"><span class=\"t\">14:02:11.402</span><span class=\"lv\">info</span><span class=\"msg\">sandbox warm · pool=3 t=210ms</span></span>\n<span class=\"row\"><span class=\"t\">14:02:11.688</span><span class=\"lv\">info</span><span class=\"msg\">clone uinaf/slopzapper#512 @ 9c41f2e</span></span>\n<span class=\"row\" data-warn><span class=\"t\">14:02:14.010</span><span class=\"lv\">warn</span><span class=\"msg\">github rate remaining=41 · backing off 2s</span></span>\n<span class=\"row\"><span class=\"t\">14:02:19.334</span><span class=\"lv\">info</span><span class=\"msg\">build ok · 3.2s</span></span>\n<span class=\"row\" data-err><span class=\"t\">14:02:24.902</span><span class=\"lv\">error</span><span class=\"msg\">test FAIL webhook_dedupe_test.go:88 — retry scheduled</span></span></pre>"
+      "rules": ["the level word takes the color. never the message"],
+      "markup": "<pre class=\"u-log\" style=\"max-width:680px\"><span class=\"row\"><span class=\"t\">14:02:11.402</span><span class=\"lv\">info</span><span class=\"msg\">sandbox warm · pool=3 t=210ms</span></span>\n<span class=\"row\"><span class=\"t\">14:02:11.688</span><span class=\"lv\">info</span><span class=\"msg\">clone uinaf/slopzapper#512 @ 9c41f2e</span></span>\n<span class=\"row\" data-warn><span class=\"t\">14:02:14.010</span><span class=\"lv\">warn</span><span class=\"msg\">github rate remaining=41 · backing off 2s</span></span>\n<span class=\"row\"><span class=\"t\">14:02:19.334</span><span class=\"lv\">info</span><span class=\"msg\">build ok · 3.2s</span></span>\n<span class=\"row\" data-err><span class=\"t\">14:02:24.902</span><span class=\"lv\">error</span><span class=\"msg\">test FAIL webhook_dedupe_test.go:88 · retry scheduled</span></span></pre>"
     },
     {
       "name": "menu",
       "classes": [".u-menu", ".u-menu-list"],
       "use": "··· opens a hairline list",
       "rules": [
-        "words not icons — words are shorter",
+        "use words, not icons. words are shorter",
         "one danger item max, ruled off with <hr>",
         "toggle via hidden attribute (css ships [hidden]{display:none})"
       ],
@@ -210,7 +210,7 @@
       "use": "THE hierarchy device: kicks off sections, heads tables, labels fields, captions stats",
       "markup": "<span class=\"u-label\">recent reviews</span>\n<span class=\"u-label u-label--accent\">new</span>\n<span class=\"u-meta\">128 runs</span>",
       "rules": [
-        "11px uppercase tracked dim — the only uppercase besides abbreviations",
+        "11px uppercase, tracked, and dim. the only uppercase besides abbreviations",
         "fix weak hierarchy with a micro-label + space, never with size"
       ],
       "never": ["accent color except one active marker per view"]
@@ -220,9 +220,9 @@
       "classes": [".u-overlay", ".u-modal", ".u-modal-title", ".u-modal-body", ".u-modal-actions"],
       "use": "confirm destructive actions",
       "rules": [
-        "title / body / primary+ghost pair; cancel is a button — no ✕",
+        "title / body / primary+ghost pair. cancel is a button. no ✕",
         "overlay click + esc close; toggle via hidden attribute",
-        "the overlay carries `hidden`; the app toggles it — a copied modal must not cover the page on load"
+        "the overlay carries `hidden`, and the app toggles it. a copied modal must not cover the page on load"
       ],
       "markup": "<div class=\"u-overlay\" hidden>\n<div class=\"u-modal u-ticks\">\n<h2 class=\"u-modal-title\">uninstall slopzapper?</h2>\n<p class=\"u-modal-body\">removes the app from all 12 repos. runs are kept 30 days, then deleted. reinstalling restores nothing.</p>\n<div class=\"u-modal-actions\"><button class=\"u-btn u-btn--ghost\" id=\"cancel\" type=\"button\">cancel</button><button class=\"u-btn u-btn--primary\" type=\"button\">uninstall</button></div>\n</div>\n</div>"
     },
@@ -230,7 +230,7 @@
       "name": "notice",
       "classes": [".u-notice"],
       "use": "the allowed non-banner: hairline box, dot carries the color",
-      "rules": ["text stays muted — the dot is the signal"],
+      "rules": ["text stays muted. the dot is the signal"],
       "markup": "<div class=\"u-notice\"><span class=\"u-dot u-dot--ok\" style=\"flex:none\"></span><span>webhook verified. reviews start on the next PR.</span></div>"
     },
     {
@@ -253,7 +253,7 @@
     {
       "name": "panel-grid",
       "classes": [".u-panel-grid"],
-      "use": "panels sharing single hairlines — stat strips, feature grids, kanban",
+      "use": "panels sharing single hairlines for stat strips, feature grids, and kanban",
       "markup": "<div class=\"u-panel-grid\" style=\"grid-template-columns:repeat(3,1fr)\">\n<div class=\"u-stat\"><span class=\"u-label\">reviews today</span><span class=\"u-stat-value\">128</span></div>\n<div class=\"u-stat\"><span class=\"u-label\">median turnaround</span><span class=\"u-stat-value\">3m 12s</span></div>\n<div class=\"u-stat\"><span class=\"u-label\">queue</span><span class=\"u-stat-value\">7</span><span class=\"u-stat-note\">PRs waiting</span></div>\n</div>",
       "rules": ["1px gap over border color = shared hairlines, no double borders"]
     },
@@ -269,7 +269,7 @@
       "classes": [".u-progress"],
       "use": "segment ticks + `2/5` count",
       "rules": ["filled=neutral, accent=the segment running NOW"],
-      "never": ["bars, percentages, spinners — progress is countable or it isn't shown"],
+      "never": ["bars, percentages, or spinners. progress is countable or it isn't shown"],
       "markup": "<span class=\"u-progress\"><i data-on></i><i data-on></i><i data-live></i><i></i><i></i><span>2/5 units</span></span>"
     },
     {
@@ -292,7 +292,7 @@
     {
       "name": "shell",
       "classes": [".u-shell-narrow", ".u-shell-base", ".u-shell-wide"],
-      "use": "narrow 40rem (default — prose, home, detail) · base 48rem (data-dense: tables, dashboards) · wide 72rem (rare) · one product = one width",
+      "use": "narrow 40rem (default for prose, home, and detail) · base 48rem (data-dense: tables and dashboards) · wide 72rem (rare) · one product = one width",
       "rules": [
         "if unsure, narrow",
         "never widen a shell to fit one element",
@@ -305,7 +305,7 @@
       "classes": [".u-header", ".u-header-mark", ".u-header-name", ".u-header-tagline", ".u-nav"],
       "use": "uinaf.dev family sites ONLY (stacked mark → tagline → nav)",
       "rules": ["the page title outranks the chrome"],
-      "never": ["on product pages — that's what the topbar is for"],
+      "never": ["on product pages. that's what the topbar is for"],
       "markup": "<div class=\"u-header\" style=\"margin-bottom:0\">\n<span class=\"u-header-mark\"><img src=\"https://cdn.uinaf.dev/images/uinaf-computer.png\" alt=\"\"><span class=\"u-header-name\">uinaf</span></span>\n<p class=\"u-header-tagline\">we bet you've seen us before</p>\n<nav class=\"u-nav\"><a class=\"u-link-plain\" href=\"#\">blog</a><span class=\"u-sep\">·</span><a class=\"u-link-plain\" href=\"#\">projects</a><span class=\"u-sep\">·</span><a class=\"u-link-plain\" href=\"#\">status</a></nav>\n</div>"
     },
     {
@@ -324,7 +324,7 @@
       "classes": [".u-stat", ".u-stat-value", ".u-stat-note"],
       "use": "label / value / note; lives in panels or panel grids",
       "markup": "<div class=\"u-stat\"><span class=\"u-label\">queue</span><span class=\"u-stat-value\">7</span><span class=\"u-stat-note\">PRs waiting</span></div>",
-      "rules": ["value is 24px — same step as page titles", "a sparkline may replace the note"]
+      "rules": ["value is 24px, the same step as page titles", "a sparkline may replace the note"]
     },
     {
       "name": "switch",
@@ -362,7 +362,7 @@
       "use": "status = a small muted dot + a lowercase word",
       "markup": "<span class=\"u-tag\"><span class=\"u-dot u-dot--ok\"></span>pass</span>\n<span class=\"u-tag\"><span class=\"u-dot u-dot--warn\"></span>flaky</span>\n<span class=\"u-tag\"><span class=\"u-dot u-dot--error\"></span>fail</span>\n<span class=\"u-tag\"><span class=\"u-dot u-dot--live\"></span>running</span>",
       "rules": [
-        "tags stay bordered — a filled tag would outrank the buttons",
+        "tags stay bordered. a filled tag would outrank the buttons",
         "--live glows accent: reserve for genuinely live things"
       ],
       "never": ["neon status", "filled banners"]
@@ -377,11 +377,11 @@
     {
       "name": "timeline",
       "classes": [".u-timeline", ".u-timeline-row"],
-      "use": "time-ordered events — a run log, an audit trail, a changelog",
-      "markup": "<div class=\"u-timeline\">\n<div class=\"u-timeline-row\" data-live><span class=\"u-meta\">now</span><span>cloning uinaf/slopzapper</span></div>\n<div class=\"u-timeline-row\"><span class=\"u-meta\">12m</span><span>review posted — 7 findings</span></div>\n</div>",
+      "use": "time-ordered events for a run log, audit trail, or changelog",
+      "markup": "<div class=\"u-timeline\">\n<div class=\"u-timeline-row\" data-live><span class=\"u-meta\">now</span><span>cloning uinaf/slopzapper</span></div>\n<div class=\"u-timeline-row\"><span class=\"u-meta\">12m</span><span>review posted · 7 findings</span></div>\n</div>",
       "rules": [
         "a single hairline spine on the left, timestamps in a fixed 72px column",
-        "data-live turns the timestamp accent — at most one row"
+        "data-live turns the timestamp accent. at most one row"
       ],
       "never": ["dots or icons on the spine, or a second accent row"]
     },
@@ -396,7 +396,7 @@
       "name": "toolbar",
       "classes": [".u-toolbar"],
       "use": "above tables: search + filter + right-aligned count",
-      "rules": ["at most two filters — a third means the table needs a redesign"],
+      "rules": ["at most two filters. a third means the table needs a redesign"],
       "markup": "<div class=\"u-toolbar\">\n<input class=\"u-input\" type=\"search\" placeholder=\"search runs…\">\n<select class=\"u-select\"><option>all repos</option><option>uinaf/slopzapper</option><option>uinaf/healthd</option></select>\n<span class=\"count\">128 runs</span>\n</div>"
     },
     {
@@ -423,7 +423,7 @@
       "markup": "<header class=\"u-topbar\"><div class=\"u-shell-base u-topbar-row\"><a class=\"u-topbar-mark\" href=\"#\"><img src=\"https://cdn.uinaf.dev/images/webp/uinaf-computer-240w.webp\" alt=\"\">slopzapper</a><nav class=\"u-topbar-nav\"><a aria-current=\"page\" href=\"#\">overview</a><a href=\"#\">reviews</a><a href=\"#\">repos</a><a href=\"#\">settings</a></nav><div class=\"u-topbar-actions\"><a class=\"u-btn u-btn--sm u-btn--primary\" href=\"#\">new review</a></div></div></header>",
       "rules": [
         "ONE 56px row: 20px framed mark + name left, plain links right (current brightest), max one small button",
-        "the row and the content below share the same shell class — one gutter"
+        "the row and the content below share the same shell class and gutter"
       ],
       "never": ["two stacked rows (the classic agent failure)", "sticky, backgrounds, shadows"]
     },
@@ -432,9 +432,9 @@
       "classes": [".u-version"],
       "use": "a small inert version or commit chip beside a title",
       "markup": "<span class=\"u-version\">v1.5.2</span>",
-      "rules": ["inert by default — hairline border, subtle text, 10px"],
+      "rules": ["inert by default with a hairline border, subtle text, and 10px type"],
       "never": ["using it as a status pill, or coloring it"]
     }
   ],
-  "$markupCoverage": "42 patterns; every pattern that names classes carries canonical markup with no placeholders and type=\"button\" on every button. icons declares no classes — its markup shows the inline-SVG idiom."
+  "$markupCoverage": "42 patterns. every pattern that names classes carries canonical markup with no placeholders and type=\"button\" on every button. icons declares no classes, so its markup shows the inline-SVG idiom."
 }

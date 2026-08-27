@@ -28,7 +28,7 @@ const SPACED_PROPERTY_SPLIT = /\s+/;
 
 /**
  * Two regimes, not one grid. Layout spacing sits on the published scale; micro
- * spacing — under 16px, between elements inside one row or control — has a legal
+ * spacing, under 16px between elements inside one row or control, has a legal
  * 2px resolution, because 2/6/10/14 are deliberate optical half-steps with their
  * own tokens. A flat `size % 4` test flagged all four of them as drift.
  *
@@ -40,13 +40,13 @@ const LAYOUT_STEPS = [4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 48, 56, 64, 72, 80, 
 const MICRO_STEPS = [2, 4, 6, 8, 10, 12, 14];
 const MICRO_CEILING = 16;
 
-/** Ties round down — denser is on-brand. Ascending steps plus a strict `<` gives that. */
+/** Ties round down because denser is on-brand. Ascending steps plus a strict `<` gives that. */
 const nearestStep = (size: number, steps: readonly number[]): number =>
   steps.reduce((best, step) => (Math.abs(step - size) < Math.abs(best - size) ? step : best));
 
 /**
  * The token name is the value: 4px is `--sp-1`, and a half-step writes its
- * fraction with a dash — 6px is `--sp-1-5`. Derived rather than tabulated, so a
+ * fraction with a dash. 6px is `--sp-1-5`. Derived rather than tabulated, so a
  * new step cannot arrive with no name or the wrong one.
  */
 const spacingToken = (px: number): string => `--sp-${String(px / 4).replace(".", "-")}`;
@@ -57,7 +57,7 @@ const isToken = (value: string): boolean => /var\(\s*--/.test(value);
  * Strip whole `var(--x, fallback)` references, leaving the part of the value
  * that is not token-driven. A fallback inside var() is a safety net for when
  * the stylesheet has not loaded and stays allowed; a raw color sitting *beside*
- * a token — `linear-gradient(var(--accent), #ff0000)` — is a real violation and
+ * a token, such as `linear-gradient(var(--accent), #ff0000)`, is a real violation and
  * survives the strip.
  */
 const withoutTokenReferences = (value: string): string => {
@@ -139,7 +139,7 @@ const withoutLiterals = (value: string): string =>
 
 /**
  * `color-mix()` composes colours it is given, so it is exactly as raw as its
- * arguments — `color-mix(in srgb, var(--neutral-900) 40%, transparent)` is the
+ * arguments. `color-mix(in srgb, var(--neutral-900) 40%, transparent)` is the
  * supported way to write a translucent token, and flagging it would leave no
  * compliant spelling at all. Judged by recursion into the body, so a literal
  * mixed in still fails. `color()` is not here: it names an absolute colour in a
@@ -231,7 +231,7 @@ export const checkCss = (css: string, file: string): Violation[] => {
         "no-raw-color",
         "error",
         `raw color ${offending.join(", ")} in \`${prop}: ${value}\``,
-        "use a token: var(--fg), var(--bg), var(--border), var(--accent) — see /tokens.json",
+        "use a token: var(--fg), var(--bg), var(--border), or var(--accent). See /tokens.json.",
       );
     }
 
@@ -334,7 +334,7 @@ export const checkCss = (css: string, file: string): Violation[] => {
           "spacing-grid",
           "warn",
           `${prop}: ${part} is not a ${micro ? "micro" : "layout"} step`,
-          `use var(${spacingToken(nearest)}) — ${nearest}px${
+          `use var(${spacingToken(nearest)}), the ${nearest}px step${
             micro
               ? ". Micro spacing (under 16px, inside one row or control) has a 2px resolution"
               : ". Layout spacing sits on the published scale"

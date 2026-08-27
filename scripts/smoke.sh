@@ -61,7 +61,7 @@ cleanup() {
   stop_group "$server_pid" KILL
   wait "$server_pid" 2>/dev/null || true
   # A warning here would be swallowed: an EXIT trap keeps the pre-trap status, so
-  # a passing contract run would still exit 0 with a listener left behind — the
+  # a passing contract run would still exit 0 with a listener left behind. The
   # next run then finds the port busy and blames the wrong thing.
   if port_bound; then
     echo "smoke: port $port is still bound after teardown; the worker escaped its process group." >&2

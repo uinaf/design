@@ -1,6 +1,6 @@
 /**
  * Proves every url in the `CDN` export resolves. The assets live in uinaf/infra,
- * so this repo can go green while a declared url is still a 404 — run it before
+ * so this repo can go green while a declared url is still a 404. Run it before
  * a deploy that introduces one.
  *
  * Outside `verify` on purpose: it needs the network, and CI must not go red

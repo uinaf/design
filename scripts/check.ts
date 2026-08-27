@@ -11,12 +11,12 @@ const fail = (message: string): never => {
 
 // Everything below gates `dist/`, so this script has to run after the build,
 // never before it. `verify` had the two the other way round and only passed
-// because `dist/` was committed — the assertions ran against the previous
+// because `dist/` was committed. The assertions ran against the previous
 // build's artifacts while the current source went unchecked. Naming the
 // precondition here is what makes that ordering a failure instead of a bare
 // ENOENT stack that reads like a broken checkout.
 if (!fs.existsSync(path.join(root, "dist/css/tokens.css"))) {
-  fail("dist/ is missing — run `pnpm run build` first. check.ts gates the build output.");
+  fail("dist/ is missing. Run `pnpm run build` first. check.ts gates the build output.");
 }
 
 for (const name of ["tokens.css", "components.css"]) {
@@ -31,7 +31,7 @@ if (!css.includes('@import url("https://cdn.uinaf.dev/fonts/berkeley-mono')) {
   fail("tokens.css must @import CDN Berkeley Mono");
 }
 if (!css.includes('@import "./components.css"')) {
-  fail("tokens.css must @import ./components.css — consumers import one file");
+  fail("tokens.css must @import ./components.css. Consumers import one file.");
 }
 // url() must stay off this one: vite resolves a url()-wrapped relative import
 // against the consumer's own entry stylesheet, so the sibling sheet 404s in
@@ -66,14 +66,14 @@ for (const [name, value] of grouped) {
 const templatesDir = path.join(root, "templates");
 const templates = fs.readdirSync(templatesDir).filter((f) => f.endsWith(".html"));
 if (templates.length === 0) {
-  fail("templates/ has no .html files — templates are standalone HTML");
+  fail("templates/ has no .html files. Templates are standalone HTML.");
 }
 for (const file of templates) {
   const source = fs.readFileSync(path.join(templatesDir, file), "utf8");
   // Machinery from the design tool needs a runtime the package does not carry.
   for (const banned of ["<x-dc", "<helmet", "ds-base.js", "support.js", "_ds_bundle"]) {
     if (source.includes(banned)) {
-      fail(`templates/${file} contains ${banned} — templates are standalone HTML (#31)`);
+      fail(`templates/${file} contains ${banned}. Templates are standalone HTML (#31).`);
     }
   }
 }
@@ -91,7 +91,7 @@ const REFERENCE_PAGES = [
 for (const name of REFERENCE_PAGES) {
   const source = path.join(root, "pages", `${name}.html`);
   if (!fs.existsSync(source)) {
-    fail(`pages/${name}.html is missing — get_page and the skill both name it`);
+    fail(`pages/${name}.html is missing. get_page and the skill both name it.`);
   }
   if (!/@page\s+name="[^"]+"\s+description="[^"]*"/.test(fs.readFileSync(source, "utf8"))) {
     fail(`pages/${name}.html needs an @page name="…" description="…" marker`);
@@ -118,16 +118,16 @@ if ((pkg.files ?? []).some((f) => f === "fonts" || f.includes("font"))) {
 // deliberate edit here too, with a reason.
 //
 // `preview/`, `pages/`, and `templates/` are deliberately absent. They are whole
-// HTML documents reached by url — every doc, the skill, and both MCP tools name
+// HTML documents reached by url. Every doc, the skill, and both MCP tools name
 // `design.uinaf.dev/...`, and no `exports` entry maps them, so a consumer
 // subpath import raises ERR_PACKAGE_PATH_NOT_EXPORTED. Shipping them added 145 kB
 // of unreachable copy, `templates/` being uinaf.dev's own site and brand
 // artboards. An entry here is what makes a file downloadable, so the way to serve
 // a surface is to deploy the guide, not to widen this.
 const SHIPPED = {
-  dist: "the build output — css, tokens, patterns, the lint cli",
+  dist: "the build output with CSS, tokens, patterns, and the lint CLI",
   "DESIGN.md": "the visual and voice spec consumers are pointed at",
-  assets: "the closed icon set — the policy says pick from it, so consumers need it",
+  assets: "the closed icon set. the policy tells consumers to pick from it",
 } satisfies Record<string, string>;
 const shipped = Object.keys(SHIPPED).sort();
 const declared = [...(pkg.files ?? [])].sort();
@@ -145,7 +145,7 @@ for (const entry of shipped) {
 // AGENTS.md is the first thing an agent reads and the last thing any gate
 // checks. A command named there that no longer exists sends every agent down a
 // dead path, and renaming a script is a one-line edit no test can see. Only the
-// repo-facing docs — README.md describes the consumer's project, not this one.
+// repo-facing docs. README.md describes the consumer's project, not this one.
 const scripts = pkg.scripts ?? {};
 const stale = ["AGENTS.md", "CONTRIBUTING.md", "docs/releasing.md"].flatMap((doc) =>
   // The whole token, then trim the markdown and sentence punctuation around it.
@@ -200,7 +200,7 @@ const openai = fs.existsSync(path.join(skillDir, "agents/openai.yaml"))
   : fail("skills/uinaf-design/agents/openai.yaml is missing");
 // Parsed, not pattern-matched. Regex checks cannot tell a real key from the
 // same words inside a `default_prompt: |` block scalar, and cannot see that the
-// document is malformed at all — this file ships to consumers and drives the
+// document is malformed at all. This file ships to consumers and drives the
 // Codex picker, so it has to actually be valid YAML.
 type OpenAiConfig = {
   interface?: { display_name?: unknown; short_description?: unknown; default_prompt?: unknown };

@@ -3,7 +3,7 @@
  * discovery, every tool, every instructive-error path, and the machine-layer
  * routes those tools wrap. Config assertions and unit tests cannot catch a
  * handler/API incompatibility, a renamed artifact, or a route that 404s while
- * its artifact is present — only real round trips against the asset binding can.
+ * its artifact is present. Only real round trips against the asset binding can.
  *
  *   node scripts/smoke-mcp.ts [baseUrl]     # default http://localhost:8788
  */
@@ -24,7 +24,7 @@ let negotiatedVersion: string | undefined;
 
 // Every request needs its own bound. smoke.sh times out the boot and then waits
 // on this process, and main.yml runs it against production with only the job
-// timeout behind it — so a fetch that never settles hangs both, and no
+// timeout behind it. A fetch that never settles hangs both, and no
 // SMOKE_TIMEOUT covers it.
 const REQUEST_TIMEOUT_MS = Number(process.env.SMOKE_REQUEST_TIMEOUT_MS ?? 15_000);
 
@@ -35,7 +35,7 @@ const post = (body: unknown): Promise<Response> =>
     headers: {
       "content-type": "application/json",
       accept: "application/json, text/event-stream",
-      // Omitted on initialize — there is no negotiated version yet, and sending
+      // Omitted on initialize because there is no negotiated version yet. Sending
       // a proposed one there is rejected outright.
       ...(negotiatedVersion ? { "mcp-protocol-version": negotiatedVersion } : {}),
     },
@@ -167,7 +167,7 @@ check(
 );
 
 // Every page, because a page that 404s from the asset binding is invisible to
-// unit tests — the tool would still answer, just with a broken artifact.
+// unit tests. The tool would still answer with a broken artifact.
 for (const name of ["product-landing", "dashboard", "login", "settings", "docs", "device-auth"]) {
   const page = await call("get_page", { name });
   check(

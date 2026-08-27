@@ -2,15 +2,15 @@ name: Release
 
 # The file name is load-bearing. npm Trusted Publishing binds this package's
 # OIDC identity to `.github/workflows/release.yml` plus the `release`
-# environment — confirmed against the provenance attestation of a published
+# environment. This was confirmed against the provenance attestation of a published
 # version, not only against docs. Rename or move this file and `npm publish`
 # fails with an identity mismatch until someone updates the trusted publisher
 # on npmjs.com. So the publish job stays here, and everything else that runs on
 # a push to main came to it.
 #
 # `deploy` and `release` are siblings, both on `needs: [verify, scan]`.
-# Never make deploy `needs: [release]` — design.uinaf.dev must keep shipping
-# when a publish fails.
+# Never make deploy `needs: [release]`. design.uinaf.dev must keep shipping
+# when publication fails.
 
 on:
   push:
@@ -69,7 +69,7 @@ jobs:
         run: vp run deploy
 
       # verify proves the contract against a local worker. Only this proves it
-      # against what design.uinaf.dev actually serves — the custom domain, the
+      # against what design.uinaf.dev actually serves: the custom domain, the
       # real asset binding, and the build that just shipped.
       - name: Smoke the deployed contract
         env:
@@ -78,7 +78,7 @@ jobs:
           # The contract alone would pass against the deployment this job
           # replaced, so during propagation a green result would prove nothing.
           # machine-layer.ts stamps this commit into /.well-known/build, and
-          # wrangler ships the Worker and its assets as one version — so seeing
+          # wrangler ships the Worker and its assets as one version, so seeing
           # this SHA is proof the new Worker is the one answering.
           # Two waits, budgeted separately. Counting attempts across both put a
           # good deploy in the red: the probe returns in milliseconds while

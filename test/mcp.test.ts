@@ -184,8 +184,8 @@ describe("verify order", () => {
 
   it("builds the guide before the tests that read it", () => {
     // The page and template suites above assert on published output. `guide/` is
-    // gitignored, so on a cold checkout — every CI run — tests placed before
-    // `guide:sync` fail on a missing file rather than on the contract.
+    // gitignored, so tests placed before `guide:sync` fail on every cold checkout
+    // due to a missing file rather than the contract.
     const { verify } = scripts;
     expect(verify).toContain("guide:sync");
     expect(verify.indexOf("guide:sync")).toBeLessThan(verify.indexOf("vp test run"));

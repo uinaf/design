@@ -18,7 +18,7 @@ const previewSrc = path.join(root, "preview");
 const previewDest = path.join(guide, "preview");
 
 fs.mkdirSync(guide, { recursive: true });
-// tokens.css @imports ./components.css — both must land side by side.
+// tokens.css imports components.css, so both must land side by side.
 fs.copyFileSync(path.join(root, "dist/css/tokens.css"), path.join(guide, "tokens.css"));
 fs.copyFileSync(path.join(root, "dist/css/components.css"), path.join(guide, "components.css"));
 fs.copyFileSync(path.join(root, "dist/components.json"), path.join(guide, "components.json"));
@@ -120,8 +120,8 @@ for (const name of fs.readdirSync(previewDest).sort()) {
 fs.writeFileSync(path.join(guide, "previews.json"), `${JSON.stringify(catalog, null, 2)}\n`);
 
 /**
- * Reference pages are whole screens, not cards, so they get no guide chrome —
- * a second bar above a page that already owns a topbar would break the one-row
+ * Reference pages are whole screens, not cards, so they get no guide chrome.
+ * A second bar above a page that already owns a topbar would break the one-row
  * rule the pages exist to demonstrate. The marker comment is authoring
  * metadata and is stripped rather than published.
  */
@@ -151,7 +151,7 @@ fs.writeFileSync(path.join(guide, "pages.json"), `${JSON.stringify(pages, null, 
  * Templates are whole surfaces too, so they publish like pages: no guide chrome,
  * marker stripped, `@template` fails closed.
  *
- * Four of them are export artboards — fixed canvases up to 2560px wide, sized
+ * Four of them are export artboards: fixed canvases up to 2560px wide, sized
  * for the file they become rather than for a viewport. Published untouched they
  * would be a page you scroll sideways to read, so the artboard is zoomed to fit.
  * `zoom` and not `transform`, because zoom reflows: a scaled canvas leaves no

@@ -29,7 +29,7 @@ export type CheckOptions = {
   ignore?: string[];
   /**
    * Named rules that do not apply to a class of file. Unlike `ignore`, the file
-   * is still linted by every other rule — an export artboard obeys no viewport
+   * is still linted by every other rule. An export artboard obeys no viewport
    * rule, but it still may not carry an emoji or a raw hex.
    */
   except?: RuleException[];
@@ -57,7 +57,7 @@ setJsxStyleChecker((property, value, classes) => {
  * consumer imports. Derived, never hand-listed: a second copy of the namespace
  * would drift, and a drifted list reports live classes as undefined.
  *
- * Two layouts, because this module runs from both — `src/lint/` beside the CSS
+ * Two layouts, because this module runs from both: `src/lint/` beside the CSS
  * source, and `dist/lint/` beside the built pair.
  */
 const STYLESHEETS = [
@@ -112,7 +112,7 @@ export const collectFiles = (
       // Skipped directories apply to explicit file arguments too. A caller
       // passing a glob or a `git ls-files` result should never end up linting
       // its own dependencies.
-      // Inside the project, only segments below its root count — a repo living
+      // Inside the project, only segments below its root count. A repo living
       // under a directory called `dist` must not have every file suppressed.
       // Outside it, fall back to the whole path and stay conservative.
       const within = path.relative(relativeTo, target);
@@ -147,7 +147,7 @@ export const collectFiles = (
  * an emoji on purpose, and `no-emoji` is an error.
  *
  * The rule name is required. A blanket form muted every rule on the line, which
- * turns one declared exception into an undeclared hole — and the next violation
+ * turns one declared exception into an undeclared hole, and the next violation
  * on that line would pass silently.
  */
 const DISABLE_NEXT_LINE =
@@ -169,7 +169,7 @@ const applySuppressions = (source: string, violations: Violation[]): Violation[]
 
 /**
  * Files this branch touched: committed changes against the base, uncommitted
- * edits to tracked files, and untracked new files. All three matter — a Stop
+ * edits to tracked files, and untracked new files. All three matter. A Stop
  * hook runs mid-work, so the most common case is an edit that is not committed
  * yet, and a brand new component is untracked.
  *
@@ -310,7 +310,7 @@ export const check = (options: CheckOptions = {}): Violation[] => {
       (entry) => violation.file.includes(entry.path) && entry.rules.includes(violation.rule),
     );
   const files = collectFiles(roots, options.ignore ?? [], options.relativeTo);
-  // A project may extend the namespace — `.u-row` overridden, `.u-hero` added.
+  // A project may extend the namespace: `.u-row` overridden, `.u-hero` added.
   // `unknown-class` judges against the union, so a class the project defines
   // itself counts as defined and only a dangling reference is left over.
   //

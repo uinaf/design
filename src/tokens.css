@@ -1,4 +1,4 @@
-/* uinaf — colors & type · v2 "neat pass"
+/* uinaf: colors & type · v2 "neat pass"
    One typeface (Berkeley Mono), near-black canvas, hairline structure. */
 @import url("https://cdn.uinaf.dev/fonts/berkeley-mono/variable/font.css");
 /* Not `url("./components.css")`: vite resolves a url()-wrapped relative import
@@ -12,21 +12,21 @@
    ruled tables, real button/input polish, more air inside containers.
    ===================================================================== */
 
-/* Fonts: Berkeley Mono is licensed — repos load it from the CDN, never bundle it:
+/* Fonts: Berkeley Mono is licensed: repos load it from the CDN, never bundle it:
    <link rel="stylesheet" href="https://cdn.uinaf.dev/fonts/berkeley-mono/variable/font.css">
    (@font-face lives in that file; this stylesheet only references var(--font-mono).) */
 
 :root {
-  /* ---------- Type families — mono is the only face ---------- */
+  /* ---------- Type families: mono is the only face ---------- */
   --font-mono:
     "Berkeley Mono", ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
-  --font-sans: var(--font-mono); /* alias — there is no sans */
+  --font-sans: var(--font-mono); /* alias: there is no sans */
   --font-display: var(--font-mono);
 
-  /* ---------- Type sizes — smol but hierarchical ----------
+  /* ---------- Type sizes: smol but hierarchical ----------
      Hierarchy comes from the 11px↔24px spread + whitespace, not from
      giant display sizes. 10px is the absolute floor (tracked caps only). */
-  --text-2xs: 10px; /* tick labels, tags — floor */
+  --text-2xs: 10px; /* tick labels, tags: floor */
   --text-xs: 11px; /* micro-labels (uppercase, tracked), meta */
   --text-sm: 13px; /* secondary body, descriptions, buttons, code */
   --text-base: 14px; /* default body */
@@ -34,11 +34,11 @@
   --text-lg: 20px; /* h2 / section */
   --text-xl: 24px; /* page h1, stat values */
   --text-2xl: 32px; /* hero */
-  --text-3xl: 40px; /* marketing display — the ceiling */
+  --text-3xl: 40px; /* marketing display: the ceiling */
 
   --leading-tight: 1.15;
   --leading-snug: 1.3;
-  --leading-base: 1.6; /* body — mono needs air between lines */
+  --leading-base: 1.6; /* body: mono needs air between lines */
   --leading-loose: 1.75;
 
   --tracking-tight: -0.01em;
@@ -99,7 +99,7 @@
   --link-underline: var(--neutral-500);
   --link-underline-offset: 3px;
 
-  /* ---------- Slime family — imagery + data-viz ONLY ----------
+  /* ---------- Slime family: imagery + data-viz ONLY ----------
      The artwork's neon runs cyan→green→magenta→purple. In product these
      appear as chart series 2+ and nowhere else. Lime graduated to
      --accent; cyan is no longer a ui color. */
@@ -111,14 +111,14 @@
   --slime-magenta: #e646ff;
   --slime-pink: #ff6bd6;
 
-  /* Chart sequence — series 1 is the accent */
+  /* Chart sequence: series 1 is the accent */
   --viz-1: var(--accent);
   --viz-2: var(--slime-cyan);
   --viz-3: var(--slime-purple);
   --viz-4: var(--slime-magenta);
   --viz-5: var(--slime-green);
 
-  /* ---------- Status — quiet, dot-scaled, never neon ---------- */
+  /* ---------- Status: quiet, dot-scaled, never neon ---------- */
   --ok: #7fd996;
   --warn: #d9c878;
   --error: #e07a8b;
@@ -126,7 +126,7 @@
 
   /* ---------- Spacing ---------- */
   --sp-0: 0; /* @kind spacing */
-  --sp-0-5: 2px; /* micro only — see spacing regimes */
+  --sp-0-5: 2px; /* micro only: see spacing regimes */
   --sp-1: 4px;
   --sp-1-5: 6px; /* micro only */
   --sp-2: 8px;
@@ -147,7 +147,7 @@
   --sp-20: 80px;
   --sp-24: 96px;
 
-  /* ---------- Radii — square-edged brand ---------- */
+  /* ---------- Radii: square-edged brand ---------- */
   --radius-none: 0;
   --radius-xs: 2px;
   --radius-sm: 4px;
@@ -159,7 +159,7 @@
   --hairline-soft: 1px solid var(--border-soft);
   --hairline-dashed: 1px dashed var(--border);
 
-  /* ---------- Shadows — none on UI; one glow allowance ---------- */
+  /* ---------- Shadows: no UI shadows. one glow allowance ---------- */
   --shadow-none: none;
   --shadow-glow-accent: 0 0 24px -4px rgba(212, 255, 63, 0.3);
 
@@ -246,7 +246,7 @@
   margin: 0;
 }
 
-/* Micro-label — THE hierarchy device. 11px, uppercase, tracked, subtle.
+/* Micro-label: THE hierarchy device. 11px, uppercase, tracked, subtle.
    The only uppercase in the system (everything else stays lowercase). */
 .u-label {
   font-size: var(--text-xs);
@@ -329,10 +329,10 @@
 }
 
 /* =====================================================================
-   Structure — panels, ticks, grids  (the "neat" vocabulary)
+   Structure: panels, ticks, grids  (the "neat" vocabulary)
    ===================================================================== */
 
-/* Panel — bordered region with AIR inside (20px). */
+/* Panel: bordered region with AIR inside (20px). */
 .u-panel {
   border: 1px solid var(--border-soft);
   background: var(--bg-card);
@@ -340,7 +340,7 @@
   padding: var(--sp-5);
 }
 
-/* Corner ticks — technical-drawing "+" at all four corners.
+/* Corner ticks: technical-drawing "+" at all four corners.
    Add to .u-panel, .u-frame, figures, hero bands. Pure CSS, no markup. */
 .u-ticks {
   position: relative;
@@ -376,7 +376,7 @@
     right 4px bottom 0;
 }
 
-/* Panel grid — shared hairlines via 1px gap over border color.
+/* Panel grid: shared hairlines via 1px gap over border color.
    The Midday stat-strip: crisp, no double borders. */
 .u-panel-grid {
   display: grid;
@@ -390,7 +390,7 @@
   min-width: 0;
 }
 
-/* Stat — label / value / note. Lives inside panels or panel grids. */
+/* Stat: label / value / note. Lives inside panels or panel grids. */
 .u-stat {
   display: flex;
   flex-direction: column;
@@ -406,13 +406,13 @@
   color: var(--fg-subtle);
 }
 
-/* Frame — full-width band bounded by hairlines (section chrome). */
+/* Frame: full-width band bounded by hairlines (section chrome). */
 .u-frame {
   border-block: 1px solid var(--border);
   padding-block: var(--sp-12);
 }
 
-/* Card — the link primitive (indexable items). More air than v1. */
+/* Card: the link primitive (indexable items). More air than v1. */
 .u-card {
   display: block;
   border: 1px solid var(--border-soft);
@@ -434,10 +434,10 @@
 }
 
 /* =====================================================================
-   Controls — buttons, inputs, tags, dots
+   Controls: buttons, inputs, tags, dots
    ===================================================================== */
 
-/* Buttons — 32px rhythm, mono 13px, lowercase, square. */
+/* Buttons: 32px rhythm, mono 13px, lowercase, square. */
 .u-btn {
   display: inline-flex;
   align-items: center;
@@ -512,7 +512,7 @@
   pointer-events: none;
 }
 
-/* Fields — micro-label above, 32px control, quiet focus, accent caret. */
+/* Fields: micro-label above, 32px control, quiet focus, accent caret. */
 .u-field {
   display: flex;
   flex-direction: column;
@@ -577,7 +577,7 @@
   color: var(--error);
 }
 
-/* Tags & dots — status stays small. */
+/* Tags & dots: status stays small. */
 .u-tag {
   display: inline-flex;
   align-items: center;
@@ -615,7 +615,7 @@
 }
 
 /* =====================================================================
-   Web surface patterns — shells, header, hero, lists, tables, prose, code
+   Web surface patterns: shells, header, hero, lists, tables, prose, code
    ===================================================================== */
 
 .u-shell-narrow,
@@ -642,7 +642,7 @@
   }
 }
 
-/* Header — small mark, quiet nav. The page h1 outranks the chrome. */
+/* Header: small mark, quiet nav. The page h1 outranks the chrome. */
 .u-header {
   display: flex;
   flex-direction: column;
@@ -693,10 +693,10 @@
   user-select: none;
 }
 
-/* Topbar — app/product chrome. ONE row, never stacked: mark + product
+/* Topbar: app/product chrome. ONE row, never stacked: mark + product
    name left, plain links right, at most one small button. Hairline
    below, never sticky, no background. The stacked .u-header above is
-   uinaf.dev site chrome ONLY — product pages and dashboards use this. */
+   uinaf.dev site chrome ONLY: product pages and dashboards use this. */
 .u-topbar {
   border-bottom: 1px solid var(--border);
 }
@@ -744,7 +744,7 @@
   gap: var(--sp-3);
 }
 
-/* Hero — kicker label, modest display, one sub line, actions. */
+/* Hero: kicker label, modest display, one sub line, actions. */
 .u-hero {
   display: flex;
   flex-direction: column;
@@ -776,7 +776,7 @@
   margin-top: var(--sp-2);
 }
 
-/* Index rows — more air, ruled by default when long. */
+/* Index rows: more air, ruled by default when long. */
 .u-list {
   list-style: none;
   margin: 0;
@@ -823,7 +823,7 @@
   border-top: 0;
 }
 
-/* Table — micro-label header, hairline rules, 40px rows, numerics right. */
+/* Table: micro-label header, hairline rules, 40px rows, numerics right. */
 .u-table {
   width: 100%;
   border-collapse: collapse;

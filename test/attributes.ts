@@ -23,7 +23,7 @@
 // The alternation is what makes this safe on real markup: `[^"'>]*` stops at a
 // quote, then a whole quoted value is consumed in one step. A plain `<[^>]*>`
 // would truncate `<i title="a > b" class="u-btn">` at the first `>` and lose
-// the class entirely — a narrower reader that fails open, which is worse than
+// the class entirely. A narrower reader that fails open is worse than
 // the wide one it replaces.
 const OPENING_TAG = /<[a-zA-Z][^"'>]*(?:(?:"[^"]*"|'[^']*')[^"'>]*)*>/g;
 

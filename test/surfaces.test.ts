@@ -52,7 +52,7 @@ describe("authored surfaces", () => {
   // These are whole HTML documents reached by url, and no `exports` entry maps
   // them, so a shipped copy is 145 kB a consumer cannot import. The pull to
   // re-add one is real: a card iframes `../pages/dashboard.html`, which reads
-  // like the tarball owes it that file. It does not — the guide serves it. The
+  // like the tarball owes it that file. It does not. The guide serves it. The
   // parity check in `scripts/check.ts` catches `files` drifting from `SHIPPED`,
   // but not both being widened together, which is exactly how this arrived.
   it("keeps the by-url surfaces out of the tarball", () => {

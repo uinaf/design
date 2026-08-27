@@ -116,8 +116,8 @@ describe("spacing-grid", () => {
     }
   });
   it("rounds an exact layout tie down, because denser is on-brand", () => {
-    expect(css("a{padding:18px}")[0].fix).toContain("var(--sp-4) — 16px");
-    expect(css("a{padding:22px}")[0].fix).toContain("var(--sp-5) — 20px");
+    expect(css("a{padding:18px}")[0].fix).toContain("var(--sp-4), the 16px step");
+    expect(css("a{padding:22px}")[0].fix).toContain("var(--sp-5), the 20px step");
   });
   it("names a real token, fraction and all", () => {
     // The name is derived from the value, so a new step cannot arrive unnamed.
@@ -152,7 +152,7 @@ describe("topbar-single-row", () => {
       "topbar-single-row",
     );
   });
-  it("fails when stacked — the classic agent failure", () => {
+  it("fails on the common stacked layout", () => {
     expect(rules(markup(`<header class="u-topbar">${row}${row}</header>`))).toContain(
       "topbar-single-row",
     );
@@ -336,14 +336,14 @@ describe("modifier-base", () => {
   });
 
   // This rule shipped with a two-entry exemption list, because two standalone
-  // utilities were named `u-link--plain` and `u-code--bleed` — the spelling
+  // utilities were named `u-link--plain` and `u-code--bleed`. The spelling
   // claimed a dependency neither had. The names went back to one hyphen and the
   // list went away. What keeps it away is the naming convention itself, so hold
   // the CSS to it: every `--` class owes a base, or the exemptions come back.
   //
   // Split with the rule's own function, not a second `lastIndexOf("--")` one.
-  // They disagree on `u-btn---b` — the rule reads `u-btn`, `lastIndexOf` reads
-  // `u-btn-` — so a hand-rolled split here would hold the CSS to a convention
+  // They disagree on `u-btn---b`: the rule reads `u-btn`, while `lastIndexOf` reads
+  // `u-btn-`. A hand-rolled split here would hold the CSS to a convention
   // the shipped rule does not enforce.
   it("has a base in the CSS for every -- class the CSS defines", () => {
     const defined = definedUtilityClasses("src/tokens.css", "src/components.css");
@@ -599,7 +599,7 @@ describe("no-raw-color cannot hide behind a token", () => {
 });
 
 describe("no-raw-color judges color-mix by its arguments", () => {
-  it("allows a token mixed toward transparent — the way to write a translucent token", () => {
+  it("allows a token mixed toward transparent for translucency", () => {
     expect(
       rules(css("a{background:color-mix(in srgb, var(--neutral-900) 40%, transparent)}")),
     ).not.toContain("no-raw-color");
@@ -1060,7 +1060,7 @@ describe("skip names are judged inside the project only", () => {
     const { mkdtempSync, mkdirSync, writeFileSync } = await import("node:fs");
     const { join } = await import("node:path");
     const { tmpdir } = await import("node:os");
-    // /…/dist/myrepo/src/page.html — `dist` is an ancestor, not the project's.
+    // /…/dist/myrepo/src/page.html has `dist` as an ancestor, not the project's.
     const base = mkdtempSync(join(tmpdir(), "design-anc-"));
     const repo = join(base, "dist", "myrepo");
     mkdirSync(join(repo, "src"), { recursive: true });
@@ -1102,7 +1102,7 @@ describe("--except waives named rules without excluding the file", () => {
     expect(rules).not.toContain("spacing-grid");
   });
 
-  it("leaves every other rule in force — the whole point over --ignore", async () => {
+  it("leaves every other rule in force unlike --ignore", async () => {
     expect(await artboard(CANVAS)).toContain("no-raw-color");
   });
 

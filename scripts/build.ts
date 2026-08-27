@@ -12,7 +12,7 @@ fs.writeFileSync(path.join(root, "dist/css/tokens.css"), css);
 fs.copyFileSync(path.join(root, "src/components.css"), path.join(root, "dist/css/components.css"));
 
 // Over the AST, not the text. A regex for `--name:` also matches the pseudo-class
-// on a BEM modifier — `.u-btn--primary:hover` reads as a token named `--primary`
+// on a BEM modifier. `.u-btn--primary:hover` reads as a token named `--primary`
 // with `hover { … }` for a value, and the ungrouped-token guard then fails the
 // build on a property that does not exist.
 const vars: Array<readonly [string, string]> = [];
@@ -53,7 +53,7 @@ for (const [name, value] of vars) {
 }
 if (ungrouped.length > 0) {
   throw new Error(
-    `tokens.json: no group for ${ungrouped.map((n) => `--${n}`).join(", ")} — add a rule to groupRules in scripts/build.ts`,
+    `tokens.json: no group for ${ungrouped.map((n) => `--${n}`).join(", ")}. Add a rule to groupRules in scripts/build.ts`,
   );
 }
 
@@ -62,7 +62,7 @@ fs.writeFileSync(
   `${JSON.stringify(
     {
       $schema: "uinaf design tokens v2",
-      $source: "src/tokens.css (generated in the build — do not hand-edit)",
+      $source: "src/tokens.css. generated during build. do not hand-edit",
       groups,
     },
     null,
@@ -101,8 +101,8 @@ const allCss = `${css}${componentsCss}`
   .replace(/\/\*[\s\S]*?\*\//g, " ")
   .replace(/url\([^)]*\)/g, " ")
   .replace(/"[^"]*"|'[^']*'/g, " ");
-// u-* classes are the public contract; every class the CSS defines — including
-// scoped helpers like `.u-crumbs .sep` — is what markup is allowed to use.
+// u-* classes are the public contract. Every class the CSS defines, including
+// scoped helpers like `.u-crumbs .sep`, is what markup may use.
 const publicClasses = new Set([...allCss.matchAll(/\.(u-[a-zA-Z0-9_-]+)/g)].map((m) => m[1]));
 const definedClasses = new Set(
   [...allCss.matchAll(/\.([a-zA-Z_][a-zA-Z0-9_-]*)/g)].map((m) => m[1]),
@@ -115,10 +115,10 @@ const declared = components.patterns.flatMap((p) =>
     .filter((c) => c.startsWith("u-") && !publicClasses.has(c))
     .map((c) => `${p.name} classes → .${c}`),
 );
-// All three HTML attribute forms — double-quoted, single-quoted, and bare —
-// or markup could dodge the guard just by changing its quoting.
+// Read double-quoted, single-quoted, and bare HTML attributes. Otherwise markup
+// could dodge the guard just by changing its quoting.
 const classAttr = /class\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/g;
-// Markup is what an agent copies, so every pattern owes one — including the
+// Markup is what an agent copies, so every pattern owes one, including the
 // class-less policy entries, which owe the idiom they permit (`icons` shows the
 // inline-SVG shape it restricts agents to). The contract claims full coverage in
 // `$markupCoverage`; this is what makes the claim fail loudly instead of quietly.
@@ -126,7 +126,7 @@ const classAttr = /class\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/g;
 const contractless = components.patterns.filter((p) => !p.markup);
 if (contractless.length > 0) {
   throw new Error(
-    `components.json: ${contractless.map((p) => p.name).join(", ")} publish no markup — every pattern needs something copyable, a policy entry included`,
+    `components.json: ${contractless.map((p) => p.name).join(", ")} publish no markup. Every pattern needs something copyable, including policy entries`,
   );
 }
 const inMarkup = components.patterns.flatMap((p) =>
@@ -144,7 +144,7 @@ if (undefinedClasses.length > 0) {
 
 const slug = (name: string): string => name.replace(/\+/g, "-").replace(/[^a-z0-9-]/gi, "-");
 
-// Absolute so a chunk previews correctly wherever it is opened — served from the
+// Absolute so a chunk previews correctly wherever it is opened: served from the
 // guide, opened from dist/patterns/, or saved anywhere else. In a real project,
 // import the package instead of linking this URL.
 const patternPage = (p: Pattern): string => `<!doctype html>

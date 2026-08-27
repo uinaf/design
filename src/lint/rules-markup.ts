@@ -42,11 +42,11 @@ const ICON_FONT_CLASS =
 
 /**
  * `u-X--y` is a BEM modifier: it overrides part of `.u-X` and is wrong without
- * it. `.u-btn--primary` alone is a background colour on inline text — no
+ * it. `.u-btn--primary` alone is a background colour on inline text, with no
  * padding, no border, no font, because `.u-btn` owns those.
  *
  * The rule needs no exemptions, because the system reserves `--` for exactly
- * this dependency. A standalone utility gets a single hyphen — `.u-link-plain`
+ * this dependency. A standalone utility gets a single hyphen, as in `.u-link-plain`
  * *unsets* link styling and `.u-code-bleed` is a margin-only utility on
  * `.u-pre`, so neither wants a base and neither wears the spelling.
  */
@@ -103,7 +103,7 @@ export const setJsxStyleChecker = (
 /**
  * Every `u-` class the shipped stylesheet defines, injected by the runner.
  *
- * Empty means the runner could not read the CSS, and the rule stays silent —
+ * Empty means the runner could not read the CSS, and the rule stays silent.
  * a check that invented its own list would report the whole namespace as
  * undefined the moment the two drifted.
  */
@@ -158,7 +158,7 @@ export const checkMarkup = (source: string, file: string): Violation[] => {
         base + offset,
         "topbar-single-row",
         "error",
-        `${rows.length} .u-topbar-row elements in one .u-topbar — product nav is ONE row`,
+        `${rows.length} .u-topbar-row elements in one .u-topbar. Product nav is ONE row.`,
         "collapse to a single 56px row: mark and name left, links right, at most one small button",
       );
     }
@@ -199,7 +199,7 @@ export const checkMarkup = (source: string, file: string): Violation[] => {
         "shared-gutter",
         "error",
         `.${shellClass} appears only on the topbar row`,
-        `put .${shellClass} on the page's main content wrapper too — the row and the content share one gutter`,
+        `put .${shellClass} on the page's main content wrapper too. The row and content share one gutter.`,
       );
     }
   }
@@ -243,7 +243,7 @@ export const checkMarkup = (source: string, file: string): Violation[] => {
       // An error, unlike the style rules below: a `u-` class the package does
       // not define is not an opinion about taste, it is a dangling reference.
       // The stylesheet matches nothing, so the element renders as bare content
-      // and nothing fails — which is how five renamed button classes survived
+      // and nothing fails. This is how five renamed button classes survived
       // two commits and a clean design-check.
       if (shippedClasses.size > 0 && UTILITY_TOKEN.test(token) && !shippedClasses.has(token)) {
         const meant = byShape.get(shape(token));
@@ -253,8 +253,8 @@ export const checkMarkup = (source: string, file: string): Violation[] => {
           "error",
           `${token} is not defined by @uinaf/design`,
           meant
-            ? `rename it to ${meant} — it was renamed, and the old name now matches no rule, so this renders unstyled without failing`
-            : "remove it or pick a class the package defines — the stylesheet matches nothing, so this renders unstyled without failing",
+            ? `rename it to ${meant}. The old name matches no rule and renders unstyled without failing.`
+            : "remove it or pick a class the package defines. The stylesheet matches nothing, so this renders unstyled without failing.",
         );
         continue;
       }
@@ -268,13 +268,13 @@ export const checkMarkup = (source: string, file: string): Violation[] => {
         "modifier-base",
         "warn",
         `${token} without its base class ${base}`,
-        `add ${base} alongside it — a modifier overrides part of its base, so on its own it renders as unstyled content with one property changed`,
+        `add ${base} alongside it. A modifier overrides part of its base, so it renders as unstyled content with one changed property on its own.`,
       );
     }
   }
 
   // Sized icons only. An <svg> that carries neither a render size nor a stroke
-  // width is a sparkline, a chart, or an icon sized by a class — none of them
+  // width is a sparkline, a chart, or an icon sized by a class. None of them
   // have anything for this rule to judge, and guessing from viewBox would read
   // the 16-grid as a 16px render.
   for (const match of source.matchAll(/<svg\b([^>]{0,2000})>/gi)) {
@@ -304,7 +304,7 @@ export const checkMarkup = (source: string, file: string): Violation[] => {
         "icon-size-ramp",
         "warn",
         `icon rendered at ${width}px`,
-        "icons render at 16px, 12px in tags and meta rows, or 20px in large buttons and empty states — nothing between",
+        "icons render at 16px, 12px in tags and meta rows, or 20px in large buttons and empty states. Nothing between.",
       );
     } else if (width !== undefined && height !== undefined && height !== width) {
       add(
@@ -320,7 +320,7 @@ export const checkMarkup = (source: string, file: string): Violation[] => {
         "icon-size-ramp",
         "warn",
         `${width}px icon with stroke-width ${stroke}`,
-        `use stroke-width ${expected} at ${width}px — the ramp thickens the stroke as the glyph shrinks so the weight reads the same`,
+        `use stroke-width ${expected} at ${width}px. The ramp thickens the stroke as the glyph shrinks so the weight reads the same.`,
       );
     } else if (
       width === undefined &&
@@ -397,7 +397,7 @@ export const checkMarkup = (source: string, file: string): Violation[] => {
       "button-type",
       "warn",
       "<button> without an explicit type",
-      'add type="button" — a bare <button> defaults to type="submit" and will submit any form it sits in',
+      'add type="button". A bare <button> defaults to type="submit" and submits any form it sits in.',
     );
   }
 

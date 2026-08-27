@@ -1,9 +1,9 @@
 /**
- * design.uinaf.dev — static assets plus content negotiation.
+ * design.uinaf.dev serves static assets plus content negotiation.
  *
  * Every artifact is a build output; this Worker only routes. `html_handling` is
  * off so assets serve at their exact path, which keeps `/patterns/x.html` a 200
- * rather than a redirect to `/patterns/x` — the published components.json
+ * rather than a redirect to `/patterns/x`. The published components.json
  * points at the `.html` form. Extensionless paths are
  * resolved here so both spellings work.
  */
@@ -56,7 +56,7 @@ const matchFor = (
 
 /**
  * Markdown only when the client prefers it over HTML: higher q, or equal q via a
- * more specific range. Order in the header is not preference — q is — so a fully
+ * more specific range. Header order does not express preference. q does. A fully
  * equal pair falls to HTML, keeping the site normal for anything browser-shaped.
  */
 export const wantsMarkdown = (request: Request): boolean => {

@@ -2,7 +2,7 @@ import { McpServer } from "@modelcontextprotocol/server";
 import { z } from "zod";
 
 /**
- * The six read tools over build output. Kept deliberately small — large tool
+ * The six read tools over build output. Kept deliberately small because large tool
  * counts burn an agent's context before it has done any work.
  *
  * Every response is assembled from artifacts the build produced, so the tools
@@ -106,9 +106,9 @@ const describe = (p: Pattern): string =>
     "",
     p.use,
     "",
-    // `icons` names no class — it restricts an idiom instead of shipping one.
+    // `icons` names no class because it restricts an idiom instead of shipping one.
     // An empty "Classes —" line reads to an agent as a truncated contract.
-    `**Classes** — ${p.classes.length > 0 ? p.classes.join(", ") : "none — this entry is policy"}`,
+    `**Classes** — ${p.classes.length > 0 ? p.classes.join(", ") : "none. this entry is policy"}`,
     p.rules?.length ? `\n**Rules**\n${p.rules.map((r) => `- ${r}`).join("\n")}` : "",
     p.never?.length ? `\n**Never**\n${p.never.map((r) => `- ${r}`).join("\n")}` : "",
   ]
@@ -122,7 +122,7 @@ export const createServer = (env: Env): McpServer => {
     "list_patterns",
     {
       description:
-        "List every uinaf UI pattern with a one-line use and its classes. Call this first to find the right pattern, then call get_pattern for the markup. Names only — cheap to call.",
+        "List every uinaf UI pattern with a one-line use and its classes. Call this first to find the right pattern, then call get_pattern for the markup. Names only, so it is cheap to call.",
       inputSchema: {},
     },
     async () => {
@@ -135,7 +135,7 @@ export const createServer = (env: Env): McpServer => {
     "get_pattern",
     {
       description:
-        "Get one pattern's full contract and its copy-installable markup. Call this BEFORE writing any uinaf component — copy the markup and adapt the content, do not reinterpret the design.",
+        "Get one pattern's full contract and its copy-installable markup. Call this BEFORE writing any uinaf component. Copy the markup and adapt the content. Do not reinterpret the design.",
       inputSchema: { name: z.string().describe("Pattern name from list_patterns, e.g. 'topbar'") },
     },
     async ({ name }) => {
@@ -197,7 +197,7 @@ export const createServer = (env: Env): McpServer => {
     "get_page",
     {
       description:
-        "Get a whole reference page — a complete, on-brand screen with its full markup. Call this BEFORE building a page, in preference to assembling one from patterns. Pages: product-landing, dashboard, login, settings, docs, device-auth.",
+        "Get a whole reference page with its complete, on-brand markup. Call this BEFORE building a page, in preference to assembling one from patterns. Pages: product-landing, dashboard, login, settings, docs, device-auth.",
       inputSchema: {
         name: z.string().optional().describe("Page name, e.g. 'dashboard'; omit to list them"),
       },
@@ -219,7 +219,7 @@ export const createServer = (env: Env): McpServer => {
       }
       const html = await (await asset(env, `/pages/${page.slug}.html`)).text();
       return text(
-        `# ${page.name}\n\n${page.description}\n\nRendered: https://design.uinaf.dev/pages/${page.slug}.html\n\n\`\`\`html\n${html.trim()}\n\`\`\`\n\nImport \`@uinaf/design/css\`, copy the markup, and replace the content. Keep the structure — the layout is the design.`,
+        `# ${page.name}\n\n${page.description}\n\nRendered: https://design.uinaf.dev/pages/${page.slug}.html\n\n\`\`\`html\n${html.trim()}\n\`\`\`\n\nImport \`@uinaf/design/css\`, copy the markup, and replace the content. Keep the structure. The layout is the design.`,
       );
     },
   );
@@ -228,7 +228,7 @@ export const createServer = (env: Env): McpServer => {
     "get_template",
     {
       description:
-        "Get a uinaf.dev site template or export artboard with its full markup — homepage, blog index, blog post, changelog, projects, project page, roadmap, status, 404, and the four fixed-size export canvases. Use for a uinaf-owned surface; use get_page for a product screen.",
+        "Get a uinaf.dev site template or export artboard with its full markup: homepage, blog index, blog post, changelog, projects, project page, roadmap, status, 404, and the four fixed-size export canvases. Use this for a uinaf-owned surface. Use get_page for a product screen.",
       inputSchema: {
         name: z.string().optional().describe("Template slug, e.g. 'homepage'; omit to list them"),
       },
@@ -252,10 +252,10 @@ export const createServer = (env: Env): McpServer => {
       // An artboard is a file to render at a fixed size, not a page to adapt.
       // Without the size an agent pastes a 2560px canvas into a layout.
       const canvas = template.canvas
-        ? `\nFixed export canvas — ${template.canvas.width}×${template.canvas.height}. Render it at that size; do not adapt it into a page.\n`
+        ? `\nFixed export canvas: ${template.canvas.width}×${template.canvas.height}. Render it at that size; do not adapt it into a page.\n`
         : "";
       return text(
-        `# ${template.name}\n\n${template.description}\n${canvas}\nRendered: https://design.uinaf.dev/templates/${template.slug}.html\n\n\`\`\`html\n${html.trim()}\n\`\`\`\n\nImport \`@uinaf/design/css\`, copy the markup, and replace the content. Keep the structure — the layout is the design.`,
+        `# ${template.name}\n\n${template.description}\n${canvas}\nRendered: https://design.uinaf.dev/templates/${template.slug}.html\n\n\`\`\`html\n${html.trim()}\n\`\`\`\n\nImport \`@uinaf/design/css\`, copy the markup, and replace the content. Keep the structure. The layout is the design.`,
       );
     },
   );

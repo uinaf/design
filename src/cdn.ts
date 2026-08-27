@@ -1,5 +1,5 @@
 /**
- * A group of urls, nested to any depth. Every leaf must be a url string — a
+ * A group of urls, nested to any depth. Every leaf must be a url string. A
  * number or a null leaf is a compile error here rather than an entry `cdnUrls`
  * drops on the floor.
  */
@@ -36,7 +36,7 @@ export const CDN = {
 } as const satisfies UrlTree;
 
 /**
- * Every asset url in `CDN`, flattened — the origin itself excluded, because it
+ * Every asset url in `CDN`, flattened. The origin itself is excluded because it
  * is the prefix the others are checked against, not an asset.
  *
  * Lives next to the declaration so `cdn:check` and the inline-url gate read the

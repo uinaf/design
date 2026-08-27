@@ -1,7 +1,7 @@
-/* uinaf — components.css · patterns beyond the primitives.
-   Auto-imported by tokens.css — consumers still import one file. */
+/* uinaf: components.css · patterns beyond the primitives.
+   Auto-imported by tokens.css: consumers still import one file. */
 
-/* ---------- viz — charts. series 1 = the accent, 2+ = slime. ---------- */
+/* ---------- viz: charts. series 1 = the accent, 2+ = slime. ---------- */
 .u-spark {
   display: block;
   width: 100%;
@@ -37,7 +37,7 @@
 }
 .u-bars i[data-hot] {
   background: var(--viz-1);
-} /* the current period — one per chart */
+} /* the current period: one per chart */
 .u-axis {
   display: flex;
   justify-content: space-between;
@@ -107,7 +107,7 @@
   vertical-align: 1px;
 }
 
-/* ---------- feedback — modal, toast, notice, progress ---------- */
+/* ---------- feedback: modal, toast, notice, progress ---------- */
 .u-overlay {
   position: fixed;
   inset: 0;
@@ -208,7 +208,7 @@
   background: var(--accent);
 } /* the segment currently running */
 
-/* ---------- chrome — tabs, segmented, crumbs, menu ---------- */
+/* ---------- chrome: tabs, segmented, crumbs, menu ---------- */
 .u-tabs {
   display: flex;
   gap: var(--sp-6);
@@ -330,7 +330,7 @@
   margin: 4px 0;
 }
 
-/* ---------- data — toolbar, pagination, empty ---------- */
+/* ---------- data: toolbar, pagination, empty ---------- */
 .u-toolbar {
   display: flex;
   align-items: center;
@@ -400,7 +400,7 @@
   max-width: 40ch;
 }
 
-/* ---------- code — diff, terminal, log ---------- */
+/* ---------- code: diff, terminal, log ---------- */
 .u-diff {
   font-size: var(--text-sm);
   line-height: var(--leading-base);
@@ -506,7 +506,7 @@
   color: var(--fg-muted);
 }
 
-/* ---------- choice controls — checkbox, radio, switch (square-edged) ---------- */
+/* ---------- choice controls: checkbox, radio, switch (square-edged) ---------- */
 .u-check {
   display: inline-flex;
   align-items: center;
@@ -612,7 +612,7 @@
   pointer-events: none;
 }
 
-/* ---------- skeleton — loading placeholders, quiet shimmer ---------- */
+/* ---------- skeleton: loading placeholders, quiet shimmer ---------- */
 .u-skeleton {
   position: relative;
   overflow: hidden;
@@ -652,7 +652,7 @@
   width: 60%;
 }
 
-/* ---------- tooltip — data-tip attr, hover/focus reveal ---------- */
+/* ---------- tooltip: data-tip attr, hover/focus reveal ---------- */
 .u-tip {
   position: relative;
 }
@@ -682,7 +682,7 @@
   transform: translateX(-50%) translateY(0);
 }
 
-/* ---------- banner — one-line announcement above the topbar ---------- */
+/* ---------- banner: one-line announcement above the topbar ---------- */
 .u-banner {
   display: flex;
   align-items: baseline;
@@ -695,7 +695,7 @@
   color: var(--fg-muted);
 }
 
-/* ---------- footer — 3-col site footer ---------- */
+/* ---------- footer: 3-col site footer ---------- */
 .u-footer {
   border-top: 1px solid var(--border);
 }
@@ -727,7 +727,7 @@
   }
 }
 
-/* ---------- timeline — left spine, meta + line ---------- */
+/* ---------- timeline: left spine, meta + line ---------- */
 .u-timeline {
   display: flex;
   flex-direction: column;
@@ -746,7 +746,7 @@
   color: var(--accent);
 }
 
-/* ---------- definition rows — what/where/since ledger ---------- */
+/* ---------- definition rows: what/where/since ledger ---------- */
 .u-def {
   display: grid;
   grid-template-columns: 120px 1fr;
@@ -784,7 +784,7 @@
   white-space: nowrap;
 }
 
-/* ---------- icon button — squares .u-btn; tooltip + aria-label carry the word ---------- */
+/* ---------- icon button: squares .u-btn. tooltip + aria-label carry the word ---------- */
 .u-btn.u-btn--icon {
   aspect-ratio: 1;
   width: auto;

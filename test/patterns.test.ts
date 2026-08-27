@@ -29,7 +29,7 @@ describe("pattern markup", () => {
   });
 
   // Layout parameters like grid-template-columns are a per-use decision and
-  // belong inline. Anything the tokens own must not be spelled out inline —
+  // belong inline. Anything the tokens own must not be spelled out inline.
   // `background: #b6ff3c` is the failure mode. A `var(--viz-1)` reference is
   // not: the value still comes from the tokens, and which series a swatch shows
   // is as per-use as the `width: 44%` beside it.
@@ -38,8 +38,8 @@ describe("pattern markup", () => {
   // declaration. `attributeValues` covers the attribute side. One definition,
   // used by both the gate and the proof below, so the two cannot drift apart.
   // The longhands matter more than the shorthands: `background-color` is the
-  // spelling people reach for first. `border(?!-)` stays deliberate — the other
-  // border longhands are width and style, which are layout, not tokens — but
+  // spelling people reach for first. `border(?!-)` stays deliberate. The other
+  // border longhands are width and style, which are layout, not tokens, but
   // `border-color` carries a colour and belongs here.
   const OWNED =
     /(?:^|[;\s])(color|background(?:-color|-image)?|border(?!-)|border-color|border-radius|box-shadow|font-family|font-size)\s*:\s*([^;]+)/gi;

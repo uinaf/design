@@ -40,7 +40,7 @@ describe("CDN", () => {
 
   // Counted from the source text rather than from `CDN` itself, so the walk is
   // proved against something that does not use it. A leaf the walk cannot reach
-  // is invisible to both `cdn:check` and the gate below — the same 404 nobody
+  // is invisible to both `cdn:check` and the gate below. It is the same 404 nobody
   // can grep for, arrived at from inside the declaration.
   it("flattens every url the declaration writes, dropping none", () => {
     const declared = [

@@ -9,7 +9,7 @@
 <div class="ln"><span class="no">41</span><span>  const key = await deriveKey(secret);</span></div>
 <div class="ln del"><span class="no">42</span><span>- cache.set(url, key);</span></div>
 <div class="ln add"><span class="no">42</span><span>+ cache.set(url, key, { ttl: 300 });</span></div>
-<div class="u-finding"><span class="u-dot u-dot--warn" style="flex:none"></span><span><strong style="font-weight:400;color:var(--fg)">unbounded cache before this change.</strong> ttl fixes growth, but eviction on key rotation is still missing — see <code>deriveKey</code>.</span></div>
+<div class="u-finding"><span class="u-dot u-dot--warn" style="flex:none"></span><span><strong style="font-weight:400;color:var(--fg)">unbounded cache before this change.</strong> ttl fixes growth, but <code>deriveKey</code> still lacks eviction on key rotation.</span></div>
 <div class="ln"><span class="no">43</span><span>  return key;</span></div>
 </div>
 <hr>
@@ -24,6 +24,6 @@
 <span class="row"><span class="t">14:02:11.688</span><span class="lv">info</span><span class="msg">clone uinaf/slopzapper#512 @ 9c41f2e</span></span>
 <span class="row" data-warn><span class="t">14:02:14.010</span><span class="lv">warn</span><span class="msg">github rate remaining=41 · backing off 2s</span></span>
 <span class="row"><span class="t">14:02:19.334</span><span class="lv">info</span><span class="msg">build ok · 3.2s</span></span>
-<span class="row" data-err><span class="t">14:02:24.902</span><span class="lv">error</span><span class="msg">test FAIL webhook_dedupe_test.go:88 — retry scheduled</span></span></pre>
-<p class="u-meta">code never wraps — scroll it. levels color the level word only, never the message. the caret is the one thing allowed to blink.</p>
+<span class="row" data-err><span class="t">14:02:24.902</span><span class="lv">error</span><span class="msg">test FAIL webhook_dedupe_test.go:88 · retry scheduled</span></span></pre>
+<p class="u-meta">code never wraps. scroll it. levels color the level word only, never the message. the caret is the one thing allowed to blink.</p>
 </body></html>
