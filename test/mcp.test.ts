@@ -2,6 +2,7 @@ import { describe, expect, it } from "vite-plus/test";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { rankSections } from "../src/mcp";
+import { verifyPureCommands } from "../vite.config";
 
 const root = resolve(import.meta.dirname, "..");
 const spec = readFileSync(resolve(root, "DESIGN.md"), "utf8");
@@ -176,19 +177,14 @@ describe("published templates", () => {
 });
 
 describe("verify order", () => {
-  const scripts = (
-    JSON.parse(readFileSync(resolve(root, "package.json"), "utf8")) as {
-      scripts: Record<string, string>;
-    }
-  ).scripts;
-
   it("builds the guide before the tests that read it", () => {
     // The page and template suites above assert on published output. `guide/` is
     // gitignored, so tests placed before `guide:sync` fail on every cold checkout
     // due to a missing file rather than the contract.
-    const { verify } = scripts;
-    expect(verify).toContain("guide:sync");
-    expect(verify.indexOf("guide:sync")).toBeLessThan(verify.indexOf("vp test run"));
+    expect(verifyPureCommands).toContain("pnpm run guide:sync");
+    expect(verifyPureCommands.indexOf("pnpm run guide:sync")).toBeLessThan(
+      verifyPureCommands.indexOf("vp test run"),
+    );
   });
 });
 

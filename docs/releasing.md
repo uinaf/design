@@ -52,7 +52,7 @@ tag points to it. The `[skip ci]` marker prevents a recursive release run.
 Manual publish is only for emergency recovery:
 
 ```sh
-pnpm run verify
+pnpm run verify:full
 npm publish --access public
 ```
 

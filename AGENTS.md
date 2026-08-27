@@ -28,7 +28,8 @@
 
 ```sh
 pnpm install --frozen-lockfile   # bootstrap: Node from .node-version, pnpm from packageManager
-pnpm run verify                  # the gate CI runs; ends in the real-surface smoke
+pnpm run verify                  # caches pure checks; always ends in the real-surface smoke
+pnpm run verify:full             # uncached full gate for release and cache verification
 pnpm run smoke                   # that smoke alone: boots the Worker, exercises /mcp + every machine-layer route, tears it down
 pnpm run cdn:check               # HEADs every URL in the CDN export; run before a deploy that adds one
 ```
@@ -36,6 +37,8 @@ pnpm run cdn:check               # HEADs every URL in the CDN export; run before
 Prefer `vp` for lint/format/test: `pnpm exec vp check`, `pnpm exec vp test run`.
 
 `pnpm run smoke` syncs the guide, binds port 8788, and always kills the server it started. Set `SMOKE_PORT` to run it from a second worktree; logs land in `.smoke/` (gitignored). Two runs in the _same_ checkout will fight over `guide/`; use a separate worktree, or call `./scripts/smoke.sh` directly once the guide is built.
+
+`pnpm run verify` reuses Vite Task results for deterministic checks and still runs the Worker smoke every time. `pnpm run verify:full` bypasses the task cache without narrowing the gate.
 
 `pnpm run deploy` publishes the working tree to **production** `design.uinaf.dev`. It is outside `verify` on purpose and must not run unattended; CI deploys from `main` (`.github/workflows/release.yml`). To see your change, run `pnpm run smoke` or `pnpm exec wrangler dev`.
 

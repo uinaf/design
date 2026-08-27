@@ -19,6 +19,8 @@ pnpm run verify
 
 That builds tokens, syncs `guide/`, runs checks + tests, then boots the Worker and exercises the `/mcp` contract against it. The last step alone is `pnpm run smoke`; it binds port 8788 (override with `SMOKE_PORT`) and writes its logs to `.smoke/`.
 
+The deterministic steps use Vite Task caching. Run `pnpm run verify:full` to bypass the cache; the Worker smoke remains uncached in both commands.
+
 ## Preview locally
 
 ```sh
