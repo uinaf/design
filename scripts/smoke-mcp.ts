@@ -23,7 +23,7 @@ const PROPOSED_VERSION = "2026-07-28";
 let negotiatedVersion: string | undefined;
 
 // Every request needs its own bound. smoke.sh times out the boot and then waits
-// on this process, and main.yml runs it against production with only the job
+// on this process, and release.yml runs it against production with only the job
 // timeout behind it. A fetch that never settles hangs both, and no
 // SMOKE_TIMEOUT covers it.
 const REQUEST_TIMEOUT_MS = Number(process.env.SMOKE_REQUEST_TIMEOUT_MS ?? 15_000);
@@ -76,6 +76,25 @@ const check = (label: string, condition: boolean, detail = ""): void => {
   failures += 1;
   console.error(`  FAIL ${label}${detail ? `\n       ${detail}` : ""}`);
 };
+
+const get = (path: string, accept?: string): Promise<Response> =>
+  fetch(`${base}${path}`, {
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    headers: accept ? { accept } : {},
+  });
+
+const json = async <T>(path: string): Promise<T> => {
+  const response = await get(path);
+  if (!response.ok) throw new Error(`${path}: HTTP ${response.status}`);
+  return (await response.json()) as T;
+};
+
+type Slugged = { slug: string };
+
+// Slugs come from the served indexes, never a list written here: a renamed page
+// or template has to fail this smoke rather than leave a stale literal passing.
+const pages = await json<Slugged[]>("/pages.json");
+const templates = await json<Slugged[]>("/templates.json");
 
 console.log(`mcp smoke → ${endpoint}`);
 
@@ -168,7 +187,8 @@ check(
 
 // Every page, because a page that 404s from the asset binding is invisible to
 // unit tests. The tool would still answer with a broken artifact.
-for (const name of ["product-landing", "dashboard", "login", "settings", "docs", "device-auth"]) {
+check("pages.json lists the six reference screens", pages.length === 6, `${pages.length} page(s)`);
+for (const { slug: name } of pages) {
   const page = await call("get_page", { name });
   check(
     `get_page returns ${name} with markup`,
@@ -190,21 +210,8 @@ check(
 
 // Same reason as the pages loop: a template whose asset never synced would still
 // answer the tool, with a 404 body. Every template, marker stripped.
-for (const name of [
-  "homepage",
-  "blog-index",
-  "blog-post",
-  "changelog",
-  "projects",
-  "project-page",
-  "roadmap",
-  "status",
-  "not-found",
-  "export-og-card",
-  "export-og-card-post",
-  "export-readme-banner",
-  "export-repo-banner",
-]) {
+check("templates.json lists templates", templates.length > 0, `${templates.length} template(s)`);
+for (const { slug: name } of templates) {
   const template = await call("get_template", { name });
   check(
     `get_template returns ${name} with markup`,
@@ -244,12 +251,6 @@ check("search_guidelines error lists sections", noHit.includes("Nothing in the s
 // artifact exists, not that the route serving it answers.
 console.log("\nmachine layer");
 
-const get = (path: string, accept?: string): Promise<Response> =>
-  fetch(`${base}${path}`, {
-    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-    headers: accept ? { accept } : {},
-  });
-
 const served = async (path: string, type: string, accept?: string): Promise<void> => {
   const response = await get(path, accept);
   const got = response.headers.get("content-type") ?? "";
@@ -259,14 +260,6 @@ const served = async (path: string, type: string, accept?: string): Promise<void
     `HTTP ${response.status}, content-type ${got || "none"}`,
   );
 };
-
-const json = async <T>(path: string): Promise<T> => {
-  const response = await get(path);
-  if (!response.ok) throw new Error(`${path}: HTTP ${response.status}`);
-  return (await response.json()) as T;
-};
-
-type Slugged = { slug: string };
 
 for (const [path, type] of [
   ["/components.json", "application/json"],
@@ -278,10 +271,6 @@ for (const [path, type] of [
   await served(path, type);
 }
 
-// Slugs come from the served indexes, never a list written here: a renamed page
-// or pattern has to fail this smoke rather than leave a stale literal passing.
-const pages = await json<Slugged[]>("/pages.json");
-check("pages.json lists the six reference screens", pages.length === 6, `${pages.length} page(s)`);
 for (const { slug } of pages) {
   await served(`/pages/${slug}.html`, "text/html");
   await served(`/pages/${slug}.md`, "text/markdown");

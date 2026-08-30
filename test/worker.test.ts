@@ -45,6 +45,16 @@ describe("asset routing config", () => {
     expect(wrangler).toMatch(/run_worker_first = \[[^\]]*"\/\*\.html"/);
     expect(wrangler).toMatch(/run_worker_first = \[[^\]]*"\/patterns\/\*\.html"/);
   });
+
+  it("enables nodejs_compat for the Agents SDK", () => {
+    // The MCP handler imports node:async_hooks; without this the Worker throws
+    // "No such module" at startup and every route 500s, not just /mcp.
+    expect(wrangler).toMatch(/compatibility_flags = \[\s*"nodejs_compat"/);
+  });
+
+  it("routes /mcp to the Worker before static assets", () => {
+    expect(wrangler).toMatch(/run_worker_first = \[\s*"\/mcp"/);
+  });
 });
 
 describe("Accept quality weights", () => {

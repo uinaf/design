@@ -188,20 +188,6 @@ describe("verify order", () => {
   });
 });
 
-describe("mcp runtime config", () => {
-  const wrangler = readFileSync(resolve(root, "wrangler.toml"), "utf8");
-
-  it("enables nodejs_compat for the Agents SDK", () => {
-    // The MCP handler imports node:async_hooks; without this the Worker throws
-    // "No such module" at startup and every route 500s, not just /mcp.
-    expect(wrangler).toMatch(/compatibility_flags = \[\s*"nodejs_compat"/);
-  });
-
-  it("routes /mcp to the Worker before static assets", () => {
-    expect(wrangler).toMatch(/run_worker_first = \[\s*"\/mcp"/);
-  });
-});
-
 describe("search_guidelines input bounds", () => {
   it("ignores one-character terms that match almost everything", () => {
     // "a"/"e" occur thousands of times; scoring on them is noise, and counting

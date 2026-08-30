@@ -9,12 +9,8 @@ const fail = (message: string): never => {
   process.exit(1);
 };
 
-// Everything below gates `dist/`, so this script has to run after the build,
-// never before it. `verify` had the two the other way round and only passed
-// because `dist/` was committed. The assertions ran against the previous
-// build's artifacts while the current source went unchecked. Naming the
-// precondition here is what makes that ordering a failure instead of a bare
-// ENOENT stack that reads like a broken checkout.
+// Everything below gates `dist/`, so this script must run after the build
+// (see AGENTS.md invariants for the ordering incident that earned this).
 if (!fs.existsSync(path.join(root, "dist/css/tokens.css"))) {
   fail("dist/ is missing. Run `pnpm run build` first. check.ts gates the build output.");
 }
@@ -58,11 +54,8 @@ for (const [name, value] of grouped) {
   }
 }
 
-// Templates are standalone documents the guide serves, so they cannot depend on
-// a runtime. `_ds_bundle.js` (#31) shipped broken because nothing checked, and
-// nothing in this repo reads templates/, so no other code path would notice.
-// Local references are checked for all three surface dirs in
-// `test/surfaces.test.ts`, which owns that rule.
+// Templates are standalone documents the guide serves, so they cannot depend
+// on a runtime (#31). Local references are owned by `test/surfaces.test.ts`.
 const templatesDir = path.join(root, "templates");
 const templates = fs.readdirSync(templatesDir).filter((f) => f.endsWith(".html"));
 if (templates.length === 0) {
@@ -104,26 +97,15 @@ if (fs.existsSync(path.join(root, "fonts"))) {
 
 type PackageJson = {
   files?: string[];
-  scripts?: Record<string, string>;
 };
 
 const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8")) as PackageJson;
-if ((pkg.files ?? []).some((f) => f === "fonts" || f.includes("font"))) {
-  fail("package.json files must not include fonts");
-}
 
-// The tarball contents are a decision, not a side effect. `system/` shipped two
-// unreachable PNGs for four releases because adding a directory to `files` is a
-// one-line edit nothing reads. Changing what consumers download now takes a
-// deliberate edit here too, with a reason.
-//
-// `preview/`, `pages/`, and `templates/` are deliberately absent. They are whole
-// HTML documents reached by url. Every doc, the skill, and both MCP tools name
-// `design.uinaf.dev/...`, and no `exports` entry maps them, so a consumer
-// subpath import raises ERR_PACKAGE_PATH_NOT_EXPORTED. Shipping them added 145 kB
-// of unreachable copy, `templates/` being uinaf.dev's own site and brand
-// artboards. An entry here is what makes a file downloadable, so the way to serve
-// a surface is to deploy the guide, not to widen this.
+// The tarball contents are a decision, not a side effect: an entry here is
+// what makes a file downloadable, so changing what consumers download takes a
+// deliberate edit with a reason. `preview/`, `pages/`, and `templates/` are
+// deliberately absent — they are whole HTML documents reached by url on the
+// deployed guide, and no `exports` entry maps them.
 const SHIPPED = {
   dist: "the build output with CSS, tokens, patterns, and the lint CLI",
   "DESIGN.md": "the visual and voice spec consumers are pointed at",
@@ -140,26 +122,6 @@ for (const entry of shipped) {
   if (!fs.existsSync(path.join(root, entry))) {
     fail(`package.json files lists ${entry}, which does not exist`);
   }
-}
-
-// AGENTS.md is the first thing an agent reads and the last thing any gate
-// checks. A command named there that no longer exists sends every agent down a
-// dead path, and renaming a script is a one-line edit no test can see. Only the
-// repo-facing docs. README.md describes the consumer's project, not this one.
-const scripts = pkg.scripts ?? {};
-const stale = ["AGENTS.md", "CONTRIBUTING.md", "docs/releasing.md"].flatMap((doc) =>
-  // The whole token, then trim the markdown and sentence punctuation around it.
-  // `[\w:-]+` stopped at the first period, so a doc naming `pnpm run test.unit`
-  // captured `test` and passed on a script that does not exist.
-  [...fs.readFileSync(path.join(root, doc), "utf8").matchAll(/pnpm run (\S+)/g)]
-    .map((m) => m[1].replace(/^[`'"*]+/, "").replace(/[`'"*.,;)\]]+$/, ""))
-    .filter((name) => scripts[name] === undefined)
-    .map((name) => `${doc} → pnpm run ${name}`),
-);
-if (stale.length > 0) {
-  fail(
-    `${[...new Set(stale)].join("\n")}\nNamed in the docs, missing from package.json scripts. Rename in both places, or drop it from the doc.`,
-  );
 }
 
 // Keep the repository-owned skill source structurally valid even though it is

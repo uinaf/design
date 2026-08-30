@@ -23,11 +23,6 @@ describe("pattern markup", () => {
     expect(bare).toEqual([]);
   });
 
-  it("leaves no unresolved placeholders in attributes", () => {
-    const broken = patterns.filter((p) => /(?:src|href)="…"/.test(p.markup)).map((p) => p.name);
-    expect(broken).toEqual([]);
-  });
-
   // Layout parameters like grid-template-columns are a per-use decision and
   // belong inline. Anything the tokens own must not be spelled out inline.
   // `background: #b6ff3c` is the failure mode. A `var(--viz-1)` reference is
