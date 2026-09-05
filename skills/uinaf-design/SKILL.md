@@ -30,5 +30,6 @@ explicitly scoped uinaf work.
 4. **Reuse the shipped system.** Import `@uinaf/design/css`, copy the fetched
    structure, and adapt content. Do not recreate a component from prose.
 5. **Finish through the owning repo's gate.** Run its existing
-   `npm run design:check`. If the script is missing, consult `/readme.md`; do not
-   install dependencies, create a ratchet, or widen the task without approval.
+   `design:check` script through the repo's declared package manager. If the
+   script is missing, consult `/readme.md`; do not install dependencies, create
+   a ratchet, or widen the task without approval.
