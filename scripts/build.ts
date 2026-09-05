@@ -203,10 +203,9 @@ await esbuild.build({
   packages: "external",
 });
 // esbuild emits no declarations, and the ./lint export is a public API. This
-// is hand-maintained and nothing compiles it against src/lint: tsc cannot see
-// inside a string, and a type-level probe misses a dropped optional parameter
-// because the two signatures stay mutually assignable. Change an exported
-// signature in src/lint and you must change it here in the same commit.
+// is hand-maintained; test/lint-consumer.test.ts compiles public calls against
+// the built export because signature assignability alone misses dropped
+// optional parameters. Update the declaration and consumer calls together.
 fs.writeFileSync(
   path.join(lintOut, "index.d.ts"),
   `export type Severity = "error" | "warn";
@@ -218,7 +217,13 @@ export type Violation = {
   message: string;
   fix: string;
 };
-export type CheckOptions = { paths?: string[]; ignore?: string[] };
+export type RuleException = { path: string; rules: string[] };
+export type CheckOptions = {
+  paths?: string[];
+  ignore?: string[];
+  except?: RuleException[];
+  relativeTo?: string;
+};
 export type RatchetResult = {
   passed: boolean;
   risen: Array<{ rule: string; was: number; now: number }>;
@@ -228,7 +233,7 @@ export declare const check: (options?: CheckOptions) => Violation[];
 export declare const checkFile: (file: string) => Violation[];
 export declare const checkCss: (css: string, file: string) => Violation[];
 export declare const checkMarkup: (source: string, file: string) => Violation[];
-export declare const collectFiles: (roots: string[], ignore?: string[]) => string[];
+export declare const collectFiles: (roots: string[], ignore?: string[], relativeTo?: string) => string[];
 export declare const countByRule: (violations: Violation[]) => Record<string, number>;
 export declare const compareRatchet: (
   baseline: Record<string, number>,
