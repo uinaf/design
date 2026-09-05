@@ -45,9 +45,21 @@ the job fails at that step. The private key cannot be read back from GitHub;
 recreating it means generating a new one in the App settings.
 
 During semantic-release preparation, npm stages the released `package.json`
-version and `@jno21/semantic-release-github-commit` commits it to `main` through
-GitHub's API as the authenticated App. GitHub signs that commit, and the release
-tag points to it. The `[skip ci]` marker prevents a recursive release run.
+version. `scripts/release-commit.ts` checks that this is the only source change,
+then uses GitHub's `createCommitOnBranch` mutation with the verified event SHA
+as `expectedHeadOid`. GitHub signs the App's commit and atomically rejects the
+write if `main` has advanced, preserving any newer package edits. The plugin
+fetches the returned commit SHA, checks its parent and source, and resets to
+that exact commit before semantic-release tags or publishes it. Later branch
+movement cannot change the release candidate. The `[skip ci]` marker prevents
+a recursive release run.
+
+If GitHub accepts the writeback but fetching or validating the returned commit
+fails, preparation stops before tagging or publishing. The signed version
+commit remains on `main`; inspect that commit, tags, and npm before recovery.
+The source write and registry publication are not one transaction. Local tests
+exercise the API request and race handling with mocked GitHub responses; a
+live versioned release must still prove GitHub signing and npm/tag parity.
 
 Manual publish is only for emergency recovery:
 
