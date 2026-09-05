@@ -75,36 +75,9 @@ pnpm run deploy
 
 `design.uinaf.dev` is bound in `uinaf/infra` (`workers_custom_domains`), not via wrangler routes.
 
-## Recover the interrupted 1.14.5 publication
+## npm runner
 
-npm rejected the self-hosted runner after semantic-release created signed
-commit `c2a9bf32df62783d44ef2422fefbb73d42e5b2a8` and tag `v1.14.5`.
-The release job now uses GitHub-hosted Ubuntu because
+The release job uses GitHub-hosted Ubuntu because
 [npm provenance requires a supported hosted runner](https://docs.npmjs.com/generating-provenance-statements/).
-
-Dispatch `release.yml` on `main` to run the fixed recovery path in the `release` job.
-It checks out the exact event commit and validates the unchanged tag, its signed release commit,
-ancestry, and version. Only the recovery workflow, helper, test, and this document may
-differ from the tag; package inputs must be unchanged. The full verification
-gate builds the package before publication.
-
-The path publishes only a missing npm version through the existing OIDC
-identity, then creates only a missing GitHub Release. npm integrity must match
-the verified build; npm gitHead must match the event commit. The unchanged
-release tag remains at the original signed version commit. Lookup failures
-other than a confirmed 404 stop recovery. `gh release create --verify-tag`
-checks that the tag exists; the helper checks its target and the commit signature.
-
-The helper reads npm’s registry-served provenance bundle and checks its artifact
-subject, repository, release workflow, dispatch event, hosted runner, and event
-commit on main. npm validates the signed bundle when accepting publication;
-the helper checks its payload rather than implementing signature verification.
-Release notes distinguish that build from the unchanged release tag. GitHub
-environment variables are never overridden to pretend the workflow ran at
-the old tag.
-
-This dispatch does not run semantic-release or deploy the guide. It never
-moves tags or creates another version. A repeat dispatch at the same commit
-checks the existing package against the rebuilt tarball before completing.
-The older tag-only `v1.14.4` is outside this recovery. Remove this one-shot
-dispatch path after publication has been verified.
+Vite+ caching is disabled in this job. Publishing runs through semantic-release
+on pushes to `main`, after verification and scanning pass.
