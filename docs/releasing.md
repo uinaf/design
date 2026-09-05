@@ -83,8 +83,8 @@ The release job now uses GitHub-hosted Ubuntu because
 [npm provenance requires a supported hosted runner](https://docs.npmjs.com/generating-provenance-statements/).
 
 Dispatch `release.yml` on `main` to run the fixed recovery path in the `release` job.
-It checks out the exact event commit and validates the signed tag, ancestry,
-and version. Only the recovery workflow, helper, test, and this document may
+It checks out the exact event commit and validates the unchanged tag, its signed release commit,
+ancestry, and version. Only the recovery workflow, helper, test, and this document may
 differ from the tag; package inputs must be unchanged. The full verification
 gate builds the package before publication.
 
@@ -92,7 +92,8 @@ The path publishes only a missing npm version through the existing OIDC
 identity, then creates only a missing GitHub Release. npm integrity must match
 the verified build; npm gitHead must match the event commit. The unchanged
 release tag remains at the original signed version commit. Lookup failures
-other than a confirmed 404 stop recovery.
+other than a confirmed 404 stop recovery. `gh release create --verify-tag`
+checks that the tag exists; the helper checks its target and the commit signature.
 
 The helper reads npm’s registry-served provenance bundle and checks its artifact
 subject, repository, release workflow, dispatch event, hosted runner, and event
