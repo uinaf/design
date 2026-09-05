@@ -110,8 +110,6 @@ const statement = {
       internalParameters: {
         github: {
           event_name: "workflow_dispatch",
-          repository_id: "1327747420",
-          repository_owner_id: "261665463",
         },
       },
       resolvedDependencies: [

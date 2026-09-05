@@ -206,7 +206,7 @@ jobs:
           RECOVERY_SHA: ${{ github.sha }}
         run: |
           gh release create v1.14.5 --verify-tag --title v1.14.5 --generate-notes --notes-start-tag v1.14.4 \
-            --notes "Recovered npm publication from build $RECOVERY_SHA. Package inputs match the unchanged signed tag v1.14.5; provenance and npm gitHead identify the recovery build."
+            --notes "Recovered npm publication from build $RECOVERY_SHA. Package inputs match the signed release commit referenced by the unchanged tag v1.14.5; provenance and npm gitHead identify the recovery build."
 
       - name: Verify recovered release parity
         if: github.event_name == 'workflow_dispatch'
