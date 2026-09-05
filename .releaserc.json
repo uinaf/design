@@ -5,13 +5,7 @@
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
     "@semantic-release/npm",
-    [
-      "@jno21/semantic-release-github-commit",
-      {
-        "files": ["package.json"],
-        "commitMessage": "chore(release): ${nextRelease.version} [skip ci]"
-      }
-    ],
+    "./scripts/release-commit.ts",
     [
       "@semantic-release/github",
       {
