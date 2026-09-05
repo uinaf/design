@@ -127,7 +127,8 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0
-          ref: main
+          # Publish the commit verified by this workflow, even if main advances.
+          ref: ${{ github.sha }}
       - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
         with:
           standalone: true
