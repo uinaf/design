@@ -31,7 +31,7 @@ Whole screens are read by URL, never imported. The package carries CSS, tokens, 
 
 - **Brand register: lowercase.** Everything rendered as uinaf (the site, product UI, marketing, OG cards) plus commit messages, PR titles, code comments, and CLI output. Two exceptions: micro-labels are uppercase, and **abbreviations keep their conventional caps**: PR, AI, API, CLI, URL, OG, KV, R2, D1, SHA, HDR, HLS, TCC, macOS. `pr review` is wrong; `PR review` is right.
 - **Docs register: conventional caps.** Repo docs (README, CONTRIBUTING, `docs/`), repository changelog files, and GitHub release notes take standard capitalization: sentences start with a capital, headings use sentence case, never title case. Same voice, short and dry and free of sludge, just capitalized. An all-lowercase README reads as a broken shift key, not a brand. This file uses the docs register. The design system's own catalog is documentation too: card names, group labels, subtitles, and spec files take sentence case. A changelog or blog rendered on uinaf.dev is a brand surface and stays lowercase.
-- **Product and studio names stay lowercase in both registers**, even at sentence start: `tccutil manages…`, never `Tccutil manages…`. Recast the sentence if it bothers you. This applies to uinaf, tccutil, healthd, intake, attach, lab, and slopshipper.
+- **Product and studio names stay lowercase in both registers**, even at sentence start: `tccutil manages…`, never `Tccutil manages…`. Recast the sentence if it bothers you. This applies to uinaf, tccutil, healthd, intake, attach, lab, and ffss.
 - The boundary: read as a document → docs register. Read as the product talking → brand register. When unsure, lowercase.
 
 ### Repository identity
