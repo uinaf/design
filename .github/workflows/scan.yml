@@ -1,7 +1,9 @@
 name: Scan
 
 # No push trigger: the push-to-main pipeline already runs the same shared
-# scan as a release gate.
+# scan as a release gate. Pull requests scan the full history too, because the
+# shared baseline checks out with `fetch-depth: 0`; the weekly schedule
+# re-scans unchanged code against newer detector rules.
 on:
   pull_request:
   schedule:
@@ -19,5 +21,6 @@ jobs:
     permissions:
       contents: read
     # Tracks main by design: baseline changes reach every adopter without a
-    # pin bump per repository, and Renovate does not update this reference.
+    # pin bump per repository. The shared Renovate preset deliberately disables
+    # updates for `uinaf/.github`, so a pin here would never move again.
     uses: uinaf/.github/.github/workflows/scan.yml@main
