@@ -18,4 +18,6 @@ jobs:
   scan:
     permissions:
       contents: read
+    # Tracks main by design: baseline changes reach every adopter without a
+    # pin bump per repository, and Renovate does not update this reference.
     uses: uinaf/.github/.github/workflows/scan.yml@main
