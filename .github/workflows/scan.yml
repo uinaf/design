@@ -1,9 +1,11 @@
 name: Scan
 
-# No push trigger: the push-to-main pipeline already runs the same shared
-# scan as a release gate. Pull requests scan the full history too, because the
-# shared baseline checks out with `fetch-depth: 0`; the weekly schedule
-# re-scans unchanged code against newer detector rules.
+# No push trigger: the push-to-main pipeline already runs the same shared scan
+# as a release gate, and pull requests scan the full history because the shared
+# baseline checks out with `fetch-depth: 0`. The weekly run is for the scanners
+# that consult live state - TruffleHog reports only credentials it can verify,
+# and zizmor's online audits read GitHub - so a secret that was inactive at
+# commit time is caught once it becomes valid.
 on:
   pull_request:
   schedule:
