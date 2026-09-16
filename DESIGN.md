@@ -83,7 +83,7 @@ No 18px. Pick the nearest step.
 - **Fields:** micro-label above a 32px control on a slightly raised fill. Focus brightens the border: no rings, no glow. Caret in accent. Errors: muted red border + one dry sentence, never a banner.
 - **Tags:** small caps, bordered, square, never filled.
 - **Links, three families, never mixed:** prose links (visible dim underline, phosphor on hover) · plain links for chrome (opacity fade, no underline) · the whole card as one link.
-- **Header chrome:** small framed mark + small name; the page title outranks it. Never sticky, no background, no shadow.
+- **Header chrome:** small framed mark, plus a small name when the surface has one; the page title outranks it. Never sticky, no background, no shadow.
 - **Code:** inline chips on a raised fill; blocks slightly darker, 13px. Never wrap code; scroll it. Highlighting stays neutral; slime may color strings + keywords only.
 
 ## Layout
