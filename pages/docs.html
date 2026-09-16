@@ -50,7 +50,7 @@
     <header class="u-topbar">
       <div class="u-shell-base u-topbar-row">
         <a href="#" class="u-topbar-mark"
-          ><img src="https://cdn.uinaf.dev/images/uinaf-computer.png" alt="" />attach</a
+          ><img src="https://cdn.uinaf.dev/images/uinaf-computer.png" alt="" />slopguard</a
         >
         <nav class="u-topbar-nav">
           <a href="#" aria-current="page">docs</a><a href="#">source ↗</a>
@@ -63,30 +63,33 @@
           <span class="u-label" style="margin-bottom: 4px">docs</span>
           <a href="#">install</a>
           <a href="#" aria-current="page">quick start</a>
-          <a href="#">auth contract</a>
-          <a href="#">deploy</a>
+          <a href="#">config</a>
+          <a href="#">doctor</a>
           <a href="#">releasing</a>
         </nav>
         <article class="u-prose">
           <h1 style="margin-top: 0">quick start</h1>
           <p>
-            authorize once, then put files. every upload returns a public preview URL you can paste
-            into a PR.
+            check the harness once, then review. every run freezes an explicit git target and prints
+            one report you can paste into a PR.
           </p>
           <pre class="u-pre">
-attach login
-attach put ./shot.png --repo owner/repo --pr 12</pre>
+slopguard doctor --engine codex
+slopguard review --mode branch --base origin/main --engine codex</pre>
           <p>
-            <code>put</code> prints a <code>/p/…</code> preview URL. pass <code>--markdown</code> to
-            get an embeddable raw <code>/o/…</code> link instead.
+            <code>review</code> prints a terminal report. pass <code>--output json</code> to get the
+            versioned <code>result-v1</code> contract on stdout instead.
           </p>
-          <h2>deleting</h2>
-          <pre class="u-pre">attach delete &lt;url-or-key&gt;</pre>
-          <p>deletion is immediate. objects expire on their own after 30 days regardless.</p>
-          <h2>auth</h2>
+          <h2>modes</h2>
+          <pre class="u-pre">slopguard review --mode commit --commit HEAD --engine codex</pre>
           <p>
-            upload auth is <code>att_</code> keys only. never github tokens. agents enroll through
-            the github app; humans use the device flow.
+            <code>local</code> reviews dirty changes. <code>branch</code> reviews merge-base to
+            HEAD; <code>commit</code> reviews one non-merge commit.
+          </p>
+          <h2>exit codes</h2>
+          <p>
+            0 is a clean review, 1 is findings, 2 is no trustworthy result. slopguard never edits
+            source, runs tests, or falls back to another model.
           </p>
         </article>
       </div>

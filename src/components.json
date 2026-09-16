@@ -93,9 +93,9 @@
       "use": "inline chips on raised fill; blocks darker, 13px; .u-code-bleed lets a block run wider than narrow prose",
       "rules": [
         "never wrap code. scroll it",
-        "abbreviations in code stay as written (--pr flags, url vars)"
+        "abbreviations in code stay as written (--base flags, url vars)"
       ],
-      "markup": "<p class=\"u-prose\">run <code class=\"u-code\">attach put ./shot.png</code>, or press <kbd class=\"u-kbd\">⌘k</kbd>.</p>\n<pre class=\"u-pre\">attach login\nattach put ./shot.png --repo owner/repo --pr 12</pre>\n<!-- wide block escaping narrow prose -->\n<pre class=\"u-pre u-code-bleed\">slopguard review --mode branch --base origin/main --engine codex --prompt &quot;review this change.&quot;</pre>"
+      "markup": "<p class=\"u-prose\">run <code class=\"u-code\">slopguard doctor --engine codex</code>, or press <kbd class=\"u-kbd\">⌘k</kbd>.</p>\n<pre class=\"u-pre\">slopguard config --engine codex\nslopguard review --mode local --engine codex</pre>\n<!-- wide block escaping narrow prose -->\n<pre class=\"u-pre u-code-bleed\">slopguard review --mode branch --base origin/main --engine codex --prompt &quot;review this change.&quot;</pre>"
     },
     {
       "name": "def-rows",
@@ -372,7 +372,7 @@
       "classes": [".u-term", ".u-caret"],
       "use": "CLI transcript: dim prompt, fg command, muted output",
       "rules": ["the accent caret is the ONE thing allowed to blink"],
-      "markup": "<pre class=\"u-term\" style=\"max-width:680px\"><span class=\"ps1\">$</span> attach put ./shot.png --repo uinaf/slopzapper --pr 512\n<span class=\"out\">uploading… 482.1 KiB</span>\n<span class=\"ok\">✓</span> <span class=\"out\">https://attach.uinaf.dev/p/Jw5tQUBK0ao5rRzItyF0Fg</span>\n<span class=\"ps1\">$</span> <span class=\"u-caret\"></span></pre>"
+      "markup": "<pre class=\"u-term\" style=\"max-width:680px\"><span class=\"ps1\">$</span> slopguard review --mode branch --base origin/main --engine codex\n<span class=\"out\">reviewing… 14 files, 482 lines</span>\n<span class=\"ok\">✓</span> <span class=\"out\">clean · https://uinaf.dev/ffss/slopguard/r/Jw5tQUBK0ao5</span>\n<span class=\"ps1\">$</span> <span class=\"u-caret\"></span></pre>"
     },
     {
       "name": "timeline",
