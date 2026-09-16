@@ -74,17 +74,17 @@
     "agents": "^0.22.0",
     "esbuild": "^0.28.2",
     "typescript": "^5.9.2",
-    "vite": "npm:@voidzero-dev/vite-plus-core@0.3.0",
-    "vite-plus": "0.3.0",
+    "vite": "npm:@voidzero-dev/vite-plus-core@0.3.1",
+    "vite-plus": "0.3.1",
     "wrangler": "^4.131.0",
     "yaml": "^2.9.0",
     "zod": "^4.4.3"
   },
   "overrides": {
-    "vite": "npm:@voidzero-dev/vite-plus-core@0.3.0"
+    "vite": "npm:@voidzero-dev/vite-plus-core@0.3.1"
   },
   "engines": {
     "node": ">=24.18.0"
   },
-  "packageManager": "pnpm@12.3.4"
+  "packageManager": "pnpm@12.4.0"
 }
