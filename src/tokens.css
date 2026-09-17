@@ -73,8 +73,8 @@
   --fg: var(--neutral-200);
   --fg-strong: var(--neutral-100);
   --fg-muted: var(--neutral-400);
-  --fg-subtle: var(--neutral-600);
-  --fg-faint: var(--neutral-700);
+  --fg-subtle: var(--neutral-500); /* 4.2:1 on --bg; neutral-600 was 2.5:1 */
+  --fg-faint: var(--neutral-600); /* axes and hints; neutral-700 was 1.9:1 */
 
   --border: var(--neutral-800);
   --border-soft: rgba(38, 38, 38, 0.9);
