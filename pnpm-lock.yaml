@@ -180,8 +180,8 @@ importers:
         specifier: ^24.0.0
         version: 24.13.4
       agents:
-        specifier: ^0.22.0
-        version: 0.22.0(@babel/core@8.0.1)(@babel/runtime@7.29.7)(@modelcontextprotocol/client@2.0.0)(@modelcontextprotocol/sdk@1.30.0(@cfworker/json-schema@4.1.1)(supports-color@10.2.2)(zod@4.6.2))(@modelcontextprotocol/server@2.0.0)(@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.0))(react@19.2.8)(rolldown@1.2.3)(zod@4.6.2)
+        specifier: ^0.23.0
+        version: 0.23.0(@babel/core@8.0.1)(@babel/runtime@7.29.7)(@modelcontextprotocol/client@2.0.0)(@modelcontextprotocol/sdk@1.30.0(@cfworker/json-schema@4.1.1)(supports-color@10.2.2)(zod@4.6.2))(@modelcontextprotocol/server@2.0.0)(@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.1))(react@19.2.8)(rolldown@1.2.3)(zod@4.6.2)
       esbuild:
         specifier: ^0.28.2
         version: 0.28.2
@@ -190,16 +190,16 @@ importers:
         version: 5.9.3
       vite:
         specifier: npm:@voidzero-dev/vite-plus-core@0.3.1
-        version: '@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.0)'
+        version: '@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.1)'
       vite-plus:
         specifier: 0.3.1
-        version: 0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.0)
+        version: 0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.1)
       wrangler:
         specifier: ^4.131.0
-        version: 4.131.0(@cloudflare/workers-types@5.20260911.1)(@types/node@24.13.4)
+        version: 4.131.1(@cloudflare/workers-types@5.20260911.1)(@types/node@24.13.4)
       yaml:
         specifier: ^2.9.0
-        version: 2.9.0
+        version: 2.9.1
       zod:
         specifier: ^4.4.3
         version: 4.6.2
@@ -344,32 +344,32 @@ packages:
       workerd:
         optional: true
 
-  '@cloudflare/workerd-darwin-64@1.20260910.1':
-    resolution: {integrity: sha512-9K72iwX+RdKZLgvEqCgOI0tBgo10lN2lWjrtM8SRFjl7LOzk7NmrepBvAFiUz8H5PhxafQ17Dku2RLmzA/Hnew==}
+  '@cloudflare/workerd-darwin-64@1.20260911.1':
+    resolution: {integrity: sha512-785eaY1bkR1cm4Z/PCUeteZYmTMe6lre2zz63/GdGGimsoMsKxgl4brFPRukim8iv28EyD1XoCB/VPYF20BERA==}
     engines: {node: '>=16'}
     cpu: [x64]
     os: [darwin]
 
-  '@cloudflare/workerd-darwin-arm64@1.20260910.1':
-    resolution: {integrity: sha512-OYjzHbTXXxzRDtjnlcy4o6unJ3WiKM9FTtndvy4sitP9ZN+JC2/EDT/lyyJaFw4yZ9uSF9pdeMDp3Kgxixc2NA==}
+  '@cloudflare/workerd-darwin-arm64@1.20260911.1':
+    resolution: {integrity: sha512-WU4bFqEN0H7ndGWxoedegv95DmNVBtv0ncXcHG9nYFTUI78sxEb0qoT3U6Ga4hyBkzsJFBX/zvVBIGX3qKldGA==}
     engines: {node: '>=16'}
     cpu: [arm64]
     os: [darwin]
 
-  '@cloudflare/workerd-linux-64@1.20260910.1':
-    resolution: {integrity: sha512-tNlHMrvoAyggdukuPSpN3huxOAwI9xzg2SOHC8sI785/HaAQbA220Ua9MOHWuc6MXj6QNSc3B0YA3DWtFtw37Q==}
+  '@cloudflare/workerd-linux-64@1.20260911.1':
+    resolution: {integrity: sha512-0Y2gy62oxQxWa38qinSPE6zNL5+JmumJtDY9AWW1HB8KHuATxN71o5MGzmVFfB8PwZsiHfUd2Sv7O22krCOrhw==}
     engines: {node: '>=16'}
     cpu: [x64]
     os: [linux]
 
-  '@cloudflare/workerd-linux-arm64@1.20260910.1':
-    resolution: {integrity: sha512-ScBo7DydT1o/sowCj2HBbN2TU3rQ11H2YEuFG3SC7M5b97PMmakhcIBzFpbKeHbyVf+aEsTlLCJsZtWDuyWAyQ==}
+  '@cloudflare/workerd-linux-arm64@1.20260911.1':
+    resolution: {integrity: sha512-kttNPnx1r2lCqFUoMH62z7CqGV+j4QBbw5fdtaz4pzOrzBv0AWkNATt7onFUe+SwP8zhcepMtbm2F4kKzTf6VA==}
     engines: {node: '>=16'}
     cpu: [arm64]
     os: [linux]
 
-  '@cloudflare/workerd-windows-64@1.20260910.1':
-    resolution: {integrity: sha512-+iiMuoE9+rbs3NL21gIQYmhMDXs/kfhoiSsehqZparbvZo0MVUZDzm7cSaUgCKM3YCtXNWPnoV6VlfkgBbotvw==}
+  '@cloudflare/workerd-windows-64@1.20260911.1':
+    resolution: {integrity: sha512-5iO/YfoBDOgO3CrHdkiiVP8SL3O2jC+c6Ux3d378TSPKLhU5+CgHjtE/ZSodWQrzr4FzFRqdW8S7n5nbyD1MHQ==}
     engines: {node: '>=16'}
     cpu: [x64]
     os: [win32]
@@ -1640,8 +1640,8 @@ packages:
     resolution: {integrity: sha512-5cvg6CtKwfgdmVqY1WIiXKc3Q1bkRqGLi+2W/6ao+6Y7gu/RCwRuAhGEzh5B4KlszSuTLgZYuqFqo5bImjNKng==}
     engines: {node: '>= 0.6'}
 
-  agents@0.22.0:
-    resolution: {integrity: sha512-dIy/BRdO5GSqdOIp0pmkcLmHCCxIKb4RBByXFXmXG6Nc6WBSNYRXoLLDvWj2fJAfi4l5/OndJjZuBAP0vW0DZQ==}
+  agents@0.23.0:
+    resolution: {integrity: sha512-V6K9vSaUn9AWQUKj4rQl6Q+4Q2EJ7+TYwaakY1uBXb9RJvSqIwv25SPjZKZA5Mjy0lCUnBoExJlzUeFERKYrUQ==}
     peerDependencies:
       '@ai-sdk/react': ^3.0.0 || ^4.0.0
       '@cloudflare/codemode': '>=0.5.0'
@@ -1736,6 +1736,9 @@ packages:
 
   caniuse-lite@1.0.30001809:
     resolution: {integrity: sha512-xxWVywk6a6Arlk+hymeycyn/VgqEfLDxupvhH/xiY5SJ/18kmi9o6MiO320DCUzypORHLtvh0I4i04tUhCNHNQ==}
+
+  capnweb@0.12.0:
+    resolution: {integrity: sha512-jgZ/LMtMVTi+RVlooIslH78Gg23XbDTdvcLghWx3oz17D6u5GuJARt+uhZk/wcTo+f81eeabfnow4d3zLBj+JQ==}
 
   chai@6.2.2:
     resolution: {integrity: sha512-NUPRluOfOiTKBKvWPtSD4PhFvWCqOi0BGStNWs57X9js7XGTprSmFoz5F0tWhR4WPjNeR9jXqdC7/UpSJTnlRg==}
@@ -2131,8 +2134,8 @@ packages:
   mimetext@3.0.28:
     resolution: {integrity: sha512-eQXpbNrtxLCjUtiVbR/qR09dbPgZ2o+KR1uA7QKqGhbn8QV7HIL16mXXsobBL4/8TqoYh1us31kfz+dNfCev9g==}
 
-  miniflare@5.20260910.0-alpha:
-    resolution: {integrity: sha512-V41TxLjX1Dq4pys8X5GAl/CrUY0//QcXCIdYwy01Cev+JdsWOWzzN0IP45lojgw+fEVY9QdepzVIziT2IxhbUQ==}
+  miniflare@5.20260911.0-alpha:
+    resolution: {integrity: sha512-CRieJmvHx+7rNqnA5SKdsYsER6rfkUIE/jruIUw+fLhsQ4sORfuMtr3+FQzsQ9/y8lhk061V4Fl1DFdHiyBB6g==}
     engines: {node: '>=22.0.0'}
 
   mrmime@2.0.1:
@@ -2248,6 +2251,9 @@ packages:
   pngjs@7.0.0:
     resolution: {integrity: sha512-LKWqWJRhstyYo9pGvgor/ivk2w94eSjE3RGVuzLGlr3NmD8bf7RcYGze1mNdEHRP6TRP6rMuDHk5t44hnTRyow==}
     engines: {node: '>=14.19.0'}
+
+  postal-mime@2.7.6:
+    resolution: {integrity: sha512-UUlyE2KlxmvwMGq060onF/VWU3zD6dVW31FwokQ5v26jWd35fbs2MoTFzh+jXnPwAyV2MULMKXcBInGOl5TO6Q==}
 
   postcss@8.5.28:
     resolution: {integrity: sha512-RRuzqDtt5Y9h3quz5hWhK+TPnsmVs6WwSU6LkJMeY4HstUEDuYTG8UJSdawMRzmzAtV+KEoG8N3Qg2qLy5vM/A==}
@@ -2497,17 +2503,17 @@ packages:
     engines: {node: '>=8'}
     hasBin: true
 
-  workerd@1.20260910.1:
-    resolution: {integrity: sha512-/HF0f8LmgT60Uk+ZPDbMnlUHjecfV8w4VMo61iFxW7ky7EexTdwbzUCANWZQiG0w1cBihjJTkhzmReeZLGarXw==}
+  workerd@1.20260911.1:
+    resolution: {integrity: sha512-vRr8QdBxueQOZJO1hRCI73EZlix87IAyBAcSyI3rA1VB+6oxjw3oaqzYnIV8C4IOPtUgihbdMAgzkb5GM4V7DQ==}
     engines: {node: '>=16'}
     hasBin: true
 
-  wrangler@4.131.0:
-    resolution: {integrity: sha512-ElsBshkzBhpIeaqc7sP5lsAEXYTrHPxWGKExK+HwIRYFleiKkW4ozvQidW36OXcsIUbZ0pPJJUP5RDodKbN0cA==}
+  wrangler@4.131.1:
+    resolution: {integrity: sha512-1u5FMdJAn6UOcL02cVsIITcnHrk6mC7N+RF10EkVhPL18R/o9g5BZb4PCjByL+3AsRP5wQpppCIPHhYPRmIJwg==}
     engines: {node: '>=22.0.0'}
     hasBin: true
     peerDependencies:
-      '@cloudflare/workers-types': ^5.20260910.1
+      '@cloudflare/workers-types': ^5.20260911.1
     peerDependenciesMeta:
       '@cloudflare/workers-types':
         optional: true
@@ -2527,8 +2533,8 @@ packages:
       utf-8-validate:
         optional: true
 
-  yaml@2.9.0:
-    resolution: {integrity: sha512-2AvhNX3mb8zd6Zy7INTtSpl1F15HW6Wnqj0srWlkKLcpYl/gMIMJiyuGq2KeI2YFxUPjdlB+3Lc10seMLtL4cA==}
+  yaml@2.9.1:
+    resolution: {integrity: sha512-3NxN8+78OdzbT7C/WjGsyfPAtJaN3FNDsWxv7Y7mcDsT/oOmgW8BpyQQFFBnvZE3j9Y2Sdz1ULFLezL7Eb2yFw==}
     engines: {node: '>= 14.6'}
     hasBin: true
 
@@ -2710,25 +2716,25 @@ snapshots:
 
   '@cloudflare/kv-asset-handler@0.5.0': {}
 
-  '@cloudflare/unenv-preset@2.16.1(unenv@2.0.0-rc.24)(workerd@1.20260910.1)':
+  '@cloudflare/unenv-preset@2.16.1(unenv@2.0.0-rc.24)(workerd@1.20260911.1)':
     dependencies:
       unenv: 2.0.0-rc.24
     optionalDependencies:
-      workerd: 1.20260910.1
+      workerd: 1.20260911.1
 
-  '@cloudflare/workerd-darwin-64@1.20260910.1':
+  '@cloudflare/workerd-darwin-64@1.20260911.1':
     optional: true
 
-  '@cloudflare/workerd-darwin-arm64@1.20260910.1':
+  '@cloudflare/workerd-darwin-arm64@1.20260911.1':
     optional: true
 
-  '@cloudflare/workerd-linux-64@1.20260910.1':
+  '@cloudflare/workerd-linux-64@1.20260911.1':
     optional: true
 
-  '@cloudflare/workerd-linux-arm64@1.20260910.1':
+  '@cloudflare/workerd-linux-arm64@1.20260911.1':
     optional: true
 
-  '@cloudflare/workerd-windows-64@1.20260910.1':
+  '@cloudflare/workerd-windows-64@1.20260911.1':
     optional: true
 
   '@cloudflare/workers-types@5.20260911.1':
@@ -3267,14 +3273,14 @@ snapshots:
   '@rolldown/binding-win32-x64-msvc@1.2.3':
     optional: true
 
-  '@rolldown/plugin-babel@0.2.3(@babel/core@8.0.1)(@babel/runtime@7.29.7)(@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.0))(rolldown@1.2.3)':
+  '@rolldown/plugin-babel@0.2.3(@babel/core@8.0.1)(@babel/runtime@7.29.7)(@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.1))(rolldown@1.2.3)':
     dependencies:
       '@babel/core': 8.0.1
       picomatch: 4.0.5
       rolldown: 1.2.3
     optionalDependencies:
       '@babel/runtime': 7.29.7
-      vite: '@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.0)'
+      vite: '@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.1)'
 
   '@rolldown/pluginutils@1.0.1': {}
 
@@ -3318,28 +3324,28 @@ snapshots:
     dependencies:
       undici-types: 7.18.2
 
-  '@vitest/browser-preview@4.1.11(@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.0))(vitest@4.1.11)':
+  '@vitest/browser-preview@4.1.11(@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.1))(vitest@4.1.11)':
     dependencies:
       '@testing-library/dom': 10.4.1
       '@testing-library/user-event': 14.6.3(@testing-library/dom@10.4.1)
-      '@vitest/browser': 4.1.11(@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.0))(vitest@4.1.11)
-      vitest: 4.1.11(@types/node@24.13.4)(@vitest/browser-preview@4.1.11)(@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.0))
+      '@vitest/browser': 4.1.11(@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.1))(vitest@4.1.11)
+      vitest: 4.1.11(@types/node@24.13.4)(@vitest/browser-preview@4.1.11)(@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.1))
     transitivePeerDependencies:
       - bufferutil
       - msw
       - utf-8-validate
       - vite
 
-  '@vitest/browser@4.1.11(@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.0))(vitest@4.1.11)':
+  '@vitest/browser@4.1.11(@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.1))(vitest@4.1.11)':
     dependencies:
       '@blazediff/core': 1.9.1
-      '@vitest/mocker': 4.1.11(@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.0))
+      '@vitest/mocker': 4.1.11(@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.1))
       '@vitest/utils': 4.1.11
       magic-string: 0.30.21
       pngjs: 7.0.0
       sirv: 3.0.2
       tinyrainbow: 3.1.1
-      vitest: 4.1.11(@types/node@24.13.4)(@vitest/browser-preview@4.1.11)(@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.0))
+      vitest: 4.1.11(@types/node@24.13.4)(@vitest/browser-preview@4.1.11)(@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.1))
       ws: 8.21.0
     transitivePeerDependencies:
       - bufferutil
@@ -3356,13 +3362,13 @@ snapshots:
       chai: 6.2.2
       tinyrainbow: 3.1.1
 
-  '@vitest/mocker@4.1.11(@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.0))':
+  '@vitest/mocker@4.1.11(@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.1))':
     dependencies:
       '@vitest/spy': 4.1.11
       estree-walker: 3.0.3
       magic-string: 0.30.21
     optionalDependencies:
-      vite: '@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.0)'
+      vite: '@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.1)'
 
   '@vitest/pretty-format@4.1.11':
     dependencies:
@@ -3388,7 +3394,7 @@ snapshots:
       convert-source-map: 2.0.0
       tinyrainbow: 3.1.1
 
-  '@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.0)':
+  '@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.1)':
     dependencies:
       '@oxc-project/runtime': 0.148.0
       '@oxc-project/types': 0.148.0
@@ -3409,7 +3415,7 @@ snapshots:
       esbuild: 0.28.2
       fsevents: 2.3.3
       typescript: 5.9.3
-      yaml: 2.9.0
+      yaml: 2.9.1
 
   '@voidzero-dev/vite-plus-darwin-arm64@0.3.1':
     optional: true
@@ -3514,24 +3520,26 @@ snapshots:
       mime-types: 3.0.2
       negotiator: 1.0.0
 
-  agents@0.22.0(@babel/core@8.0.1)(@babel/runtime@7.29.7)(@modelcontextprotocol/client@2.0.0)(@modelcontextprotocol/sdk@1.30.0(@cfworker/json-schema@4.1.1)(supports-color@10.2.2)(zod@4.6.2))(@modelcontextprotocol/server@2.0.0)(@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.0))(react@19.2.8)(rolldown@1.2.3)(zod@4.6.2):
+  agents@0.23.0(@babel/core@8.0.1)(@babel/runtime@7.29.7)(@modelcontextprotocol/client@2.0.0)(@modelcontextprotocol/sdk@1.30.0(@cfworker/json-schema@4.1.1)(supports-color@10.2.2)(zod@4.6.2))(@modelcontextprotocol/server@2.0.0)(@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.1))(react@19.2.8)(rolldown@1.2.3)(zod@4.6.2):
     dependencies:
       '@babel/plugin-proposal-decorators': 8.0.2(@babel/core@8.0.1)
       '@cfworker/json-schema': 4.1.1
       '@modelcontextprotocol/client': 2.0.0
       '@modelcontextprotocol/sdk': 1.30.0(@cfworker/json-schema@4.1.1)(supports-color@10.2.2)(zod@4.6.2)
       '@modelcontextprotocol/server': 2.0.0
-      '@rolldown/plugin-babel': 0.2.3(@babel/core@8.0.1)(@babel/runtime@7.29.7)(@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.0))(rolldown@1.2.3)
+      '@rolldown/plugin-babel': 0.2.3(@babel/core@8.0.1)(@babel/runtime@7.29.7)(@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.1))(rolldown@1.2.3)
+      capnweb: 0.12.0
       cron-schedule: 6.0.0
       esbuild: 0.28.2
       mimetext: 3.0.28
       nanoid: 5.1.16
       partysocket: 1.3.0(react@19.2.8)
-      yaml: 2.9.0
+      postal-mime: 2.7.6
+      yaml: 2.9.1
       zod: 4.6.2
     optionalDependencies:
       react: 19.2.8
-      vite: '@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.0)'
+      vite: '@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.1)'
     transitivePeerDependencies:
       - '@babel/core'
       - '@babel/plugin-transform-runtime'
@@ -3598,6 +3606,8 @@ snapshots:
       get-intrinsic: 1.3.0
 
   caniuse-lite@1.0.30001809: {}
+
+  capnweb@0.12.0: {}
 
   chai@6.2.2: {}
 
@@ -3971,12 +3981,12 @@ snapshots:
       js-base64: 3.9.2
       mime-types: 2.1.35
 
-  miniflare@5.20260910.0-alpha(@types/node@24.13.4):
+  miniflare@5.20260911.0-alpha(@types/node@24.13.4):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       sharp: 0.35.4(@types/node@24.13.4)
       undici: 7.29.0
-      workerd: 1.20260910.1
+      workerd: 1.20260911.1
       ws: 8.21.0
       youch: 4.1.0-beta.10
     transitivePeerDependencies:
@@ -4010,7 +4020,7 @@ snapshots:
     dependencies:
       wrappy: 1.0.2
 
-  oxfmt@0.66.0(vite-plus@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.0)):
+  oxfmt@0.66.0(vite-plus@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.1)):
     dependencies:
       tinypool: 2.1.0
     optionalDependencies:
@@ -4033,7 +4043,7 @@ snapshots:
       '@oxfmt/binding-win32-arm64-msvc': 0.66.0
       '@oxfmt/binding-win32-ia32-msvc': 0.66.0
       '@oxfmt/binding-win32-x64-msvc': 0.66.0
-      vite-plus: 0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.0)
+      vite-plus: 0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.1)
 
   oxlint-tsgolint@7.0.2001:
     optionalDependencies:
@@ -4044,7 +4054,7 @@ snapshots:
       '@oxlint-tsgolint/win32-arm64': 7.0.2001
       '@oxlint-tsgolint/win32-x64': 7.0.2001
 
-  oxlint@1.81.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.0)):
+  oxlint@1.81.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.1)):
     optionalDependencies:
       '@oxlint/binding-android-arm-eabi': 1.81.0
       '@oxlint/binding-android-arm64': 1.81.0
@@ -4066,7 +4076,7 @@ snapshots:
       '@oxlint/binding-win32-ia32-msvc': 1.81.0
       '@oxlint/binding-win32-x64-msvc': 1.81.0
       oxlint-tsgolint: 7.0.2001
-      vite-plus: 0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.0)
+      vite-plus: 0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.1)
 
   parseurl@1.3.3: {}
 
@@ -4091,6 +4101,8 @@ snapshots:
   pkce-challenge@5.0.1: {}
 
   pngjs@7.0.0: {}
+
+  postal-mime@2.7.6: {}
 
   postcss@8.5.28:
     dependencies:
@@ -4322,24 +4334,24 @@ snapshots:
 
   vary@1.1.2: {}
 
-  vite-plus@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.0):
+  vite-plus@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.1):
     dependencies:
       '@oxc-project/types': 0.148.0
       '@oxlint/plugins': 1.79.0
-      '@vitest/browser': 4.1.11(@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.0))(vitest@4.1.11)
-      '@vitest/browser-preview': 4.1.11(@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.0))(vitest@4.1.11)
+      '@vitest/browser': 4.1.11(@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.1))(vitest@4.1.11)
+      '@vitest/browser-preview': 4.1.11(@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.1))(vitest@4.1.11)
       '@vitest/expect': 4.1.11
-      '@vitest/mocker': 4.1.11(@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.0))
+      '@vitest/mocker': 4.1.11(@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.1))
       '@vitest/pretty-format': 4.1.11
       '@vitest/runner': 4.1.11
       '@vitest/snapshot': 4.1.11
       '@vitest/spy': 4.1.11
       '@vitest/utils': 4.1.11
-      oxfmt: 0.66.0(vite-plus@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.0))
-      oxlint: 1.81.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.0))
+      oxfmt: 0.66.0(vite-plus@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.1))
+      oxlint: 1.81.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.1))
       oxlint-tsgolint: 7.0.2001
-      vite: '@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.0)'
-      vitest: 4.1.11(@types/node@24.13.4)(@vitest/browser-preview@4.1.11)(@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.0))
+      vite: '@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.1)'
+      vitest: 4.1.11(@types/node@24.13.4)(@vitest/browser-preview@4.1.11)(@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.1))
     optionalDependencies:
       '@voidzero-dev/vite-plus-darwin-arm64': 0.3.1
       '@voidzero-dev/vite-plus-darwin-x64': 0.3.1
@@ -4379,10 +4391,10 @@ snapshots:
       - utf-8-validate
       - yaml
 
-  vitest@4.1.11(@types/node@24.13.4)(@vitest/browser-preview@4.1.11)(@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.0)):
+  vitest@4.1.11(@types/node@24.13.4)(@vitest/browser-preview@4.1.11)(@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.1)):
     dependencies:
       '@vitest/expect': 4.1.11
-      '@vitest/mocker': 4.1.11(@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.0))
+      '@vitest/mocker': 4.1.11(@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.1))
       '@vitest/pretty-format': 4.1.11
       '@vitest/runner': 4.1.11
       '@vitest/snapshot': 4.1.11
@@ -4399,11 +4411,11 @@ snapshots:
       tinyexec: 1.3.0
       tinyglobby: 0.2.17
       tinyrainbow: 3.1.1
-      vite: '@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.0)'
+      vite: '@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.1)'
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 24.13.4
-      '@vitest/browser-preview': 4.1.11(@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.0))(vitest@4.1.11)
+      '@vitest/browser-preview': 4.1.11(@voidzero-dev/vite-plus-core@0.3.1(@types/node@24.13.4)(esbuild@0.28.2)(typescript@5.9.3)(yaml@2.9.1))(vitest@4.1.11)
     transitivePeerDependencies:
       - msw
 
@@ -4416,24 +4428,24 @@ snapshots:
       siginfo: 2.0.0
       stackback: 0.0.2
 
-  workerd@1.20260910.1:
+  workerd@1.20260911.1:
     optionalDependencies:
-      '@cloudflare/workerd-darwin-64': 1.20260910.1
-      '@cloudflare/workerd-darwin-arm64': 1.20260910.1
-      '@cloudflare/workerd-linux-64': 1.20260910.1
-      '@cloudflare/workerd-linux-arm64': 1.20260910.1
-      '@cloudflare/workerd-windows-64': 1.20260910.1
+      '@cloudflare/workerd-darwin-64': 1.20260911.1
+      '@cloudflare/workerd-darwin-arm64': 1.20260911.1
+      '@cloudflare/workerd-linux-64': 1.20260911.1
+      '@cloudflare/workerd-linux-arm64': 1.20260911.1
+      '@cloudflare/workerd-windows-64': 1.20260911.1
 
-  wrangler@4.131.0(@cloudflare/workers-types@5.20260911.1)(@types/node@24.13.4):
+  wrangler@4.131.1(@cloudflare/workers-types@5.20260911.1)(@types/node@24.13.4):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.5.0
-      '@cloudflare/unenv-preset': 2.16.1(unenv@2.0.0-rc.24)(workerd@1.20260910.1)
+      '@cloudflare/unenv-preset': 2.16.1(unenv@2.0.0-rc.24)(workerd@1.20260911.1)
       blake3-wasm: 2.1.5
       esbuild: 0.28.1
-      miniflare: 5.20260910.0-alpha(@types/node@24.13.4)
+      miniflare: 5.20260911.0-alpha(@types/node@24.13.4)
       path-to-regexp: 6.3.0
       unenv: 2.0.0-rc.24
-      workerd: 1.20260910.1
+      workerd: 1.20260911.1
     optionalDependencies:
       '@cloudflare/workers-types': 5.20260911.1
       fsevents: 2.3.3
@@ -4446,7 +4458,7 @@ snapshots:
 
   ws@8.21.0: {}
 
-  yaml@2.9.0: {}
+  yaml@2.9.1: {}
 
   youch-core@0.3.3:
     dependencies:

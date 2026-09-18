@@ -71,7 +71,7 @@
   "devDependencies": {
     "@modelcontextprotocol/server": "2.0.0",
     "@types/node": "^24.0.0",
-    "agents": "^0.22.0",
+    "agents": "^0.23.0",
     "esbuild": "^0.28.2",
     "typescript": "^5.9.2",
     "vite": "npm:@voidzero-dev/vite-plus-core@0.3.1",
