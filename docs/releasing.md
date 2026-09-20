@@ -8,7 +8,7 @@ A push to `main` runs one workflow, `.github/workflows/release.yml`:
 verify ──┐
          ├──> deploy   guide to design.uinaf.dev  (production environment)
 scan ────┘
-         └──> release  npm publish, OIDC + uinaf-releaser  (release environment)
+         └──> release  npm publish, OIDC + uinaf-ci  (release environment)
 ```
 
 `verify` and `scan` are the shared gate: `verify` is called from `verify.yml`,
@@ -24,14 +24,14 @@ The file name `release.yml` is load-bearing; see below.
 
 ## npm
 
-`@uinaf/design` publishes from `.github/workflows/release.yml` via npm Trusted Publishing (OIDC) and `uinaf-releaser`.
+`@uinaf/design` publishes from `.github/workflows/release.yml` via npm Trusted Publishing (OIDC) and `uinaf-ci`.
 
 Required on the `release` GitHub Environment:
 
-| Name                            | Kind   | Purpose                                     |
-| ------------------------------- | ------ | ------------------------------------------- |
-| `UINAF_RELEASE_APP_CLIENT_ID`   | var    | GitHub App client id for the releaser bot   |
-| `UINAF_RELEASE_APP_PRIVATE_KEY` | secret | GitHub App private key for the releaser bot |
+| Name                       | Kind   | Purpose                                     |
+| -------------------------- | ------ | ------------------------------------------- |
+| `UINAF_CI_APP_CLIENT_ID`   | var    | GitHub App client id for the releaser bot   |
+| `UINAF_CI_APP_PRIVATE_KEY` | secret | GitHub App private key for the releaser bot |
 
 npm trusted publisher is already registered for this repo / workflow file
 (`release.yml`) / `release` environment. The registration is by **file path**,
