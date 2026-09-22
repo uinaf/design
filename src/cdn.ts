@@ -14,14 +14,18 @@ export const CDN = {
   images: {
     computer240: "https://cdn.uinaf.dev/images/webp/uinaf-computer-240w.webp",
     computer: "https://cdn.uinaf.dev/images/uinaf-computer.png",
+    computerFavicon: "https://cdn.uinaf.dev/images/uinaf-computer-favicon.png",
     computerOg: "https://cdn.uinaf.dev/images/uinaf-computer-og-image.png",
     computerOgWebp: "https://cdn.uinaf.dev/images/webp/uinaf-computer-og-image-1024w.webp",
+    team240: "https://cdn.uinaf.dev/images/webp/uinaf-team-240w.webp",
+    teamOgWebp: "https://cdn.uinaf.dev/images/webp/uinaf-team-1024w.webp",
     team: "https://cdn.uinaf.dev/images/uinaf-team.png",
   },
-  /** Rendered output of the `templates/export-*.html` artboards. */
+  /** Rendered share cards and historical repository-banner samples. */
   exports: {
     ogCard: "https://cdn.uinaf.dev/images/exports/og-card.png",
     ogCardPost: "https://cdn.uinaf.dev/images/exports/og-card-post.png",
+    /** Historical samples retained for compatibility; current repo banners use uinaf.dev/og/banner/[repo].png. */
     repoOgSample: "https://cdn.uinaf.dev/images/exports/repo-og-healthd.png",
     readmeBannerSample: "https://cdn.uinaf.dev/images/exports/readme-banner-healthd.png",
   },

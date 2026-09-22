@@ -219,6 +219,17 @@ for (const { slug: name } of templates) {
   );
 }
 
+for (const [name, slug] of [
+  ["blog index", "blog-index"],
+  ["blog post", "blog-post"],
+  ["uinaf.dev status", "status"],
+  ["export · repo OG card", "export-repo-banner"],
+]) {
+  const byName = await call("get_template", { name });
+  const bySlug = await call("get_template", { name: slug });
+  check(`get_template preserves the alias ${name}`, byName === bySlug);
+}
+
 // The canvas size is the one thing that separates an artboard from a page. An
 // artboard answering without it reads as a surface to adapt.
 const artboard = await call("get_template", { name: "export-readme-banner" });
