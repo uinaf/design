@@ -5,8 +5,9 @@ name: Release
 # environment. This was confirmed against the provenance attestation of a published
 # version, not only against docs. Rename or move this file and `npm publish`
 # fails with an identity mismatch until someone updates the trusted publisher
-# on npmjs.com. So the publish job stays here, and everything else that runs on
-# a push to main came to it.
+# on npmjs.com. So the publish job stays here, calling the shared
+# uinaf/.github release-npm workflow, which binds the `release` environment;
+# everything else that runs on a push to main came to it.
 #
 # `deploy` and `release` are siblings, both on `needs: [verify, scan]`.
 # Never make deploy `needs: [release]`. design.uinaf.dev must keep shipping
@@ -114,7 +115,6 @@ jobs:
       contents: read
       id-token: write # OIDC for npm trusted publishing; the shared job needs it too
     uses: uinaf/.github/.github/workflows/release-npm.yml@main
-    with:
-      app-client-id: ${{ vars.UINAF_CI_APP_CLIENT_ID }}
-    secrets:
-      app-private-key: ${{ secrets.UINAF_CI_APP_PRIVATE_KEY }}
+    # The App credentials live on this repository's release Environment; the
+    # shared job binds that Environment and reads them itself.
+    secrets: inherit
