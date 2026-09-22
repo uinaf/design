@@ -92,7 +92,7 @@ pnpm run deploy
 Verification, guide deployment, and npm publication use standard GitHub-hosted
 `ubuntu-24.04` runners, preserving Ubuntu 24.04 x64 execution.
 
-The release job requires GitHub-hosted Ubuntu because
-[npm provenance requires a supported hosted runner](https://docs.npmjs.com/generating-provenance-statements/).
+The release job stays GitHub-hosted because
+[npm trusted publishing accepts cloud-hosted runners only](https://docs.npmjs.com/trusted-publishers/).
 Vite+ caching is disabled in this job. Publishing runs through semantic-release
 on pushes to `main`, after verification and scanning pass.
