@@ -183,8 +183,6 @@ describe("shared-gutter", () => {
 });
 
 describe("design-check-disable-next-line precision", () => {
-  // A suppression is a bypass, so it earns more tests than the rule it mutes.
-  // "suppresses the named rule, and nothing else in the file" is covered above.
   const check = async (body: string): Promise<string[]> => {
     const { checkFile } = await import("../src/lint/index");
     const { tmpdir } = await import("node:os");
