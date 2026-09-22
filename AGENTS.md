@@ -44,10 +44,10 @@ Prefer `vp` for lint/format/test: `pnpm exec vp check`, `pnpm exec vp test run`.
 
 ## Pipelines
 
-| Workflow                        | Trigger                          | Jobs                                                                                    |
-| ------------------------------- | -------------------------------- | --------------------------------------------------------------------------------------- |
-| `.github/workflows/verify.yml`  | PR, merge queue, `workflow_call` | `verify`, the one definition, called by the others                                      |
-| `.github/workflows/release.yml` | push to `main`                   | (verify + scan) → guide deploy (`production`) ∥ npm publish (`release`)                 |
+| Workflow                        | Trigger                          | Jobs                                                                                                                                         |
+| ------------------------------- | -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.github/workflows/verify.yml`  | PR, merge queue, `workflow_call` | `verify`, the one definition, called by the others                                                                                           |
+| `.github/workflows/release.yml` | push to `main`                   | (verify + scan) → guide deploy (`production`) ∥ npm publish (`release`)                                                                      |
 | `.github/workflows/scan.yml`    | PR, weekly, dispatch             | caller for the shared scan in `uinaf/.github`: gitleaks and trufflehog always, actionlint and zizmor when workflow or scanner config changes |
 
 `+` and `∥` both mean parallel: the two gates run at once, then the two terminal jobs run at once. The `→` is the only chain; nothing after it starts until both gates pass.
@@ -60,6 +60,7 @@ Two rules the file names do not tell you:
 - `deploy` and `release` are siblings on `needs: [verify, scan]`. Never gate guide deploy on the release job; `design.uinaf.dev` must keep shipping when a publish fails.
 
 Credentials for each path are listed in `docs/releasing.md` (vars vs secrets).
+
 - `verify.yml` groups concurrency on `github.workflow` and `github.ref`, which resolve to the caller when called from `release.yml`, so a called run never collides with a PR run.
 - `wrangler.toml` constraints: `nodejs_compat` is required because the Agents SDK MCP handler imports `node:async_hooks`; the custom domain `design.uinaf.dev` is bound in `uinaf/infra` (the deploy token cannot mutate zone routes); `/patterns/x.html` must serve 200 rather than redirect; HTML pages run `run_worker_first` so `Accept: text/markdown` can serve the twin, while CSS, JSON, and `.md` stay on the asset fast path.
 

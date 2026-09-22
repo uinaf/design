@@ -20,7 +20,7 @@ on a push-to-`main` workflow races this one over the same commit.
 of npm so `design.uinaf.dev` keeps shipping even when a release job fails. Do
 not make deploy `needs: [release]`.
 
-`verify-live` waits for `/.well-known/build` on design.uinaf.dev to report the pushed SHA before probing the contract, because a green probe against the previous deployment proves nothing; the two waits are budgeted separately.
+The deploy job's post-deploy smoke step waits for `/.well-known/build` on design.uinaf.dev to report the pushed SHA before probing the contract, because a green probe against the previous deployment proves nothing; the two waits are budgeted separately.
 The App private key lives on the `release` Environment; the shared release-npm job binds that Environment, so GitHub substitutes the Environment value for the secret named in `release.yml`.
 
 The file name `release.yml` is load-bearing; see below.
@@ -96,6 +96,6 @@ Verification, guide deployment, and npm publication use standard GitHub-hosted
 `ubuntu-24.04` runners, preserving Ubuntu 24.04 x64 execution.
 
 The release job stays GitHub-hosted because
-[npm trusted publishing accepts cloud-hosted runners only](https://docs.npmjs.com/trusted-publishers/).
+[npm trusted publishing supports GitHub-hosted runners only](https://docs.npmjs.com/trusted-publishers/).
 Vite+ caching is disabled in this job. Publishing runs through semantic-release
 on pushes to `main`, after verification and scanning pass.
