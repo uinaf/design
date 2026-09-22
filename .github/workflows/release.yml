@@ -37,7 +37,7 @@ jobs:
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     permissions:
       contents: read
-    uses: uinaf/.github/.github/workflows/scan.yml@main
+    uses: uinaf/.github/.github/workflows/scan.yml@273d0888178ba4795605c440bef144d8882331fc # v1.0.0
 
   # A skipped dependency skips its dependents, so `[skip ci]` is declared once
   # above and reaches both of the jobs below through `needs`.
@@ -114,7 +114,7 @@ jobs:
     permissions:
       contents: read
       id-token: write # OIDC for npm trusted publishing; the shared job needs it too
-    uses: uinaf/.github/.github/workflows/release-npm.yml@main
+    uses: uinaf/.github/.github/workflows/release-npm.yml@273d0888178ba4795605c440bef144d8882331fc # v1.0.0
     # The App private key lives on this repository's release Environment. The
     # shared job binds that Environment, so GitHub substitutes the Environment
     # value for the one named here.
