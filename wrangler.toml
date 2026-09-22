@@ -1,22 +1,13 @@
 name = "uinaf-design"
 main = "src/worker.ts"
 compatibility_date = "2025-08-01"
-# The Agents SDK MCP handler pulls in node:async_hooks.
 compatibility_flags = [ "nodejs_compat" ]
 workers_dev = true
 preview_urls = false
 
-# Custom domain design.uinaf.dev is bound in uinaf/infra
-# (cloudflare_workers_custom_domain). Deploy token cannot mutate zone routes.
-
 [assets]
 directory = "./guide"
 binding = "ASSETS"
-# Exact-path serving: /patterns/x.html must be a 200, not a redirect to
-# /patterns/x. The Worker resolves extensionless paths so both forms work.
 html_handling = "none"
 not_found_handling = "none"
-# HTML pages must reach the Worker so Accept: text/markdown can serve the twin;
-# an exact asset match would otherwise bypass Worker code entirely. CSS, JSON,
-# and .md stay on the asset fast path.
 run_worker_first = [ "/mcp", "/mcp/", "/", "/*.html", "/patterns/*.html", "/preview/*.html" ]

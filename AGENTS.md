@@ -60,6 +60,8 @@ Two rules the file names do not tell you:
 - `deploy` and `release` are siblings on `needs: [verify, scan]`. Never gate guide deploy on the release job; `design.uinaf.dev` must keep shipping when a publish fails.
 
 Credentials for each path are listed in `docs/releasing.md` (vars vs secrets).
+- `verify.yml` groups concurrency on `github.workflow` and `github.ref`, which resolve to the caller when called from `release.yml`, so a called run never collides with a PR run.
+- `wrangler.toml` constraints: `nodejs_compat` is required because the Agents SDK MCP handler imports `node:async_hooks`; the custom domain `design.uinaf.dev` is bound in `uinaf/infra` (the deploy token cannot mutate zone routes); `/patterns/x.html` must serve 200 rather than redirect; HTML pages run `run_worker_first` so `Accept: text/markdown` can serve the twin, while CSS, JSON, and `.md` stay on the asset fast path.
 
 ## Docs map
 

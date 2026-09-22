@@ -1,18 +1,5 @@
 name: Release
 
-# The file name is load-bearing. npm Trusted Publishing binds this package's
-# OIDC identity to `.github/workflows/release.yml` plus the `release`
-# environment. This was confirmed against the provenance attestation of a published
-# version, not only against docs. Rename or move this file and `npm publish`
-# fails with an identity mismatch until someone updates the trusted publisher
-# on npmjs.com. So the publish job stays here, calling the shared
-# uinaf/.github release-npm workflow, which binds the `release` environment;
-# everything else that runs on a push to main came to it.
-#
-# `deploy` and `release` are siblings, both on `needs: [verify, scan]`.
-# Never make deploy `needs: [release]`. design.uinaf.dev must keep shipping
-# when publication fails.
-
 on:
   push:
     branches: [main]
@@ -24,9 +11,6 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # One verify and one secret scan for both consumers. These used to live in
-  # this file and in main.yml, on the same trigger, so every push to main ran
-  # the whole gate twice and the two runs raced each other over one commit.
   verify:
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     permissions:
@@ -39,8 +23,6 @@ jobs:
       contents: read
     uses: uinaf/.github/.github/workflows/scan.yml@273d0888178ba4795605c440bef144d8882331fc # v1.0.0
 
-  # A skipped dependency skips its dependents, so `[skip ci]` is declared once
-  # above and reaches both of the jobs below through `needs`.
   deploy:
     needs: [verify, scan]
     runs-on: ubuntu-24.04
@@ -69,21 +51,10 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
         run: vp run deploy
 
-      # verify proves the contract against a local worker. Only this proves it
-      # against what design.uinaf.dev actually serves: the custom domain, the
-      # real asset binding, and the build that just shipped.
       - name: Smoke the deployed contract
         env:
           GITHUB_SHA: ${{ github.sha }}
         run: |
-          # The contract alone would pass against the deployment this job
-          # replaced, so during propagation a green result would prove nothing.
-          # machine-layer.ts stamps this commit into /.well-known/build, and
-          # wrangler ships the Worker and its assets as one version, so seeing
-          # this SHA is proof the new Worker is the one answering.
-          # Two waits, budgeted separately. Counting attempts across both put a
-          # good deploy in the red: the probe returns in milliseconds while
-          # propagation is pending, so a budget written as 400s spent 50.
           deadline=$(($(date +%s) + 300))
           while true; do
             served="$(curl -sf --max-time 10 https://design.uinaf.dev/.well-known/build || true)"
@@ -98,7 +69,6 @@ jobs:
             sleep 10
           done
 
-          # This build is the one answering, so a failure here is the contract's.
           for attempt in 1 2 3; do
             if timeout 60 node scripts/smoke-mcp.ts https://design.uinaf.dev; then
               exit 0
@@ -113,10 +83,7 @@ jobs:
     needs: [verify, scan]
     permissions:
       contents: read
-      id-token: write # OIDC for npm trusted publishing; the shared job needs it too
+      id-token: write
     uses: uinaf/.github/.github/workflows/release-npm.yml@273d0888178ba4795605c440bef144d8882331fc # v1.0.0
-    # The App private key lives on this repository's release Environment. The
-    # shared job binds that Environment, so GitHub substitutes the Environment
-    # value for the one named here.
     secrets:
       UINAF_CI_APP_PRIVATE_KEY: ${{ secrets.UINAF_CI_APP_PRIVATE_KEY }}
