@@ -21,10 +21,11 @@ export const CDN = {
     teamOgWebp: "https://cdn.uinaf.dev/images/webp/uinaf-team-1024w.webp",
     team: "https://cdn.uinaf.dev/images/uinaf-team.png",
   },
-  /** Historical sample artboards, retained for compatibility. Current repo banners use uinaf.dev/og/banner/[repo].png. */
+  /** Rendered share cards and historical repository-banner samples. */
   exports: {
     ogCard: "https://cdn.uinaf.dev/images/exports/og-card.png",
     ogCardPost: "https://cdn.uinaf.dev/images/exports/og-card-post.png",
+    /** Historical samples retained for compatibility; current repo banners use uinaf.dev/og/banner/[repo].png. */
     repoOgSample: "https://cdn.uinaf.dev/images/exports/repo-og-healthd.png",
     readmeBannerSample: "https://cdn.uinaf.dev/images/exports/readme-banner-healthd.png",
   },
