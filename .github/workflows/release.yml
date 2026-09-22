@@ -115,6 +115,8 @@ jobs:
       contents: read
       id-token: write # OIDC for npm trusted publishing; the shared job needs it too
     uses: uinaf/.github/.github/workflows/release-npm.yml@main
-    # The App credentials live on this repository's release Environment; the
-    # shared job binds that Environment and reads them itself.
-    secrets: inherit
+    # The App private key lives on this repository's release Environment. The
+    # shared job binds that Environment, so GitHub substitutes the Environment
+    # value for the one named here.
+    secrets:
+      UINAF_CI_APP_PRIVATE_KEY: ${{ secrets.UINAF_CI_APP_PRIVATE_KEY }}
