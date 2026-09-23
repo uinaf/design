@@ -2,7 +2,7 @@
 
 ## Setup
 
-Node (see `.node-version`) with Corepack enabled:
+Node (see `.node-version`) and [pnpm](https://pnpm.io/installation):
 
 ```sh
 pnpm install --frozen-lockfile
