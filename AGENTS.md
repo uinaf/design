@@ -2,10 +2,6 @@
 
 `@uinaf/design`: public tokens, CSS primitives, preview cards, and the guide at design.uinaf.dev.
 
-## Tracker
-
-[radar](https://github.com/orgs/uinaf/projects/2)
-
 ## Invariants
 
 - Never commit Berkeley Mono binaries or a `fonts/` directory.
