@@ -34,7 +34,7 @@ See [Releasing](docs/releasing.md). Guide deploys from `main` via the `productio
 
 ## Dependency automerge
 
-- Eligible Renovate updates use GitHub auto-merge after required checks: verify and scan / Gitleaks, scan / TruffleHog, scan / Actionlint, scan / Zizmor.
+- Eligible Renovate updates use GitHub auto-merge after required checks: verify and scan / Scan.
 - Checks are non-strict; repository admins and the existing release App retain direct writes through
   a bypass limited to the check ruleset. Renovate has no bypass.
 - Shared release-age and major/digest rules remain unchanged. Add new voting
