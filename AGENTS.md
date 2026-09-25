@@ -47,7 +47,7 @@ Prefer `vp` for lint/format/test: `pnpm exec vp check`, `pnpm exec vp test run`.
 
 `∥` means parallel: once `verify` passes, the two terminal jobs run at once.
 
-There is no CodeQL or other code-scanning gate; `verify` ends with the push-time scan from `uinaf/.github`.
+`verify` ends with the push-time scan from `uinaf/.github`.
 
 Two rules the file names do not tell you:
 
