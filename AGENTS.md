@@ -40,11 +40,10 @@ Prefer `vp` for lint/format/test: `pnpm exec vp check`, `pnpm exec vp test run`.
 
 ## Pipelines
 
-| Workflow                        | Trigger                       | Jobs                                                                                                                                                                  |
-| ------------------------------- | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `.github/workflows/verify.yml`  | PR, `workflow_call`, dispatch | `verify`, the one definition, called by the others                                                                                                                    |
-| `.github/workflows/release.yml` | push to `main`                | (verify + scan) → guide deploy (`production`) ∥ npm publish (`release`)                                                                                               |
-| `.github/workflows/scan.yml`    | PR, weekly, dispatch          | caller for the shared scan in `uinaf/.github` as one `scan / Scan` job: gitleaks and trufflehog always, actionlint and zizmor when workflow or scanner config changes |
+| Workflow                        | Trigger                       | Jobs                                                           |
+| ------------------------------- | ----------------------------- | -------------------------------------------------------------- |
+| `.github/workflows/verify.yml`  | PR, `workflow_call`, dispatch | `verify`, the one definition, called by the others             |
+| `.github/workflows/release.yml` | push to `main`                | verify → guide deploy (`production`) ∥ npm publish (`release`) |
 
 `+` and `∥` both mean parallel: the two gates run at once, then the two terminal jobs run at once. The `→` is the only chain; nothing after it starts until both gates pass.
 
@@ -53,7 +52,7 @@ A fifth gate has no file. CodeQL runs through GitHub **default setup** (code sca
 Two rules the file names do not tell you:
 
 - `release.yml` is the **only** push-to-`main` workflow, and its file name is pinned by npm Trusted Publishing. Renaming it breaks `npm publish` until someone edits the trusted publisher on npmjs.com. That is why the guide deploy lives in a file called `release`.
-- `deploy` and `release` are siblings on `needs: [verify, scan]`. Never gate guide deploy on the release job; `design.uinaf.dev` must keep shipping when a publish fails.
+- `deploy` and `release` are siblings on `needs: [verify]`. Never gate guide deploy on the release job; `design.uinaf.dev` must keep shipping when a publish fails.
 
 Credentials for each path are listed in `docs/releasing.md` (vars vs secrets).
 
