@@ -71,7 +71,7 @@
   "devDependencies": {
     "@modelcontextprotocol/server": "2.0.0",
     "@types/node": "^24.0.0",
-    "agents": "^0.23.0",
+    "agents": "^0.24.0",
     "esbuild": "^0.28.2",
     "typescript": "^7.0.0",
     "vite": "catalog:",
@@ -90,5 +90,5 @@
   "engines": {
     "node": ">=24.18.0"
   },
-  "packageManager": "pnpm@12.4.2"
+  "packageManager": "pnpm@12.5.0"
 }
