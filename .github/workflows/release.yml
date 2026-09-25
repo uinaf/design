@@ -17,14 +17,8 @@ jobs:
       contents: read
     uses: ./.github/workflows/verify.yml
 
-  scan:
-    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
-    permissions:
-      contents: read
-    uses: uinaf/.github/.github/workflows/scan.yml@5cb5234c5395e37a1c876619bbe5d7cb8938bda3 # v2.0.0
-
   deploy:
-    needs: [verify, scan]
+    needs: [verify]
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     permissions:
@@ -80,7 +74,7 @@ jobs:
           exit 1
 
   release:
-    needs: [verify, scan]
+    needs: [verify]
     permissions:
       contents: read
       id-token: write

@@ -5,16 +5,14 @@
 A push to `main` runs one workflow, `.github/workflows/release.yml`:
 
 ```text
-verify ──┐
-         ├──> deploy   guide to design.uinaf.dev  (production environment)
-scan ────┘
+verify ──┬──> deploy   guide to design.uinaf.dev  (production environment)
          └──> release  npm publish, OIDC + uinaf-ci  (release environment)
 ```
 
-`verify` and `scan` are the shared gate: `verify` is called from `verify.yml`,
-and `scan` calls the shared scan workflow in `uinaf/.github`, the same one
-`scan.yml` runs for pull requests. Keep it that way: a second copy of the gate
-on a push-to-`main` workflow races this one over the same commit.
+`verify` is the one gate, called from `verify.yml`; its last step runs the
+shared push-time scan from `uinaf/.github` over the pushed range. Keep it that
+way: a second copy of the gate on a push-to-`main` workflow races this one over
+the same commit.
 
 `deploy` and `release` are siblings, not a chain. Guide deploy stays independent
 of npm so `design.uinaf.dev` keeps shipping even when a release job fails. Do
