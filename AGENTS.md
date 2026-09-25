@@ -45,9 +45,9 @@ Prefer `vp` for lint/format/test: `pnpm exec vp check`, `pnpm exec vp test run`.
 | `.github/workflows/verify.yml`  | PR, `workflow_call`, dispatch | `verify`, the one definition, called by the others             |
 | `.github/workflows/release.yml` | push to `main`                | verify → guide deploy (`production`) ∥ npm publish (`release`) |
 
-`+` and `∥` both mean parallel: the two gates run at once, then the two terminal jobs run at once. The `→` is the only chain; nothing after it starts until both gates pass.
+`∥` means parallel: once `verify` passes, the two terminal jobs run at once.
 
-A fifth gate has no file. CodeQL runs through GitHub **default setup** (code scanning) over `actions`, `javascript-typescript`, and `typescript`, so `gh run list` shows runs no workflow in this repo declares. It is a repository setting, changed on GitHub, not in a pull request.
+There is no CodeQL or other code-scanning gate; `verify` ends with the push-time scan from `uinaf/.github`.
 
 Two rules the file names do not tell you:
 
