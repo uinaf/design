@@ -40,7 +40,8 @@
         "hierarchy via fill weight: primary=white fill, secondary=outline, ghost=borderless",
         "default pairing = primary + ghost",
         "natural width. never stretch full-width, even in auth cards",
-        "icon-only: .u-btn--icon squares the button; data-tip + aria-label carry the word"
+        "icon-only: .u-btn--icon squares the button; data-tip + aria-label carry the word",
+        "press compresses slightly"
       ],
       "never": ["two fills side by side", "more than one .u-btn--accent per surface (usually zero)"]
     },
@@ -93,9 +94,10 @@
       "use": "inline chips on raised fill; blocks darker, 13px; .u-code-bleed lets a block run wider than narrow prose",
       "rules": [
         "never wrap code. scroll it",
-        "abbreviations in code stay as written (--base flags, url vars)"
+        "abbreviations in code stay as written (--base flags, url vars)",
+        "highlighting stays neutral; slime may color strings and keywords only"
       ],
-      "markup": "<p class=\"u-prose\">run <code class=\"u-code\">slopguard doctor --engine codex</code>, or press <kbd class=\"u-kbd\">⌘k</kbd>.</p>\n<pre class=\"u-pre\">slopguard config --engine codex\nslopguard review --mode local --engine codex</pre>\n<!-- wide block escaping narrow prose -->\n<pre class=\"u-pre u-code-bleed\">slopguard review --mode branch --base origin/main --engine codex --prompt &quot;review this change.&quot;</pre>"
+      "markup": "<p class=\"u-prose\">run <code class=\"u-code\">slopguard doctor --engine codex</code>, or press <kbd class=\"u-kbd\">⌘k</kbd>.</p>\n<pre class=\"u-pre\">slopguard config --engine codex\nslopguard review --mode local --engine codex --prompt &quot;review this change.&quot;</pre>\n<!-- wide block escaping narrow prose -->\n<pre class=\"u-pre u-code-bleed\">slopguard review --mode branch --base origin/main --engine codex --prompt &quot;review this change.&quot;</pre>"
     },
     {
       "name": "def-rows",
@@ -292,13 +294,13 @@
     {
       "name": "shell",
       "classes": [".u-shell-narrow", ".u-shell-base", ".u-shell-wide"],
-      "use": "narrow 40rem (default for prose, home, and detail) · base 48rem (data-dense: tables and dashboards) · wide 72rem (rare) · one product = one width",
+      "use": "narrow 40rem (default for prose, detail, and indexes) · base 48rem (data-dense: tables, dashboards, and the banded homepage) · wide 72rem (rare) · one product = one width",
       "rules": [
         "if unsure, narrow",
         "never widen a shell to fit one element",
         "one product = one width: every page keeps the same shell; a data-dense view may step UP to base, but a detail page never shrinks below its index/home"
       ],
-      "markup": "<header class=\"u-topbar\"><div class=\"u-shell-base u-topbar-row\"><a class=\"u-topbar-mark\" aria-label=\"home\" href=\"#\"><img src=\"https://cdn.uinaf.dev/images/webp/uinaf-computer-240w.webp\" alt=\"\"></a><nav class=\"u-topbar-nav\"><a aria-current=\"page\" href=\"#\">overview</a></nav></div></header>\n<main class=\"u-shell-base\"><h1>overview</h1></main>\n\n<!-- prose/home/detail default -->\n<main class=\"u-shell-narrow\"><h1>about</h1></main>\n<!-- rare: dashboards -->\n<main class=\"u-shell-wide\"><h1>fleet</h1></main>"
+      "markup": "<header class=\"u-topbar\"><div class=\"u-shell-base u-topbar-row\"><a class=\"u-topbar-mark\" aria-label=\"home\" href=\"#\"><img src=\"https://cdn.uinaf.dev/images/webp/uinaf-computer-240w.webp\" alt=\"\"></a><nav class=\"u-topbar-nav\"><a aria-current=\"page\" href=\"#\">overview</a></nav></div></header>\n<main class=\"u-shell-base\"><h1>overview</h1></main>\n\n<!-- prose/detail/index default -->\n<main class=\"u-shell-narrow\"><h1>about</h1></main>\n<!-- rare: dashboards -->\n<main class=\"u-shell-wide\"><h1>fleet</h1></main>"
     },
     {
       "name": "site-header",
@@ -372,7 +374,7 @@
       "classes": [".u-term", ".u-caret"],
       "use": "CLI transcript: dim prompt, fg command, muted output",
       "rules": ["the accent caret is the ONE thing allowed to blink"],
-      "markup": "<pre class=\"u-term\" style=\"max-width:680px\"><span class=\"ps1\">$</span> slopguard review --mode branch --base origin/main --engine codex\n<span class=\"out\">reviewing… 14 files, 482 lines</span>\n<span class=\"ok\">✓</span> <span class=\"out\">clean · https://uinaf.dev/ffss/slopguard/r/Jw5tQUBK0ao5</span>\n<span class=\"ps1\">$</span> <span class=\"u-caret\"></span></pre>"
+      "markup": "<pre class=\"u-term\" style=\"max-width:680px\"><span class=\"ps1\">$</span> slopguard review --mode branch --base origin/main --engine codex --prompt &quot;review this change.&quot;\n<span class=\"out\">reviewing… 14 files, 482 lines</span>\n<span class=\"ok\">✓</span> <span class=\"out\">clean · 0 findings</span>\n<span class=\"ps1\">$</span> <span class=\"u-caret\"></span></pre>"
     },
     {
       "name": "timeline",
@@ -423,7 +425,10 @@
       "markup": "<header class=\"u-topbar\"><div class=\"u-shell-base u-topbar-row\"><a class=\"u-topbar-mark\" aria-label=\"home\" href=\"#\"><img src=\"https://cdn.uinaf.dev/images/webp/uinaf-computer-240w.webp\" alt=\"\"></a><nav class=\"u-topbar-nav\"><a aria-current=\"page\" href=\"#\">overview</a><a href=\"#\">reviews</a><a href=\"#\">repos</a><a href=\"#\">settings</a></nav><div class=\"u-topbar-actions\"><a class=\"u-btn u-btn--sm u-btn--primary\" href=\"#\">new review</a></div></div></header>",
       "rules": [
         "ONE 56px row: 20px framed mark left, with the product name beside it when the surface has one, plain links right (current brightest), max one small button",
-        "the row and the content below share the same shell class and gutter"
+        "the row and the content below share the same shell class and gutter",
+        "hairline below the row",
+        "without a product name the mark stands alone, labelled home",
+        "full-bleed bands keep their hairline edge to edge and their content in the same shell"
       ],
       "never": ["two stacked rows (the classic agent failure)", "sticky, backgrounds, shadows"]
     },
