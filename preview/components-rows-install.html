@@ -1,0 +1,35 @@
+<!doctype html>
+<!-- @dsCard group="Components" name="Rows, install, lists" subtitle="Ruled row · install snippet with tabs and copy · dash bullets · prose box · pill" viewport="760x860" -->
+<html lang="en"><head><meta charset="utf-8"><title>uinaf — rows, install, lists</title>
+<link rel="stylesheet" href="../dist/css/tokens.css">
+<style>html,body{margin:0;padding:0}body.uinaf{padding:32px 36px;display:flex;flex-direction:column;gap:14px}.row{display:flex;gap:8px;flex-wrap:wrap}</style>
+</head><body class="uinaf">
+<div class="u-label">ruled row — .u-row, the index primitive on projects and thanks</div>
+<div style="display:flex;flex-direction:column;max-width:560px">
+<a class="u-row" href="#"><span class="u-row-head"><span class="u-row-title">skillcheck</span><span class="u-row-arrow" aria-hidden="true">↗</span></span><span class="u-row-desc">lint and eval harness for agent skills.</span></a>
+<a class="u-row" href="#"><span class="u-row-head"><span class="u-row-title">slopwake</span><span class="u-row-arrow" aria-hidden="true">↗</span></span><span class="u-row-desc">keep your slopshop awake.</span></a>
+<a class="u-row" href="#"><span class="u-row-head"><span class="u-row-desc" style="margin:0">everything else</span><span class="u-row-arrow">github.com/uinaf ↗</span></span></a>
+</div>
+<hr>
+<div class="u-label">install — .u-install, tabs only for alternate installers</div>
+<div class="u-install" id="inst" style="max-width:560px">
+<div class="u-snip-tabs" role="tablist"><button type="button" role="tab" class="u-snip-tab" aria-selected="true">npm</button><button type="button" role="tab" class="u-snip-tab" aria-selected="false">pnpm</button><button type="button" role="tab" class="u-snip-tab" aria-selected="false">bun</button></div>
+<div class="u-snip"><button type="button" class="u-copy" aria-label="copy command">copy</button><code class="u-snip-pane"><span class="u-prompt">$</span>npm install react-json-logic</code><code class="u-snip-pane" hidden><span class="u-prompt">$</span>pnpm add react-json-logic</code><code class="u-snip-pane" hidden><span class="u-prompt">$</span>bun add react-json-logic</code></div>
+</div>
+<p class="u-meta">copy confirms in place for 1.4s. no toast.</p>
+<hr>
+<div class="u-label">dash bullets — .u-bullets, one sentence per item</div>
+<ul role="list" class="u-bullets"><li>detects active Codex, Claude, and Cursor sessions.</li><li>keeps display sleep optional.</li><li>reads process evidence, never prompts or files.</li></ul>
+<hr>
+<div class="u-label">prose box — .u-prose-box, the one bordered prose region</div>
+<div class="u-prose-box" style="max-width:560px"><p>requires macOS 26 or newer. holds release at the battery cutoff.</p></div>
+<hr>
+<div class="u-label">pill — .u-pill, aria-pressed filters a list</div>
+<div class="row" id="pills"><button type="button" class="u-pill" aria-pressed="true">agents</button><button type="button" class="u-pill" aria-pressed="false">cli</button><button type="button" class="u-pill" aria-pressed="false">macos</button></div>
+<script>
+const r=document.getElementById('inst'),tabs=r.querySelectorAll('.u-snip-tab'),panes=r.querySelectorAll('.u-snip-pane'),cp=r.querySelector('.u-copy');
+tabs.forEach((t,i)=>t.onclick=()=>{tabs.forEach(x=>x.setAttribute('aria-selected',String(x===t)));panes.forEach((p,j)=>p.hidden=j!==i);});
+cp.onclick=async()=>{const pane=[...panes].find(p=>!p.hidden);const cmd=[...pane.childNodes].filter(n=>!n.classList?.contains('u-prompt')).map(n=>n.textContent).join('').trim();try{await navigator.clipboard.writeText(cmd)}catch{return}cp.textContent='copied';cp.dataset.copied='';setTimeout(()=>{cp.textContent='copy';delete cp.dataset.copied},1400);};
+document.getElementById('pills').onclick=e=>{const b=e.target.closest('.u-pill');if(b)b.setAttribute('aria-pressed',String(b.getAttribute('aria-pressed')!=='true'));};
+</script>
+</body></html>

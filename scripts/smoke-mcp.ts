@@ -220,9 +220,8 @@ for (const { slug: name } of templates) {
 }
 
 for (const [name, slug] of [
-  ["blog index", "blog-index"],
-  ["blog post", "blog-post"],
-  ["uinaf.dev status", "status"],
+  ["uinaf.dev thanks", "thanks"],
+  ["uinaf.dev project page", "project-page"],
   ["export · repo OG card", "export-repo-banner"],
 ]) {
   const byName = await call("get_template", { name });

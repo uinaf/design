@@ -245,13 +245,28 @@ export declare const summarise: (violations: Violation[]) => string;
 `,
 );
 
+// `CDN` is emitted from its runtime value, which carries no comments. A key
+// deprecated in the source would ship as an ordinary supported property, so
+// its `@deprecated` JSDoc is lifted from the source text by key name.
+const deprecated = new Map(
+  [
+    ...fs
+      .readFileSync(path.join(root, "src/cdn.ts"), "utf8")
+      .matchAll(/(\/\*\*\s*@deprecated[^*]*\*\/)\s*\n\s*(\w+):/g),
+  ].map((m) => [m[2], m[1]]),
+);
+
 const literalType = (value: unknown, indent = 0): string => {
   const pad = "  ".repeat(indent);
   if (typeof value === "string") return JSON.stringify(value);
   if (typeof value === "number" || typeof value === "boolean") return String(value);
   if (value !== null && typeof value === "object" && !Array.isArray(value)) {
     const entries = Object.entries(value as Record<string, unknown>)
-      .map(([k, v]) => `${pad}  readonly ${k}: ${literalType(v, indent + 1)}`)
+      .map(([k, v]) => {
+        const doc = deprecated.get(k);
+        const line = `${pad}  readonly ${k}: ${literalType(v, indent + 1)}`;
+        return doc ? `${pad}  ${doc}\n${line}` : line;
+      })
       .join("\n");
     return `{\n${entries}\n${pad}}`;
   }

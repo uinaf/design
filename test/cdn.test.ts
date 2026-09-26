@@ -62,4 +62,15 @@ describe("CDN", () => {
     const undeclared = authored().filter(({ url }) => !known.has(url));
     expect(undeclared).toEqual([]);
   });
+
+  // `dist/cdn.d.ts` is generated from the runtime value, which has no comments.
+  // Consumers only see a deprecation if the build carries it across.
+  it("ships every source deprecation in the published types", () => {
+    const keys = (text: string) =>
+      [...text.matchAll(/@deprecated[^*]*\*\/\s*\n\s*(?:readonly )?(\w+):/g)].map(([, k]) => k);
+    const source = keys(fs.readFileSync(path.join(root, "src/cdn.ts"), "utf8"));
+
+    expect(source.length).toBeGreaterThan(0);
+    expect(keys(fs.readFileSync(path.join(root, "dist/cdn.d.ts"), "utf8"))).toEqual(source);
+  });
 });

@@ -228,7 +228,7 @@ export const createServer = (env: Env): McpServer => {
     "get_template",
     {
       description:
-        "Get a uinaf.dev site template or export artboard with its full markup: homepage, blog index, blog post, changelog, projects, project page, roadmap, status, 404, and the four fixed-size export canvases. Use this for a uinaf-owned surface. Use get_page for a product screen.",
+        "Get a uinaf.dev site template or export artboard with its full markup: homepage, projects, project page, thanks, 404, and the three fixed-size export canvases. Use this for a uinaf-owned surface. Use get_page for a product screen.",
       inputSchema: {
         name: z.string().optional().describe("Template slug, e.g. 'homepage'; omit to list them"),
       },

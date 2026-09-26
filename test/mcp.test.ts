@@ -100,19 +100,14 @@ describe("published templates", () => {
 
   it("publishes every template in the source tree", () => {
     expect(templates.map((t) => t.slug).sort()).toEqual([
-      "blog-index",
-      "blog-post",
-      "changelog",
       "export-og-card",
-      "export-og-card-post",
       "export-readme-banner",
       "export-repo-banner",
       "homepage",
       "not-found",
       "project-page",
       "projects",
-      "roadmap",
-      "status",
+      "thanks",
     ]);
   });
 

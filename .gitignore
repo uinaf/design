@@ -10,7 +10,7 @@ coverage/
 # smoke run evidence — server and contract logs, not repo content
 .smoke/
 
-# `dist/` is the whole output of `scripts/build.ts` — css, tokens, the 42
+# `dist/` is the whole output of `scripts/build.ts` — css, tokens, the
 # pattern files, the lint bundle. Tracking it committed the same drift risk
 # guide/ is excluded for, and it masked a real one: `verify` ran `check.ts`
 # before the build, so the gate read the previous build's artifacts and the

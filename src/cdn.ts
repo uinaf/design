@@ -21,12 +21,14 @@ export const CDN = {
     teamOgWebp: "https://cdn.uinaf.dev/images/webp/uinaf-team-1024w.webp",
     team: "https://cdn.uinaf.dev/images/uinaf-team.png",
   },
-  /** Rendered share cards and historical repository-banner samples. */
+  /** Rendered share cards. Repo cards and README banners render live at uinaf.dev/og/repo/[repo].png and uinaf.dev/og/banner/[repo].png. */
   exports: {
     ogCard: "https://cdn.uinaf.dev/images/exports/og-card.png",
+    /** @deprecated The post card template is retired; kept so `@uinaf/design/cdn` stays compatible. */
     ogCardPost: "https://cdn.uinaf.dev/images/exports/og-card-post.png",
-    /** Historical samples retained for compatibility; current repo banners use uinaf.dev/og/banner/[repo].png. */
+    /** @deprecated Retired sample; repo cards render at uinaf.dev/og/repo/[repo].png. */
     repoOgSample: "https://cdn.uinaf.dev/images/exports/repo-og-healthd.png",
+    /** @deprecated Retired sample; README banners render at uinaf.dev/og/banner/[repo].png. */
     readmeBannerSample: "https://cdn.uinaf.dev/images/exports/readme-banner-healthd.png",
   },
   favicons: {

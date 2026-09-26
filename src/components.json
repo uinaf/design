@@ -20,7 +20,7 @@
       "name": "breadcrumbs",
       "classes": [".u-crumbs"],
       "use": "path with / separators",
-      "markup": "<nav class=\"u-crumbs\"><a href=\"#\">uinaf/slopzapper</a><span class=\"sep\">/</span><span aria-current=\"page\">runs</span></nav>",
+      "markup": "<nav class=\"u-crumbs\"><a href=\"#\">uinaf/skillcheck</a><span class=\"sep\">/</span><span aria-current=\"page\">runs</span></nav>",
       "rules": ["current page brightest"]
     },
     {
@@ -48,7 +48,7 @@
       "name": "card",
       "classes": [".u-card"],
       "use": "the indexable link primitive. the WHOLE card is one link",
-      "markup": "<a class=\"u-card u-link-plain\" href=\"#\">\n  <span class=\"u-label\">healthd</span>\n  <p class=\"u-meta\">small daemon for machine health checks and reporting.</p>\n</a>",
+      "markup": "<a class=\"u-card u-link-plain\" href=\"#\">\n  <span class=\"u-label\">workspace-kit</span>\n  <p class=\"u-meta\">validates and scaffolds agent workspaces.</p>\n</a>",
       "rules": ["hover: border brightens + 2px lift; press compresses"],
       "never": ["links inside a card-link"]
     },
@@ -151,7 +151,7 @@
       "use": "optional kicker → 32px title ≤22ch → one 14px sub ≤46ch → primary+ghost → optional stat strip",
       "rules": ["the kicker must ADD information (category, status, live stat)"],
       "never": [
-        "a kicker that repeats the product name, studio name, or anything in the nav. `UINAF · REVIEW BOT` under a slopzapper nav is the canonical failure. no kicker beats a redundant one"
+        "a kicker that repeats the product name, studio name, or anything in the nav. `UINAF · REVIEW BOT` under a nav that names the product is the canonical failure. no kicker beats a redundant one"
       ],
       "markup": "<div class=\"u-hero\">\n<span class=\"u-label\">AI code review · runs the code</span>\n<h1 class=\"u-hero-title\">PR review that actually runs the PR.</h1>\n<p class=\"u-hero-sub\">every PR gets cloned into a cloudflare sandbox, built, exercised, and reviewed. findings only, no vibes.</p>\n<div class=\"u-hero-actions\">\n<a class=\"u-btn u-btn--primary\" href=\"#\">add to github ↗</a>\n<a class=\"u-btn u-btn--ghost\" href=\"#\">read the docs</a>\n</div>\n</div>"
     },
@@ -191,7 +191,7 @@
       "classes": [".u-log"],
       "use": "faint timestamps, leveled rows",
       "rules": ["the level word takes the color. never the message"],
-      "markup": "<pre class=\"u-log\" style=\"max-width:680px\"><span class=\"row\"><span class=\"t\">14:02:11.402</span><span class=\"lv\">info</span><span class=\"msg\">sandbox warm · pool=3 t=210ms</span></span>\n<span class=\"row\"><span class=\"t\">14:02:11.688</span><span class=\"lv\">info</span><span class=\"msg\">clone uinaf/slopzapper#512 @ 9c41f2e</span></span>\n<span class=\"row\" data-warn><span class=\"t\">14:02:14.010</span><span class=\"lv\">warn</span><span class=\"msg\">github rate remaining=41 · backing off 2s</span></span>\n<span class=\"row\"><span class=\"t\">14:02:19.334</span><span class=\"lv\">info</span><span class=\"msg\">build ok · 3.2s</span></span>\n<span class=\"row\" data-err><span class=\"t\">14:02:24.902</span><span class=\"lv\">error</span><span class=\"msg\">test FAIL webhook_dedupe_test.go:88 · retry scheduled</span></span></pre>"
+      "markup": "<pre class=\"u-log\" style=\"max-width:680px\"><span class=\"row\"><span class=\"t\">14:02:11.402</span><span class=\"lv\">info</span><span class=\"msg\">sandbox warm · pool=3 t=210ms</span></span>\n<span class=\"row\"><span class=\"t\">14:02:11.688</span><span class=\"lv\">info</span><span class=\"msg\">clone uinaf/skillcheck#512 @ 9c41f2e</span></span>\n<span class=\"row\" data-warn><span class=\"t\">14:02:14.010</span><span class=\"lv\">warn</span><span class=\"msg\">github rate remaining=41 · backing off 2s</span></span>\n<span class=\"row\"><span class=\"t\">14:02:19.334</span><span class=\"lv\">info</span><span class=\"msg\">build ok · 3.2s</span></span>\n<span class=\"row\" data-err><span class=\"t\">14:02:24.902</span><span class=\"lv\">error</span><span class=\"msg\">test FAIL webhook_dedupe_test.go:88 · retry scheduled</span></span></pre>"
     },
     {
       "name": "menu",
@@ -224,7 +224,7 @@
         "overlay click + esc close; toggle via hidden attribute",
         "the overlay carries `hidden`, and the app toggles it. a copied modal must not cover the page on load"
       ],
-      "markup": "<div class=\"u-overlay\" hidden>\n<div class=\"u-modal u-ticks\">\n<h2 class=\"u-modal-title\">uninstall slopzapper?</h2>\n<p class=\"u-modal-body\">removes the app from all 12 repos. runs are kept 30 days, then deleted. reinstalling restores nothing.</p>\n<div class=\"u-modal-actions\"><button class=\"u-btn u-btn--ghost\" id=\"cancel\" type=\"button\">cancel</button><button class=\"u-btn u-btn--primary\" type=\"button\">uninstall</button></div>\n</div>\n</div>"
+      "markup": "<div class=\"u-overlay\" hidden>\n<div class=\"u-modal u-ticks\">\n<h2 class=\"u-modal-title\">uninstall the github app?</h2>\n<p class=\"u-modal-body\">removes the app from all 12 repos. runs are kept 30 days, then deleted. reinstalling restores nothing.</p>\n<div class=\"u-modal-actions\"><button class=\"u-btn u-btn--ghost\" id=\"cancel\" type=\"button\">cancel</button><button class=\"u-btn u-btn--primary\" type=\"button\">uninstall</button></div>\n</div>\n</div>"
     },
     {
       "name": "notice",
@@ -243,7 +243,7 @@
       "name": "panel",
       "classes": [".u-panel", ".u-ticks"],
       "use": "bordered region for grouping DATA (whitespace groups prose)",
-      "markup": "<div class=\"u-panel u-ticks\">\n<span class=\"u-label\">webhook</span>\n<p class=\"u-meta\" style=\"margin-top:var(--sp-2)\">delivering to slopzapper.uinaf.dev/hooks/gh · secret rotated 2026-07-30</p>\n</div>",
+      "markup": "<div class=\"u-panel u-ticks\">\n<span class=\"u-label\">webhook</span>\n<p class=\"u-meta\" style=\"margin-top:var(--sp-2)\">delivering to hooks.example.dev/gh · secret rotated 2026-07-30</p>\n</div>",
       "rules": [
         "20px air inside",
         "corner ticks (.u-ticks) for technical-drawing framing on panels, figures, hero bands"
@@ -298,15 +298,15 @@
         "never widen a shell to fit one element",
         "one product = one width: every page keeps the same shell; a data-dense view may step UP to base, but a detail page never shrinks below its index/home"
       ],
-      "markup": "<header class=\"u-topbar\"><div class=\"u-shell-base u-topbar-row\"><a class=\"u-topbar-mark\" href=\"#\"><img src=\"https://cdn.uinaf.dev/images/webp/uinaf-computer-240w.webp\" alt=\"\">slopzapper</a><nav class=\"u-topbar-nav\"><a aria-current=\"page\" href=\"#\">overview</a></nav></div></header>\n<main class=\"u-shell-base\"><h1>overview</h1></main>\n\n<!-- prose/home/detail default -->\n<main class=\"u-shell-narrow\"><h1>about</h1></main>\n<!-- rare: dashboards -->\n<main class=\"u-shell-wide\"><h1>fleet</h1></main>"
+      "markup": "<header class=\"u-topbar\"><div class=\"u-shell-base u-topbar-row\"><a class=\"u-topbar-mark\" aria-label=\"home\" href=\"#\"><img src=\"https://cdn.uinaf.dev/images/webp/uinaf-computer-240w.webp\" alt=\"\"></a><nav class=\"u-topbar-nav\"><a aria-current=\"page\" href=\"#\">overview</a></nav></div></header>\n<main class=\"u-shell-base\"><h1>overview</h1></main>\n\n<!-- prose/home/detail default -->\n<main class=\"u-shell-narrow\"><h1>about</h1></main>\n<!-- rare: dashboards -->\n<main class=\"u-shell-wide\"><h1>fleet</h1></main>"
     },
     {
       "name": "site-header",
-      "classes": [".u-header", ".u-header-mark", ".u-header-name", ".u-header-tagline", ".u-nav"],
-      "use": "uinaf.dev family sites ONLY (stacked mark → tagline → nav)",
+      "classes": [".u-link-plain"],
+      "use": "uinaf.dev subpages ONLY: a 24px framed mark plus uinaf, 48px above the page title. no nav row; the footer carries the links. the homepage uses the topbar",
       "rules": ["the page title outranks the chrome"],
       "never": ["on product pages. that's what the topbar is for"],
-      "markup": "<div class=\"u-header\" style=\"margin-bottom:0\">\n<span class=\"u-header-mark\"><img src=\"https://cdn.uinaf.dev/images/uinaf-computer.png\" alt=\"\"><span class=\"u-header-name\">uinaf</span></span>\n<p class=\"u-header-tagline\">we bet you've seen us before</p>\n<nav class=\"u-nav\"><a class=\"u-link-plain\" href=\"#\">blog</a><span class=\"u-sep\">·</span><a class=\"u-link-plain\" href=\"#\">projects</a><span class=\"u-sep\">·</span><a class=\"u-link-plain\" href=\"#\">status</a></nav>\n</div>"
+      "markup": "<a class=\"u-link-plain\" href=\"#\" style=\"display:inline-flex;align-items:center;gap:var(--sp-2)\"><img src=\"https://cdn.uinaf.dev/images/uinaf-computer.png\" width=\"24\" height=\"24\" alt=\"\" style=\"display:block;border-width:1px;border-style:solid;border-color:var(--border)\"><span style=\"color:var(--fg)\">uinaf</span></a>\n<h1 style=\"margin-top:var(--sp-12)\">projects</h1>"
     },
     {
       "name": "skeleton",
@@ -340,7 +340,7 @@
       "use": "micro-label headers, hairline rules, numerics right (data-num)",
       "rules": ["first column brightest", "row hover = subtle bg; selected = accent-soft tint"],
       "never": ["zebra stripes", "heavy grid lines"],
-      "markup": "<table class=\"u-table\">\n  <thead><tr><th>service</th><th>status</th><th data-num>p99</th></tr></thead>\n  <tbody>\n    <tr><td>gateway</td><td><i class=\"u-dot u-dot--live\"></i>live</td><td data-num>41ms</td></tr>\n    <tr data-selected=\"\"><td>healthd</td><td><i class=\"u-dot u-dot--ok\"></i>ok</td><td data-num>8ms</td></tr>\n    <tr><td>relay</td><td><i class=\"u-dot\"></i>idle</td><td data-num>—</td></tr>\n  </tbody>\n</table>"
+      "markup": "<table class=\"u-table\">\n  <thead><tr><th>service</th><th>status</th><th data-num>p99</th></tr></thead>\n  <tbody>\n    <tr><td>gateway</td><td><i class=\"u-dot u-dot--live\"></i>live</td><td data-num>41ms</td></tr>\n    <tr data-selected=\"\"><td>queue</td><td><i class=\"u-dot u-dot--ok\"></i>ok</td><td data-num>8ms</td></tr>\n    <tr><td>relay</td><td><i class=\"u-dot\"></i>idle</td><td data-num>—</td></tr>\n  </tbody>\n</table>"
     },
     {
       "name": "tabs",
@@ -378,7 +378,7 @@
       "name": "timeline",
       "classes": [".u-timeline", ".u-timeline-row"],
       "use": "time-ordered events for a run log, audit trail, or changelog",
-      "markup": "<div class=\"u-timeline\">\n<div class=\"u-timeline-row\" data-live><span class=\"u-meta\">now</span><span>cloning uinaf/slopzapper</span></div>\n<div class=\"u-timeline-row\"><span class=\"u-meta\">12m</span><span>review posted · 7 findings</span></div>\n</div>",
+      "markup": "<div class=\"u-timeline\">\n<div class=\"u-timeline-row\" data-live><span class=\"u-meta\">now</span><span>cloning uinaf/skillcheck</span></div>\n<div class=\"u-timeline-row\"><span class=\"u-meta\">12m</span><span>review posted · 7 findings</span></div>\n</div>",
       "rules": [
         "a single hairline spine on the left, timestamps in a fixed 72px column",
         "data-live turns the timestamp accent. at most one row"
@@ -397,7 +397,7 @@
       "classes": [".u-toolbar"],
       "use": "above tables: search + filter + right-aligned count",
       "rules": ["at most two filters. a third means the table needs a redesign"],
-      "markup": "<div class=\"u-toolbar\">\n<input class=\"u-input\" type=\"search\" placeholder=\"search runs…\">\n<select class=\"u-select\"><option>all repos</option><option>uinaf/slopzapper</option><option>uinaf/healthd</option></select>\n<span class=\"count\">128 runs</span>\n</div>"
+      "markup": "<div class=\"u-toolbar\">\n<input class=\"u-input\" type=\"search\" placeholder=\"search runs…\">\n<select class=\"u-select\"><option>all repos</option><option>uinaf/skillcheck</option><option>uinaf/slopwake</option></select>\n<span class=\"count\">128 runs</span>\n</div>"
     },
     {
       "name": "tooltip",
@@ -420,7 +420,7 @@
         ".u-topbar-actions"
       ],
       "use": "EVERY product page, dashboard, logged-in view",
-      "markup": "<header class=\"u-topbar\"><div class=\"u-shell-base u-topbar-row\"><a class=\"u-topbar-mark\" href=\"#\"><img src=\"https://cdn.uinaf.dev/images/webp/uinaf-computer-240w.webp\" alt=\"\">slopzapper</a><nav class=\"u-topbar-nav\"><a aria-current=\"page\" href=\"#\">overview</a><a href=\"#\">reviews</a><a href=\"#\">repos</a><a href=\"#\">settings</a></nav><div class=\"u-topbar-actions\"><a class=\"u-btn u-btn--sm u-btn--primary\" href=\"#\">new review</a></div></div></header>",
+      "markup": "<header class=\"u-topbar\"><div class=\"u-shell-base u-topbar-row\"><a class=\"u-topbar-mark\" aria-label=\"home\" href=\"#\"><img src=\"https://cdn.uinaf.dev/images/webp/uinaf-computer-240w.webp\" alt=\"\"></a><nav class=\"u-topbar-nav\"><a aria-current=\"page\" href=\"#\">overview</a><a href=\"#\">reviews</a><a href=\"#\">repos</a><a href=\"#\">settings</a></nav><div class=\"u-topbar-actions\"><a class=\"u-btn u-btn--sm u-btn--primary\" href=\"#\">new review</a></div></div></header>",
       "rules": [
         "ONE 56px row: 20px framed mark left, with the product name beside it when the surface has one, plain links right (current brightest), max one small button",
         "the row and the content below share the same shell class and gutter"
@@ -434,7 +434,67 @@
       "markup": "<span class=\"u-version\">v1.5.2</span>",
       "rules": ["inert by default with a hairline border, subtle text, and 10px type"],
       "never": ["using it as a status pill, or coloring it"]
+    },
+    {
+      "name": "row",
+      "classes": [".u-row", ".u-row-head", ".u-row-title", ".u-row-arrow", ".u-row-desc"],
+      "use": "the index primitive: one ruled link per item on projects and thanks",
+      "markup": "<a class=\"u-row\" href=\"/projects/slopwake\"><span class=\"u-row-head\"><span class=\"u-row-title\">slopwake</span><span class=\"u-row-arrow\" aria-hidden=\"true\">↗</span></span><span class=\"u-row-desc\">keep your slopshop awake.</span></a>",
+      "rules": [
+        "hairline above every row; the list closes on the next row or a trailing everything-else row",
+        "the whole row is one link. hover fades, press compresses"
+      ],
+      "never": ["a card border around a row. rows are ruled, not boxed"]
+    },
+    {
+      "name": "install",
+      "classes": [
+        ".u-install",
+        ".u-snip-tabs",
+        ".u-snip-tab",
+        ".u-snip",
+        ".u-snip-pane",
+        ".u-prompt",
+        ".u-copy"
+      ],
+      "use": "one canonical install command, with package-manager tabs when there are several",
+      "markup": "<div class=\"u-install\"><div class=\"u-snip-tabs\" role=\"tablist\"><button type=\"button\" role=\"tab\" class=\"u-snip-tab\" aria-selected=\"true\">npm</button><button type=\"button\" role=\"tab\" class=\"u-snip-tab\" aria-selected=\"false\">pnpm</button></div><div class=\"u-snip\"><button type=\"button\" class=\"u-copy\" aria-label=\"copy command\">copy</button><code class=\"u-snip-pane\"><span class=\"u-prompt\">$</span>npm install react-json-logic</code><code class=\"u-snip-pane\" hidden><span class=\"u-prompt\">$</span>pnpm add react-json-logic</code></div></div>",
+      "rules": [
+        "one line per tab, no prompt in the copied text",
+        "copy confirms in place: the label reads copied for 1.4s, border goes ok"
+      ],
+      "never": ["a toast for copy", "tabs for anything but alternate installers"]
+    },
+    {
+      "name": "bullets",
+      "classes": [".u-bullets"],
+      "use": "short what-it-does lists on project pages",
+      "markup": "<ul role=\"list\" class=\"u-bullets\"><li>detects active Codex, Claude, and Cursor sessions.</li><li>releases holds at the battery cutoff.</li></ul>",
+      "rules": [
+        "dash marker in fg-faint, text one step brighter than muted",
+        "one sentence per item, period at the end"
+      ],
+      "never": ["nesting", "icons as markers"]
+    },
+    {
+      "name": "prose-box",
+      "classes": [".u-prose-box"],
+      "use": "a bounded long-form region: a quoted note, an entry body",
+      "markup": "<div class=\"u-prose-box\"><p>entries are notes, not endorsements.</p></div>",
+      "rules": ["dashed, never solid. solid borders group data"],
+      "never": ["more than one per screen"]
+    },
+    {
+      "name": "pill",
+      "classes": [".u-pill"],
+      "use": "pressable filter chips over a list",
+      "markup": "<button type=\"button\" class=\"u-pill\" aria-pressed=\"true\">agents</button><button type=\"button\" class=\"u-pill\" aria-pressed=\"false\">cli</button>",
+      "rules": [
+        "aria-pressed carries state; pressed brightens border and text",
+        "filters views, never triggers actions"
+      ],
+      "never": ["a filled accent pill", "more than one row of pills"]
     }
   ],
-  "$markupCoverage": "42 patterns. every pattern that names classes carries canonical markup with no placeholders and type=\"button\" on every button. icons declares no classes, so its markup shows the inline-SVG idiom."
+  "$markupCoverage": "47 patterns. every pattern that names classes carries canonical markup with no placeholders and type=\"button\" on every button. icons declares no classes, so its markup shows the inline-SVG idiom."
 }
