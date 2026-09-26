@@ -75,13 +75,14 @@
           </p>
           <pre class="u-pre">
 slopguard doctor --engine codex
-slopguard review --mode branch --base origin/main --engine codex</pre>
+slopguard review --mode branch --base origin/main --engine codex --prompt "review this change."</pre>
           <p>
             <code>review</code> prints a terminal report. pass <code>--output json</code> to get the
             versioned <code>result-v1</code> contract on stdout instead.
           </p>
           <h2>modes</h2>
-          <pre class="u-pre">slopguard review --mode commit --commit HEAD --engine codex</pre>
+          <pre class="u-pre">
+slopguard review --mode commit --commit HEAD --engine codex --prompt "review this change."</pre>
           <p>
             <code>local</code> reviews dirty changes. <code>branch</code> reviews merge-base to
             HEAD; <code>commit</code> reviews one non-merge commit.

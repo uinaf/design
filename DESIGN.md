@@ -96,7 +96,7 @@ No 18px. Pick the nearest step.
 
 ## Layout
 
-- Three shells: narrow 40rem (default: prose, home, detail), base 48rem (data-dense: tables, dashboards, and the banded homepage), wide 72rem (rare; cap inner prose at narrow). If unsure, narrow. One product = one width: a data-dense view may step UP to base, but a detail page never shrinks below its index/home.
+- Three shells: narrow 40rem (default: prose, detail, and indexes), base 48rem (data-dense: tables, dashboards, and the banded homepage), wide 72rem (rare; cap inner prose at narrow). If unsure, narrow. One product = one width: a data-dense view may step UP to base, but a detail page never shrinks below its index/home.
 - Hero formula: micro-label kicker (optionally with a live dot) → 32px title (≤22ch) → one 14px sub-line (≤46ch) → primary + tertiary buttons → optional stat strip. See the project page template.
 - Never widen a shell to fit one element; let the element break out or redesign it.
 
@@ -106,7 +106,7 @@ Snappy decel, no bounce. 160ms hover/press, 220ms entry. Entry = fade-up 10px wi
 
 ## Imagery & logo
 
-- Two illustrations, total: `uinaf-team.png` (primary mark, 220–240px framed) and `uinaf-computer.png` (small mark, 20–64px, and the 120px frame on the 404). Pure black behind, 1px frame, square crop. Never rotate, recolor, or generate look-alikes.
+- Two illustrations, total: `uinaf-team.png` (primary mark, 200–240px framed) and `uinaf-computer.png` (small mark, 20–64px, and the 120px frame on the 404). Pure black behind, 1px frame, square crop. Never rotate, recolor, or generate look-alikes.
 - The favicon is neither of those; it is its own rendered set on the CDN, under `CDN.favicons`: 16 / 32 / 48 / 192 / 512 plus apple-touch. It is not the small mark scaled down.
 - No photos, no icon fonts. `↗` `→` `·` and hairlines carry the iconography.
 - **Icons are a last resort, and the set is closed.** Eight 16-grid stroke SVGs live in `assets/icons/`: search, copy, download, refresh, file, folder, branch, warning. Original work, licensed with the repo. Pick from the set; extend it in its idiom (stroke 1.5, square caps, `currentColor`, no fills) as a pull request, never inline. Sizes scale the stroke inversely: 16/1.5 default, 12/1.75 in tags and meta rows, 20/1.25 in large buttons and empty states. Never import an icon library, never paste from a third-party set, and never put an icon beside a word that already says it.
