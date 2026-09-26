@@ -29,7 +29,7 @@
 <script>
 const r=document.getElementById('inst'),tabs=r.querySelectorAll('.u-snip-tab'),panes=r.querySelectorAll('.u-snip-pane'),cp=r.querySelector('.u-copy');
 tabs.forEach((t,i)=>t.onclick=()=>{tabs.forEach(x=>x.setAttribute('aria-selected',String(x===t)));panes.forEach((p,j)=>p.hidden=j!==i);});
-cp.onclick=()=>{cp.textContent='copied';cp.dataset.copied='';setTimeout(()=>{cp.textContent='copy';delete cp.dataset.copied},1400);};
+cp.onclick=async()=>{const pane=[...panes].find(p=>!p.hidden);const cmd=[...pane.childNodes].filter(n=>!n.classList?.contains('u-prompt')).map(n=>n.textContent).join('').trim();try{await navigator.clipboard.writeText(cmd)}catch{return}cp.textContent='copied';cp.dataset.copied='';setTimeout(()=>{cp.textContent='copy';delete cp.dataset.copied},1400);};
 document.getElementById('pills').onclick=e=>{const b=e.target.closest('.u-pill');if(b)b.setAttribute('aria-pressed',String(b.getAttribute('aria-pressed')!=='true'));};
 </script>
 </body></html>

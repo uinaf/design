@@ -302,11 +302,11 @@
     },
     {
       "name": "site-header",
-      "classes": [".u-header", ".u-header-mark", ".u-header-name", ".u-header-tagline", ".u-nav"],
-      "use": "uinaf.dev family sites ONLY (stacked mark → tagline → nav)",
+      "classes": [".u-link-plain"],
+      "use": "uinaf.dev subpages ONLY: a 24px framed mark plus uinaf, 48px above the page title. no nav row; the footer carries the links. the homepage uses the topbar",
       "rules": ["the page title outranks the chrome"],
       "never": ["on product pages. that's what the topbar is for"],
-      "markup": "<div class=\"u-header\" style=\"margin-bottom:0\">\n<span class=\"u-header-mark\"><img src=\"https://cdn.uinaf.dev/images/uinaf-computer.png\" alt=\"\"><span class=\"u-header-name\">uinaf</span></span>\n<p class=\"u-header-tagline\">we bet you've seen us before</p>\n<nav class=\"u-nav\"><a class=\"u-link-plain\" href=\"#\">blog</a><span class=\"u-sep\">·</span><a class=\"u-link-plain\" href=\"#\">projects</a><span class=\"u-sep\">·</span><a class=\"u-link-plain\" href=\"#\">status</a></nav>\n</div>"
+      "markup": "<a class=\"u-link-plain\" href=\"#\" style=\"display:inline-flex;align-items:center;gap:var(--sp-2)\"><img src=\"https://cdn.uinaf.dev/images/uinaf-computer.png\" width=\"24\" height=\"24\" alt=\"\" style=\"display:block;border-width:1px;border-style:solid;border-color:var(--border)\"><span style=\"color:var(--fg)\">uinaf</span></a>\n<h1 style=\"margin-top:var(--sp-12)\">projects</h1>"
     },
     {
       "name": "skeleton",
@@ -437,7 +437,7 @@
     },
     {
       "name": "row",
-      "classes": ["u-row", "u-row-head", "u-row-title", "u-row-arrow", "u-row-desc"],
+      "classes": [".u-row", ".u-row-head", ".u-row-title", ".u-row-arrow", ".u-row-desc"],
       "use": "the index primitive: one ruled link per item on projects and thanks",
       "markup": "<a class=\"u-row\" href=\"/projects/slopwake\"><span class=\"u-row-head\"><span class=\"u-row-title\">slopwake</span><span class=\"u-row-arrow\" aria-hidden=\"true\">↗</span></span><span class=\"u-row-desc\">keep your slopshop awake.</span></a>",
       "rules": [
@@ -449,13 +449,13 @@
     {
       "name": "install",
       "classes": [
-        "u-install",
-        "u-snip-tabs",
-        "u-snip-tab",
-        "u-snip",
-        "u-snip-pane",
-        "u-prompt",
-        "u-copy"
+        ".u-install",
+        ".u-snip-tabs",
+        ".u-snip-tab",
+        ".u-snip",
+        ".u-snip-pane",
+        ".u-prompt",
+        ".u-copy"
       ],
       "use": "one canonical install command, with package-manager tabs when there are several",
       "markup": "<div class=\"u-install\"><div class=\"u-snip-tabs\" role=\"tablist\"><button type=\"button\" role=\"tab\" class=\"u-snip-tab\" aria-selected=\"true\">npm</button><button type=\"button\" role=\"tab\" class=\"u-snip-tab\" aria-selected=\"false\">pnpm</button></div><div class=\"u-snip\"><button type=\"button\" class=\"u-copy\" aria-label=\"copy command\">copy</button><code class=\"u-snip-pane\"><span class=\"u-prompt\">$</span>npm install react-json-logic</code><code class=\"u-snip-pane\" hidden><span class=\"u-prompt\">$</span>pnpm add react-json-logic</code></div></div>",
@@ -467,7 +467,7 @@
     },
     {
       "name": "bullets",
-      "classes": ["u-bullets"],
+      "classes": [".u-bullets"],
       "use": "short what-it-does lists on project pages",
       "markup": "<ul role=\"list\" class=\"u-bullets\"><li>detects active Codex, Claude, and Cursor sessions.</li><li>releases holds at the battery cutoff.</li></ul>",
       "rules": [
@@ -478,7 +478,7 @@
     },
     {
       "name": "prose-box",
-      "classes": ["u-prose-box"],
+      "classes": [".u-prose-box"],
       "use": "a bounded long-form region: a quoted note, an entry body",
       "markup": "<div class=\"u-prose-box\"><p>entries are notes, not endorsements.</p></div>",
       "rules": ["dashed, never solid. solid borders group data"],
@@ -486,7 +486,7 @@
     },
     {
       "name": "pill",
-      "classes": ["u-pill"],
+      "classes": [".u-pill"],
       "use": "pressable filter chips over a list",
       "markup": "<button type=\"button\" class=\"u-pill\" aria-pressed=\"true\">agents</button><button type=\"button\" class=\"u-pill\" aria-pressed=\"false\">cli</button>",
       "rules": [

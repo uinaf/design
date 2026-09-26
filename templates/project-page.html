@@ -30,7 +30,7 @@
 </section>
 <section id="install" style="display:flex;flex-direction:column;gap:var(--sp-2-5)">
 <span class="u-label">install</span>
-<div class="u-install"><div class="u-snip-tabs" role="tablist"><button type="button" role="tab" class="u-snip-tab" aria-selected="true">brew</button></div><div class="u-snip"><button type="button" class="u-copy" aria-label="copy command">copy</button><code class="u-snip-pane"><span class="u-prompt">$</span>brew install --cask uinaf/tap/slopwake</code></div></div>
+<div class="u-install"><div class="u-snip"><button type="button" class="u-copy" aria-label="copy command">copy</button><code class="u-snip-pane"><span class="u-prompt">$</span>brew install --cask uinaf/tap/slopwake</code></div></div>
 <p style="font-size:11px;color:var(--fg-subtle)">requires macOS 26 or newer.</p>
 </section>
 </div>
@@ -49,4 +49,13 @@
 </footer>
 </div>
 </div>
+<script>
+for (const b of document.querySelectorAll('.u-copy')) b.onclick = async () => {
+  const pane = [...b.closest('.u-snip').querySelectorAll('.u-snip-pane')].find((p) => !p.hidden);
+  const cmd = [...pane.childNodes].filter((n) => !n.classList?.contains('u-prompt')).map((n) => n.textContent).join('').trim();
+  try { await navigator.clipboard.writeText(cmd); } catch { return; }
+  b.textContent = 'copied'; b.dataset.copied = '';
+  setTimeout(() => { b.textContent = 'copy'; delete b.dataset.copied; }, 1400);
+};
+</script>
 </body></html>
