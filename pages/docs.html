@@ -49,9 +49,9 @@
   <body class="uinaf">
     <header class="u-topbar">
       <div class="u-shell-base u-topbar-row">
-        <a href="#" class="u-topbar-mark"
-          ><img src="https://cdn.uinaf.dev/images/uinaf-computer.png" alt="" />slopguard</a
-        >
+        <a href="#" class="u-topbar-mark" aria-label="home"
+          ><img src="https://cdn.uinaf.dev/images/uinaf-computer.png" alt=""
+        /></a>
         <nav class="u-topbar-nav">
           <a href="#" aria-current="page">docs</a><a href="#">source ↗</a>
         </nav>
@@ -91,6 +91,9 @@ slopguard review --mode branch --base origin/main --engine codex</pre>
             0 is a clean review, 1 is findings, 2 is no trustworthy result. slopguard never edits
             source, runs tests, or falls back to another model.
           </p>
+          <h2>install</h2>
+          <pre class="u-pre">brew install --cask uinaf/tap/slopguard</pre>
+          <p>one binary. the skill ships alongside it in <code>uinaf/ffss</code>.</p>
         </article>
       </div>
     </main>

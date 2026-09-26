@@ -791,3 +791,198 @@
   padding: 0;
   justify-content: center;
 }
+/* ---------- index: ruled row. one link per row, hairline above ---------- */
+.u-row {
+  display: block;
+  border-top: 1px solid var(--border);
+  padding: var(--sp-4) 0;
+  color: inherit;
+  text-decoration: none;
+  transition: opacity var(--duration-fast) var(--ease-snappy);
+}
+.u-row:hover {
+  opacity: 0.8;
+}
+.u-row:active {
+  transform: scale(0.97);
+}
+.u-row-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+.u-row-title {
+  font-size: var(--text-base);
+  color: var(--fg);
+}
+.u-row-arrow {
+  font-size: 12px;
+  color: var(--fg-subtle);
+}
+.u-row-desc {
+  display: block;
+  margin-top: var(--sp-1);
+  font-size: var(--text-sm);
+  color: var(--fg-muted);
+}
+
+/* ---------- install: tab row joined to one command line, copy on the right ---------- */
+.u-install {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.u-snip-tabs {
+  display: flex;
+  width: fit-content;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-bottom: 0;
+  border-radius: var(--radius-xs) var(--radius-xs) 0 0;
+  background: var(--bg);
+}
+.u-snip-tab {
+  cursor: pointer;
+  border: 0;
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--fg-subtle);
+  padding: var(--sp-1) var(--sp-3);
+  transition: color var(--duration-fast) var(--ease-snappy);
+}
+.u-snip-tab + .u-snip-tab {
+  border-left: 1px solid var(--border);
+}
+.u-snip-tab:hover {
+  color: var(--fg);
+}
+.u-snip-tab[aria-selected="true"] {
+  background: var(--neutral-925);
+  color: var(--fg);
+}
+.u-snip {
+  position: relative;
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 0 var(--radius-xs) var(--radius-xs) var(--radius-xs);
+  background: var(--neutral-925);
+  padding: 10px 72px 10px 14px;
+  font-size: var(--text-sm);
+  line-height: var(--leading-base);
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+.u-snip-pane {
+  display: block;
+  margin: 0;
+  font: inherit;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.u-snip-pane[hidden] {
+  display: none;
+}
+.u-prompt {
+  color: var(--fg-subtle);
+  margin-right: 10px;
+  user-select: none;
+}
+.u-copy {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  color: var(--fg-subtle);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  line-height: 1;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  padding: var(--sp-1) 10px;
+  transition:
+    color var(--duration-fast) var(--ease-snappy),
+    border-color var(--duration-fast) var(--ease-snappy);
+}
+.u-copy:hover {
+  color: var(--fg);
+  border-color: var(--border-hover);
+}
+.u-copy:active {
+  transform: translateY(-50%) scale(0.97);
+}
+.u-copy[data-copied] {
+  color: var(--ok);
+  border-color: var(--ok);
+}
+
+/* ---------- lists: dash bullets for short feature lists ---------- */
+.u-bullets {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.u-bullets > li {
+  display: flex;
+  gap: var(--sp-2);
+  color: var(--neutral-300);
+}
+.u-bullets > li::before {
+  content: "-";
+  color: var(--fg-faint);
+  user-select: none;
+}
+
+/* ---------- prose box: the one bordered prose region, dashed ---------- */
+.u-prose-box {
+  border: 1px dashed var(--border);
+  padding: var(--sp-5) var(--sp-6);
+}
+
+/* ---------- pill: a pressable filter chip. aria-pressed carries state ---------- */
+.u-pill {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  background: transparent;
+  padding: 6px 10px;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--fg);
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-snappy),
+    background-color var(--duration-fast) var(--ease-snappy);
+}
+.u-pill:hover {
+  border-color: var(--border-hover);
+  background: var(--bg-hover);
+}
+.u-pill[aria-pressed="true"] {
+  border-color: var(--border-hover);
+  background: rgba(23, 23, 23, 0.6);
+  color: var(--fg-strong);
+}
+@media (prefers-reduced-motion: reduce) {
+  .u-row:active,
+  .u-copy:active {
+    transform: translateY(-50%);
+  }
+  .u-row:active {
+    transform: none;
+    opacity: 0.9;
+  }
+}

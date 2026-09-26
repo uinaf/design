@@ -7,16 +7,16 @@
 <div class="u-label">toolbar — search + one filter + count. filters never multiply past two</div>
 <div style="display:flex;flex-direction:column;gap:12px">
 <div class="u-toolbar">
-<input class="u-input" type="search" placeholder="search runs…">
-<select class="u-select"><option>all repos</option><option>uinaf/slopzapper</option><option>uinaf/healthd</option></select>
-<span class="count">128 runs</span>
+<input class="u-input" type="search" placeholder="search reviews…">
+<select class="u-select"><option>all repos</option><option>uinaf/skillcheck</option><option>uinaf/slopwake</option></select>
+<span class="count">128 reviews</span>
 </div>
 <table class="u-table">
 <thead><tr><th>PR</th><th>verdict</th><th data-num>duration</th></tr></thead>
 <tbody>
 <tr><td>#512 add sandbox pool warmup</td><td><span style="display:inline-flex;align-items:center;gap:8px"><span class="u-dot u-dot--ok"></span>pass</span></td><td data-num>2m 08s</td></tr>
-<tr><td>#204 fix: TCC db lock retry</td><td><span style="display:inline-flex;align-items:center;gap:8px"><span class="u-dot u-dot--warn"></span>changes</span></td><td data-num>4m 51s</td></tr>
-<tr><td>#97 bump wrangler to 4.2</td><td><span style="display:inline-flex;align-items:center;gap:8px"><span class="u-dot u-dot--ok"></span>pass</span></td><td data-num>1m 33s</td></tr>
+<tr><td>#204 fix: skill lint exit code</td><td><span style="display:inline-flex;align-items:center;gap:8px"><span class="u-dot u-dot--warn"></span>changes</span></td><td data-num>4m 51s</td></tr>
+<tr><td>#97 bump wrangler to 4.135</td><td><span style="display:inline-flex;align-items:center;gap:8px"><span class="u-dot u-dot--ok"></span>pass</span></td><td data-num>1m 33s</td></tr>
 </tbody>
 </table>
 <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap">
@@ -28,6 +28,6 @@
 <div class="u-label">empty state — dashed region, one dry line, one action. never an illustration</div>
 <div class="u-empty" style="max-width:560px">
 <p>no reviews yet. review the local changes.</p>
-<pre class="u-pre" style="font-size:12px;padding:8px 14px">slopguard review --mode local --engine codex --prompt &quot;review this change.&quot;</pre>
+<pre class="u-pre" style="font-size:12px;padding:8px 14px">slopguard review --mode local --engine codex</pre>
 </div>
 </body></html>

@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- @template name="uinaf.dev homepage" description="Studio homepage: centered poster hero, four featured repos, compact list of the rest, footer." -->
+<!-- @template name="uinaf.dev homepage" description="Studio homepage: centered poster hero, four featured repos, compact list of three more, work-with-us band, three-column footer." -->
 <html lang="en"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,64 +9,45 @@
 </head>
 <body class="uinaf">
 <div class="uinaf" style="min-height:100vh;display:flex;flex-direction:column">
-<div style="border-bottom:1px solid var(--border)">
-<div style="max-width:48rem;margin:0 auto;display:flex;align-items:center;gap:var(--sp-2-5);height:60px;padding:0 var(--sp-8)">
-<img src="https://cdn.uinaf.dev/images/uinaf-computer.png" alt="" width="22" height="22" style="border:1px solid var(--border);display:block">
-<span style="font-size:14px;color:var(--fg-strong)">uinaf</span>
-<nav style="margin-left:auto;display:flex;gap:var(--sp-6);font-size:13px"><a class="u-link-plain" href="https://uinaf.dev/projects" style="color:var(--fg-muted)">projects</a><a class="u-link-plain" href="https://github.com/uinaf" style="color:var(--fg-muted)">gh ↗</a></nav>
-</div>
-</div>
-<div style="border-bottom:1px solid var(--border)">
-<div style="max-width:48rem;margin:0 auto;display:flex;flex-direction:column;align-items:center;text-align:center;padding:var(--sp-18) var(--sp-8);animation:ue 220ms cubic-bezier(0.22,1,0.36,1) both">
-<img src="https://cdn.uinaf.dev/images/uinaf-team.png" alt="two robed skeletons at a melting crt" class="u-ticks" style="width:200px;height:200px;border:1px solid var(--neutral-900)">
+<header class="u-topbar"><div class="u-shell-base u-topbar-row">
+<a href="https://uinaf.dev/" class="u-topbar-mark"><img src="https://cdn.uinaf.dev/images/uinaf-computer.png" alt=""><span>uinaf</span></a>
+<nav class="u-topbar-nav"><a href="https://uinaf.dev/projects">projects</a><a href="https://github.com/uinaf">gh&nbsp;↗</a></nav>
+</div></header>
+<section><div class="u-shell-base" style="display:flex;flex-direction:column;align-items:center;text-align:center;padding-block:var(--sp-18);animation:ue 220ms cubic-bezier(0.22,1,0.36,1) both">
+<span class="u-ticks" style="display:block;width:202px"><img src="https://cdn.uinaf.dev/images/uinaf-team.png" alt="uinaf — two robed skeletons at a melting crt" style="display:block;width:200px;height:200px;border:1px solid var(--neutral-900)"></span>
 <span class="u-label u-label--accent" style="margin-top:var(--sp-9)">we bet you've seen us before</span>
 <h1 class="u-display" style="margin-top:var(--sp-4);max-width:24ch">software for anything with a screen.</h1>
 <p style="margin-top:var(--sp-4);max-width:52ch;font-size:16px;color:var(--fg-muted)">terminals, browsers, phones, TVs, set-top boxes. lately, the tooling that keeps AI-written code honest. nearly all of it open source.</p>
-<p class="u-meta" style="margin-top:var(--sp-8)">you may know us from <a class="u-link-plain" href="https://put.io/about" style="color:var(--neutral-500)">put.io</a> and <a class="u-link-plain" href="https://www.openclaw.org/people" style="color:var(--neutral-500)">openclaw</a></p>
+<a class="u-btn u-btn--primary u-btn--lg" href="#work" style="margin-top:var(--sp-8)">work with us</a>
+<span class="u-meta" style="margin-top:var(--sp-6)">you may know us from <a class="u-link-plain" href="https://put.io/about">put.io</a> and <a class="u-link-plain" href="https://www.openclaw.org/people">openclaw</a></span>
+</div></section>
+<section style="border-top:1px solid var(--border)"><div class="u-shell-base" style="padding-block:var(--sp-14);animation:ue 220ms cubic-bezier(0.22,1,0.36,1) 90ms both">
+<div style="display:flex;flex-direction:column;gap:var(--sp-3)">
+<span style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:var(--sp-1) var(--sp-6)"><span class="u-label">start here</span><span class="u-meta">four we think everyone can use</span></span>
+<div class="u-panel-grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
+<a class="u-link-plain" href="https://uinaf.dev/projects/dotfiles" style="display:flex;flex-direction:column;gap:var(--sp-2);padding:var(--sp-6) var(--sp-7)"><span style="font-size:20px;color:var(--fg-strong)">dotfiles</span><span style="font-size:13px;color:var(--fg-muted)">profile-based machine bootstrap and maintenance.</span></a>
+<a class="u-link-plain" href="https://uinaf.dev/projects/ffss" style="display:flex;flex-direction:column;gap:var(--sp-2);padding:var(--sp-6) var(--sp-7)"><span style="font-size:20px;color:var(--fg-strong)">ffss</span><span style="font-size:13px;color:var(--fg-muted)">the flipflopslopstack.</span></a>
+<a class="u-link-plain" href="https://uinaf.dev/projects/agent-skills" style="display:flex;flex-direction:column;gap:var(--sp-2);padding:var(--sp-6) var(--sp-7)"><span style="font-size:20px;color:var(--fg-strong)">agent-skills</span><span style="font-size:13px;color:var(--fg-muted)">reusable agent skills with a deterministic lint gate.</span></a>
+<a class="u-link-plain" href="https://uinaf.dev/projects/workspace-kit" style="display:flex;flex-direction:column;gap:var(--sp-2);padding:var(--sp-6) var(--sp-7)"><span style="font-size:20px;color:var(--fg-strong)">workspace-kit</span><span style="font-size:13px;color:var(--fg-muted)">validates and scaffolds agent workspaces.</span></a>
 </div>
 </div>
-<div style="max-width:48rem;margin:0 auto;width:100%;box-sizing:border-box;padding:var(--sp-14) var(--sp-8) 0">
-<div style="animation:ue 220ms cubic-bezier(0.22,1,0.36,1) 90ms both">
-<div style="display:flex;justify-content:space-between;align-items:baseline"><span class="u-label">start here</span><span class="u-meta">four we think everyone can use</span></div>
-<div class="u-panel-grid" style="grid-template-columns:1fr 1fr;margin-top:var(--sp-3)">
-<a class="u-link-plain" href="https://github.com/uinaf/dotfiles" style="display:flex;flex-direction:column;gap:var(--sp-2)"><span style="display:flex;justify-content:space-between;align-items:baseline;gap:var(--sp-2)"><span style="font-size:20px;color:var(--fg-strong)">dotfiles</span><span style="font-size:13px;color:var(--fg-subtle)">↗</span></span><span style="font-size:13px;color:var(--fg-muted)">profile-based machine bootstrap and maintenance.</span></a>
-<a class="u-link-plain" href="https://github.com/uinaf/ffss" style="display:flex;flex-direction:column;gap:var(--sp-2)"><span style="display:flex;justify-content:space-between;align-items:baseline;gap:var(--sp-2)"><span style="font-size:20px;color:var(--fg-strong)">ffss</span><span style="font-size:13px;color:var(--fg-subtle)">↗</span></span><span style="font-size:13px;color:var(--fg-muted)">the flipflopslopstack.</span></a>
-<a class="u-link-plain" href="https://github.com/uinaf/agent-skills" style="display:flex;flex-direction:column;gap:var(--sp-2)"><span style="display:flex;justify-content:space-between;align-items:baseline;gap:var(--sp-2)"><span style="font-size:20px;color:var(--fg-strong)">agent-skills</span><span style="font-size:13px;color:var(--fg-subtle)">↗</span></span><span style="font-size:13px;color:var(--fg-muted)">reusable agent skills with a deterministic lint gate.</span></a>
-<a class="u-link-plain" href="https://github.com/uinaf/workspace-kit" style="display:flex;flex-direction:column;gap:var(--sp-2)"><span style="display:flex;justify-content:space-between;align-items:baseline;gap:var(--sp-2)"><span style="font-size:20px;color:var(--fg-strong)">workspace-kit</span><span style="font-size:13px;color:var(--fg-subtle)">↗</span></span><span style="font-size:13px;color:var(--fg-muted)">validates and scaffolds agent workspaces.</span></a>
+<div style="display:flex;flex-direction:column;gap:var(--sp-2);margin-top:var(--sp-12)">
+<span style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:var(--sp-1) var(--sp-6)"><span class="u-label">also</span><a class="u-link-plain u-meta" href="https://github.com/uinaf">all repos → github.com/uinaf ↗</a></span>
+<div style="display:flex;flex-direction:column">
+<a href="https://uinaf.dev/projects/skillcheck" class="u-link-plain" style="display:grid;grid-template-columns:150px minmax(0,1fr);gap:var(--sp-1) var(--sp-4);align-items:baseline;padding:var(--sp-4) 0;border-bottom:1px solid var(--border-soft)"><span style="color:var(--fg)">skillcheck</span><span style="font-size:13px;color:var(--fg-muted)">lint and eval harness for agent skills.</span></a>
+<a href="https://uinaf.dev/projects/slopwake" class="u-link-plain" style="display:grid;grid-template-columns:150px minmax(0,1fr);gap:var(--sp-1) var(--sp-4);align-items:baseline;padding:var(--sp-4) 0;border-bottom:1px solid var(--border-soft)"><span style="color:var(--fg)">slopwake</span><span style="font-size:13px;color:var(--fg-muted)">keep your slopshop awake.</span></a>
+<a href="https://uinaf.dev/projects/react-json-logic" class="u-link-plain" style="display:grid;grid-template-columns:150px minmax(0,1fr);gap:var(--sp-1) var(--sp-4);align-items:baseline;padding:var(--sp-4) 0"><span style="color:var(--fg)">react-json-logic</span><span style="font-size:13px;color:var(--fg-muted)">build and evaluate JsonLogic with React components.</span></a>
 </div>
 </div>
-</div>
-<div style="max-width:48rem;margin:0 auto;width:100%;box-sizing:border-box;padding:var(--sp-12) var(--sp-8) var(--sp-14)">
-<div style="animation:ue 220ms cubic-bezier(0.22,1,0.36,1) 135ms both">
-<div style="display:flex;justify-content:space-between;align-items:baseline"><span class="u-label">also</span><a class="u-link-plain u-meta" href="https://github.com/uinaf">all repos → github.com/uinaf ↗</a></div>
-<div style="display:flex;flex-direction:column;margin-top:var(--sp-2)">
-<a href="https://github.com/uinaf/skillcheck" class="u-link-plain" style="display:grid;grid-template-columns:150px 1fr auto;gap:var(--sp-4);align-items:baseline;padding:var(--sp-4) 0;border-bottom:1px solid var(--border-soft)"><span style="font-size:14px;color:var(--fg)">skillcheck</span><span style="font-size:13px;color:var(--fg-muted)">lint and eval harness for agent skills.</span><span style="color:var(--fg-subtle);font-size:13px">↗</span></a>
-<a href="https://github.com/uinaf/slopwake" class="u-link-plain" style="display:grid;grid-template-columns:150px 1fr auto;gap:var(--sp-4);align-items:baseline;padding:var(--sp-4) 0;border-bottom:1px solid var(--border-soft)"><span style="font-size:14px;color:var(--fg)">slopwake</span><span style="font-size:13px;color:var(--fg-muted)">keep your slopshop awake.</span><span style="color:var(--fg-subtle);font-size:13px">↗</span></a>
-<a href="https://github.com/uinaf/react-json-logic" class="u-link-plain" style="display:grid;grid-template-columns:150px 1fr auto;gap:var(--sp-4);align-items:baseline;padding:var(--sp-4) 0"><span style="font-size:14px;color:var(--fg)">react-json-logic</span><span style="font-size:13px;color:var(--fg-muted)">build and evaluate JsonLogic with React components.</span><span style="color:var(--fg-subtle);font-size:13px">↗</span></a>
-</div>
-</div>
-</div>
-
-<div id="work" style="border-top:1px solid var(--border)">
-<div style="max-width:48rem;margin:0 auto;box-sizing:border-box;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:var(--sp-4) var(--sp-8);padding:var(--sp-10) var(--sp-8)">
-<div><span class="u-label">work with us</span><p style="margin-top:var(--sp-2);font-size:14px;max-width:44ch">we take on contract work. if it has a screen, we can ship for it.</p></div>
+</div></section>
+<section id="work" style="border-top:1px solid var(--border)"><div class="u-shell-base" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:var(--sp-4) var(--sp-8);padding-block:var(--sp-10)">
+<div><span class="u-label">work with us</span><p style="margin-top:var(--sp-2);max-width:44ch;color:var(--fg)">we take on contract work. if it has a screen, we can ship for it.</p></div>
 <a class="u-btn u-btn--accent" href="mailto:dev@uinaf.dev">dev@uinaf.dev</a>
-</div>
-</div>
-
-<div style="border-top:1px solid var(--border);margin-top:auto">
-<div style="max-width:48rem;margin:0 auto;box-sizing:border-box;width:100%;display:grid;grid-template-columns:1fr auto;gap:var(--sp-6) var(--sp-16);padding:var(--sp-8) var(--sp-8) var(--sp-10)">
-
-<div style="display:flex;flex-direction:column;gap:var(--sp-1);font-size:12px;color:var(--fg-subtle);line-height:1.6">
-<span>undefined is not a function LLC</span>
-<span>175 SW 7th Street STE 1517-1115</span>
-<span>Miami, FL 33130</span>
-</div>
-
-<div style="display:flex;flex-direction:column;gap:var(--sp-1);font-size:12px">
-<a class="u-link-plain" href="https://x.com/uinafdev" style="color:var(--fg-subtle)">x ↗</a>
-</div>
-</div>
-</div>
+</div></section>
+<footer class="u-footer" style="margin-top:auto"><div class="u-shell-base u-footer-grid">
+<address class="u-footer-col" style="font-style:normal"><span>undefined is not a function LLC</span><span>175 SW 7th Street STE 1517-1115</span><span>Miami, FL 33130</span><span>United States</span></address>
+<nav class="u-footer-col"><a href="https://uinaf.dev/projects">projects</a><a href="https://uinaf.dev/thanks">thanks</a></nav>
+<nav class="u-footer-col"><a href="mailto:dev@uinaf.dev">dev@uinaf.dev</a><a href="https://github.com/uinaf">github&nbsp;↗</a><a href="https://x.com/uinafdev">x&nbsp;↗</a></nav>
+</div></footer>
 </div>
 </body></html>

@@ -151,7 +151,7 @@ fs.writeFileSync(path.join(guide, "pages.json"), `${JSON.stringify(pages, null, 
  * Templates are whole surfaces too, so they publish like pages: no guide chrome,
  * marker stripped, `@template` fails closed.
  *
- * Four of them are export artboards: fixed canvases up to 2560px wide, sized
+ * Three of them are export artboards: fixed canvases up to 2560px wide, sized
  * for the file they become rather than for a viewport. Published untouched they
  * would be a page you scroll sideways to read, so the artboard is zoomed to fit.
  * `zoom` and not `transform`, because zoom reflows: a scaled canvas leaves no
