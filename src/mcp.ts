@@ -150,7 +150,7 @@ export const createServer = (env: Env): McpServer => {
         );
       }
       return text(
-        `${describe(pattern)}\n\n\`\`\`html\n${pattern.markup}\n\`\`\`\n\nImport \`@uinaf/design/css\`, then copy the markup above.`,
+        `${describe(pattern)}\n\n\`\`\`html\n${pattern.markup}\n\`\`\`\n\nImport \`@uinaf/design/css\`, then copy the markup above. The package ships CSS only, so wire any behavior the rules describe.`,
       );
     },
   );

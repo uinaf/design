@@ -181,6 +181,12 @@ describe("verify order", () => {
       verifyPureCommands.indexOf("vp test run"),
     );
   });
+
+  it("runs that task from both verify entrypoints", () => {
+    const { scripts } = JSON.parse(readFileSync(resolve(root, "package.json"), "utf8"));
+    expect(scripts.verify).toMatch(/\bvp run verifyPure\b/);
+    expect(scripts["verify:full"]).toMatch(/\bvp run --no-cache verifyPure\b/);
+  });
 });
 
 describe("search_guidelines input bounds", () => {
