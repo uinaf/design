@@ -466,7 +466,8 @@
       "markup": "<div class=\"u-install\"><div class=\"u-snip-tabs\" role=\"tablist\"><button type=\"button\" role=\"tab\" class=\"u-snip-tab\" aria-selected=\"true\">npm</button><button type=\"button\" role=\"tab\" class=\"u-snip-tab\" aria-selected=\"false\">pnpm</button></div><div class=\"u-snip\"><button type=\"button\" class=\"u-copy\" aria-label=\"copy command\">copy</button><code class=\"u-snip-pane\"><span class=\"u-prompt\">$</span>npm install react-json-logic</code><code class=\"u-snip-pane\" hidden><span class=\"u-prompt\">$</span>pnpm add react-json-logic</code></div></div>",
       "rules": [
         "one line per tab, no prompt in the copied text",
-        "copy confirms in place: the label reads copied for 1.4s, border goes ok"
+        "copy confirms in place: the label reads copied for 1.4s, border goes ok",
+        "the package ships no script: a tab sets aria-selected and unhides only its own pane; copy writes the visible pane's text without the u-prompt and sets data-copied for the ok border"
       ],
       "never": ["a toast for copy", "tabs for anything but alternate installers"]
     },

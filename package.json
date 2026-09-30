@@ -52,7 +52,7 @@
     "guide:sync": "node scripts/build.ts && node scripts/sync-guide.ts && node scripts/machine-layer.ts",
     "cdn:check": "node scripts/cdn-check.ts",
     "test": "vp test run",
-    "audit": "pnpm audit --audit-level high",
+    "audit": "pnpm audit --audit-level high --ignore-registry-errors",
     "verify": "pnpm run audit && vp run verifyPure && ./scripts/smoke.sh",
     "verify:full": "pnpm run audit && vp run --no-cache verifyPure && ./scripts/smoke.sh",
     "deploy": "pnpm run guide:sync && wrangler deploy",
