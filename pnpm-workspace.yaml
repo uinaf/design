@@ -4,7 +4,7 @@ packages:
 overrides:
   vite@*: "catalog:"
   # miniflare pins undici exactly; 7.29.0 carries two high advisories. No-op once wrangler resolves undici >=7.29.1.
-  undici@7.29.0: 7.29.1
+  undici@7.29.0: 7.30.0
 
 allowBuilds:
   core-js-pure: false
