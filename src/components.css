@@ -42,7 +42,7 @@
   display: flex;
   justify-content: space-between;
   font-size: var(--text-2xs);
-  color: var(--fg-faint);
+  color: var(--fg-subtle);
   margin-top: 6px;
 }
 .u-chart {

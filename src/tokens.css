@@ -57,6 +57,7 @@
   --neutral-700: rgb(64, 64, 64);
   --neutral-600: rgb(82, 82, 82);
   --neutral-500: rgb(115, 115, 115);
+  --neutral-450: rgb(128, 128, 128);
   --neutral-400: rgb(163, 163, 163);
   --neutral-300: rgb(212, 212, 212);
   --neutral-200: rgb(229, 229, 229);
@@ -73,8 +74,8 @@
   --fg: var(--neutral-200);
   --fg-strong: var(--neutral-100);
   --fg-muted: var(--neutral-400);
-  --fg-subtle: var(--neutral-500); /* 4.2:1 on --bg; neutral-600 was 2.5:1 */
-  --fg-faint: var(--neutral-600); /* axes and hints; neutral-700 was 1.9:1 */
+  --fg-subtle: var(--neutral-450); /* 4.5:1 on --bg-raised, 5:1 on --bg; neutral-500 was 4.2:1 */
+  --fg-faint: var(--neutral-600); /* hints and separators; neutral-700 was 1.9:1 */
 
   --border: var(--neutral-800);
   --border-soft: rgba(38, 38, 38, 0.9);

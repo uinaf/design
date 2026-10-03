@@ -66,7 +66,7 @@ No 18px. Pick the nearest step.
 ## Color
 
 - Monochrome neutrals do all the UI work: light text on near-black, dim labels, darker hairlines. Hierarchy by border + background step, never hue.
-- Dim text has two steps: `--fg-subtle` (neutral-500, 4.2:1 on the canvas) for labels and meta, `--fg-faint` (neutral-600) for axes, hints, and separators. Nothing that must be read sits below subtle.
+- Dim text has two steps: `--fg-subtle` (neutral-450, at least 4.5:1 on every dark surface up to `--bg-raised`) for labels, meta, and axis labels, `--fg-faint` (neutral-600) for hints and separators. Nothing that must be read sits below subtle.
 - **One accent: phosphor lime.** Allowed: link hover, text selection + caret, live dots, active markers, first chart series, at most one accent-filled button per screen. Never: body text, washes, resting borders. If two things glow, neither does.
 - The slime family (cyan / green / magenta / purple) lives in the artwork and chart series 2+. Cyan is not a UI color.
 - Status = a small muted dot + a lowercase word. Never a filled banner, never neon.
