@@ -6,7 +6,7 @@
 
 - Never commit Berkeley Mono binaries or a `fonts/` directory.
 - Font URLs in tokens must stay on `https://cdn.uinaf.dev/fonts/berkeley-mono/...`.
-- Every `cdn.uinaf.dev` URL written in `preview/`, `pages/`, or `templates/` must also be declared in the `CDN` export (`src/cdn.ts`); a test fails on an inline one, because an undeclared URL is a 404 nobody can grep for. The assets live in `uinaf/infra`, so `pnpm run cdn:check` proves they resolve; it is outside `verify` because it needs the network.
+- Every `cdn.uinaf.dev` URL written in `preview/`, `pages/`, or `templates/` must also be declared in the `CDN` export (`src/cdn.ts`); a test fails on an inline one, because an undeclared URL is a 404 nobody can grep for. The assets live in `uinaf/cdn-uinaf-dev`, so `pnpm run cdn:check` proves they resolve; it is outside `verify` because it needs the network.
 - CSS source is the pair `src/tokens.css` + `src/components.css`; `tokens.css` `@import`s the other, so consumers import one file and the two must stay side by side in `dist/css/` and `guide/`.
 - Handoff CSS is adopted **content-verbatim, formatter-normalized**: `vp fmt` owns layout, hex casing, and trailing zeros. Never add `src/*.css` to a formatter ignore to preserve upstream byte formatting.
 - `dist/tokens.json` is generated. Every custom property must match a rule in `groupRules` (`scripts/build.ts`); an ungrouped token fails the build by design.
@@ -27,16 +27,18 @@ pnpm install --frozen-lockfile   # bootstrap: Node from .node-version, pnpm from
 pnpm run verify                  # caches pure checks; always ends in the real-surface smoke
 pnpm run verify:full             # uncached full gate for release and cache verification
 pnpm run smoke                   # that smoke alone: boots the Worker, exercises /mcp + every machine-layer route, tears it down
-pnpm run cdn:check               # HEADs every URL in the CDN export; run before a deploy that adds one
+pnpm run cdn:check               # HEADs every URL in the CDN export; run when a change adds one
 ```
 
-Prefer `vp` for lint/format/test: `pnpm exec vp check`, `pnpm exec vp test run`.
+Proof by change: `AGENTS.md`, `CONTRIBUTING.md`, and `docs/` need only `pnpm exec vp fmt --check`. Everything else needs `pnpm run verify`, including `DESIGN.md` and `README.md` (the guide serves both as markdown) and `skills/` (`scripts/check.ts` validates it).
+
+Prefer `vp` for lint/format/test: `pnpm exec vp check`, `pnpm exec vp test run`. In a fresh checkout, `vp check` reports missing `Env` types until `pnpm run types:worker` generates the gitignored `worker-configuration.d.ts`; `verify` does that first.
 
 `pnpm run smoke` syncs the guide, binds port 8788, and always kills the server it started. Set `SMOKE_PORT` to run it from a second worktree; logs land in `.smoke/` (gitignored). Two runs in the _same_ checkout will fight over `guide/`; use a separate worktree, or call `./scripts/smoke.sh` directly once the guide is built.
 
 `pnpm run verify` reuses Vite Task results for deterministic checks and still runs the Worker smoke every time. `pnpm run verify:full` bypasses the task cache without narrowing the gate.
 
-`pnpm run deploy` publishes the working tree to **production** `design.uinaf.dev`. It is outside `verify` on purpose and must not run unattended; CI deploys from `main` (`.github/workflows/release.yml`). To see your change, run `pnpm run smoke` or `pnpm exec wrangler dev`.
+`pnpm run deploy` publishes the working tree to **production** `design.uinaf.dev` without running `verify`; CI deploys from `main` (`.github/workflows/release.yml`). To see your change, run `pnpm run smoke` or `pnpm exec wrangler dev`.
 
 ## Pipelines
 
@@ -46,6 +48,8 @@ Prefer `vp` for lint/format/test: `pnpm exec vp check`, `pnpm exec vp test run`.
 | `.github/workflows/release.yml` | push to `main`                | verify → guide deploy (`production`) ∥ npm publish (`release`) |
 
 `∥` means parallel: once `verify` passes, the two terminal jobs run at once.
+
+Every merge to `main` redeploys the guide. The commit type decides the npm release through semantic-release: `feat` is a minor, `fix` and `perf` a patch, a breaking change a major, and `docs`, `chore`, `ci`, or `test` publish nothing.
 
 `verify` ends with the push-time scan from `uinaf/.github`.
 
