@@ -34,7 +34,7 @@ See [Releasing](docs/releasing.md). Guide deploys from `main` via the `productio
 
 ## Dependency automerge
 
-- Eligible Renovate updates use GitHub auto-merge after required check: verify. The shared scan reports but is not required.
+- Eligible Renovate updates use GitHub auto-merge after required check: verify. The shared scan skips pull requests; on the push to `main` it runs inside `verify`, where a finding stops the guide deploy and npm release.
 - Checks are non-strict; repository admins and the existing release App retain direct writes through
   a bypass limited to the check ruleset. Renovate has no bypass.
 - Shared release-age and major/digest rules remain unchanged. Add new voting
