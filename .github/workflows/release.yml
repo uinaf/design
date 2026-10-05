@@ -15,7 +15,7 @@ jobs:
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     permissions:
       contents: read
-    uses: ./.github/workflows/verify.yml
+    uses: ./.github/workflows/verify.yml # zizmor: ignore[self-repository]
 
   deploy:
     needs: [verify]
