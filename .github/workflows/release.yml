@@ -9,6 +9,7 @@ permissions: {}
 concurrency:
   group: main-${{ github.repository }}
   cancel-in-progress: false
+  queue: max
 
 jobs:
   verify:

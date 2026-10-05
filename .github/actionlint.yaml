@@ -1,0 +1,5 @@
+paths:
+  # `queue: max` is GitHub syntax newer than actionlint 1.7.12; drop once a release knows it.
+  .github/workflows/release.yml:
+    ignore:
+      - 'unexpected key "queue" for "concurrency" section'
