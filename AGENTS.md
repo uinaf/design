@@ -60,7 +60,7 @@ Two rules the file names do not tell you:
 
 Credentials for each path are listed in `docs/releasing.md` (vars vs secrets).
 
-- `verify.yml` groups concurrency on `github.workflow` and `github.ref`, which resolve to the caller when called from `release.yml`, so a called run never collides with a PR run.
+- `verify.yml` cancels superseded pull-request runs only; push, dispatch, and called runs each get their own concurrency group, so every pushed range is scanned. `release.yml` queues pushes in one `main-<repo>` group with `queue: max`, so a burst of merges releases in order instead of dropping all but the newest pending run.
 - `wrangler.toml` constraints: `nodejs_compat` is required because the Agents SDK MCP handler imports `node:async_hooks`; the custom domain `design.uinaf.dev` is bound in `uinaf/infra` (the deploy token cannot mutate zone routes); `/patterns/x.html` must serve 200 rather than redirect; HTML pages run `run_worker_first` so `Accept: text/markdown` can serve the twin, while CSS, JSON, and `.md` stay on the asset fast path.
 
 ## Docs map
