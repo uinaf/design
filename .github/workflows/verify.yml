@@ -32,4 +32,4 @@ jobs:
 
       - name: Scan
         if: ${{ !cancelled() }}
-        uses: uinaf/.github/.github/actions/scan@906e5111d19132ce85765cdc5ed28c9a87381d4b # v3.0.1
+        uses: uinaf/.github/.github/actions/scan@dbeb4a0b5f9ceb0b0af48044dfc94205b2b70248 # v3.0.2
