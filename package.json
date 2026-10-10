@@ -69,7 +69,7 @@
     "postcss": "^8.5.26"
   },
   "devDependencies": {
-    "@modelcontextprotocol/server": "2.3.0",
+    "@modelcontextprotocol/server": "2.3.1",
     "@types/node": "^24.0.0",
     "agents": "^0.26.0",
     "esbuild": "^0.28.2",
@@ -90,5 +90,5 @@
   "engines": {
     "node": ">=24.18.0"
   },
-  "packageManager": "pnpm@12.8.2"
+  "packageManager": "pnpm@12.10.1"
 }
