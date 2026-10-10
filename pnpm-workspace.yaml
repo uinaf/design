@@ -3,13 +3,9 @@ packages:
 
 overrides:
   vite@*: "catalog:"
-  # miniflare pins undici exactly; 7.29.0 carries two high advisories. No-op once wrangler resolves undici >=7.29.1.
-  undici@7.29.0: 8.11.2
   # agents pins vulnerable MCP peers; keep overrides scoped to those pins.
   "@modelcontextprotocol/client@2.0.0": 2.3.1
   "@modelcontextprotocol/sdk@1.30.0": 1.32.1
-  # miniflare pins sharp before the librsvg security fix.
-  sharp@0.35.4: 0.35.5
 
 allowBuilds:
   core-js-pure: false
