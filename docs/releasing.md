@@ -80,7 +80,7 @@ Required on `production`:
 | `CLOUDFLARE_ACCOUNT_ID` | var    | Cloudflare account id |
 | `CLOUDFLARE_API_TOKEN`  | secret | Workers deploy token  |
 
-Local, with the same two values in the environment:
+Local, with the same two values in the environment (with either unset, Alchemy falls back to your Alchemy login profile and its account):
 
 ```sh
 pnpm run deploy

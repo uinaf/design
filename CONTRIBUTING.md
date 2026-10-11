@@ -27,6 +27,8 @@ The deterministic steps use Vite Task caching. Run `pnpm run verify:full` to byp
 pnpm run dev
 ```
 
+It serves on port 8787 (override with `DEV_PORT`), so it can run beside the smoke.
+
 ## Releases / deploy
 
 See [Releasing](docs/releasing.md). Guide deploys from `main` via the `production` environment; npm publishes via the `release` environment.

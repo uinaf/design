@@ -17,9 +17,9 @@ server_log="$artifacts/dev-$port.log"
 client_log="$artifacts/smoke-mcp-$port.log"
 
 probe() { curl -sf --connect-timeout "$1" --max-time "$1" -o /dev/null "http://127.0.0.1:$port/"; }
-# Readiness asks for a 2xx; teardown asks only whether anything still holds the
-# port. An escaped listener that errors, hangs, or hangs up would pass `probe`
-# and be reported as removed.
+# Readiness asks for any answer below 400; teardown asks only whether anything
+# still holds the port. An escaped listener that errors, hangs, or hangs up would
+# pass `probe` and be reported as removed.
 port_bound() { (exec 3<>"/dev/tcp/127.0.0.1/$port") 2>/dev/null; }
 # One deadline for the whole run, set before the first probe. A fixed preflight
 # would spend its own seconds outside SMOKE_TIMEOUT against a listener that

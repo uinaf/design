@@ -180,7 +180,6 @@ overrides:
   '@effect/sql-sqlite-do': 4.0.2
   '@prisma/dev>hono': ^4.12.25
   '@prisma/dev>@hono/node-server': ^1.19.10
-  '@neon/functions>hono': ^4.12.25
   lodash@<4.18.1: ^4.18.1
 
 importers:
@@ -1045,7 +1044,7 @@ packages:
     resolution: {integrity: sha512-xyIEk9aULR2nBTzyTgxljkM8aS+Ppe9oVw/t5mdqYOlY/mLFppHSZHq8hiWVDWy6Ca8oLd3loTtfVz+cZQQjsA==}
     engines: {node: '>=20.19.0'}
     peerDependencies:
-      hono: ^4.12.25
+      hono: ^4.7.8
     peerDependenciesMeta:
       hono:
         optional: true
