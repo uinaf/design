@@ -286,7 +286,7 @@ ${components.patterns.map((p) => `- [${p.name}](https://design.uinaf.dev/pattern
 `,
 );
 
-// Deploy identity. wrangler ships the Worker and its assets as one version, so
+// Deploy identity. A deploy ships the Worker and its assets as one version, so
 // an asset that changes with every build proves the new Worker is live.
 // components.json is not, because a Worker-only change leaves it byte-identical
 // and the post-deploy smoke would then pass against the deployment it replaced.

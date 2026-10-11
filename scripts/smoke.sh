@@ -13,7 +13,7 @@ artifacts="${SMOKE_ARTIFACTS:-.smoke}"
 
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 mkdir -p "$artifacts"
-server_log="$artifacts/wrangler-$port.log"
+server_log="$artifacts/dev-$port.log"
 client_log="$artifacts/smoke-mcp-$port.log"
 
 probe() { curl -sf --connect-timeout "$1" --max-time "$1" -o /dev/null "http://127.0.0.1:$port/"; }
@@ -42,7 +42,7 @@ server_pid=""
 client_pid=""
 interrupted=""
 
-# wrangler dev spawns workerd children, and a signal to the wrapper alone leaves
+# alchemy dev spawns workerd children, and a signal to the wrapper alone leaves
 # them running. TERM then KILL by group: a wrapper that ignores TERM would
 # otherwise leave this waiting forever on every exit path.
 stop_group() {
@@ -81,7 +81,7 @@ trap cleanup EXIT
 trap on_signal INT TERM
 
 set -m
-pnpm exec wrangler dev --port "$port" --persist-to "$artifacts/wrangler-state" >"$server_log" 2>&1 &
+DEV_PORT="$port" DO_NOT_TRACK=1 pnpm exec alchemy dev --no-input >"$server_log" 2>&1 &
 server_pid=$!
 set +m
 
@@ -100,7 +100,7 @@ while :; do
     echo "smoke: interrupted during boot" >&2
     exit 130
   }
-  kill -0 "$server_pid" 2>/dev/null || fail_with_log "wrangler dev exited during boot."
+  kill -0 "$server_pid" 2>/dev/null || fail_with_log "alchemy dev exited during boot."
   [ $((deadline - $(date +%s))) -gt 0 ] || break
   if probe "$(budget)"; then
     ready=1

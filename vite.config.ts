@@ -37,6 +37,7 @@ export default defineConfig({
     "scripts/**/*.{js,mjs,cjs,ts}": "vp check --fix",
     "test/**/*.{js,mjs,cjs,ts}": "vp check --fix",
     "vite.config.ts": "vp check --fix",
+    "alchemy.run.ts": "vp check --fix",
   },
   fmt: {
     ignorePatterns,

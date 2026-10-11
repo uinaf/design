@@ -24,8 +24,7 @@ The deterministic steps use Vite Task caching. Run `pnpm run verify:full` to byp
 ## Preview locally
 
 ```sh
-pnpm run guide:sync
-pnpm exec wrangler dev
+pnpm run dev
 ```
 
 ## Releases / deploy

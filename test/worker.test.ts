@@ -32,28 +32,28 @@ describe("markdown negotiation", () => {
 });
 
 describe("asset routing config", () => {
-  const wrangler = readFileSync(resolve(root, "wrangler.toml"), "utf8");
+  const stack = readFileSync(resolve(root, "alchemy.run.ts"), "utf8");
 
   it("serves assets at their exact path so .html is not a redirect", () => {
     // The published components.json points at /patterns/x.html.
-    expect(wrangler).toContain('html_handling = "none"');
+    expect(stack).toContain('htmlHandling: "none"');
   });
 
   it("runs the Worker before HTML assets so negotiation can apply", () => {
     // An exact asset match bypasses Worker code entirely, which silently
     // disables Accept: text/markdown on every page that exists as a file.
-    expect(wrangler).toMatch(/run_worker_first = \[[^\]]*"\/\*\.html"/);
-    expect(wrangler).toMatch(/run_worker_first = \[[^\]]*"\/patterns\/\*\.html"/);
+    expect(stack).toMatch(/runWorkerFirst: \[[^\]]*"\/\*\.html"/);
+    expect(stack).toMatch(/runWorkerFirst: \[[^\]]*"\/patterns\/\*\.html"/);
   });
 
   it("enables nodejs_compat for the Agents SDK", () => {
     // The MCP handler imports node:async_hooks; without this the Worker throws
     // "No such module" at startup and every route 500s, not just /mcp.
-    expect(wrangler).toMatch(/compatibility_flags = \[\s*"nodejs_compat"/);
+    expect(stack).toMatch(/flags: \[\s*"nodejs_compat"/);
   });
 
   it("routes /mcp to the Worker before static assets", () => {
-    expect(wrangler).toMatch(/run_worker_first = \[\s*"\/mcp"/);
+    expect(stack).toMatch(/runWorkerFirst: \[\s*"\/mcp"/);
   });
 });
 

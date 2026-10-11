@@ -14,6 +14,7 @@
     "src/**/*.ts",
     "scripts/**/*.ts",
     "vite.config.ts",
+    "alchemy.run.ts",
     "test/**/*.ts",
     "worker-configuration.d.ts"
   ]

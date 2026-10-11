@@ -80,13 +80,13 @@ Required on `production`:
 | `CLOUDFLARE_ACCOUNT_ID` | var    | Cloudflare account id |
 | `CLOUDFLARE_API_TOKEN`  | secret | Workers deploy token  |
 
-Local:
+Local, with the same two values in the environment:
 
 ```sh
 pnpm run deploy
 ```
 
-`design.uinaf.dev` is bound in `uinaf/infra` (`workers_custom_domains`), not via wrangler routes.
+The deploy runs `alchemy deploy --stage prod` from `alchemy.run.ts` with throwaway state; the live script's ownership tags let each run adopt it. `design.uinaf.dev` is bound in `uinaf/infra` (`workers_custom_domains`), not by the deploy.
 
 ## Runners
 

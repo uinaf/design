@@ -55,7 +55,8 @@
     "audit": "pnpm audit --audit-level high --ignore-registry-errors",
     "verify": "pnpm run audit && vp run verifyPure && ./scripts/smoke.sh",
     "verify:full": "pnpm run audit && vp run --no-cache verifyPure && ./scripts/smoke.sh",
-    "deploy": "pnpm run guide:sync && wrangler deploy",
+    "deploy": "pnpm run guide:sync && DO_NOT_TRACK=1 alchemy deploy --stage prod --yes --no-input",
+    "dev": "pnpm run guide:sync && DO_NOT_TRACK=1 alchemy dev",
     "prepare": "vp config --no-agent",
     "prepublishOnly": "pnpm run build && node scripts/check.ts",
     "fmt": "vp fmt",
@@ -69,9 +70,12 @@
     "postcss": "^8.5.26"
   },
   "devDependencies": {
+    "@effect/platform-node": "4.0.2",
     "@modelcontextprotocol/server": "2.3.1",
     "@types/node": "^24.0.0",
     "agents": "^0.27.0",
+    "alchemy": "2.0.0-beta.81",
+    "effect": "4.0.2",
     "esbuild": "^0.28.2",
     "typescript": "^7.0.0",
     "vite": "catalog:",
