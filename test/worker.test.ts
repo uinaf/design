@@ -54,8 +54,13 @@ describe("asset routing config", () => {
     // wrangler.toml feeds the types and `wrangler rollback`; alchemy.run.ts feeds
     // the runtime. Drift type-checks against one runtime and ships another.
     const toml = readFileSync(resolve(root, "wrangler.toml"), "utf8");
-    const pick = (source: string, pattern: RegExp) => source.match(pattern)?.[1];
-    const list = (raw = "") => raw.split(",").map((flag) => flag.trim().replaceAll('"', ""));
+    // A missing setting must fail, not compare equal to another missing one.
+    const pick = (source: string, pattern: RegExp): string => {
+      const value = source.match(pattern)?.[1];
+      expect(value, `${pattern}`).toBeDefined();
+      return value ?? "";
+    };
+    const list = (raw: string) => raw.split(",").map((flag) => flag.trim().replaceAll('"', ""));
     expect(pick(toml, /^name = "(.+)"/m)).toBe(pick(stack, /name: "(.+?)"/));
     expect(pick(toml, /^compatibility_date = "(.+)"/m)).toBe(pick(stack, /date: "(.+?)"/));
     expect(list(pick(toml, /^compatibility_flags = \[(.*)\]/m))).toEqual(
