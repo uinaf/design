@@ -86,7 +86,7 @@ Local, with the same two values in the environment:
 pnpm run deploy
 ```
 
-The deploy runs `alchemy deploy --stage prod` from `alchemy.run.ts` with throwaway state; the live script's ownership tags let each run adopt it. `design.uinaf.dev` is bound in `uinaf/infra` (`workers_custom_domains`), not by the deploy.
+The deploy runs `alchemy deploy --stage prod` from `alchemy.run.ts` with in-memory state; the live script's ownership tags let each run adopt it. `design.uinaf.dev` is bound in `uinaf/infra` (`workers_custom_domains`), not by the deploy.
 
 ## Runners
 
