@@ -30,5 +30,9 @@ guide/*
 worker-configuration.d.ts
 .vitest/
 
-# alchemy local state and dev artifacts (pilot)
+# alchemy dev artifacts
 .alchemy/
+
+# local credentials; alchemy reads .env from the working directory
+.env
+.env.*
