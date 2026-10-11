@@ -46,14 +46,29 @@ describe("asset routing config", () => {
     expect(stack).toMatch(/runWorkerFirst: \[[^\]]*"\/patterns\/\*\.html"/);
   });
 
-  it("enables nodejs_compat for the Agents SDK", () => {
-    // The MCP handler imports node:async_hooks; without this the Worker throws
-    // "No such module" at startup and every route 500s, not just /mcp.
-    expect(stack).toMatch(/flags: \[\s*"nodejs_compat"/);
-  });
-
   it("routes /mcp to the Worker before static assets", () => {
     expect(stack).toMatch(/runWorkerFirst: \[\s*"\/mcp"/);
+  });
+
+  it("keeps wrangler.toml on the deployed name, date, and flags", () => {
+    // wrangler.toml feeds the types and `wrangler rollback`; alchemy.run.ts feeds
+    // the runtime. Drift type-checks against one runtime and ships another.
+    const toml = readFileSync(resolve(root, "wrangler.toml"), "utf8");
+    const pick = (source: string, pattern: RegExp) => source.match(pattern)?.[1];
+    const list = (raw = "") => raw.split(",").map((flag) => flag.trim().replaceAll('"', ""));
+    expect(pick(toml, /^name = "(.+)"/m)).toBe(pick(stack, /name: "(.+?)"/));
+    expect(pick(toml, /^compatibility_date = "(.+)"/m)).toBe(pick(stack, /date: "(.+?)"/));
+    expect(list(pick(toml, /^compatibility_flags = \[(.*)\]/m))).toEqual(
+      list(pick(stack, /flags: \[(.*?)\]/)),
+    );
+  });
+
+  it("never lets a deploy delete or detach production", () => {
+    // Persisted state plus a lost retain lets a removal delete the script, and any
+    // `domain` value, null included, makes Alchemy reconcile design.uinaf.dev.
+    expect(stack).toContain("inMemoryState()");
+    expect(stack).toContain(".pipe(RemovalPolicy.retain())");
+    expect(stack).not.toMatch(/^\s*domain\s*:/m);
   });
 });
 

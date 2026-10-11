@@ -1,9 +1,11 @@
-# Read only by `wrangler types` to generate `Env` and the runtime types.
-# `alchemy.run.ts` owns deploy and dev; keep the date and flags in step with it.
+# Feeds `wrangler types` (`Env` and the runtime types) and lets `wrangler rollback`
+# find the script by `name`. `alchemy.run.ts` owns deploy and dev; a test keeps the
+# name, date, and flags in step with it. `wrangler deploy` would ship without its
+# asset routing.
 name = "uinaf-design"
 main = "src/worker.ts"
 compatibility_date = "2025-08-01"
-compatibility_flags = [ "nodejs_compat" ]
+compatibility_flags = [ "nodejs_compat", "new_module_registry" ]
 
 [assets]
 directory = "./guide"

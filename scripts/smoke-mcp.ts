@@ -77,10 +77,13 @@ const check = (label: string, condition: boolean, detail = ""): void => {
   console.error(`  FAIL ${label}${detail ? `\n       ${detail}` : ""}`);
 };
 
+// A redirect fails the check: followed, `/patterns/x.html` → `/patterns/x` would
+// pass while the published `.html` links stop being the canonical answer.
 const get = (path: string, accept?: string): Promise<Response> =>
   fetch(`${base}${path}`, {
     signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
     headers: accept ? { accept } : {},
+    redirect: "manual",
   });
 
 const json = async <T>(path: string): Promise<T> => {

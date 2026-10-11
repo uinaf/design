@@ -38,7 +38,7 @@ Prefer `vp` for lint/format/test: `pnpm exec vp check`, `pnpm exec vp test run`.
 
 `pnpm run verify` reuses Vite Task results for deterministic checks and still runs the Worker smoke every time. `pnpm run verify:full` bypasses the task cache without narrowing the gate.
 
-`pnpm run deploy` publishes the working tree to **production** `design.uinaf.dev` through Alchemy without running `verify`, and needs `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`; CI deploys from `main` (`.github/workflows/release.yml`). To see your change, run `pnpm run smoke` or `pnpm run dev`.
+`pnpm run deploy` publishes the working tree to **production** `design.uinaf.dev` through Alchemy without running `verify`, and needs `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` (with either unset, Alchemy falls back to your Alchemy login profile and its account); CI deploys from `main` (`.github/workflows/release.yml`). To see your change, run `pnpm run smoke` or `pnpm run dev`.
 
 ## Pipelines
 
@@ -61,10 +61,10 @@ Two rules the file names do not tell you:
 Credentials for each path are listed in `docs/releasing.md` (vars vs secrets).
 
 - `verify.yml` cancels superseded pull-request runs only; push, dispatch, and called runs each get their own concurrency group, so every pushed range is scanned. `release.yml` queues pushes in one `main-<repo>` group with `queue: max`, so a burst of merges releases in order instead of dropping all but the newest pending run.
-- `alchemy.run.ts` owns the Worker's deploy and dev config: `nodejs_compat` is required because the Agents SDK MCP handler imports `node:async_hooks`; the custom domain `design.uinaf.dev` is bound in `uinaf/infra` (the deploy token cannot mutate zone routes), so `domain` stays unset; `/patterns/x.html` must serve 200 rather than redirect; HTML pages run `runWorkerFirst` so `Accept: text/markdown` can serve the twin, while CSS, JSON, and `.md` stay on the asset fast path. `wrangler.toml` only feeds `wrangler types`; keep its compatibility date and flags in step.
-- Alchemy state lives in memory: each run adopts the live script by its ownership tags (`alchemy:stack:uinaf-design`, `alchemy:stage:prod`, `alchemy:id:Guide`). Deploy only through `pnpm run deploy`, which pins `--stage prod`. Renaming the stack or the `Guide` id, or an `--adopt` deploy under another stage, rewrites or orphans the tags and CI refuses to deploy until one `pnpm run deploy -- --adopt`. Changing `name` creates a second script and leaves the old one serving `design.uinaf.dev`. Alchemy never deletes the script (`RemovalPolicy.retain`).
+- `alchemy.run.ts` owns the Worker's deploy and dev config: `nodejs_compat` is required because the Agents SDK MCP handler imports `node:async_hooks`; the custom domain `design.uinaf.dev` is bound in `uinaf/infra` (the deploy token cannot mutate zone routes), so `domain` stays unset; `/patterns/x.html` must serve 200 rather than redirect; HTML pages run `runWorkerFirst` so `Accept: text/markdown` can serve the twin, while CSS, JSON, and `.md` stay on the asset fast path. `wrangler.toml` feeds `wrangler types` and lets `wrangler rollback` find the script; `test/worker.test.ts` keeps its name, compatibility date, and flags in step. Never `wrangler deploy` it: it carries no asset routing.
+- Alchemy state lives in memory: each run adopts the live script by its ownership tags (`alchemy:stack:uinaf-design`, `alchemy:stage:prod`, `alchemy:id:Guide`). Deploy only through `pnpm run deploy`, which pins `--stage prod`. Renaming the stack or the `Guide` id, or an `--adopt` deploy under another stage, rewrites or orphans the tags and CI refuses to deploy until one `pnpm run deploy --adopt` (no `--`: pnpm passes it through and Alchemy reads `--adopt` as a config path). Changing `name` creates a second script and leaves the old one serving `design.uinaf.dev`. Deploy and destroy never delete the script (`RemovalPolicy.retain`); `alchemy nuke` ignores that and empties the account.
 - Each deploy replaces the Worker's bindings, vars, and secrets with what `alchemy.run.ts` declares; a `wrangler secret put` or dashboard variable is gone after the next deploy.
-- Roll back with `pnpm exec wrangler rollback <version-id>`; it lasts until the next merge to `main` redeploys, so revert on `main` to keep it.
+- Roll back with `pnpm exec wrangler rollback <version-id>`, taking the id from `pnpm exec wrangler versions list`; it lasts until the next merge to `main` redeploys, so revert on `main` to keep it.
 
 ## Docs map
 
