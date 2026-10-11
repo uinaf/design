@@ -6,6 +6,14 @@ overrides:
   # agents pins vulnerable MCP peers; keep overrides scoped to those pins.
   "@modelcontextprotocol/client@2.0.0": 2.3.1
   "@modelcontextprotocol/sdk@1.30.0": 1.32.1
+  # alchemy pulls @effect/* 4.0.3, still inside the release-age window; keep them on the root effect.
+  "@effect/platform-node-shared": 4.0.2
+  "@effect/sql-d1": 4.0.2
+  "@effect/sql-sqlite-do": 4.0.2
+  # alchemy bundles Prisma and Neon tooling this Cloudflare-only stack never loads; lift their advisories.
+  "hono@<4.12.25": ^4.12.25
+  "@hono/node-server@<1.19.10": ^1.19.10
+  "lodash@<4.18.1": ^4.18.1
 
 allowBuilds:
   core-js-pure: false
