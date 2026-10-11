@@ -67,7 +67,7 @@ const patternLinks = (heading: string, classes: string[]): string => {
 };
 
 // Generated output is gitignored, so a renamed or deleted pattern would leave
-// an orphan twin that Wrangler keeps deploying. Clear before writing.
+// an orphan twin that every deploy keeps uploading. Clear before writing.
 for (const name of fs.readdirSync(path.join(guide, "patterns"))) {
   if (name.endsWith(".md")) fs.rmSync(path.join(guide, "patterns", name));
 }

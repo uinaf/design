@@ -1,18 +1,24 @@
 packages:
   - "."
 
+# Explicit, so a too-young version fails the install instead of being exempted.
+minimumReleaseAge: 1440
+
 overrides:
   vite@*: "catalog:"
   # agents pins vulnerable MCP peers; keep overrides scoped to those pins.
   "@modelcontextprotocol/client@2.0.0": 2.3.1
   "@modelcontextprotocol/sdk@1.30.0": 1.32.1
-  # alchemy pulls @effect/* 4.0.3, still inside the release-age window; keep them on the root effect.
+  # The @effect/* 4.0.3 packages need effect@4.0.3 as a peer, which was inside the
+  # release-age window; hold them on the root effect and drop these when bumping it.
   "@effect/platform-node-shared": 4.0.2
   "@effect/sql-d1": 4.0.2
   "@effect/sql-sqlite-do": 4.0.2
-  # alchemy bundles Prisma and Neon tooling this Cloudflare-only stack never loads; lift their advisories.
-  "hono@<4.12.25": ^4.12.25
-  "@hono/node-server@<1.19.10": ^1.19.10
+  # alchemy bundles Prisma and Neon tooling this Cloudflare-only stack never loads; lift
+  # their advisories without moving the MCP SDK's own hono server.
+  "@prisma/dev>hono": ^4.12.25
+  "@prisma/dev>@hono/node-server": ^1.19.10
+  "@neon/functions>hono": ^4.12.25
   "lodash@<4.18.1": ^4.18.1
 
 allowBuilds:

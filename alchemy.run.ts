@@ -2,9 +2,9 @@
  * The guide Worker: `pnpm run deploy` ships it to production and
  * `alchemy dev` serves it for the smoke.
  *
- * State is throwaway. The live script carries Alchemy's ownership tags, so a
- * fresh state store adopts it on every deploy. The cost: renaming or removing
- * the Worker here never deletes the old script on Cloudflare.
+ * State lives in memory, so every run starts empty and adopts the live script
+ * by its ownership tags. Persisted state would let a removal, a replacement, or
+ * `alchemy destroy` delete the script and detach its custom domain.
  *
  * `domain` stays unset because `design.uinaf.dev` is bound in `uinaf/infra`;
  * setting it, even to `null`, would make Alchemy reconcile that binding.
@@ -12,12 +12,13 @@
 
 import * as Alchemy from "alchemy";
 import * as Cloudflare from "alchemy/Cloudflare";
-import { localState } from "alchemy/State";
+import * as RemovalPolicy from "alchemy/RemovalPolicy";
+import { inMemoryState } from "alchemy/State";
 import * as Effect from "effect/Effect";
 
 export default Alchemy.Stack(
   "uinaf-design",
-  { providers: Cloudflare.providers(), state: localState() },
+  { providers: Cloudflare.providers(), state: inMemoryState() },
   Effect.gen(function* () {
     const worker = yield* Cloudflare.Worker("Guide", {
       name: "uinaf-design",
@@ -36,7 +37,7 @@ export default Alchemy.Stack(
       },
       // The smoke probes one port, so a silent fallback would test nothing.
       dev: { port: Number(process.env.DEV_PORT ?? 8788), strictPort: true },
-    });
+    }).pipe(RemovalPolicy.retain());
     return { url: worker.url };
   }),
 );

@@ -62,7 +62,9 @@ Credentials for each path are listed in `docs/releasing.md` (vars vs secrets).
 
 - `verify.yml` cancels superseded pull-request runs only; push, dispatch, and called runs each get their own concurrency group, so every pushed range is scanned. `release.yml` queues pushes in one `main-<repo>` group with `queue: max`, so a burst of merges releases in order instead of dropping all but the newest pending run.
 - `alchemy.run.ts` owns the Worker's deploy and dev config: `nodejs_compat` is required because the Agents SDK MCP handler imports `node:async_hooks`; the custom domain `design.uinaf.dev` is bound in `uinaf/infra` (the deploy token cannot mutate zone routes), so `domain` stays unset; `/patterns/x.html` must serve 200 rather than redirect; HTML pages run `runWorkerFirst` so `Accept: text/markdown` can serve the twin, while CSS, JSON, and `.md` stay on the asset fast path. `wrangler.toml` only feeds `wrangler types`; keep its compatibility date and flags in step.
-- Alchemy state is throwaway: each deploy re-adopts the live script by its ownership tags. Renaming or removing the Worker in `alchemy.run.ts` leaves the old script running; delete it by hand. Roll back with `pnpm exec wrangler rollback <version-id>`.
+- Alchemy state lives in memory: each run adopts the live script by its ownership tags (`alchemy:stack:uinaf-design`, `alchemy:stage:prod`, `alchemy:id:Guide`). Deploy only through `pnpm run deploy`, which pins `--stage prod`. Renaming the stack or the `Guide` id, or an `--adopt` deploy under another stage, rewrites or orphans the tags and CI refuses to deploy until one `pnpm run deploy -- --adopt`. Changing `name` creates a second script and leaves the old one serving `design.uinaf.dev`. Alchemy never deletes the script (`RemovalPolicy.retain`).
+- Each deploy replaces the Worker's bindings, vars, and secrets with what `alchemy.run.ts` declares; a `wrangler secret put` or dashboard variable is gone after the next deploy.
+- Roll back with `pnpm exec wrangler rollback <version-id>`; it lasts until the next merge to `main` redeploys, so revert on `main` to keep it.
 
 ## Docs map
 

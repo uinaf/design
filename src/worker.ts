@@ -1,7 +1,7 @@
 /**
  * design.uinaf.dev serves static assets plus content negotiation.
  *
- * Every artifact is a build output; this Worker only routes. `html_handling` is
+ * Every artifact is a build output; this Worker only routes. `htmlHandling` is
  * off so assets serve at their exact path, which keeps `/patterns/x.html` a 200
  * rather than a redirect to `/patterns/x`. The published components.json
  * points at the `.html` form. Extensionless paths are
