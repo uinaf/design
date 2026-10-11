@@ -38,7 +38,7 @@ Prefer `vp` for lint/format/test: `pnpm exec vp check`, `pnpm exec vp test run`.
 
 `pnpm run verify` reuses Vite Task results for deterministic checks and still runs the Worker smoke every time. `pnpm run verify:full` bypasses the task cache without narrowing the gate.
 
-`pnpm run deploy` publishes the working tree to **production** `design.uinaf.dev` without running `verify`; CI deploys from `main` (`.github/workflows/release.yml`). To see your change, run `pnpm run smoke` or `pnpm exec wrangler dev`.
+`pnpm run deploy` publishes the working tree to **production** `design.uinaf.dev` through Alchemy without running `verify`, and needs `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`; CI deploys from `main` (`.github/workflows/release.yml`). To see your change, run `pnpm run smoke` or `pnpm run dev`.
 
 ## Pipelines
 
@@ -61,7 +61,8 @@ Two rules the file names do not tell you:
 Credentials for each path are listed in `docs/releasing.md` (vars vs secrets).
 
 - `verify.yml` cancels superseded pull-request runs only; push, dispatch, and called runs each get their own concurrency group, so every pushed range is scanned. `release.yml` queues pushes in one `main-<repo>` group with `queue: max`, so a burst of merges releases in order instead of dropping all but the newest pending run.
-- `wrangler.toml` constraints: `nodejs_compat` is required because the Agents SDK MCP handler imports `node:async_hooks`; the custom domain `design.uinaf.dev` is bound in `uinaf/infra` (the deploy token cannot mutate zone routes); `/patterns/x.html` must serve 200 rather than redirect; HTML pages run `run_worker_first` so `Accept: text/markdown` can serve the twin, while CSS, JSON, and `.md` stay on the asset fast path.
+- `alchemy.run.ts` owns the Worker's deploy and dev config: `nodejs_compat` is required because the Agents SDK MCP handler imports `node:async_hooks`; the custom domain `design.uinaf.dev` is bound in `uinaf/infra` (the deploy token cannot mutate zone routes), so `domain` stays unset; `/patterns/x.html` must serve 200 rather than redirect; HTML pages run `runWorkerFirst` so `Accept: text/markdown` can serve the twin, while CSS, JSON, and `.md` stay on the asset fast path. `wrangler.toml` only feeds `wrangler types`; keep its compatibility date and flags in step.
+- Alchemy state is throwaway: each deploy re-adopts the live script by its ownership tags. Renaming or removing the Worker in `alchemy.run.ts` leaves the old script running; delete it by hand. Roll back with `pnpm exec wrangler rollback <version-id>`.
 
 ## Docs map
 
