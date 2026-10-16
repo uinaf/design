@@ -58,7 +58,7 @@ Two rules the file names do not tell you:
 - `release.yml` is the **only** push-to-`main` workflow, and its file name is pinned by npm Trusted Publishing. Renaming it breaks `npm publish` until someone edits the trusted publisher on npmjs.com. That is why the guide deploy lives in a file called `release`.
 - `deploy` and `release` are siblings on `needs: [verify]`. Never gate guide deploy on the release job; `design.uinaf.dev` must keep shipping when a publish fails.
 
-Credentials for each path are listed in `docs/releasing.md` (vars vs secrets).
+Environment credentials, version writeback, and release recovery: [Package releases](https://app.notion.com/p/3e5e75710b52814ab798f9febefb38ed) in the uinaf Notion.
 
 - `verify.yml` cancels superseded pull-request runs only; push, dispatch, and called runs each get their own concurrency group, so every pushed range is scanned. `release.yml` queues pushes in one `main-<repo>` group with `queue: max`, so a burst of merges releases in order instead of dropping all but the newest pending run.
 - `alchemy.run.ts` owns the Worker's deploy and dev config: `nodejs_compat` is required because the Agents SDK MCP handler imports `node:async_hooks`; the custom domain `design.uinaf.dev` is bound in `uinaf/infra` (the deploy token cannot mutate zone routes), so `domain` stays unset; `/patterns/x.html` must serve 200 rather than redirect; HTML pages run `runWorkerFirst` so `Accept: text/markdown` can serve the twin, while CSS, JSON, and `.md` stay on the asset fast path. `wrangler.toml` feeds `wrangler types` and lets `wrangler rollback` find the script; `test/worker.test.ts` keeps its name, compatibility date, and flags in step. Never `wrangler deploy` it: it carries no asset routing.
@@ -68,11 +68,10 @@ Credentials for each path are listed in `docs/releasing.md` (vars vs secrets).
 
 ## Docs map
 
-| Doc                 | When                                       |
-| ------------------- | ------------------------------------------ |
-| `README.md`         | package install / consumer usage           |
-| `DESIGN.md`         | visual + voice rules                       |
-| `CONTRIBUTING.md`   | local setup and verify                     |
-| `docs/releasing.md` | npm + guide deploy pipelines               |
-| `docs/adoption.md`  | stylesheet + lint wiring in a product repo |
-| skill               | building UI that should feel like uinaf    |
+| Doc                | When                                       |
+| ------------------ | ------------------------------------------ |
+| `README.md`        | package install / consumer usage           |
+| `DESIGN.md`        | visual + voice rules                       |
+| `CONTRIBUTING.md`  | local setup and verify                     |
+| `docs/adoption.md` | stylesheet + lint wiring in a product repo |
+| skill              | building UI that should feel like uinaf    |

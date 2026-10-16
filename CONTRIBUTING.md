@@ -31,12 +31,8 @@ It serves on port 8787 (override with `DEV_PORT`), so it can run beside the smok
 
 ## Releases / deploy
 
-See [Releasing](docs/releasing.md). Guide deploys from `main` via the `production` environment; npm publishes via the `release` environment.
+Every merge to `main` redeploys the guide; semantic-release publishes to npm when the commit type calls for it (`feat`, `fix`, `perf`, or a breaking change).
 
 ## Dependency automerge
 
-- Eligible Renovate updates use GitHub auto-merge after required check: verify. The shared scan skips pull requests; on the push to `main` it runs inside `verify`, where a finding stops the guide deploy and npm release.
-- Checks are non-strict; repository admins and the existing release App retain direct writes through
-  a bypass limited to the check ruleset. Renovate has no bypass.
-- Shared release-age and major/digest rules remain unchanged. Add new voting
-  checks to the ruleset; workflow presence alone does not require them.
+Eligible Renovate updates auto-merge once `verify` passes. The shared scan skips pull requests; on the push to `main` it runs inside `verify`, where a finding stops the guide deploy and npm release.

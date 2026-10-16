@@ -70,7 +70,6 @@ modules you import. Get them from the guide:
 - [Design spec](DESIGN.md)
 - [Adopting in a product repo](docs/adoption.md)
 - [Contributing](CONTRIBUTING.md)
-- [Releasing](docs/releasing.md)
 - [Security](https://github.com/uinaf/design/security/policy)
 
 ## License
