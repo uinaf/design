@@ -11,9 +11,9 @@ overrides:
   "@modelcontextprotocol/sdk@1.30.0": 1.32.1
   # The @effect/* 4.0.3 packages need effect@4.0.3 as a peer, which was inside the
   # release-age window; hold them on the root effect and drop these when bumping it.
-  "@effect/platform-node-shared": 4.0.2
-  "@effect/sql-d1": 4.0.2
-  "@effect/sql-sqlite-do": 4.0.2
+  "@effect/platform-node-shared": 4.0.4
+  "@effect/sql-d1": 4.0.4
+  "@effect/sql-sqlite-do": 4.0.4
   # alchemy bundles Prisma tooling this Cloudflare-only stack never loads; lift its
   # advisories without moving the MCP SDK's own hono server.
   "@prisma/dev>hono": ^4.12.25
