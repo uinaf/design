@@ -1,13 +1,10 @@
 ---
 name: uinaf-design
-description: "Route explicitly authorized uinaf interface, brand-asset, and repository-copy work through the live design.uinaf.dev contract. Use only when explicitly invoked for a uinaf-owned repository or surface; never use for put.io, OpenClaw, or unrelated projects. The skill carries workflow, not design rules."
+description: "Route uinaf interface, brand-asset, and repository-copy work through the live design.uinaf.dev contract. For uinaf-owned repositories and surfaces only; put.io, OpenClaw, and other projects have their own design. Carries workflow, not design rules."
 disable-model-invocation: true
 ---
 
 # uinaf design
-
-This is a manual skill. Its presence never authorizes uinaf styling outside
-explicitly scoped uinaf work.
 
 ## Workflow
 
@@ -25,11 +22,11 @@ explicitly scoped uinaf work.
 3. **Fall back to Markdown, not memory.** When MCP is unavailable, read
    `https://design.uinaf.dev/llms.txt`, choose the one relevant link, and fetch
    it. Use `/design.md` for voice and general guidance and `/readme.md` for
-   package setup. Do not load the whole catalog. If neither route is reachable,
-   stop and report the missing design context.
+   package setup. If neither route is reachable, stop and report the missing
+   design context.
 4. **Reuse the shipped system.** Import `@uinaf/design/css`, copy the fetched
-   structure, and adapt content. Do not recreate a component from prose.
+   structure, and adapt content.
 5. **Finish through the owning repo's gate.** Run its existing
    `design:check` script through the repo's declared package manager. If the
-   script is missing, consult `/readme.md`; do not install dependencies, create
-   a ratchet, or widen the task without approval.
+   script is missing, follow `/readme.md` and ask before adding dependencies or
+   a ratchet baseline.

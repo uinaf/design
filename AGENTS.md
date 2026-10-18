@@ -4,41 +4,37 @@
 
 ## Invariants
 
-- Never commit Berkeley Mono binaries or a `fonts/` directory.
-- Font URLs in tokens must stay on `https://cdn.uinaf.dev/fonts/berkeley-mono/...`.
-- Every `cdn.uinaf.dev` URL written in `preview/`, `pages/`, or `templates/` must also be declared in the `CDN` export (`src/cdn.ts`); a test fails on an inline one, because an undeclared URL is a 404 nobody can grep for. The assets live in `uinaf/cdn-uinaf-dev`, so `pnpm run cdn:check` proves they resolve; it is outside `verify` because it needs the network.
-- CSS source is the pair `src/tokens.css` + `src/components.css`; `tokens.css` `@import`s the other, so consumers import one file and the two must stay side by side in `dist/css/` and `guide/`.
-- Handoff CSS is adopted **content-verbatim, formatter-normalized**: `vp fmt` owns layout, hex casing, and trailing zeros. Never add `src/*.css` to a formatter ignore to preserve upstream byte formatting.
-- `dist/tokens.json` is generated. Every custom property must match a rule in `groupRules` (`scripts/build.ts`); an ungrouped token fails the build by design.
-- All of `dist/` is generated and untracked, so `scripts/check.ts` runs after the build: `verifyPure` in `vite.config.ts` orders `guide:sync` before `check.ts`, and `check.ts` fails by name when `dist/` is absent. A check that ran first would assert on the previous build's artifacts while the current source went unchecked.
-- Tarball contents are declared twice on purpose: `files` in `package.json` and `SHIPPED` in `scripts/check.ts`. `check.ts` fails when they disagree, so changing what consumers download costs a reason rather than a one-line edit. `system/assets/` is the counter-example that earned the rule: the two source PNGs are tracked but deliberately unshipped, because every surface loads brand images from the cdn.
-- The tarball is `dist/` + `DESIGN.md` + `assets/`. `preview/`, `pages/`, `templates/`, and `skills/` stay source-only. `test/surfaces.test.ts` keeps the site surfaces out because `files`/`SHIPPED` parity only catches drift, not both being widened together. To serve a design surface, deploy the guide.
-- Every `src`/`href` in `preview/`, `pages/`, or `templates/` that names a path must resolve to a file inside the repo (`test/surfaces.test.ts`): existence and containment, since a ref that climbs out of the root resolves locally and 404s once the guide serves it from its own root. `guide:sync` publishes paths unchanged, so a dangling ref is caught here and nowhere else; `test/surfaces.test.ts` is the one owner and `scripts/check.ts` does not repeat it.
-- Spec: `DESIGN.md`. Skill source: `skills/uinaf-design/`; it is not published with the npm package.
-- Guide static root is `guide/`. `guide/index.html` is hand-authored; `pnpm run guide:sync` refreshes tokens + `guide/preview/` from `preview/`, `guide/pages/` from `pages/`, and `guide/templates/` from `templates/`. It runs before `vp test run` in `verify` because the page and template suites assert on published output.
-- `pages/` holds the six reference screens. Each needs an `@page name="…" description="…"` marker; the sync strips it when publishing and fails the build if it is missing. Pages carry no guide chrome: they already own a topbar, and a second bar would break the one-row rule they exist to demonstrate.
-- `templates/` holds uinaf.dev's own surfaces plus three `export-*` artboards, and publishes the same way behind `@template name="…" description="…"`. An artboard is a fixed canvas, not a page: the sync reads its declared `width:…px;height:…px` into `templates.json` and zooms it to fit, and `design:check` waives exactly `type-scale-only` and `spacing-grid` on `templates/export-` because a 2560px canvas obeys no viewport rule. That is `--except`, not `--ignore`: an artboard still may not carry an emoji or a raw hex, because it is a published uinaf brand surface, so the other rules stay in force.
-- Keep tracker / GitHub Project links out of the public guide and out of package-facing docs (`README.md`, `DESIGN.md`).
+- Berkeley Mono is licensed. The repo holds no font binaries or `fonts/` directory; token font URLs point at `https://cdn.uinaf.dev/fonts/berkeley-mono/...`.
+- Every `cdn.uinaf.dev` URL in `preview/`, `pages/`, or `templates/` is declared in the `CDN` export (`src/cdn.ts`); a test fails on an inline one. The assets live in `uinaf/cdn-uinaf-dev`; `pnpm run cdn:check` proves they resolve and needs the network, so it sits outside `verify`.
+- CSS source is `src/tokens.css` + `src/components.css`. `tokens.css` `@import`s the other, so the two stay side by side in `dist/css/` and `guide/`.
+- Handoff CSS is adopted content-verbatim, formatter-normalized: `vp fmt` owns layout, hex casing, and trailing zeros, and `src/*.css` stays under the formatter.
+- Every custom property matches a rule in `groupRules` (`scripts/build.ts`); an ungrouped token fails the build by design.
+- `dist/` is generated and untracked. `scripts/check.ts` asserts on build output, so `verifyPure` (`vite.config.ts`) runs it after `guide:sync`.
+- The tarball is `dist/` + `DESIGN.md` + `assets/`, declared twice on purpose: `files` in `package.json` and `SHIPPED` in `scripts/check.ts`, which fails when they disagree. `system/assets/` PNGs are tracked but unshipped; surfaces load brand images from the cdn. `test/surfaces.test.ts` keeps `preview/`, `pages/`, `templates/`, and `skills/` out of the tarball; design surfaces ship by deploying the guide.
+- Every path `src`/`href` in `preview/`, `pages/`, or `templates/` resolves to a file inside the repo (`test/surfaces.test.ts`). The guide serves from its own root, so a ref that climbs out of the repo works locally and 404s live.
+- Spec: `DESIGN.md`. Skill source: `skills/uinaf-design/`, not part of the npm package.
+- `guide/` is the static root. `guide/index.html` is hand-authored; `pnpm run guide:sync` generates the rest from `preview/`, `pages/`, and `templates/`, and runs before tests because the page and template suites assert on published output.
+- `pages/` holds the six reference screens, each with an `@page name="…" description="…"` marker the sync requires and strips. Pages carry their own topbar and no guide chrome, since they demonstrate the one-row rule.
+- `templates/` holds uinaf.dev's surfaces plus three `export-*` artboards, published behind `@template name="…" description="…"`. An artboard is a fixed canvas: the sync reads its `width:…px;height:…px` into `templates.json` and zooms it to fit. `design:check` waives only `type-scale-only` and `spacing-grid` on `templates/export-` (`--except`, not `--ignore`), so artboards still obey the emoji and raw-hex rules.
+- Tracker and GitHub Project links stay out of the public guide, `README.md`, and `DESIGN.md`.
 
 ## Commands
 
 ```sh
-pnpm install --frozen-lockfile   # bootstrap: Node from .node-version, pnpm from packageManager
-pnpm run verify                  # caches pure checks; always ends in the real-surface smoke
-pnpm run verify:full             # uncached full gate for release and cache verification
-pnpm run smoke                   # that smoke alone: boots the Worker, exercises /mcp + every machine-layer route, tears it down
-pnpm run cdn:check               # HEADs every URL in the CDN export; run when a change adds one
+pnpm install --frozen-lockfile   # Node from .node-version, pnpm from packageManager
+pnpm run verify                  # cached pure checks, then the Worker smoke every time
+pnpm run verify:full             # same gate, uncached
+pnpm run smoke                   # boots the Worker, exercises /mcp and every machine-layer route
+pnpm run cdn:check               # HEADs every URL in the CDN export
 ```
 
-Proof by change: `AGENTS.md`, `CONTRIBUTING.md`, and `docs/` need only `pnpm exec vp fmt --check`. Everything else needs `pnpm run verify`, including `DESIGN.md` and `README.md` (the guide serves both as markdown) and `skills/` (`scripts/check.ts` validates it).
+Proof by change: `AGENTS.md`, `CONTRIBUTING.md`, and `docs/` need `pnpm exec vp fmt --check`. Everything else needs `pnpm run verify`, including `DESIGN.md` and `README.md` (the guide serves both as markdown) and `skills/` (`scripts/check.ts` validates it).
 
-Prefer `vp` for lint/format/test: `pnpm exec vp check`, `pnpm exec vp test run`. In a fresh checkout, `vp check` reports missing `Env` types until `pnpm run types:worker` generates the gitignored `worker-configuration.d.ts`; `verify` does that first.
+Use `vp` for lint, format, and test. In a fresh checkout, run `pnpm run types:worker` before `vp check` to generate the gitignored `worker-configuration.d.ts`; `verify` does this itself.
 
-`pnpm run smoke` syncs the guide, binds port 8788, and always kills the server it started. Set `SMOKE_PORT` to run it from a second worktree; logs land in `.smoke/` (gitignored). Two runs in the _same_ checkout will fight over `guide/`; use a separate worktree, or call `./scripts/smoke.sh` directly once the guide is built.
+The smoke binds port 8788 (`SMOKE_PORT` overrides) and logs to `.smoke/`. Runs in the same checkout share `guide/`, so run parallel smokes from separate worktrees.
 
-`pnpm run verify` reuses Vite Task results for deterministic checks and still runs the Worker smoke every time. `pnpm run verify:full` bypasses the task cache without narrowing the gate.
-
-`pnpm run deploy` publishes the working tree to **production** `design.uinaf.dev` through Alchemy without running `verify`, and needs `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` (with either unset, Alchemy falls back to your Alchemy login profile and its account); CI deploys from `main` (`.github/workflows/release.yml`). To see your change, run `pnpm run smoke` or `pnpm run dev`.
+`pnpm run deploy` publishes the working tree to production `design.uinaf.dev` through Alchemy without running `verify`. It reads `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`, falling back to your Alchemy login profile. To preview a change, use `pnpm run smoke` or `pnpm run dev`.
 
 ## Pipelines
 
@@ -47,24 +43,22 @@ Prefer `vp` for lint/format/test: `pnpm exec vp check`, `pnpm exec vp test run`.
 | `.github/workflows/verify.yml`  | PR, `workflow_call`, dispatch | `verify`, the one definition, called by the others             |
 | `.github/workflows/release.yml` | push to `main`                | verify → guide deploy (`production`) ∥ npm publish (`release`) |
 
-`∥` means parallel: once `verify` passes, the two terminal jobs run at once.
+Every merge to `main` redeploys the guide. semantic-release picks the npm release from the commit type: `feat` minor, `fix` and `perf` patch, breaking change major; `docs`, `chore`, `ci`, and `test` publish nothing. `verify` ends with the push-time scan from `uinaf/.github`.
 
-Every merge to `main` redeploys the guide. The commit type decides the npm release through semantic-release: `feat` is a minor, `fix` and `perf` a patch, a breaking change a major, and `docs`, `chore`, `ci`, or `test` publish nothing.
-
-`verify` ends with the push-time scan from `uinaf/.github`.
-
-Two rules the file names do not tell you:
-
-- `release.yml` is the **only** push-to-`main` workflow, and its file name is pinned by npm Trusted Publishing. Renaming it breaks `npm publish` until someone edits the trusted publisher on npmjs.com. That is why the guide deploy lives in a file called `release`.
-- `deploy` and `release` are siblings on `needs: [verify]`. Never gate guide deploy on the release job; `design.uinaf.dev` must keep shipping when a publish fails.
+- npm Trusted Publishing pins the file name `release.yml`, which is why the guide deploy lives there too. A rename breaks `npm publish` until the trusted publisher on npmjs.com is updated.
+- `deploy` and `release` both depend only on `verify`, so `design.uinaf.dev` keeps shipping when a publish fails.
+- `release.yml` queues pushes in order (`queue: max`); `verify.yml` cancels only superseded pull-request runs, so every pushed range is scanned.
 
 Environment credentials, version writeback, and release recovery: [Package releases](https://app.notion.com/p/3e5e75710b52814ab798f9febefb38ed) in the uinaf Notion.
 
-- `verify.yml` cancels superseded pull-request runs only; push, dispatch, and called runs each get their own concurrency group, so every pushed range is scanned. `release.yml` queues pushes in one `main-<repo>` group with `queue: max`, so a burst of merges releases in order instead of dropping all but the newest pending run.
-- `alchemy.run.ts` owns the Worker's deploy and dev config: `nodejs_compat` is required because the Agents SDK MCP handler imports `node:async_hooks`; the custom domain `design.uinaf.dev` is bound in `uinaf/infra` (the deploy token cannot mutate zone routes), so `domain` stays unset; `/patterns/x.html` must serve 200 rather than redirect; HTML pages run `runWorkerFirst` so `Accept: text/markdown` can serve the twin, while CSS, JSON, and `.md` stay on the asset fast path. `wrangler.toml` feeds `wrangler types` and lets `wrangler rollback` find the script; `test/worker.test.ts` keeps its name, compatibility date, and flags in step. Never `wrangler deploy` it: it carries no asset routing.
-- Alchemy state lives in memory: each run adopts the live script by its ownership tags (`alchemy:stack:uinaf-design`, `alchemy:stage:prod`, `alchemy:id:Guide`). Deploy only through `pnpm run deploy`, which pins `--stage prod`. Renaming the stack or the `Guide` id, or an `--adopt` deploy under another stage, rewrites or orphans the tags and CI refuses to deploy until one `pnpm run deploy --adopt` (no `--`: pnpm passes it through and Alchemy reads `--adopt` as a config path). Changing `name` creates a second script and leaves the old one serving `design.uinaf.dev`. Deploy and destroy never delete the script (`RemovalPolicy.retain`); `alchemy nuke` ignores that and empties the account.
-- Each deploy replaces the Worker's bindings, vars, and secrets with what `alchemy.run.ts` declares; a `wrangler secret put` or dashboard variable is gone after the next deploy.
-- Roll back with `pnpm exec wrangler rollback <version-id>`, taking the id from `pnpm exec wrangler versions list`; it lasts until the next merge to `main` redeploys, so revert on `main` to keep it.
+## Worker deploy
+
+`alchemy.run.ts` owns deploy and dev config; its comments explain each setting. `wrangler.toml` exists for `wrangler types` and `wrangler rollback`, carries no asset routing, and is kept in step by `test/worker.test.ts`; deploys go through `pnpm run deploy`.
+
+- Alchemy state is in memory: each run adopts the live script by its tags (`alchemy:stack:uinaf-design`, `alchemy:stage:prod`, `alchemy:id:Guide`). Renaming the stack or `Guide` id, or deploying `--adopt` under another stage, orphans the tags and CI refuses to deploy until one `pnpm run deploy --adopt` (no `--`; pnpm passes the flag through). Changing `name` creates a second script while the old one keeps serving the domain.
+- The script is retained on deploy and destroy (`RemovalPolicy.retain`); `alchemy nuke` ignores that and empties the account.
+- Each deploy replaces bindings, vars, and secrets with what `alchemy.run.ts` declares, so dashboard or `wrangler secret put` changes last until the next deploy.
+- Roll back with `pnpm exec wrangler rollback <version-id>` (ids from `pnpm exec wrangler versions list`). The next merge to `main` redeploys, so revert on `main` to keep it.
 
 ## Docs map
 

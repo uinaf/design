@@ -1,7 +1,7 @@
 # Adopting the design system in a product repo
 
-Two things to wire up: the stylesheet, and the adherence lint. Agent guidance is
-not wired up here; it ships with the package.
+Two things to wire up: the stylesheet and the adherence lint. Agents read the
+design contract from the guide; see [Agent guidance](#agent-guidance).
 
 ## 1. Install
 
@@ -35,8 +35,8 @@ it.
 
 ## Starting from a repo that already has violations
 
-`design:check` will be red before you change anything. Do not fix the whole
-codebase.
+`design:check` will be red before you change anything. Record a baseline and
+migrate gradually.
 
 Record the baseline **on a clean tree, before making changes**; running it
 afterward bakes your own new violations into the baseline and the ratchet will
@@ -87,17 +87,17 @@ Use whichever matches how strict the repo should be.
 
 ## Agent guidance
 
-Nothing to paste. The repository-local source at `skills/uinaf-design/` carries
-the fetch-first workflow, not a second copy of the rules. It is not shipped in
-the npm package or served by the guide. The canonical spec, reference screens,
+Nothing to paste. The skill source at `skills/uinaf-design/` in this repository
+carries the fetch-first workflow, not a copy of the rules; it is not in the npm
+package or the guide. The canonical spec, reference screens,
 pattern markup, and tokens live on
 [design.uinaf.dev](https://design.uinaf.dev). The guide also answers MCP at
 `https://design.uinaf.dev/mcp`, read-only and unauthenticated; without MCP,
 `https://design.uinaf.dev/llms.txt` is the index into the same Markdown
 artifacts.
 
-Installing the local guidance and registering the MCP server is harness provisioning, so it belongs
-wherever the machine's agent config lives, not in a product repo.
+Installing the skill and registering the MCP server belong in the machine's
+agent config rather than the product repo.
 
 ## Checking it works
 
