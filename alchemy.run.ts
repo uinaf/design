@@ -22,9 +22,8 @@ export default Alchemy.Stack(
     const worker = yield* Cloudflare.Worker("Guide", {
       name: "uinaf-design",
       main: "./src/worker.ts",
-      // The Agents SDK MCP handler imports node:async_hooks. Alchemy adds
-      // new_module_registry unasked; listing it lets wrangler.toml match.
-      compatibility: { date: "2025-08-01", flags: ["nodejs_compat", "new_module_registry"] },
+      // Alchemy adds new_module_registry unasked; listing it lets wrangler.toml match.
+      compatibility: { date: "2025-08-01", flags: ["new_module_registry"] },
       workersDev: { enabled: true, previewsEnabled: false },
       assets: {
         directory: "./guide",
@@ -33,7 +32,7 @@ export default Alchemy.Stack(
         notFoundHandling: "none",
         // HTML runs the Worker first so Accept: text/markdown can serve the twin;
         // CSS, JSON, and .md stay on the asset fast path.
-        runWorkerFirst: ["/mcp", "/mcp/", "/", "/*.html", "/patterns/*.html", "/preview/*.html"],
+        runWorkerFirst: ["/", "/*.html", "/patterns/*.html", "/preview/*.html"],
       },
       // The smoke probes one port, so a silent fallback would test nothing.
       // 8787 by default keeps `pnpm run dev` off the smoke's 8788.

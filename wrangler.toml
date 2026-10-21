@@ -5,7 +5,7 @@
 name = "uinaf-design"
 main = "src/worker.ts"
 compatibility_date = "2025-08-01"
-compatibility_flags = [ "nodejs_compat", "new_module_registry" ]
+compatibility_flags = [ "new_module_registry" ]
 
 [assets]
 directory = "./guide"

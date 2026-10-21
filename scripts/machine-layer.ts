@@ -250,9 +250,8 @@ write(
 
 > Tokens, CSS primitives, and a ${components.patterns.length}-pattern contract for building uinaf-branded interfaces. Fetch a pattern before writing any component.
 
-Use the MCP server at https://design.uinaf.dev/mcp when it is connected.
-Otherwise choose one relevant link below and fetch that Markdown artifact; do
-not load the whole catalog. Start with design.md for voice and general rules.
+Choose one relevant link below and fetch that Markdown artifact; do not load
+the whole catalog. Start with design.md for voice and general rules.
 
 ## Guidelines
 

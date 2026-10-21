@@ -91,13 +91,11 @@ Nothing to paste. The skill source at `skills/uinaf-design/` in this repository
 carries the fetch-first workflow, not a copy of the rules; it is not in the npm
 package or the guide. The canonical spec, reference screens,
 pattern markup, and tokens live on
-[design.uinaf.dev](https://design.uinaf.dev). The guide also answers MCP at
-`https://design.uinaf.dev/mcp`, read-only and unauthenticated; without MCP,
-`https://design.uinaf.dev/llms.txt` is the index into the same Markdown
-artifacts.
+[design.uinaf.dev](https://design.uinaf.dev);
+`https://design.uinaf.dev/llms.txt` indexes them as Markdown.
 
-Installing the skill and registering the MCP server belong in the machine's
-agent config rather than the product repo.
+Installing the skill belongs in the machine's agent config rather than the
+product repo.
 
 ## Checking it works
 
