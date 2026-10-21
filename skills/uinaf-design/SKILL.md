@@ -11,7 +11,7 @@ disable-model-invocation: true
 1. **Keep implementation with its owner.** This package supplies the design
    system and general brand guidance. Product-specific UI and copy belong in
    that product's repository.
-2. **Fetch one live source before writing, not memory.** Read
+2. **Fetch one live source before writing.** Read
    `https://design.uinaf.dev/llms.txt`, choose the one relevant link, and fetch
    it. Use `/design.md` for voice and general guidance and `/readme.md` for
    package setup. If the guide is unreachable, stop and report the missing
