@@ -12,7 +12,6 @@
 - `dist/` is generated and untracked. `scripts/check.ts` asserts on build output, so `verifyPure` (`vite.config.ts`) runs it after `guide:sync`.
 - The tarball is `dist/` + `DESIGN.md` + `assets/`, declared twice on purpose: `files` in `package.json` and `SHIPPED` in `scripts/check.ts`, which fails when they disagree. `system/assets/` PNGs are tracked but unshipped; surfaces load brand images from the cdn. `test/surfaces.test.ts` keeps `preview/`, `pages/`, `templates/`, and `skills/` out of the tarball; design surfaces ship by deploying the guide.
 - Every path `src`/`href` in `preview/`, `pages/`, or `templates/` resolves to a file inside the repo (`test/surfaces.test.ts`). The guide serves from its own root, so a ref that climbs out of the repo works locally and 404s live.
-- Spec: `DESIGN.md`. Skill source: `skills/uinaf-design/`, not part of the npm package.
 - `guide/` is the static root. `guide/index.html` is hand-authored; `pnpm run guide:sync` generates the rest from `preview/`, `pages/`, and `templates/`, and runs before tests because the page and template suites assert on published output.
 - `pages/` holds the six reference screens, each with an `@page name="…" description="…"` marker the sync requires and strips. Pages carry their own topbar and no guide chrome, since they demonstrate the one-row rule.
 - `templates/` holds uinaf.dev's surfaces plus three `export-*` artboards, published behind `@template name="…" description="…"`. An artboard is a fixed canvas: the sync reads its `width:…px;height:…px` into `templates.json` and zooms it to fit. `design:check` waives only `type-scale-only` and `spacing-grid` on `templates/export-` (`--except`, not `--ignore`), so artboards still obey the emoji and raw-hex rules.
@@ -64,14 +63,20 @@ Environment credentials, version writeback, and release recovery: [Package relea
 
 ## Artifact publish
 
-After a merge that changes tokens, patterns, or `artifact/`, a Claude session with the Artifact tool republishes: `pnpm run artifact`, read the artifact's `project/design-system.json`, then one publish to the artifact's URL with `root` `artifact/out`, `file_path` its `project/README.md`, and every other path in `artifact/out/files.json` as `files`. Leave the index and the uploaded icons and marks to the artifact; a new mark or icon is an asset upload plus an index record, and a new CDN image in pattern markup needs its blob URL in `notes.images`.
+After a merge that changes tokens, patterns, screens, or `artifact/`, a Claude session with the Artifact tool republishes:
+
+1. `pnpm run artifact`.
+2. Read the artifact's `project/design-system.json`; the tool refuses a publish to an artifact this session has not read.
+3. Publish once to the artifact's URL: `root` `artifact/out`, `file_path` its `project/README.md`, every other path in `artifact/out/files.json` as `files`.
+
+Done when the artifact's Components view renders the changed cards. The index and the uploaded icons and marks belong to the artifact: a new mark or icon is an asset upload plus an index record, and a new CDN image in markup needs its blob URL in `notes.images`.
 
 ## Docs map
 
-| Doc                | When                                       |
-| ------------------ | ------------------------------------------ |
-| `README.md`        | package install / consumer usage           |
-| `DESIGN.md`        | visual + voice rules                       |
-| `CONTRIBUTING.md`  | local setup and verify                     |
-| `docs/adoption.md` | stylesheet + lint wiring in a product repo |
-| skill              | building UI that should feel like uinaf    |
+| Doc                    | When                                       |
+| ---------------------- | ------------------------------------------ |
+| `README.md`            | package install / consumer usage           |
+| `DESIGN.md`            | visual + voice rules                       |
+| `CONTRIBUTING.md`      | local setup and verify                     |
+| `docs/adoption.md`     | stylesheet + lint wiring in a product repo |
+| `skills/uinaf-design/` | agent skill for building uinaf UI          |
