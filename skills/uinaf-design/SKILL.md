@@ -11,22 +11,14 @@ disable-model-invocation: true
 1. **Keep implementation with its owner.** This package supplies the design
    system and general brand guidance. Product-specific UI and copy belong in
    that product's repository.
-2. **Fetch one live source before writing.** Prefer the MCP server at
-   `https://design.uinaf.dev/mcp` when it is connected:
-   - Whole product screen → `get_page`
-   - uinaf.dev surface or export artboard → `get_template`
-   - Component → `list_patterns`, then `get_pattern`
-   - Token value → `get_tokens`
-   - Voice or general rule → `search_guidelines` with one exact topic such as
-     `voice`, `type`, `color`, `layout`, or `motion`
-3. **Fall back to Markdown, not memory.** When MCP is unavailable, read
+2. **Fetch one live source before writing, not memory.** Read
    `https://design.uinaf.dev/llms.txt`, choose the one relevant link, and fetch
    it. Use `/design.md` for voice and general guidance and `/readme.md` for
-   package setup. If neither route is reachable, stop and report the missing
+   package setup. If the guide is unreachable, stop and report the missing
    design context.
-4. **Reuse the shipped system.** Import `@uinaf/design/css`, copy the fetched
+3. **Reuse the shipped system.** Import `@uinaf/design/css`, copy the fetched
    structure, and adapt content.
-5. **Finish through the owning repo's gate.** Run its existing
+4. **Finish through the owning repo's gate.** Run its existing
    `design:check` script through the repo's declared package manager. If the
    script is missing, follow `/readme.md` and ask before adding dependencies or
    a ratchet baseline.

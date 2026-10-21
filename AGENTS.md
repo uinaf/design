@@ -25,7 +25,7 @@
 pnpm install --frozen-lockfile   # Node from .node-version, pnpm from packageManager
 pnpm run verify                  # cached pure checks, then the Worker smoke every time
 pnpm run verify:full             # same gate, uncached
-pnpm run smoke                   # boots the Worker, exercises /mcp and every machine-layer route
+pnpm run smoke                   # boots the Worker and exercises every machine-layer route
 pnpm run cdn:check               # HEADs every URL in the CDN export
 pnpm run artifact                # builds the design system artifact into artifact/out/
 ```

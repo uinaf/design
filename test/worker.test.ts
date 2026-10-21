@@ -46,10 +46,6 @@ describe("asset routing config", () => {
     expect(stack).toMatch(/runWorkerFirst: \[[^\]]*"\/patterns\/\*\.html"/);
   });
 
-  it("routes /mcp to the Worker before static assets", () => {
-    expect(stack).toMatch(/runWorkerFirst: \[\s*"\/mcp"/);
-  });
-
   it("keeps wrangler.toml on the deployed name, date, and flags", () => {
     // wrangler.toml feeds the types and `wrangler rollback`; alchemy.run.ts feeds
     // the runtime. Drift type-checks against one runtime and ships another.
