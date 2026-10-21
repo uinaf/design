@@ -65,7 +65,7 @@ jobs:
           done
 
           for attempt in 1 2 3; do
-            if timeout 60 node scripts/smoke-mcp.ts https://design.uinaf.dev; then
+            if timeout 60 node scripts/smoke-guide.ts https://design.uinaf.dev; then
               exit 0
             fi
             echo "attempt $attempt: this build is live but the contract failed"

@@ -111,10 +111,9 @@ describe("every class is demonstrated", () => {
   });
 
   it("demonstrates every contract class in the pattern that declares it", () => {
-    // components.json is what the MCP tools and the skill serve to agents, and
-    // they serve it one pattern at a time. Against the whole corpus this passed
-    // while `prose` declared `.u-link-plain` and showed `.u-link`. The class
-    // was demonstrated, just not anywhere `get_pattern prose` would return it.
+    // Agents fetch components.json one pattern at a time. Against the whole
+    // corpus this passed while `prose` declared `.u-link-plain` and showed
+    // `.u-link`: demonstrated, just not anywhere `/patterns/prose.md` returns it.
     const undemonstrated = components.patterns.flatMap((p) => {
       const own = new Set(classTokens(p.markup));
       return referenced(p)

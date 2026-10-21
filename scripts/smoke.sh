@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-# Boots the Worker, runs the read contract against it (MCP plus the machine-layer
-# routes those tools wrap), and always tears it down.
+# Boots the Worker, runs the read routes against it, and always tears it down.
 #
 #   SMOKE_PORT       port to bind (default 8788; set it per worktree)
 #   SMOKE_TIMEOUT    seconds to wait for the worker to answer (default 90)
@@ -14,7 +13,7 @@ artifacts="${SMOKE_ARTIFACTS:-.smoke}"
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 mkdir -p "$artifacts"
 server_log="$artifacts/dev-$port.log"
-client_log="$artifacts/smoke-mcp-$port.log"
+client_log="$artifacts/smoke-guide-$port.log"
 
 probe() { curl -sf --connect-timeout "$1" --max-time "$1" -o /dev/null "http://127.0.0.1:$port/"; }
 # Readiness asks for any answer below 400; teardown asks only whether anything
@@ -112,7 +111,7 @@ done
 [ -n "$ready" ] || fail_with_log "no answer on http://127.0.0.1:$port after ${timeout_seconds}s."
 
 set +e
-node scripts/smoke-mcp.ts "http://127.0.0.1:$port" >"$client_log" 2>&1 &
+node scripts/smoke-guide.ts "http://127.0.0.1:$port" >"$client_log" 2>&1 &
 client_pid=$!
 # A signal landing between the launch and this assignment finds an empty
 # client_pid, so the handler cannot stop the client and `wait` would sit through
