@@ -139,6 +139,12 @@ const bundle = [
   read("src/components.css").trim(),
 ].join("\n\n");
 write("components/bundle.css", `${bundle}\n`);
+// The page refuses to run any preview without a bundle. The package ships CSS
+// only, so the namespace stays empty and every card is plain markup.
+write(
+  "components/bundle.js",
+  '/* @ds-bundle: {"format":4,"namespace":"Uinaf","components":[]} */\nwindow.Uinaf = {};\n',
+);
 
 // ---- one README and preview per pattern
 const names = new Set(patterns.map((p) => p.name));
