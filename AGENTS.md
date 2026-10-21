@@ -17,6 +17,7 @@
 - `pages/` holds the six reference screens, each with an `@page name="…" description="…"` marker the sync requires and strips. Pages carry their own topbar and no guide chrome, since they demonstrate the one-row rule.
 - `templates/` holds uinaf.dev's surfaces plus three `export-*` artboards, published behind `@template name="…" description="…"`. An artboard is a fixed canvas: the sync reads its `width:…px;height:…px` into `templates.json` and zooms it to fit. `design:check` waives only `type-scale-only` and `spacing-grid` on `templates/export-` (`--except`, not `--ignore`), so artboards still obey the emoji and raw-hex rules.
 - Tracker and GitHub Project links stay out of the public guide, `README.md`, and `DESIGN.md`.
+- The claude.ai design system artifact, [uinaf design](https://claude.ai/artifact/6EmfdC7t7eMkc46RYVVH1x), is generated, never edited by hand. `scripts/artifact.ts` builds its `project/` files into `artifact/out/` from the CSS and `src/components.json`, plus `artifact/project/` (hand-written README, asset notes, cover) and `artifact/notes.json` (token usage notes, type styles, preview cards). A token or pattern without an entry there fails `verify`.
 
 ## Commands
 
@@ -26,6 +27,7 @@ pnpm run verify                  # cached pure checks, then the Worker smoke eve
 pnpm run verify:full             # same gate, uncached
 pnpm run smoke                   # boots the Worker and exercises every machine-layer route
 pnpm run cdn:check               # HEADs every URL in the CDN export
+pnpm run artifact                # builds the design system artifact into artifact/out/
 ```
 
 Proof by change: `AGENTS.md`, `CONTRIBUTING.md`, and `docs/` need `pnpm exec vp fmt --check`. Everything else needs `pnpm run verify`, including `DESIGN.md` and `README.md` (the guide serves both as markdown) and `skills/` (`scripts/check.ts` validates it).
@@ -59,6 +61,10 @@ Environment credentials, version writeback, and release recovery: [Package relea
 - The script is retained on deploy and destroy (`RemovalPolicy.retain`); `alchemy nuke` ignores that and empties the account.
 - Each deploy replaces bindings, vars, and secrets with what `alchemy.run.ts` declares, so dashboard or `wrangler secret put` changes last until the next deploy.
 - Roll back with `pnpm exec wrangler rollback <version-id>` (ids from `pnpm exec wrangler versions list`). The next merge to `main` redeploys, so revert on `main` to keep it.
+
+## Artifact publish
+
+After a merge that changes tokens, patterns, or `artifact/`, a Claude session with the Artifact tool republishes: `pnpm run artifact`, read the artifact's `project/design-system.json`, then one publish to the artifact's URL with `root` `artifact/out`, `file_path` its `project/README.md`, and every other path in `artifact/out/files.json` as `files`. Leave the index and the uploaded icons and marks to the artifact; a new mark or icon is an asset upload plus an index record, and a new CDN image in pattern markup needs its blob URL in `notes.images`.
 
 ## Docs map
 

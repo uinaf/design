@@ -1,0 +1,460 @@
+{
+  "$comment": "Hand-authored inputs for scripts/artifact.ts: a usage note per token, the type styles, and each pattern's preview card. Marks are uploaded assets in the artifact, so previews reference their blob URLs.",
+  "images": {
+    "https://cdn.uinaf.dev/images/webp/uinaf-computer-240w.webp": "/_blob/10702ec321544e734035a2fb3d38e531",
+    "https://cdn.uinaf.dev/images/uinaf-computer.png": "/_blob/10702ec321544e734035a2fb3d38e531"
+  },
+  "usage": {
+    "neutral-950": "Page canvas (via bg). Near-black; the ground everything sits on.",
+    "neutral-925": "Input, code block, modal and toast fill: one step above the canvas.",
+    "neutral-900": "Raised surface (via bg-raised), inline code chips.",
+    "neutral-850": "Reserved step between 900 and 800 for dense panel stacks.",
+    "neutral-800": "Resting hairline (via border); hr rules.",
+    "neutral-700": "Strong hairline (via border-strong): buttons, kbd.",
+    "neutral-600": "Faint text (via fg-faint) and corner ticks (via tick).",
+    "neutral-500": "Hover hairline (via border-hover) and link underlines.",
+    "neutral-450": "Subtle text (via fg-subtle): labels, meta, axis labels.",
+    "neutral-400": "Muted text (via fg-muted): body prose and descriptions.",
+    "neutral-300": "Primary button hover fill.",
+    "neutral-200": "Default text (via fg).",
+    "neutral-100": "Strong text (via fg-strong) and the primary button's white fill.",
+    "neutral-050": "Lightest neutral; reserved.",
+    "bg": "Page background. Every text token below is checked against it.",
+    "bg-raised": "Raised surface: ghost-button hover, segmented active, inline code.",
+    "bg-card": "Panel and card fill: translucent neutral-925 over bg.",
+    "bg-hover": "Card, row and table-row hover wash.",
+    "bg-overlay": "Modal scrim behind u-modal.",
+    "fg": "Default text: headings, values, first table column. On bg, bg-raised and bg-card.",
+    "fg-strong": "Strongest text: code chips, emphasis. On bg and bg-raised.",
+    "fg-muted": "Body prose, descriptions, table cells. On bg and bg-raised.",
+    "fg-subtle": "Micro-labels, meta, axis labels; at least 4.5:1 on bg and bg-raised (source: 4.5:1 on bg-raised, 5:1 on bg). Nothing that must be read sits below this.",
+    "fg-faint": "Hints, placeholders, separators only. About 2.5:1 on bg: below the 4.5:1 text floor by design; never for text that must be read.",
+    "border": "Resting 1px hairline: panels, tables, frames, inputs.",
+    "border-soft": "Softer hairline: panel and card edges, table body rows.",
+    "border-hover": "Hover hairline and focus border (focus brightens the border, no rings). Also the :focus-visible outline.",
+    "border-strong": "Button and kbd outline; input hover.",
+    "tick": "Corner-tick crosses on u-ticks panels.",
+    "accent": "THE accent, phosphor lime. Link hover, selection, caret, live dots, active markers, chart series 1, at most one accent button per screen. Never body text, washes or resting borders.",
+    "accent-ink": "Text on an accent fill (the accent button label, selection).",
+    "accent-down": "Accent pressed/hover fill.",
+    "accent-soft": "Rare tint: a selected table row.",
+    "link": "Prose link text (u-link, u-prose a).",
+    "link-hover": "Prose link hover: text and underline turn accent.",
+    "link-underline": "Resting prose-link underline: visible, dim.",
+    "slime-lime": "Artwork neon; graduated to accent in product.",
+    "slime-cyan": "Artwork and chart series 2. Not a UI color.",
+    "slime-green": "Artwork and chart series 5.",
+    "slime-blue": "Artwork only.",
+    "slime-purple": "Artwork and chart series 3.",
+    "slime-magenta": "Artwork and chart series 4.",
+    "slime-pink": "Artwork only.",
+    "viz-1": "Chart series 1: the accent.",
+    "viz-2": "Chart series 2.",
+    "viz-3": "Chart series 3.",
+    "viz-4": "Chart series 4.",
+    "viz-5": "Chart series 5.",
+    "ok": "Status dot: ok. Always beside a lowercase word; diff add tint.",
+    "warn": "Status dot: warn. Always beside a lowercase word.",
+    "error": "Status dot: error; invalid input border and error help text on bg. Diff del tint.",
+    "info": "Status: info, the muted foreground.",
+    "sp-0": "Zero.",
+    "sp-0-5": "Micro only: 2px optical half-step inside a row.",
+    "sp-1": "Icon to label, list desc offset.",
+    "sp-1-5": "Micro only: 6px half-step.",
+    "sp-2": "Gap inside buttons, fields, tags; label to control.",
+    "sp-2-5": "Micro only: 10px half-step.",
+    "sp-3": "Field padding, gaps between related items.",
+    "sp-3-5": "Micro only: 14px half-step.",
+    "sp-4": "Rows breathe 16; button padding; shell gutter on mobile.",
+    "sp-5": "Panels breathe 20 inside (u-panel, u-card, panel-grid cells).",
+    "sp-6": "Modal padding; topbar gap.",
+    "sp-7": "Layout step.",
+    "sp-8": "Groups breathe 32; shell gutter from 640px.",
+    "sp-9": "Layout step.",
+    "sp-10": "Header bottom margin; prose h1 top.",
+    "sp-12": "Frame padding; hero bottom; site header to title.",
+    "sp-14": "Layout step.",
+    "sp-16": "Sections 64; hero top.",
+    "sp-18": "Layout step.",
+    "sp-20": "Sections 80.",
+    "sp-24": "Sections 96: the largest gap.",
+    "radius-none": "Default: panels, cards, tables, modals are square.",
+    "radius-xs": "Controls: buttons, inputs, code, tags.",
+    "radius-sm": "Rare small radius.",
+    "radius-md": "The 6px ceiling; never larger (design-check enforces).",
+    "radius-pill": "Dots only (u-dot, radio).",
+    "text-2xs": "10px: tick labels, tags. The floor.",
+    "text-xs": "11px: micro-labels, meta.",
+    "text-sm": "13px: secondary body, buttons, code.",
+    "text-base": "14px: default body.",
+    "text-md": "16px: list titles, h3.",
+    "text-lg": "20px: h2 / section.",
+    "text-xl": "24px: page h1, stat values.",
+    "text-2xl": "32px: hero.",
+    "text-3xl": "40px: marketing display, the ceiling.",
+    "leading-tight": "Display and stat values.",
+    "leading-snug": "Headings and micro-labels.",
+    "leading-base": "Body: mono needs air between lines.",
+    "leading-loose": "Loose long-form.",
+    "tracking-tight": "Display and hero titles.",
+    "tracking-base": "Everything else.",
+    "tracking-caps": "Micro-labels and tags (uppercase).",
+    "weight-regular": "Everything: sized, never weighted.",
+    "weight-bold": "Inline emphasis only.",
+    "container-narrow": "Default shell (u-shell-narrow): prose, detail, indexes.",
+    "container-base": "Data-dense shell (u-shell-base): tables, dashboards, the banded homepage.",
+    "container-wide": "Rare shell (u-shell-wide); cap inner prose at narrow.",
+    "link-underline-offset": "Prose-link underline offset.",
+    "shadow-glow-accent": "The one glow allowance, accent-tinted.",
+    "accent-glow": "Live dots only (u-dot--live).",
+    "shadow-none": "UI shadows: none. Elevation is a border plus background step."
+  },
+  "typeGroups": [
+    {
+      "name": "Text",
+      "family": "mono",
+      "styles": [
+        {
+          "name": "type-display-ceiling",
+          "fontSize": "40px",
+          "fontWeight": 400,
+          "sample": "we bet you've seen us before.",
+          "usage": "Marketing display only: the ceiling (text-3xl). Never pass it."
+        },
+        {
+          "name": "type-display",
+          "fontSize": "32px",
+          "lineHeight": 1.15,
+          "letterSpacing": "-0.01em",
+          "fontWeight": 400,
+          "sample": "agent infrastructure",
+          "usage": "Hero title (u-display, text-2xl), at most 22ch."
+        },
+        {
+          "name": "type-page-title",
+          "fontSize": "24px",
+          "lineHeight": 1.3,
+          "fontWeight": 400,
+          "sample": "overview",
+          "usage": "Page h1 (u-h1, text-xl)."
+        },
+        {
+          "name": "type-stat-value",
+          "fontSize": "24px",
+          "lineHeight": 1.15,
+          "fontWeight": 400,
+          "sample": "128",
+          "usage": "Stat values (u-stat-value): the same step as page titles."
+        },
+        {
+          "name": "type-section",
+          "fontSize": "20px",
+          "lineHeight": 1.3,
+          "fontWeight": 400,
+          "sample": "recent runs",
+          "usage": "Section heading h2 (u-h2, text-lg)."
+        },
+        {
+          "name": "type-minor",
+          "fontSize": "16px",
+          "lineHeight": 1.6,
+          "fontWeight": 400,
+          "sample": "skillcheck",
+          "usage": "List titles and minor headings h3 (u-h3, u-list-title, text-md)."
+        },
+        {
+          "name": "type-body",
+          "fontSize": "14px",
+          "lineHeight": 1.6,
+          "fontWeight": 400,
+          "sample": "lint and eval harness for agent skills.",
+          "usage": "Default body (u-p, text-base). Line-height 1.6: mono needs the air."
+        },
+        {
+          "name": "type-secondary",
+          "fontSize": "13px",
+          "lineHeight": 1.6,
+          "fontWeight": 400,
+          "sample": "removes the app from all 12 repos.",
+          "usage": "Secondary body, descriptions, buttons, fields, code (text-sm)."
+        },
+        {
+          "name": "type-micro-label",
+          "fontSize": "11px",
+          "lineHeight": 1.3,
+          "letterSpacing": "0.08em",
+          "fontWeight": 400,
+          "sample": "REVIEWS / DAY",
+          "usage": "The hierarchy device (u-label): uppercase, tracked, fg-subtle. Kicks off sections, heads tables, labels fields."
+        },
+        {
+          "name": "type-meta",
+          "fontSize": "11px",
+          "lineHeight": 1.6,
+          "fontWeight": 400,
+          "sample": "aug 03 · 4 runs",
+          "usage": "Dates and counts (u-meta, text-xs), fg-subtle."
+        },
+        {
+          "name": "type-tag",
+          "fontSize": "10px",
+          "letterSpacing": "0.08em",
+          "fontWeight": 400,
+          "sample": "BETA",
+          "usage": "Tags and tick labels (text-2xs): the floor, tracked caps only."
+        }
+      ]
+    },
+    {
+      "name": "Code",
+      "family": "mono",
+      "styles": [
+        {
+          "name": "type-code",
+          "fontSize": "13px",
+          "lineHeight": 1.6,
+          "fontWeight": 400,
+          "sample": "pnpm add @uinaf/design",
+          "usage": "Code blocks (u-pre) and the install line. Never wrap; scroll."
+        }
+      ]
+    }
+  ],
+  "cards": {
+    "banner": {
+      "component": "Banner",
+      "group": "Status",
+      "height": 80
+    },
+    "breadcrumbs": {
+      "component": "Breadcrumbs",
+      "group": "Navigation",
+      "height": 72
+    },
+    "button": {
+      "component": "Button",
+      "group": "Actions",
+      "height": 140
+    },
+    "card": {
+      "component": "Card",
+      "group": "Structure",
+      "height": 140
+    },
+    "charts": {
+      "component": "Charts",
+      "group": "Data",
+      "height": 380
+    },
+    "choice": {
+      "component": "Choice",
+      "group": "Inputs",
+      "height": 96
+    },
+    "code": {
+      "component": "Code",
+      "group": "Code",
+      "height": 200
+    },
+    "def-rows": {
+      "component": "DefRows",
+      "group": "Structure",
+      "height": 160
+    },
+    "diff": {
+      "component": "Diff",
+      "group": "Code",
+      "height": 260
+    },
+    "empty-state": {
+      "component": "EmptyState",
+      "group": "Data",
+      "height": 160
+    },
+    "field": {
+      "component": "Field",
+      "group": "Inputs",
+      "height": 260
+    },
+    "footer": {
+      "component": "Footer",
+      "group": "Navigation",
+      "height": 200
+    },
+    "hero": {
+      "component": "Hero",
+      "group": "Page",
+      "height": 320
+    },
+    "icons": {
+      "component": "Icons",
+      "group": "Icons",
+      "height": 72
+    },
+    "list": {
+      "component": "List",
+      "group": "Data",
+      "height": 260
+    },
+    "log": {
+      "component": "Log",
+      "group": "Code",
+      "height": 220
+    },
+    "menu": {
+      "component": "Menu",
+      "group": "Navigation",
+      "height": 240
+    },
+    "micro-label": {
+      "component": "MicroLabel",
+      "group": "Type",
+      "height": 96
+    },
+    "modal": {
+      "component": "Modal",
+      "group": "Feedback",
+      "height": 280
+    },
+    "notice": {
+      "component": "Notice",
+      "group": "Feedback",
+      "height": 80
+    },
+    "pagination": {
+      "component": "Pagination",
+      "group": "Data",
+      "height": 72
+    },
+    "panel": {
+      "component": "Panel",
+      "group": "Structure",
+      "height": 140
+    },
+    "panel-grid": {
+      "component": "PanelGrid",
+      "group": "Structure",
+      "height": 160
+    },
+    "primitives": {
+      "component": "Primitives",
+      "group": "Type",
+      "height": 260
+    },
+    "progress": {
+      "component": "Progress",
+      "group": "Feedback",
+      "height": 64
+    },
+    "prose": {
+      "component": "Prose",
+      "group": "Type",
+      "height": 220
+    },
+    "segmented": {
+      "component": "Segmented",
+      "group": "Actions",
+      "height": 72
+    },
+    "shell": {
+      "component": "Shell",
+      "group": "Layout",
+      "height": 320
+    },
+    "site-header": {
+      "component": "SiteHeader",
+      "group": "Navigation",
+      "height": 160
+    },
+    "skeleton": {
+      "component": "Skeleton",
+      "group": "Feedback",
+      "height": 140
+    },
+    "stat": {
+      "component": "Stat",
+      "group": "Structure",
+      "height": 120
+    },
+    "switch": {
+      "component": "Switch",
+      "group": "Inputs",
+      "height": 64
+    },
+    "table": {
+      "component": "Table",
+      "group": "Data",
+      "height": 220
+    },
+    "tabs": {
+      "component": "Tabs",
+      "group": "Navigation",
+      "height": 72
+    },
+    "tag+dot": {
+      "component": "TagDot",
+      "group": "Status",
+      "height": 80
+    },
+    "terminal": {
+      "component": "Terminal",
+      "group": "Code",
+      "height": 160
+    },
+    "timeline": {
+      "component": "Timeline",
+      "group": "Data",
+      "height": 160
+    },
+    "toast": {
+      "component": "Toast",
+      "group": "Feedback",
+      "height": 120
+    },
+    "toolbar": {
+      "component": "Toolbar",
+      "group": "Data",
+      "height": 80
+    },
+    "tooltip": {
+      "component": "Tooltip",
+      "group": "Feedback",
+      "height": 120
+    },
+    "topbar": {
+      "component": "Topbar",
+      "group": "Navigation",
+      "height": 100
+    },
+    "version": {
+      "component": "Version",
+      "group": "Status",
+      "height": 64
+    },
+    "row": {
+      "component": "Row",
+      "group": "Data",
+      "height": 160
+    },
+    "install": {
+      "component": "Install",
+      "group": "Code",
+      "height": 120
+    },
+    "bullets": {
+      "component": "Bullets",
+      "group": "Type",
+      "height": 120
+    },
+    "prose-box": {
+      "component": "ProseBox",
+      "group": "Structure",
+      "height": 100
+    },
+    "pill": {
+      "component": "Pill",
+      "group": "Actions",
+      "height": 64
+    }
+  }
+}

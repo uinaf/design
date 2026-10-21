@@ -36,3 +36,4 @@ worker-configuration.d.ts
 # local credentials; alchemy reads .env from the working directory
 .env
 .env.*
+artifact/out/
