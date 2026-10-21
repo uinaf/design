@@ -17,7 +17,7 @@
 - `pages/` holds the six reference screens, each with an `@page name="…" description="…"` marker the sync requires and strips. Pages carry their own topbar and no guide chrome, since they demonstrate the one-row rule.
 - `templates/` holds uinaf.dev's surfaces plus three `export-*` artboards, published behind `@template name="…" description="…"`. An artboard is a fixed canvas: the sync reads its `width:…px;height:…px` into `templates.json` and zooms it to fit. `design:check` waives only `type-scale-only` and `spacing-grid` on `templates/export-` (`--except`, not `--ignore`), so artboards still obey the emoji and raw-hex rules.
 - Tracker and GitHub Project links stay out of the public guide, `README.md`, and `DESIGN.md`.
-- The claude.ai design system artifact, [uinaf design](https://claude.ai/artifact/6EmfdC7t7eMkc46RYVVH1x), is generated, never edited by hand. `scripts/artifact.ts` builds its `project/` files into `artifact/out/` from the CSS and `src/components.json`, plus `artifact/project/` (hand-written README, asset notes, cover) and `artifact/notes.json` (token usage notes, type styles, preview cards). A token or pattern without an entry there fails `verify`.
+- The claude.ai design system artifact, [uinaf design](https://claude.ai/artifact/6EmfdC7t7eMkc46RYVVH1x), is generated, never edited by hand. `scripts/artifact.ts` builds its `project/` files into `artifact/out/` from the CSS, `src/components.json`, `pages/`, and `templates/`, plus `artifact/project/` (hand-written README, asset notes, cover) and `artifact/notes.json` (token usage notes, type styles, preview cards). A token or pattern without an entry there fails `verify`.
 
 ## Commands
 

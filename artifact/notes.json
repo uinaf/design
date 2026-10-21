@@ -2,7 +2,8 @@
   "$comment": "Hand-authored inputs for scripts/artifact.ts: a usage note per token, the type styles, and each pattern's preview card. Marks are uploaded assets in the artifact, so previews reference their blob URLs.",
   "images": {
     "https://cdn.uinaf.dev/images/webp/uinaf-computer-240w.webp": "/_blob/10702ec321544e734035a2fb3d38e531",
-    "https://cdn.uinaf.dev/images/uinaf-computer.png": "/_blob/10702ec321544e734035a2fb3d38e531"
+    "https://cdn.uinaf.dev/images/uinaf-computer.png": "/_blob/10702ec321544e734035a2fb3d38e531",
+    "https://cdn.uinaf.dev/images/uinaf-team.png": "/_blob/4d6cdbaa76561f625e9d6fff7dcede95"
   },
   "usage": {
     "neutral-950": "Page canvas (via bg). Near-black; the ground everything sits on.",

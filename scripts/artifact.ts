@@ -1,7 +1,8 @@
 /**
  * Builds the claude.ai Design System artifact's `project/` files from the repo:
  * tokens from src/tokens.css, one README and preview per pattern from
- * src/components.json, and bundle.css from the CSS source. Hand-written files
+ * src/components.json, a page card per screen in pages/ and templates/, and
+ * bundle.css from the CSS source. Hand-written files
  * under artifact/project/ are copied as they are; artifact/notes.json holds what
  * the source cannot say (token usage notes, type styles, preview cards).
  *
@@ -188,6 +189,47 @@ for (const p of patterns) {
   if (p.never?.length) lines.push("## Never", "", ...p.never.map((r) => `- ${r}`), "");
   lines.push("## Markup", "", "```html", markup, "```", "");
   write(`components/${component}/README.md`, lines.join("\n"));
+}
+
+// ---- whole screens and uinaf.dev surfaces as page cards
+const pascal = (slug: string): string =>
+  slug.replace(/(^|[-_])([a-z0-9])/g, (_, __, c: string) => c.toUpperCase());
+
+for (const [dir, marker, prefix] of [
+  ["pages", "page", "Page"],
+  ["templates", "template", "Template"],
+] as const) {
+  for (const file of fs.readdirSync(path.join(root, dir)).sort()) {
+    if (!file.endsWith(".html")) continue;
+    const slug = file.replace(/\.html$/, "");
+    const html = read(`${dir}/${file}`);
+    const m = new RegExp(`@${marker}\\s+name="([^"]+)"\\s+description="([^"]*)"`).exec(html);
+    if (!m) throw new Error(`${dir}/${file} has no @${marker} marker`);
+    const [, name, description] = m;
+
+    // The frame preloads tokens.css and bundle.css, so the source's own link goes.
+    let body = html
+      .replace(new RegExp(`^\\s*<!--\\s*@${marker}[\\s\\S]*?-->\\s*$\\n?`, "m"), "")
+      .replace(/^\s*<link rel="stylesheet" href="[^"]*tokens\.css" ?\/?>\s*$\n?/m, "");
+    for (const [cdn, blob] of Object.entries(notes.images)) body = body.replaceAll(cdn, blob);
+    if (body.includes("cdn.uinaf.dev"))
+      throw new Error(`${dir}/${file}: a cdn.uinaf.dev URL has no entry in notes.images`);
+
+    // An export artboard states its own canvas; anything else lays out at desktop width.
+    const canvas = /width:\s*(\d+)px;\s*height:\s*(\d+)px/.exec(body);
+    const artboard = slug.startsWith("export-") && canvas;
+    const group = dir === "pages" ? "Screens" : artboard ? "Exports" : "uinaf.dev";
+    const size = artboard ? `width=${canvas[1]} height=${canvas[2]}` : "width=1280 height=900";
+    const component = `${prefix}${pascal(slug)}`;
+    write(
+      `components/${component}/preview.html`,
+      `<!-- @dsCard group="${group}" ${size} page subtitle="${escapeAttr(name)}" -->\n${body}`,
+    );
+    write(
+      `components/${component}/README.md`,
+      `# ${component}\n\n${sentence(description)}\n\nA whole ${dir === "pages" ? "screen" : "surface"}: start from it rather than from components. Markdown: \`https://design.uinaf.dev/${dir}/${slug}.md\`.\n`,
+    );
+  }
 }
 
 // ---- the publish list: every project path, relative to artifact/out
