@@ -1,0 +1,107 @@
+<!-- @dsCard height=288 -->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>uinaf design</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+      }
+      body {
+        background: var(--bg);
+        color: var(--fg);
+        font-family: var(--font-mono);
+        overflow: hidden;
+      }
+      .cover {
+        position: relative;
+        height: 288px;
+        overflow: hidden;
+      }
+      .art {
+        position: absolute;
+        top: 0;
+        left: 480px;
+        width: 480px;
+        height: 288px;
+        overflow: hidden;
+      }
+      .art svg {
+        display: block;
+        width: 480px;
+        height: 288px;
+      }
+      .lime {
+        fill: var(--accent);
+      }
+      .panel {
+        fill: var(--neutral-850);
+        stroke: var(--border-strong);
+        stroke-width: 1;
+      }
+      .white {
+        fill: var(--neutral-100);
+      }
+      .chip {
+        fill: var(--slime-purple);
+      }
+      .blk {
+        rx: var(--radius-none);
+      }
+      .tick {
+        stroke: var(--tick);
+        stroke-width: 1;
+        fill: none;
+      }
+      .words {
+        position: absolute;
+        left: var(--sp-8);
+        bottom: var(--sp-8);
+        max-width: 440px;
+      }
+      .name {
+        margin: 0;
+        font-size: 64px;
+        line-height: 0.95;
+        font-weight: var(--weight-regular);
+        letter-spacing: var(--tracking-tight);
+        color: var(--fg);
+      }
+      .tag {
+        margin: var(--sp-3) 0 0;
+        font-size: 13px;
+        line-height: 20px;
+        color: var(--fg-muted);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="cover">
+      <div class="art" aria-hidden="true">
+        <svg viewBox="0 0 480 288" width="480" height="288">
+          <!--
+  blocks      accent 128x224 bled off the top (the one accent, largest) · neutral-850 panel 192x160 with a border-strong hairline · neutral-100 96x104 bled off the right (the white primary fill) · slime-purple 64x16 once (artwork colour, kept small) — about 25% of 960x288
+  arrangement one tall lime slab with a framed panel and a white satellite, bottoms on one line sp-18 above the edge, sp-4 gutters
+  pattern     corner-tick plus grid, from "corner ticks: technical-drawing + marks on panel corners": 9px pluses in tick at an sp-8 pitch over the panel, its corners included (42 units)
+  scales      sides in sp-4 / sp-8 multiples; gutters sp-4; pitch sp-8; corners radius-none (square brand)
+-->
+          <rect class="lime blk" x="32" y="-8" width="128" height="224" />
+          <rect class="panel blk" x="176.5" y="56.5" width="192" height="160" />
+          <rect class="white blk" x="384" y="112" width="112" height="104" />
+          <rect class="chip blk" x="176" y="232" width="64" height="16" />
+          <path
+            class="tick"
+            d="M172 56.5h9M176.5 52v9M172 88.5h9M176.5 84v9M172 120.5h9M176.5 116v9M172 152.5h9M176.5 148v9M172 184.5h9M176.5 180v9M172 216.5h9M176.5 212v9M204 56.5h9M208.5 52v9M204 88.5h9M208.5 84v9M204 120.5h9M208.5 116v9M204 152.5h9M208.5 148v9M204 184.5h9M208.5 180v9M204 216.5h9M208.5 212v9M236 56.5h9M240.5 52v9M236 88.5h9M240.5 84v9M236 120.5h9M240.5 116v9M236 152.5h9M240.5 148v9M236 184.5h9M240.5 180v9M236 216.5h9M240.5 212v9M268 56.5h9M272.5 52v9M268 88.5h9M272.5 84v9M268 120.5h9M272.5 116v9M268 152.5h9M272.5 148v9M268 184.5h9M272.5 180v9M268 216.5h9M272.5 212v9M300 56.5h9M304.5 52v9M300 88.5h9M304.5 84v9M300 120.5h9M304.5 116v9M300 152.5h9M304.5 148v9M300 184.5h9M304.5 180v9M300 216.5h9M304.5 212v9M332 56.5h9M336.5 52v9M332 88.5h9M336.5 84v9M332 120.5h9M336.5 116v9M332 152.5h9M336.5 148v9M332 184.5h9M336.5 180v9M332 216.5h9M336.5 212v9M364 56.5h9M368.5 52v9M364 88.5h9M368.5 84v9M364 120.5h9M368.5 116v9M364 152.5h9M368.5 148v9M364 184.5h9M368.5 180v9M364 216.5h9M368.5 212v9"
+          />
+        </svg>
+      </div>
+      <div class="words">
+        <h1 class="name">uinaf<br />design</h1>
+        <p class="tag">public tokens and guidance for uinaf surfaces.</p>
+      </div>
+    </div>
+  </body>
+</html>

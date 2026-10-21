@@ -5,6 +5,7 @@ const ignorePatterns = [
   "templates/**",
   "guide/**",
   "dist/**",
+  "artifact/out/**",
   ".handoff-src/**",
   "system/assets/**",
   "wrangler.toml",
@@ -19,6 +20,7 @@ export const verifyPureCommands = [
   "node scripts/check.ts",
   "vp test run",
   "pnpm run design:check",
+  "node scripts/artifact.ts",
 ];
 
 export default defineConfig({

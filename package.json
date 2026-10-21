@@ -51,6 +51,7 @@
     "build": "node scripts/build.ts",
     "guide:sync": "node scripts/build.ts && node scripts/sync-guide.ts && node scripts/machine-layer.ts",
     "cdn:check": "node scripts/cdn-check.ts",
+    "artifact": "node scripts/artifact.ts",
     "test": "vp test run",
     "audit": "pnpm audit --audit-level high --ignore-registry-errors",
     "verify": "pnpm run audit && pnpm peers check --lockfile-only && vp run verifyPure && ./scripts/smoke.sh",
