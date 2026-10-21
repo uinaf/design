@@ -26,4 +26,4 @@ Berkeley Mono is licensed and loads only from `https://cdn.uinaf.dev/fonts/berke
 
 Wrap UI in `.uinaf`; the package is CSS only, so the app toggles state through attributes (`hidden`, `aria-pressed`, `aria-selected`, `data-copied`). Gate repos with `design-check src` (`--ratchet` for an existing backlog). Agents start from `https://design.uinaf.dev/llms.txt`.
 
-> One-off import from `uinaf/design@15b11c8`. Motion and `hairline*` variables live in `bundle.css`. Whole screens, adoption docs and tooling stay in the repo.
+> Generated from [uinaf/design](https://github.com/uinaf/design); change it there, not here. Motion and `hairline*` variables live in `bundle.css`. Whole screens, adoption docs and tooling stay in the repo.
