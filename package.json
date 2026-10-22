@@ -71,10 +71,10 @@
     "postcss": "^8.5.26"
   },
   "devDependencies": {
-    "@effect/platform-node": "4.0.2",
+    "@effect/platform-node": "4.0.5",
     "@types/node": "^24.0.0",
-    "alchemy": "2.0.0-beta.81",
-    "effect": "4.0.2",
+    "alchemy": "2.0.0-beta.83",
+    "effect": "4.0.5",
     "esbuild": "^0.28.2",
     "typescript": "^7.0.0",
     "vite": "catalog:",
