@@ -26,10 +26,6 @@ export const CDN = {
     ogCard: "https://cdn.uinaf.dev/images/exports/og-card.png",
     /** @deprecated The post card template is retired; kept so `@uinaf/design/cdn` stays compatible. */
     ogCardPost: "https://cdn.uinaf.dev/images/exports/og-card-post.png",
-    /** @deprecated Retired sample; repo cards render at uinaf.dev/og/repo/[repo].png. */
-    repoOgSample: "https://cdn.uinaf.dev/images/exports/repo-og-healthd.png",
-    /** @deprecated Retired sample; README banners render at uinaf.dev/og/banner/[repo].png. */
-    readmeBannerSample: "https://cdn.uinaf.dev/images/exports/readme-banner-healthd.png",
   },
   favicons: {
     png16: "https://cdn.uinaf.dev/images/exports/favicons/favicon-16.png",
