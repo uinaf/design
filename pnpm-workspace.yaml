@@ -16,6 +16,9 @@ overrides:
   "@prisma/dev>hono": ^4.12.25
   "@prisma/dev>@hono/node-server": ^1.19.10
   "lodash@<4.18.1": ^4.18.1
+  # GHSA-xjj6-f33q-929c: wrangler and @effect/platform-node pin vulnerable undici lines.
+  "undici@>=7.18.0 <7.30.1": ^7.30.1
+  "undici@>=8.0.0 <8.12.2": ^8.12.2
 
 allowBuilds:
   core-js-pure: false
