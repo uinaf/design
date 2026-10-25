@@ -10,7 +10,7 @@
  */
 
 import * as Alchemy from "alchemy";
-import * as Cloudflare from "alchemy/Cloudflare";
+import * as Cloudflare from "@alchemy.run/cloudflare";
 import * as RemovalPolicy from "alchemy/RemovalPolicy";
 import { inMemoryState } from "alchemy/State";
 import * as Effect from "effect/Effect";
