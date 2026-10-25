@@ -2,11 +2,9 @@
 
 # uinaf/design
 
-Design tokens, CSS primitives, adherence linting, and repository-local agent guidance for [uinaf](https://uinaf.dev) surfaces.
+Design tokens, CSS primitives, and an adherence lint for [uinaf](https://uinaf.dev) surfaces.
 
-Guide: [design.uinaf.dev](https://design.uinaf.dev)
-
-Berkeley Mono is licensed; load it from `cdn.uinaf.dev`, not this package.
+Guide: [design.uinaf.dev](https://design.uinaf.dev). Agents start from `https://design.uinaf.dev/llms.txt`.
 
 ## Install
 
@@ -18,57 +16,61 @@ pnpm add @uinaf/design
 @import "@uinaf/design/css";
 ```
 
-Or link the stylesheet after the CDN font sheet:
+Without a bundler, link the files directly; a browser cannot resolve a bare specifier:
 
 ```html
 <link rel="stylesheet" href="https://cdn.uinaf.dev/fonts/berkeley-mono/variable/font.css" />
 <link rel="stylesheet" href="node_modules/@uinaf/design/dist/css/tokens.css" />
 ```
 
-Token values and the CDN URLs are importable too:
+Berkeley Mono is licensed and loads only from `cdn.uinaf.dev`; the stylesheet imports it.
 
 ```ts
 import { tokens } from "@uinaf/design";
 import { CDN } from "@uinaf/design/cdn";
 ```
 
+Package exports: [`package.json`](package.json). Reference screens and uinaf.dev surfaces are not in the package; read them at `design.uinaf.dev/pages/<name>.md` and `design.uinaf.dev/templates/<name>.md`.
+
 ## Adherence lint
 
-The package ships a `design-check` binary. Add it as a script so it resolves
-from `node_modules/.bin`:
+Add the binary as a script, so it resolves from `node_modules/.bin`, and run it in CI:
 
 ```json
 { "scripts": { "design:check": "design-check src" } }
 ```
 
-It fails on raw hex, off-scale type, radius over 6px, stacked nav rows, and the
-rest of the guardrails in the spec. Ratchet mode, for a repo with an existing
-backlog, is in [Adopting in a product repo](docs/adoption.md).
+Pass every UI path (`design-check src app`). It exits 1 on raw hex, off-scale type, radius over 6px, stacked nav rows, and the other [guardrails](DESIGN.md#guardrails). `design-check --help` lists the flags.
 
-## Package contents
+### Existing violations
 
-| Path                   | Purpose                                           |
-| ---------------------- | ------------------------------------------------- |
-| `dist/css/tokens.css`  | CSS custom properties + component primitives      |
-| `dist/tokens.js`       | Flat token map                                    |
-| `dist/components.json` | The pattern contract: classes, use, rules, markup |
-| `dist/lint/`           | The `design-check` binary and its rules           |
-| `assets/icons/`        | The closed icon set: eight 16-grid stroke SVGs    |
-| `DESIGN.md`            | Full design spec                                  |
+Record a baseline on a clean tree, before any change; a later baseline hides your own new violations:
 
-Whole example screens are not in the package; they are documents you read, not
-modules you import. Get them from the guide:
+```sh
+npm run design:check -- --update-ratchet
+git add .design-ratchet.json
+```
 
-| Surface               | Where                                        |
-| --------------------- | -------------------------------------------- |
-| Pattern cards         | [design.uinaf.dev](https://design.uinaf.dev) |
-| Six reference screens | `design.uinaf.dev/pages/<name>.md`           |
-| uinaf.dev surfaces    | `design.uinaf.dev/templates/<name>.md`       |
+Then gate on the ratchet, plus a clean check of the files the branch touched:
+
+```json
+{
+  "scripts": {
+    "design:check": "design-check src --ratchet",
+    "design:check:changed": "design-check --changed"
+  }
+}
+```
+
+- `--ratchet` fails only when a rule's count rises, warnings included. A swap of one violation for another passes; `--changed` catches it.
+- A new release can add a rule, which reads as a rise from zero. Read the rule, then re-record on a clean tree.
+- When a count falls, re-record to lock it in.
+
+To prove the wiring, add `<div style="border-radius: 20px">` to a page: the check names the file, line, and fix.
 
 ## Docs
 
 - [Design spec](DESIGN.md)
-- [Adopting in a product repo](docs/adoption.md)
 - [Contributing](CONTRIBUTING.md)
 - [Security](https://github.com/uinaf/design/security/policy)
 

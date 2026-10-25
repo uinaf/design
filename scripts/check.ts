@@ -71,8 +71,8 @@ for (const file of templates) {
   }
 }
 
-// The six reference pages are a published contract: the skill, the adoption
-// doc, and get_page all name them, so a rename silently breaks all three.
+// The six reference pages are a published contract: the skill, the README,
+// and get_page all point at them, so a rename silently breaks all three.
 const REFERENCE_PAGES = [
   "product-landing",
   "dashboard",
