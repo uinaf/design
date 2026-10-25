@@ -4,9 +4,10 @@
   "extends": ["github>uinaf/.github:renovate-config"],
   "packageRules": [
     {
-      "description": "Alchemy 2 is beta and a merge deploys production; effect and its @effect/* peers must move together with the overrides in pnpm-workspace.yaml.",
-      "matchPackageNames": ["alchemy", "effect", "/^@effect\\//"],
+      "description": "Alchemy 2 is beta and a merge deploys production, and alchemy peers on effect and its @effect/* packages, so they move as one manual PR. Each member keeps its own release-age clock, and strict filtering would pair the members that aged first; filtering none takes the latest of every member and holds the PR until all of them age.",
+      "matchPackageNames": ["alchemy", "effect", "@effect/*"],
       "groupName": "alchemy",
+      "internalChecksFilter": "none",
       "automerge": false
     }
   ]
