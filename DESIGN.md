@@ -4,19 +4,7 @@
 
 One typeface, near-black, hairline borders, one accent, visible structure.
 
-## Index
-
-| File                                   | What                                                                                          |
-| -------------------------------------- | --------------------------------------------------------------------------------------------- |
-| `@uinaf/design/css`                    | Tokens + ready styles implementing everything below. The only CSS you import                  |
-| `design.uinaf.dev/pages/<name>.md`     | Six whole reference screens; start from one of these when building a page, not a component    |
-| `design.uinaf.dev/templates/<name>.md` | uinaf.dev's own surfaces, plus fixed-size `export-*` artboards for OG and README images       |
-| Berkeley Mono (CDN only)               | `https://cdn.uinaf.dev/fonts/berkeley-mono/variable/font.css`; never vendored in this package |
-| Brand images (CDN only)                | `https://cdn.uinaf.dev/images/…`; see the `CDN` export; never vendored in this package        |
-| `design.uinaf.dev`                     | One card per pattern; the canonical reference for each                                        |
-| `assets/icons/`                        | The closed icon set: eight 16-grid stroke SVGs, `currentColor`                                |
-
-Whole screens are read by URL, never imported. The package carries CSS, tokens, the lint, the icon set, and this spec.
+Import `@uinaf/design/css`; it implements everything below. Start a page from a reference screen at `design.uinaf.dev/pages/<name>.md`; uinaf.dev surfaces and `export-*` artboards are at `design.uinaf.dev/templates/<name>.md`. Each pattern's canonical card is on [design.uinaf.dev](https://design.uinaf.dev). Berkeley Mono and brand images load from `cdn.uinaf.dev` (the `CDN` export) and are never vendored.
 
 ## Voice
 
@@ -39,11 +27,10 @@ Whole screens are read by URL, never imported. The package carries CSS, tokens, 
 - The GitHub repository name and About description use the brand register: lowercase, short, descriptive, and free of marketing copy. Conventional abbreviations keep their caps.
 - The first README heading is exactly `# uinaf/<repo>`; a banner or badges may precede it. This H1 stays lowercase; the remaining README headings and prose use the docs register.
 - Package names stay literal in body copy, install commands, and imports (`@uinaf/design`); they do not replace the repository H1.
-- On uinaf.dev a repo description renders with its leading capital dropped and a period guaranteed: `Shared Renovate preset…` becomes `shared Renovate preset….`
 
 ## Type
 
-- Berkeley Mono only. Sized, never weighted. Bold = inline emphasis only.
+- Berkeley Mono only, from the CDN under the owner's license; substitute JetBrains Mono. Sized, never weighted. Bold = inline emphasis only.
 - Scale: 10 / 11 / 13 / 14 / 16 / 20 / 24 / 32 / 40. Body 14, page title 24, hero 32, ceiling 40.
 - Hierarchy comes from the small↔large spread plus air; never from weight, never from giant display sizes.
 - **The micro-label** is the hierarchy device: 11px, uppercase, wide tracking, dim. It kicks off sections, heads tables, labels fields, captions stats. The only uppercase besides abbreviations.
@@ -118,7 +105,3 @@ Snappy decel, no bounce. 160ms hover/press, 220ms entry. Entry = fade-up 10px wi
 - Don't group prose with borders. Don't mark sections with background bands.
 - Don't let two accent elements share a viewport.
 - Don't name a private, archived, or retired repo on a public surface, sample copy included.
-
-## Caveats
-
-- Berkeley Mono is commercial. No binary lives in this repo or the npm tarball; every surface loads it from the CDN under the owner's license. Substitute: JetBrains Mono.
