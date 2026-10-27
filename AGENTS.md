@@ -16,7 +16,6 @@ pnpm run artifact                # builds the design system artifact into artifa
 - Use `vp` for lint, format, and test. In a fresh checkout, run `pnpm run types:worker` before `vp check`.
 - Smokes in one checkout share `guide/`; run parallel smokes from separate worktrees.
 - Never preview with `pnpm run deploy`: it publishes the working tree to production without `verify`.
-- `pnpm run deploy` reads `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`, else your Alchemy login.
 - Preview with `pnpm run smoke` or `pnpm run dev`.
 
 ## Invariants
