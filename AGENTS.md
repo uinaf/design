@@ -39,7 +39,7 @@ pnpm run artifact                # builds the design system artifact into artifa
 A merge to `main` redeploys the guide and publishes to npm when the commit type calls for it ([`.releaserc.json`](.releaserc.json), [`release.yml`](.github/workflows/release.yml)).
 
 - npm Trusted Publishing pins the file name `release.yml`. Renaming it breaks `npm publish` until the trusted publisher on npmjs.com changes.
-- Renaming the Alchemy stack, the `Guide` id, or `name` orphans the live Worker. Adopt and rollback steps: [design-deploy](.agents/skills/design-deploy/SKILL.md).
+- Renaming the Alchemy stack, the `Guide` id, or `name` orphans the live Worker ([`alchemy.run.ts`](alchemy.run.ts) adopts by tags).
 - Never run `alchemy nuke`: it ignores `RemovalPolicy.retain` and empties the account.
 - Each deploy replaces bindings, vars, and secrets with what `alchemy.run.ts` declares; dashboard or `wrangler secret put` changes do not survive it.
 - After a merge that changes tokens, patterns, screens, or `artifact/`, republish the artifact with [design-artifact-publish](.agents/skills/design-artifact-publish/SKILL.md).
