@@ -4,19 +4,19 @@
 
 ## Commands
 
+Setup, `verify`, and the smoke: [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ```sh
-pnpm install --frozen-lockfile   # Node from .node-version, pnpm from packageManager
-pnpm run verify                  # cached pure checks, then the Worker smoke
-pnpm run verify:full             # same gate, uncached
-pnpm run smoke                   # Worker smoke alone; port 8788, logs in .smoke/
 pnpm run cdn:check               # HEADs every CDN URL; needs network, outside verify
 pnpm run artifact                # builds the design system artifact into artifact/out/
 ```
 
-- `AGENTS.md` and `CONTRIBUTING.md` need `pnpm exec vp fmt --check`. Everything else needs `pnpm run verify`, including `DESIGN.md` and `README.md` (the guide serves both) and `skills/` (`scripts/check.ts` validates it).
+- `AGENTS.md` and `CONTRIBUTING.md` need `pnpm exec vp fmt --check`.
+- Everything else needs `pnpm run verify`, including `DESIGN.md` and `README.md` (the guide serves both) and `skills/` (`scripts/check.ts` validates it).
 - Use `vp` for lint, format, and test. In a fresh checkout, run `pnpm run types:worker` before `vp check`.
 - Smokes in one checkout share `guide/`; run parallel smokes from separate worktrees.
-- `pnpm run deploy` publishes the working tree to production without `verify`; it reads `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`, else your Alchemy login. Preview with `pnpm run smoke` or `pnpm run dev` instead.
+- Never preview with `pnpm run deploy`: it publishes the working tree to production without `verify`.
+- Preview with `pnpm run smoke` or `pnpm run dev`.
 
 ## Invariants
 
@@ -38,21 +38,10 @@ pnpm run artifact                # builds the design system artifact into artifa
 A merge to `main` redeploys the guide and publishes to npm when the commit type calls for it ([`.releaserc.json`](.releaserc.json), [`release.yml`](.github/workflows/release.yml)).
 
 - npm Trusted Publishing pins the file name `release.yml`. Renaming it breaks `npm publish` until the trusted publisher on npmjs.com changes.
-- Alchemy adopts the live Worker by its tags (`alchemy:stack:uinaf-design`, `alchemy:stage:prod`, `alchemy:id:Guide`). Renaming the stack or `Guide` id, or deploying `--adopt` under another stage, orphans them; CI then refuses to deploy until one `pnpm run deploy --adopt` (no `--`). Changing `name` creates a second script while the old one keeps the domain.
+- Renaming the Alchemy stack, the `Guide` id, or `name` orphans the live Worker ([`alchemy.run.ts`](alchemy.run.ts) adopts by tags).
 - Never run `alchemy nuke`: it ignores `RemovalPolicy.retain` and empties the account.
 - Each deploy replaces bindings, vars, and secrets with what `alchemy.run.ts` declares; dashboard or `wrangler secret put` changes do not survive it.
-- `wrangler.toml` serves `wrangler types` and `wrangler rollback` only; `test/worker.test.ts` keeps it in step.
-- Roll back with `pnpm exec wrangler rollback <version-id>` (ids from `pnpm exec wrangler versions list`), then revert on `main`, or the next merge redeploys.
-
-## Artifact publish
-
-After a merge that changes tokens, patterns, screens, or `artifact/`, a Claude session with the Artifact tool republishes:
-
-1. `pnpm run artifact`.
-2. Read the artifact's `project/design-system.json`; the tool refuses to publish to an artifact the session has not read.
-3. Publish once to the artifact's URL: `root` `artifact/out`, `file_path` its `project/README.md`, every other path in `artifact/out/files.json` as `files`.
-
-Done when the artifact's Components view renders the changed cards. A new mark or icon is an asset upload plus an index record; a new CDN image in markup needs its blob URL in `notes.images`.
+- After a merge that changes tokens, patterns, screens, or `artifact/`, republish the artifact with [design-artifact-publish](.agents/skills/design-artifact-publish/SKILL.md).
 
 ## Docs
 
