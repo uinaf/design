@@ -2,7 +2,7 @@
 
 # uinaf/design
 
-Design tokens, CSS primitives, and an adherence lint for [uinaf](https://uinaf.dev) surfaces.
+Design tokens, CSS primitives, and an adherence lint for [uinaf](https://uinaf.dev)'s own sites and internal tools. Products built for people outside uinaf own their design; see [Scope](DESIGN.md#scope).
 
 Guide: [design.uinaf.dev](https://design.uinaf.dev). Agents start from `https://design.uinaf.dev/llms.txt`.
 
