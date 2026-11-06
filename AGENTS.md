@@ -46,3 +46,5 @@ A merge to `main` redeploys the guide and publishes to npm when the commit type 
 ## Docs
 
 Visual and voice rules live in [`DESIGN.md`](DESIGN.md); the agent skill for building uinaf UI is [`skills/uinaf-design/`](skills/uinaf-design/SKILL.md).
+
+Effect code (`alchemy.run.ts`): [effect-ts](.agents/skills/effect-ts/SKILL.md); keep the pinned `effect` version, then read `node_modules/effect/AGENTS.md` completely before writing Effect code.

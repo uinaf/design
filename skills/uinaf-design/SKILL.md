@@ -1,6 +1,6 @@
 ---
 name: uinaf-design
-description: "Route uinaf interface, brand-asset, and repository-copy work through the live design.uinaf.dev contract. For uinaf-owned repositories and surfaces only; put.io, OpenClaw, and other projects have their own design. Carries workflow, not design rules."
+description: "Route uinaf interface, brand-asset, and repository-copy work through the live design.uinaf.dev contract. For uinaf's own sites and internal tools only; products for people outside uinaf, put.io, OpenClaw, and other projects have their own design. Carries workflow, not design rules."
 disable-model-invocation: true
 ---
 

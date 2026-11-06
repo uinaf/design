@@ -6,6 +6,12 @@ One typeface, near-black, hairline borders, one accent, visible structure.
 
 Import `@uinaf/design/css`; it implements everything below. Start a page from a reference screen at `design.uinaf.dev/pages/<name>.md`; uinaf.dev surfaces and `export-*` artboards are at `design.uinaf.dev/templates/<name>.md`. Each pattern's canonical card is on [design.uinaf.dev](https://design.uinaf.dev). Berkeley Mono and brand images load from `cdn.uinaf.dev` (the `CDN` export) and are never vendored.
 
+## Scope
+
+- For uinaf's own sites and internal tools: uinaf.dev, this guide, CI pages, consoles, and dashboards.
+- Products built for people outside uinaf own their visual design. They do not import `@uinaf/design` or copy its look.
+- Each such product gets its own identity, clean and minimal. References: [Linear](https://linear.app), [Vercel](https://vercel.com), [Cursor](https://cursor.com), [Anthropic](https://www.anthropic.com), [Notion](https://www.notion.com), [capy.ai](https://capy.ai), and [Grok](https://grok.com).
+
 ## Voice
 
 - Short, direct, a little dry. No SaaS sludge, no exclamation marks. Fragments fine, periods at the end.
