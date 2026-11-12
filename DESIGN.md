@@ -104,7 +104,7 @@ Snappy decel, no bounce. 160ms hover/press, 220ms entry. Entry = fade-up 10px wi
 - **Product mark:** a product may also have one colored logo in the same idiom, the slime family allowed as fills. It takes the topbar mark's slot (20–24px, unframed), its favicon, and its agent avatar. uinaf surfaces keep the uinaf marks.
 - The favicon is neither of those; it is its own rendered set on the CDN, under `CDN.favicons`: 16 / 32 / 48 / 192 / 512 plus apple-touch. It is not the small mark scaled down.
 - No photos, no icon fonts. `↗` `→` `·` and hairlines carry the iconography.
-- **Icons are a last resort, and the set is closed.** Eight 16-grid stroke SVGs live in `assets/icons/`: search, copy, download, refresh, file, folder, branch, warning. Original work, licensed with the repo. Pick from the set; extend it in its idiom (stroke 1.5, square caps, `currentColor`, no fills) as a pull request, never inline. Sizes scale the stroke inversely: 16/1.5 default, 12/1.75 in tags and meta rows, 20/1.25 in large buttons and empty states. Never import an icon library, never paste from a third-party set, and never put an icon beside a word that already says it.
+- **Icons are a last resort, and the set is closed.** The 16-grid stroke SVGs in `assets/icons/` are the set. Original work, licensed with the repo. Pick from the set; extend it in its idiom (stroke 1.5, square caps, `currentColor`, no fills) as a pull request, never inline. Sizes scale the stroke inversely: 16/1.5 default, 12/1.75 in tags and meta rows, 20/1.25 in large buttons and empty states. Never import an icon library, never paste from a third-party set, and never put an icon beside a word that already says it.
 
 ## Guardrails
 

@@ -7,7 +7,7 @@
 Setup, `verify`, and the smoke: [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ```sh
-pnpm run cdn:check               # HEADs every CDN URL; needs network, outside verify
+pnpm run cdn:check               # needs network, outside verify
 pnpm run artifact                # builds the design system artifact into artifact/out/
 ```
 
@@ -35,12 +35,12 @@ pnpm run artifact                # builds the design system artifact into artifa
 
 ## Release and deploy
 
-A merge to `main` redeploys the guide and publishes to npm when the commit type calls for it ([`.releaserc.json`](.releaserc.json), [`release.yml`](.github/workflows/release.yml)).
+The commit type decides the npm release ([`.releaserc.json`](.releaserc.json)).
 
 - npm Trusted Publishing pins the file name `release.yml`. Renaming it breaks `npm publish` until the trusted publisher on npmjs.com changes.
 - Renaming the Alchemy stack, the `Guide` id, or `name` orphans the live Worker ([`alchemy.run.ts`](alchemy.run.ts) adopts by tags).
 - Never run `alchemy nuke`: it ignores `RemovalPolicy.retain` and empties the account.
-- Each deploy replaces bindings, vars, and secrets with what `alchemy.run.ts` declares; dashboard or `wrangler secret put` changes do not survive it.
+- Change bindings, vars, and secrets only in `alchemy.run.ts`; a deploy overwrites dashboard and `wrangler secret put` changes.
 - After a merge that changes tokens, patterns, screens, or `artifact/`, republish the artifact with [design-artifact-publish](.agents/skills/design-artifact-publish/SKILL.md).
 
 ## Docs

@@ -40,7 +40,7 @@ Add the binary as a script, so it resolves from `node_modules/.bin`, and run it 
 { "scripts": { "design:check": "design-check src" } }
 ```
 
-Pass every UI path (`design-check src app`). It exits 1 on raw hex, off-scale type, radius over 6px, stacked nav rows, and the other [guardrails](DESIGN.md#guardrails). `design-check --help` lists the flags.
+Pass every UI path (`design-check src app`). It exits 1 when a page breaks the [spec](DESIGN.md); `design-check --help` lists the flags.
 
 ### Existing violations
 
