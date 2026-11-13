@@ -216,7 +216,7 @@ importers:
         version: 1.5.0(@types/node@24.19.2)(@vitest/ui@5.1.0)(esbuild@0.28.2)(typescript@7.0.2)(yaml@2.9.1)
       wrangler:
         specifier: ^4.149.0
-        version: 4.160.0(@types/node@24.19.2)
+        version: 4.161.0(@types/node@24.19.2)
       yaml:
         specifier: ^2.9.0
         version: 2.9.1
@@ -1870,8 +1870,8 @@ packages:
     engines: {node: '>=16'}
     hasBin: true
 
-  miniflare@5.20261110.0-beta:
-    resolution: {integrity: sha512-UiJRL6D4pNkHxgZ3QXDCaz/N27FFuuHRRgOmD/SucEZIwDOfWwX7s/n8ZrFemFlURRfnQpBfAdWy8ixsW0yJWA==}
+  miniflare@5.20261110.2-beta:
+    resolution: {integrity: sha512-vzUwcal5OtR/1nr5cmjCbZSrsR3QRA1cDnRUDVgET17HeDkdpQNG2QxeIkuHFLyszjdBqme59w8Nrrj4FkuFsQ==}
     engines: {node: '>=22.12.0'}
     peerDependencies:
       kerberos: ^2.0.0
@@ -2132,8 +2132,8 @@ packages:
     engines: {node: '>=16'}
     hasBin: true
 
-  wrangler@4.160.0:
-    resolution: {integrity: sha512-nwzmpu7Hd5Csax02twpCNRAloC+kduXKw9rjfq+oEuo8RnjWRaahSV+qk+p0w88EgafMcDE0XnZRSfOM3lKEKg==}
+  wrangler@4.161.0:
+    resolution: {integrity: sha512-yOHZUYEq9AP7vutWmkCADzCKAH9ynfvZdoKJRIGTzkiailf9/L+jhT7WRb+9p6jRDtuBXVFtCzLo7kGAcGw+pA==}
     engines: {node: '>=22.12.0'}
     hasBin: true
     peerDependencies:
@@ -3272,7 +3272,7 @@ snapshots:
 
   mime@4.1.1: {}
 
-  miniflare@5.20261110.0-beta(@types/node@24.19.2):
+  miniflare@5.20261110.2-beta(@types/node@24.19.2):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       sharp: 0.35.5(@types/node@24.19.2)
@@ -3626,14 +3626,14 @@ snapshots:
       '@cloudflare/workerd-linux-arm64': 1.20261110.1
       '@cloudflare/workerd-windows-64': 1.20261110.1
 
-  wrangler@4.160.0(@types/node@24.19.2):
+  wrangler@4.161.0(@types/node@24.19.2):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.5.0
       '@cloudflare/unenv-preset': 2.16.2(unenv@2.0.0-rc.24)(workerd@1.20261110.1)
       '@cspotcode/source-map-support': 0.8.1
       blake3-wasm: 2.1.5
       esbuild: 0.28.2
-      miniflare: 5.20261110.0-beta(@types/node@24.19.2)
+      miniflare: 5.20261110.2-beta(@types/node@24.19.2)
       path-to-regexp: 6.3.0
       unenv: 2.0.0-rc.24
       workerd: 1.20261110.1
