@@ -37,3 +37,5 @@ worker-configuration.d.ts
 .env
 .env.*
 artifact/out/
+.worktrees/
+.claude/worktrees/
