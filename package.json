@@ -71,11 +71,11 @@
     "postcss": "^8.5.26"
   },
   "devDependencies": {
-    "@alchemy.run/cloudflare": "2.0.0-beta.85",
-    "@effect/platform-node": "4.1.2",
+    "@alchemy.run/cloudflare": "2.0.0-beta.87",
+    "@effect/platform-node": "4.1.4",
     "@types/node": "^24.0.0",
-    "alchemy": "2.0.0-beta.85",
-    "effect": "4.1.2",
+    "alchemy": "2.0.0-beta.87",
+    "effect": "4.1.4",
     "esbuild": "^0.28.2",
     "typescript": "^7.0.0",
     "vite": "catalog:",
