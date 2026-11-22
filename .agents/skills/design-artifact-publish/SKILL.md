@@ -5,7 +5,7 @@ description: Republish the uinaf design artifact from `scripts/artifact.ts` outp
 
 # Design artifact publish
 
-The [uinaf design](https://claude.ai/artifact/6EmfdC7t7eMkc46RYVVH1x) artifact is generated. Never edit it by hand.
+The [uinaf design](https://claude.ai/artifact/6EmfdC7t7eMkc46RYVVH1x) artifact is generated; change it by republishing.
 
 1. `pnpm run artifact`.
 2. Read the artifact's `project/design-system.json`. The tool refuses to publish to an artifact the session has not read.

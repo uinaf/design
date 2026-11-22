@@ -30,7 +30,7 @@ import { tokens } from "@uinaf/design";
 import { CDN } from "@uinaf/design/cdn";
 ```
 
-Package exports: [`package.json`](package.json). Reference screens and uinaf.dev surfaces are not in the package; read them at `design.uinaf.dev/pages/<name>.md` and `design.uinaf.dev/templates/<name>.md`.
+Package exports: [`package.json`](package.json). Read reference screens and uinaf.dev surfaces at `design.uinaf.dev/pages/<name>.md` and `design.uinaf.dev/templates/<name>.md`.
 
 ## Adherence lint
 

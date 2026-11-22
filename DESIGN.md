@@ -24,7 +24,7 @@ Import `@uinaf/design/css`; it implements everything below. Start a page from a 
 ### Two registers, one voice
 
 - **Brand register: lowercase.** Everything rendered as uinaf (the site, product UI, marketing, OG cards) plus commit messages, PR titles, code comments, and CLI output. Two exceptions: micro-labels are uppercase, and **abbreviations keep their conventional caps**: PR, AI, API, CLI, URL, OG, KV, R2, D1, SHA, HDR, HLS, TCC, macOS. `pr review` is wrong; `PR review` is right.
-- **Docs register: conventional caps.** Repo docs (README, CONTRIBUTING, `docs/`), repository changelog files, and GitHub release notes take standard capitalization: sentences start with a capital, headings use sentence case, never title case. Same voice, short and dry and free of sludge, just capitalized. An all-lowercase README reads as a broken shift key, not a brand. This file uses the docs register. The design system's own catalog is documentation too: card names, group labels, subtitles, and spec files take sentence case. A changelog rendered on uinaf.dev is a brand surface and stays lowercase.
+- **Docs register: conventional caps.** Repo docs (README, CONTRIBUTING, `docs/`), repository changelog files, and GitHub release notes take standard capitalization: sentences start with a capital, headings use sentence case, never title case. Same voice, capitalized. This file uses the docs register. The design system's own catalog is documentation too: card names, group labels, subtitles, and spec files take sentence case. A changelog rendered on uinaf.dev is a brand surface and stays lowercase.
 - **Product and studio names stay lowercase in both registers**, even at sentence start: `skillcheck runs…`, never `Skillcheck runs…`. Recast the sentence if it bothers you. This applies to uinaf, ffss, slopguard, skillcheck, slopwake, dotfiles, workspace-kit, and agent-skills.
 - The boundary: read as a document → docs register. Read as the product talking → brand register. When unsure, lowercase.
 
@@ -66,7 +66,7 @@ No 18px. Pick the nearest step.
 
 ## Structure
 
-- Spacing has two regimes. **Layout**, 16px and up plus section and block margins, sits on the scale: 4 · 8 · 12 · 16 · 20 · 24 · 28 · 32 · 36 · 40 · 48 · 56 · 64 · 72 · 80 · 96. **Micro**, under 16px between elements inside one row or control (dot to text, icon to label, chip padding), has a 2px resolution, and 2 · 6 · 10 · 14 are deliberate optical half-steps, not drift. Panels breathe 20 inside, rows 16, groups 32, sections 64–96. Off the scale, round to the nearest step; an exact tie rounds down, because denser is on-brand.
+- Spacing has two regimes. **Layout**, 16px and up plus section and block margins, sits on the scale: 4 · 8 · 12 · 16 · 20 · 24 · 28 · 32 · 36 · 40 · 48 · 56 · 64 · 72 · 80 · 96. **Micro**, under 16px between elements inside one row or control (dot to text, icon to label, chip padding), has a 2px resolution, and 2 · 6 · 10 · 14 are deliberate optical half-steps. Panels breathe 20 inside, rows 16, groups 32, sections 64–96. Off the scale, round to the nearest step; an exact tie rounds down, because denser is on-brand.
 - Borders: 1px, one rest shade + one hover shade. Dashed marks a bounded long-form region. Never thicker.
 - Corners square by default, 2px on controls, 6px ceiling. Shadows: none (the live dot's glow is the one exception).
 - Box model: everything inside `.uinaf` is border-box. Element defaults (`h1`, `p`, `code`, `pre`, `hr`) carry zero specificity, so any `u-` class on the element wins.
@@ -100,9 +100,9 @@ Snappy decel, no bounce. 160ms hover/press, 220ms entry. Entry = fade-up 10px wi
 ## Imagery & logo
 
 - Two illustrations, total: `uinaf-team.png` (primary mark, 200–240px framed) and `uinaf-computer.png` (small mark, 20–64px, and the 120px frame on the 404). Pure black behind, 1px frame, square crop. Never rotate, recolor, or generate look-alikes.
-- **Product spot art:** a product may draw its own small line illustrations for its own states (empty, scanning, a score band). Inline SVG on a 48 grid, stroke 1.5, square caps, `currentColor`, no fills except one slime-gradient shape per frame. 32–96px, `aria-hidden`, one per viewport, never in chrome, never a stand-in for or a look-alike of the two marks. It lives in the product's repo, not here.
+- **Product spot art:** a product may draw its own small line illustrations for its own states (empty, scanning, a score band). Inline SVG on a 48 grid, stroke 1.5, square caps, `currentColor`, no fills except one slime-gradient shape per frame. 32–96px, `aria-hidden`, one per viewport, never in chrome, never a stand-in for or a look-alike of the two marks. It lives in the product's repo.
 - **Product mark:** a product may also have one colored logo in the same idiom, the slime family allowed as fills. It takes the topbar mark's slot (20–24px, unframed), its favicon, and its agent avatar. uinaf surfaces keep the uinaf marks.
-- The favicon is neither of those; it is its own rendered set on the CDN, under `CDN.favicons`: 16 / 32 / 48 / 192 / 512 plus apple-touch. It is not the small mark scaled down.
+- The favicon is its own rendered set on the CDN, under `CDN.favicons`: 16 / 32 / 48 / 192 / 512 plus apple-touch. Never scale the small mark down for it.
 - No photos, no icon fonts. `↗` `→` `·` and hairlines carry the iconography.
 - **Icons are a last resort, and the set is closed.** The 16-grid stroke SVGs in `assets/icons/` are the set. Original work, licensed with the repo. Pick from the set; extend it in its idiom (stroke 1.5, square caps, `currentColor`, no fills) as a pull request, never inline. Sizes scale the stroke inversely: 16/1.5 default, 12/1.75 in tags and meta rows, 20/1.25 in large buttons and empty states. Never import an icon library, never paste from a third-party set, and never put an icon beside a word that already says it.
 
