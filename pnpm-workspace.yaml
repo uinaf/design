@@ -9,7 +9,7 @@ overrides:
   # alchemy bundles Prisma tooling this Cloudflare-only stack never loads; lift its
   # advisories.
   "@prisma/dev>hono": ^4.12.25
-  "@prisma/dev>@hono/node-server": ^1.19.10
+  "@prisma/dev>@hono/node-server": ^2.0.0
   "lodash@<4.18.1": ^4.18.1
   # GHSA-xjj6-f33q-929c: wrangler and @effect/platform-node pin vulnerable undici lines.
   "undici@>=7.18.0 <7.30.1": ^7.30.1
@@ -30,3 +30,6 @@ peerDependencyRules:
   allowedVersions:
     vite: "*"
     "capnp-es>typescript": "7"
+minimumReleaseAgeExclude:
+  # Renovate security update: @hono/node-server@2.1.11
+  - "@hono/node-server@2.1.11"
